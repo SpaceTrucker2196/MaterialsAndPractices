@@ -6,21 +6,31 @@
         <attribute name="county" optional="YES" attributeType="String"/>
         <attribute name="cultivar" optional="YES" attributeType="String"/>
         <attribute name="drivingDirections" optional="YES" attributeType="String"/>
+        <attribute name="expectedHavestDate" optional="YES" attributeType="String"/>
         <attribute name="growType" optional="YES" attributeType="String"/>
         <attribute name="locationName" optional="YES" attributeType="String"/>
         <attribute name="manager" optional="YES" attributeType="String"/>
         <attribute name="managerPhone" optional="YES" attributeType="String"/>
         <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="plantedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="propertyOwner" optional="YES" attributeType="String"/>
         <attribute name="propertyOwnerPhone" optional="YES" attributeType="String"/>
         <attribute name="propertyType" optional="YES" attributeType="String"/>
-        <attribute name="size" optional="YES" attributeType="String"/>
+        <attribute name="size" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="state" optional="YES" attributeType="String"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="zip" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="Material" representedClassName="Material" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Practice" representedClassName="Practice" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+    </entity>
     <elements>
-        <element name="Grow" positionX="0" positionY="0" width="128" height="299"/>
+        <element name="Grow" positionX="0" positionY="0" width="128" height="14"/>
+        <element name="Material" positionX="0" positionY="-9" width="128" height="44"/>
+        <element name="Practice" positionX="9" positionY="9" width="128" height="44"/>
     </elements>
 </model>

@@ -15,6 +15,7 @@
 		1F4F48C2257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48C0257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld */; };
 		1F4F48CD257DB4C4005E559D /* MaterialsAndPracticesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48CC257DB4C4005E559D /* MaterialsAndPracticesTests.swift */; };
 		1F4F48D8257DB4C4005E559D /* MaterialsAndPracticesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48D7257DB4C4005E559D /* MaterialsAndPracticesUITests.swift */; };
+		1FE293EF257DDBAC00C93102 /* GrowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1F188AB7257E7A0900C7B804 /* MaterialsAndPractices 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 2.xcdatamodel"; sourceTree = "<group>"; };
 		1F4F48B2257DB4C2005E559D /* MaterialsAndPractices.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MaterialsAndPractices.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsAndPracticesApp.swift; sourceTree = "<group>"; };
 		1F4F48B7257DB4C2005E559D /* CurrentGrowsContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentGrowsContentView.swift; sourceTree = "<group>"; };
@@ -49,6 +51,7 @@
 		1F4F48D3257DB4C4005E559D /* MaterialsAndPracticesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MaterialsAndPracticesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F4F48D7257DB4C4005E559D /* MaterialsAndPracticesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsAndPracticesUITests.swift; sourceTree = "<group>"; };
 		1F4F48D9257DB4C4005E559D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,7 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */,
-				1F4F48B7257DB4C2005E559D /* CurrentGrowsContentView.swift */,
+				1FDC8616257E872000EF71E0 /* Grow */,
 				1F4F48B9257DB4C4005E559D /* Assets.xcassets */,
 				1F4F48BE257DB4C4005E559D /* Persistence.swift */,
 				1F4F48C3257DB4C4005E559D /* Info.plist */,
@@ -134,6 +137,15 @@
 				1F4F48D9257DB4C4005E559D /* Info.plist */,
 			);
 			path = MaterialsAndPracticesUITests;
+			sourceTree = "<group>";
+		};
+		1FDC8616257E872000EF71E0 /* Grow */ = {
+			isa = PBXGroup;
+			children = (
+				1F4F48B7257DB4C2005E559D /* CurrentGrowsContentView.swift */,
+				1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */,
+			);
+			path = Grow;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -265,6 +277,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FE293EF257DDBAC00C93102 /* GrowDetailView.swift in Sources */,
 				1F4F48BF257DB4C4005E559D /* Persistence.swift in Sources */,
 				1F4F48C2257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld in Sources */,
 				1F4F48B8257DB4C2005E559D /* CurrentGrowsContentView.swift in Sources */,
@@ -593,9 +606,10 @@
 		1F4F48C0257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				1F188AB7257E7A0900C7B804 /* MaterialsAndPractices 2.xcdatamodel */,
 				1F4F48C1257DB4C4005E559D /* MaterialsAndPractices.xcdatamodel */,
 			);
-			currentVersion = 1F4F48C1257DB4C4005E559D /* MaterialsAndPractices.xcdatamodel */;
+			currentVersion = 1F188AB7257E7A0900C7B804 /* MaterialsAndPractices 2.xcdatamodel */;
 			path = MaterialsAndPractices.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
