@@ -1,2 +1,2 @@
 # MaterialsAndPractices
-Software for managing organic and conventional farming practices for small farms
+A logging and organic compliance tool for small farms.
