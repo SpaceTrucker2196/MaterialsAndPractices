@@ -8,35 +8,29 @@
 import SwiftUI
 import CoreData
 
-struct GrowDetailViewModel  {
-    var cultivar = "New Cultivar"
-    var name = "My Grow"
-    var plantedDate = Date()
-    var harvestDate = Date()
-    var daysTillHarvest = 90
-    var locationName = "My Location"
-    var materials : [Material] = []
-    var practices : [Practice] = []
-}
 
 struct GrowDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    
     @State var grow:GrowDetailViewModel
     
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading){
-                Text("Cultivar:")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.green)
-                    .multilineTextAlignment(.leading)
-                    
-                Text("\(grow.cultivar )")
-                    .font(.headline)
-                    .fontWeight(.heavy)
-                    .multilineTextAlignment(.leading)
+                HStack {
+                    Grow.Image(title:grow.cultivar)
+                    VStack(alignment: .leading) {
+                        Text("Cultivar:")
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color.green)
+                            .multilineTextAlignment(.leading)
+                        Text("\(grow.cultivar )")
+                            .font(.headline)
+                            .fontWeight(.heavy)
+                            .multilineTextAlignment(.leading)
+                    }
+                }
+                
                 Text("Planted Date:")
                     .font(.subheadline)
                     .fontWeight(.bold)

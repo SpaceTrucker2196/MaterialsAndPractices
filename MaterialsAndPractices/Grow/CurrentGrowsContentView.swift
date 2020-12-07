@@ -20,7 +20,7 @@ struct CurrentGrowsContentView: View {
         NavigationView {
                 List {
                     ForEach(grows) { grow in
-                        growRow(grow: grow)
+                        GrowRow(grow: grow)
                     }
                     .onDelete(perform: deleteItems)
                 }
@@ -73,46 +73,45 @@ private let itemFormatter: DateFormatter = {
 
 
 
-struct growRow: View {
+struct GrowRow: View {
     var grow:Grow
     var body: some View {
         NavigationLink(
             destination: GrowDetailView(grow: GrowDetailViewModel()),
             label: {
                 VStack(alignment: .leading, spacing: 1.0) {
-                    Text("\(grow.title ?? "My Grow")")
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(nil)
-                        .padding(.all, 5.0)
-                        .border(Color.green, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
-                        .cornerRadius(/*@START_MENU_TOKEN@*/5.0/*@END_MENU_TOKEN@*/)
-                    
-                    HStack(alignment: .top) {
-                        Image("Grow")
-                            .padding([.top, .leading, .bottom])
-                            .frame(width: 60, height: 60)
-                            .aspectRatio(contentMode: .fit) .clipped()
-                        
+                    HStack(alignment: .center) {
+                        Grow.Image(title:grow.cultivar ?? "G")
                         VStack(alignment: .leading) {
-                            Text("Grow Started:")
-                                .font(.subheadline)
+                            Text("\(grow.title ?? "My Grow")")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(nil)
+
+                            Text("Planted Date")
+                                .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color.green)
                                 .multilineTextAlignment(.leading)
+                            
                             Text("\(grow.timestamp!, formatter: itemFormatter)")
                                 .font(.subheadline)
                                 .fontWeight(.regular)
-                                .foregroundColor(Color.green)
+                                .foregroundColor(Color.black)
                                 .multilineTextAlignment(.leading)
                                 
-                            Text("Location:")
-                                .font(.subheadline)
+                            Text("Location")
+                                .font(.caption)
                                 .fontWeight(.medium)
                                 .foregroundColor(Color.green)
                                 .multilineTextAlignment(.leading)
-                                
+                            
+                            Text("\(grow.locationName ?? "")")
+                                .font(.subheadline)
+                                .fontWeight(.regular)
+                                .foregroundColor(Color.black)
+                                .multilineTextAlignment(.leading)
                         }
                         .padding(.leading, 2.0)
                     }
