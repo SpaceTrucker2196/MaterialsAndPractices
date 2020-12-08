@@ -8,7 +8,7 @@
 import SwiftUI
 import CoreData
 
-struct CurrentGrowsContentView: View {
+struct CurrentGrowsView: View {
     
     @State private var showCreateGrow = false
     
@@ -29,7 +29,9 @@ struct CurrentGrowsContentView: View {
                     .onDelete(perform: deleteItems)
                 }
                 .toolbar {
-                    Button(action: addItem) {
+                    Button(action: {
+                        showCreateGrow = true
+                    }) {
                         Label("Add New Grow", systemImage: "plus")
                     }
                 }.navigationTitle("Active Grows")
@@ -38,24 +40,6 @@ struct CurrentGrowsContentView: View {
         })
     }
     
-
-    private func addItem() {
-        showCreateGrow = true
-//        withAnimation {
-//            let newGrow = Grow(context: viewContext)
-//            newGrow.timestamp = Date()
-//            newGrow.title = "My New Grow"
-//            do {
-//                try viewContext.save()
-//            } catch {
-//                // Replace this implementation with code to handle the error appropriately.
-//                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-//                let nsError = error as NSError
-//                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-//            }
-//        }
-    }
-
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             offsets.map { grows[$0] }.forEach(viewContext.delete)
@@ -63,8 +47,6 @@ struct CurrentGrowsContentView: View {
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
@@ -131,7 +113,7 @@ struct GrowRow: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            CurrentGrowsContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            CurrentGrowsView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         }
     }
 }
