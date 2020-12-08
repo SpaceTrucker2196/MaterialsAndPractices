@@ -9,11 +9,15 @@ import SwiftUI
 import CoreData
 
 struct CurrentGrowsContentView: View {
+    
+    @State private var showCreateGrow = false
+    
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
+        entity:Grow.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \Grow.title, ascending: true)],
         animation: .default)
-
+    
     private var grows: FetchedResults<Grow>
 
     var body: some View {
@@ -29,23 +33,27 @@ struct CurrentGrowsContentView: View {
                         Label("Add New Grow", systemImage: "plus")
                     }
                 }.navigationTitle("Active Grows")
-        }
+        }.sheet(isPresented: $showCreateGrow, content: {
+            EditGrowView(isPresented:$showCreateGrow)
+        })
     }
+    
 
     private func addItem() {
-        withAnimation {
-            let newGrow = Grow(context: viewContext)
-            newGrow.timestamp = Date()
-            newGrow.title = "My New Grow"
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
+        showCreateGrow = true
+//        withAnimation {
+//            let newGrow = Grow(context: viewContext)
+//            newGrow.timestamp = Date()
+//            newGrow.title = "My New Grow"
+//            do {
+//                try viewContext.save()
+//            } catch {
+//                // Replace this implementation with code to handle the error appropriately.
+//                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+//                let nsError = error as NSError
+//                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+//            }
+//        }
     }
 
     private func deleteItems(offsets: IndexSet) {
@@ -71,17 +79,15 @@ private let itemFormatter: DateFormatter = {
     return formatter
 }()
 
-
-
 struct GrowRow: View {
     var grow:Grow
     var body: some View {
         NavigationLink(
-            destination: GrowDetailView(grow: GrowDetailViewModel()),
+            destination: GrowDetailView(grow: GrowDetailViewModel.init(grow: grow)),
             label: {
                 VStack(alignment: .leading, spacing: 1.0) {
                     HStack(alignment: .center) {
-                        Grow.Image(title:grow.cultivar ?? "G")
+                        Grow.Image(title:grow.title ?? "G")
                         VStack(alignment: .leading) {
                             Text("\(grow.title ?? "My Grow")")
                                 .font(.headline)
@@ -95,7 +101,7 @@ struct GrowRow: View {
                                 .foregroundColor(Color.green)
                                 .multilineTextAlignment(.leading)
                             
-                            Text("\(grow.timestamp!, formatter: itemFormatter)")
+                            Text("\(grow.plantedDate!, formatter: itemFormatter)")
                                 .font(.subheadline)
                                 .fontWeight(.regular)
                                 .foregroundColor(Color.black)

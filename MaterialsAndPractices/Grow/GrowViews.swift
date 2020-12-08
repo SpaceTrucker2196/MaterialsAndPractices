@@ -7,21 +7,6 @@
 
 import SwiftUI
 
-struct GrowDetailViewModel  {
-    var cultivar = "New Cultivar"
-    var name = "My Grow"
-    var plantedDate = Date()
-    var harvestDate = Date()
-    var daysTillHarvest = 90
-    var locationName = "My Location"
-    var materials : [Material] = []
-    var practices : [Practice] = []
-
-    func initWith(grow:Grow) -> GrowDetailViewModel {
-        return GrowDetailViewModel()
-    }
-}
-
 
 extension Grow {
     struct Image: View {

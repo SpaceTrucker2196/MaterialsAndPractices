@@ -8,6 +8,31 @@
 import SwiftUI
 import CoreData
 
+struct GrowDetailViewModel  {
+    var cultivar = "New Cultivar"
+    var name = "My Grow"
+    var plantedDate = Date()
+    var harvestDate = Date()
+    var daysTillHarvest = 90
+    var locationName = "My Location"
+    var materials : [Material] = []
+    var practices : [Practice] = []
+
+    init(grow:Grow) {
+        cultivar = grow.cultivar ?? ""
+        name = grow.title ?? ""
+        plantedDate = grow.plantedDate ?? Date()
+        harvestDate = grow.harvestDate ?? Date()
+        locationName = grow.locationName ?? ""
+    }
+}
+
+private let itemFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .short
+    formatter.timeStyle = .medium
+    return formatter
+}()
 
 struct GrowDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -17,7 +42,7 @@ struct GrowDetailView: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading){
                 HStack {
-                    Grow.Image(title:grow.cultivar)
+                    Grow.Image(title:grow.name)
                     VStack(alignment: .leading) {
                         Text("Cultivar:")
                             .font(.subheadline)
@@ -37,7 +62,7 @@ struct GrowDetailView: View {
                     .foregroundColor(Color.green)
                     .multilineTextAlignment(.leading)
                     .padding(.top, 4.0)
-                Text("\(grow.plantedDate.description)")
+                Text("\(grow.plantedDate, formatter: itemFormatter)")
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .multilineTextAlignment(.leading)
@@ -46,7 +71,7 @@ struct GrowDetailView: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.green)
                     .multilineTextAlignment(.leading)
-                Text("\(grow.harvestDate.description)")
+                Text("\(grow.harvestDate, formatter: itemFormatter)")
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .multilineTextAlignment(.leading)
@@ -109,7 +134,7 @@ struct GrowDetailView: View {
 struct GrowDetailView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            GrowDetailView(grow: GrowDetailViewModel()).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            GrowDetailView(grow: GrowDetailViewModel(grow: Grow())).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         }
     }
 }
