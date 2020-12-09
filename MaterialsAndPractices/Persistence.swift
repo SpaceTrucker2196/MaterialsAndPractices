@@ -15,6 +15,7 @@ struct PersistenceController {
         let viewContext = result.container.viewContext
         for itemNum in 0..<10 {
             let newGrow = Grow(context: viewContext)
+            let newMaterial = Material(context: viewContext)
             newGrow.timestamp = Date()
             
             switch itemNum {
@@ -34,6 +35,8 @@ struct PersistenceController {
                 newGrow.size = 10.0
                 newGrow.state = "Wi"
                 newGrow.zip = "54627"
+                
+                newMaterial.name = "Azomite"
             case 1:
                 newGrow.title = "Turkey Foot"
                 newGrow.cultivar = "Corn"
@@ -50,6 +53,8 @@ struct PersistenceController {
                 newGrow.size = 10.0
                 newGrow.state = "Wi"
                 newGrow.zip = "54627"
+                
+                newMaterial.name = "Bone Meal"
             case 2:
                 newGrow.title = "Radio Hill"
                 newGrow.cultivar = "Wheat"
@@ -66,6 +71,8 @@ struct PersistenceController {
                 newGrow.size = 10.0
                 newGrow.state = "Wi"
                 newGrow.zip = "54627"
+                
+                newMaterial.name = "Fish Meal"
             case 3:
                 newGrow.cultivar = "Turnip"
                 newGrow.title = "Pines"
@@ -82,6 +89,9 @@ struct PersistenceController {
                 newGrow.size = 10.0
                 newGrow.state = "Wi"
                 newGrow.zip = "54627"
+                
+                newMaterial.name = "Compost"
+                
             case 4:
                 newGrow.title = "Cabin Field"
                 newGrow.cultivar = "Raddish"
@@ -98,6 +108,8 @@ struct PersistenceController {
                 newGrow.size = 10.0
                 newGrow.state = "Wi"
                 newGrow.zip = "54627"
+                
+                newMaterial.name = "Tiger Bloom"
             case 5:
                 newGrow.title = "Garden"
                 newGrow.cultivar = "Carrot"
@@ -114,6 +126,8 @@ struct PersistenceController {
                 newGrow.size = 10.0
                 newGrow.state = "Wi"
                 newGrow.zip = "54627"
+                
+                newMaterial.name = "MycoGro"
             case 6:
                 newGrow.title = "Block 10"
                 newGrow.cultivar = "Onion"
@@ -130,6 +144,9 @@ struct PersistenceController {
                 newGrow.size = 10.0
                 newGrow.state = "Wi"
                 newGrow.zip = "54627"
+                
+                newMaterial.name = "Oyster Shells"
+                
             case 7:
                 newGrow.title = "Block 20"
                 newGrow.cultivar = "Onion"
@@ -146,6 +163,8 @@ struct PersistenceController {
                 newGrow.size = 10.0
                 newGrow.state = "Wi"
                 newGrow.zip = "54627"
+                
+                newMaterial.name = "Manure"
             case 8:
                 newGrow.title = "Block 40"
                 newGrow.cultivar = "Onion"
@@ -162,6 +181,8 @@ struct PersistenceController {
                 newGrow.size = 10.0
                 newGrow.state = "Wi"
                 newGrow.zip = "54627"
+                
+                newMaterial.name = "Gypsum"
             case 9:
                 newGrow.title = "Block 50"
                 newGrow.cultivar = "Onion"
@@ -178,6 +199,7 @@ struct PersistenceController {
                 newGrow.size = 10.0
                 newGrow.state = "Wi"
                 newGrow.zip = "54627"
+                newMaterial.name = "Miracle Grow"
                 
             default:
                 newGrow.title = "unknown"
@@ -217,6 +239,7 @@ struct PersistenceController {
                 */
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
+            
         })
     }
 }

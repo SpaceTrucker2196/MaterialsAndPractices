@@ -13,8 +13,10 @@ struct MaterialsAndPracticesApp: App {
 
     var body: some Scene {
         WindowGroup {
-            CurrentGrowsContentView()
+            CurrentGrowsView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
+    
+    
 }

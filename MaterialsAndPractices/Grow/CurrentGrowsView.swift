@@ -69,7 +69,7 @@ struct GrowRow: View {
             label: {
                 VStack(alignment: .leading, spacing: 1.0) {
                     HStack(alignment: .center) {
-                        Grow.Image(title:grow.title ?? "G")
+                        Grow.Image(grow:grow)
                         VStack(alignment: .leading) {
                             Text("\(grow.title ?? "My Grow")")
                                 .font(.headline)

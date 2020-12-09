@@ -17,13 +17,14 @@ struct GrowDetailViewModel  {
     var locationName = "My Location"
     var materials : [Material] = []
     var practices : [Practice] = []
-
+    var previewImage = Grow.Image(grow:Grow())
     init(grow:Grow) {
         cultivar = grow.cultivar ?? ""
         name = grow.title ?? ""
         plantedDate = grow.plantedDate ?? Date()
         harvestDate = grow.harvestDate ?? Date()
         locationName = grow.locationName ?? ""
+        previewImage = Grow.Image(grow:grow)
     }
 }
 
@@ -42,7 +43,7 @@ struct GrowDetailView: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading){
                 HStack {
-                    Grow.Image(title:grow.name)
+                    grow.previewImage
                     VStack(alignment: .leading) {
                         Text("Cultivar:")
                             .font(.subheadline)
@@ -97,24 +98,24 @@ struct GrowDetailView: View {
                 .fontWeight(.medium)
                 .multilineTextAlignment(.leading)
                 
-            Text("Material Applications:")
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .foregroundColor(Color.green)
-                .multilineTextAlignment(.leading)
-                .padding(.top)
-            List {
-                VStack{
-                    Text("Material")
-                }
-                VStack{
-                    Text("Material")
-                }
-                VStack{
-                    Text("Material")
-                }
+            HStack {
+                Text("Material Applications:")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color.green)
+                    .multilineTextAlignment(.leading)
+                    .padding(.top)
+                
+                Button(action: {
+                    let newMaterial = Material(context: viewContext)
+                    newMaterial.name = "New Application"
+                    
+                }, label: {
+                    Text("New Application")
+                })
             }
-            
+                MaterialsView()
+                        
             Text("Practices:")
                 .font(.subheadline)
                 .fontWeight(.bold)

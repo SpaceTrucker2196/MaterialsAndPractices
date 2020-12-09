@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F06C21E257FEF7E006F8C83 /* MaterialDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F06C21D257FEF7E006F8C83 /* MaterialDetailView.swift */; };
+		1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F06C22225807A59006F8C83 /* OptionalBinding.swift */; };
 		1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */; };
-		1F4F48B8257DB4C2005E559D /* CurrentGrowsContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48B7257DB4C2005E559D /* CurrentGrowsContentView.swift */; };
+		1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48B7257DB4C2005E559D /* CurrentGrowsView.swift */; };
 		1F4F48BA257DB4C4005E559D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F4F48B9257DB4C4005E559D /* Assets.xcassets */; };
 		1F4F48BD257DB4C4005E559D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F4F48BC257DB4C4005E559D /* Preview Assets.xcassets */; };
 		1F4F48BF257DB4C4005E559D /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48BE257DB4C4005E559D /* Persistence.swift */; };
@@ -18,6 +20,8 @@
 		1FE293EF257DDBAC00C93102 /* GrowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */; };
 		1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B63257EAED600A6D9DD /* GrowViews.swift */; };
 		1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */; };
+		1FEA2B6E257F440900A6D9DD /* MaterialViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B6D257F440900A6D9DD /* MaterialViews.swift */; };
+		1FEA2B79257FCE1D00A6D9DD /* MaterialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B78257FCE1D00A6D9DD /* MaterialsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,10 +42,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1F06C21D257FEF7E006F8C83 /* MaterialDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialDetailView.swift; sourceTree = "<group>"; };
+		1F06C22225807A59006F8C83 /* OptionalBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalBinding.swift; sourceTree = "<group>"; };
 		1F188AB7257E7A0900C7B804 /* MaterialsAndPractices 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 2.xcdatamodel"; sourceTree = "<group>"; };
 		1F4F48B2257DB4C2005E559D /* MaterialsAndPractices.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MaterialsAndPractices.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsAndPracticesApp.swift; sourceTree = "<group>"; };
-		1F4F48B7257DB4C2005E559D /* CurrentGrowsContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentGrowsContentView.swift; sourceTree = "<group>"; };
+		1F4F48B7257DB4C2005E559D /* CurrentGrowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentGrowsView.swift; sourceTree = "<group>"; };
 		1F4F48B9257DB4C4005E559D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1F4F48BC257DB4C4005E559D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1F4F48BE257DB4C4005E559D /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -56,6 +62,8 @@
 		1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowDetailView.swift; sourceTree = "<group>"; };
 		1FEA2B63257EAED600A6D9DD /* GrowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowViews.swift; sourceTree = "<group>"; };
 		1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGrowView.swift; sourceTree = "<group>"; };
+		1FEA2B6D257F440900A6D9DD /* MaterialViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialViews.swift; sourceTree = "<group>"; };
+		1FEA2B78257FCE1D00A6D9DD /* MaterialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +114,7 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
+				1FEA2B7D257FCF0000A6D9DD /* Material */,
 				1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */,
 				1FDC8616257E872000EF71E0 /* Grow */,
 				1F4F48B9257DB4C4005E559D /* Assets.xcassets */,
@@ -113,6 +122,7 @@
 				1F4F48C3257DB4C4005E559D /* Info.plist */,
 				1F4F48C0257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld */,
 				1F4F48BB257DB4C4005E559D /* Preview Content */,
+				1F06C22225807A59006F8C83 /* OptionalBinding.swift */,
 			);
 			path = MaterialsAndPractices;
 			sourceTree = "<group>";
@@ -146,12 +156,22 @@
 		1FDC8616257E872000EF71E0 /* Grow */ = {
 			isa = PBXGroup;
 			children = (
-				1F4F48B7257DB4C2005E559D /* CurrentGrowsContentView.swift */,
+				1F4F48B7257DB4C2005E559D /* CurrentGrowsView.swift */,
 				1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */,
 				1FEA2B63257EAED600A6D9DD /* GrowViews.swift */,
 				1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */,
 			);
 			path = Grow;
+			sourceTree = "<group>";
+		};
+		1FEA2B7D257FCF0000A6D9DD /* Material */ = {
+			isa = PBXGroup;
+			children = (
+				1FEA2B78257FCE1D00A6D9DD /* MaterialsView.swift */,
+				1FEA2B6D257F440900A6D9DD /* MaterialViews.swift */,
+				1F06C21D257FEF7E006F8C83 /* MaterialDetailView.swift */,
+			);
+			path = Material;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -285,10 +305,14 @@
 			files = (
 				1FE293EF257DDBAC00C93102 /* GrowDetailView.swift in Sources */,
 				1F4F48BF257DB4C4005E559D /* Persistence.swift in Sources */,
+				1F06C21E257FEF7E006F8C83 /* MaterialDetailView.swift in Sources */,
 				1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */,
+				1FEA2B79257FCE1D00A6D9DD /* MaterialsView.swift in Sources */,
+				1FEA2B6E257F440900A6D9DD /* MaterialViews.swift in Sources */,
 				1F4F48C2257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld in Sources */,
-				1F4F48B8257DB4C2005E559D /* CurrentGrowsContentView.swift in Sources */,
+				1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */,
 				1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */,
+				1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */,
 				1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

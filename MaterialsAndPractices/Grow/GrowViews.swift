@@ -10,11 +10,11 @@ import SwiftUI
 
 extension Grow {
     struct Image: View {
-       let title: String
+       let grow: Grow
        
        var body: some View {
          let symbol =
-           SwiftUI.Image(title: title)
+           SwiftUI.Image(grow: grow)
            ?? .init(systemName: "book")
 
          symbol
@@ -28,9 +28,9 @@ extension Grow {
 }
 
 extension Image {
-  init?(title: String) {
+  init?(grow: Grow) {
     guard
-      let character = title.first,
+      let character = grow.title?.first,
       case let symbolName = "\(character.lowercased()).square",
       UIImage(systemName: symbolName) != nil
     else {
@@ -40,12 +40,10 @@ extension Image {
   }
 }
 
-
-
 struct Grow_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            Grow.Image(title:"cat")
+            Grow.Image(grow:Grow())
         }
     }
 }

@@ -10,6 +10,7 @@ import SwiftUI
 struct MaterialsView: View {
     
     @State private var showCreateMaterial = false
+    @State private var selectedMaterial = Material()
     
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
@@ -17,15 +18,34 @@ struct MaterialsView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Material.name, ascending: true)],
         animation: .default)
     
-    private var grows: FetchedResults<Grow>
+    private var materials: FetchedResults<Material>
+    
+  
+    @State private var showEditView = false
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
+
+        LazyVGrid(columns: [.init(.fixed(80)),.init(.fixed(80)),.init(.fixed(80))],
+                  content: {
+                    ForEach(materials) { material in
+                        
+                        NavigationLink(
+                            destination: MaterialDetailView(isPresented: $showEditView, material:material),
+                            label: {
+                                Material.Image(materialTitle:material.name ?? "")
+                            })
+                        
+                        
+                    }
+                  })
+        }
 }
+
 
 struct MaterialsView_Previews: PreviewProvider {
     static var previews: some View {
-        MaterialsView()
+        Group {
+            MaterialsView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        }
     }
 }

@@ -9,19 +9,31 @@ import SwiftUI
 
 extension Material {
     struct Image: View {
-       let title: String
+       let materialTitle: String
        
        var body: some View {
          let symbol =
-           SwiftUI.Image(materialTitle: title)
+           SwiftUI.Image(materialTitle: materialTitle)
            ?? .init(systemName: "book")
-
-         symbol
-           .resizable()
-           .scaledToFit()
-           .frame(width: 80, height: 80)
-           .font(Font.title.weight(.light))
-           .foregroundColor(.green)
+        
+        VStack {
+            symbol
+              .resizable()
+              .scaledToFit()
+              .frame(width: 80, height: 80)
+              .font(Font.title.weight(.light))
+              .foregroundColor(Color("OrganicMaterialColor"))
+            
+            Text(materialTitle).font(Font.caption.weight(.medium))
+                .font(.callout)
+                .foregroundColor(Color("OrganicMaterialColor"))
+                .multilineTextAlignment(.center)
+                .lineLimit(1)
+                .padding(.all, 0.0)
+                .frame(width: 66.0)
+                .border(Color("OrganicMaterialColor"), width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                .cornerRadius(/*@START_MENU_TOKEN@*/3.0/*@END_MENU_TOKEN@*/)
+        }
        }
      }
 }
@@ -39,12 +51,10 @@ extension Image {
   }
 }
 
-
-
 struct Material_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            Grow.Image(title:"cat")
+            Material.Image(materialTitle:"test")
         }
     }
 }
