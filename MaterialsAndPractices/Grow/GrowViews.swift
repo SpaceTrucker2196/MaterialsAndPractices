@@ -43,7 +43,7 @@ extension Image {
 struct Grow_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            Grow.Image(grow:Grow())
+            Grow.Image(grow:Grow(context:PersistenceController.preview.container.viewContext))
         }
     }
 }

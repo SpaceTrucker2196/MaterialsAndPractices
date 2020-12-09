@@ -13,7 +13,6 @@ struct MaterialDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
     @Binding var isPresented: Bool
-    
     @State var material : Material = Material()
     
     var body: some View {
@@ -57,7 +56,9 @@ struct MaterialDetailView: View {
 }
 
 struct MaterialDetailView_Previews: PreviewProvider {
+   
     static var previews: some View {
-        MaterialDetailView(isPresented:.constant(true), material: Material())
+
+        MaterialDetailView(isPresented:.constant(true), material:Material(context:PersistenceController.preview.container.viewContext))
     }
 }

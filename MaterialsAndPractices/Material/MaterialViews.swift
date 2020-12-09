@@ -16,7 +16,7 @@ extension Material {
            SwiftUI.Image(materialTitle: materialTitle)
            ?? .init(systemName: "book")
         
-        VStack {
+        VStack(alignment: .center) {
             symbol
               .resizable()
               .scaledToFit()
@@ -31,8 +31,6 @@ extension Material {
                 .lineLimit(1)
                 .padding(.all, 0.0)
                 .frame(width: 66.0)
-                .border(Color("OrganicMaterialColor"), width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
-                .cornerRadius(/*@START_MENU_TOKEN@*/3.0/*@END_MENU_TOKEN@*/)
         }
        }
      }

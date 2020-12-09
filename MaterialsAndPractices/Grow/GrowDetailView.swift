@@ -135,7 +135,7 @@ struct GrowDetailView: View {
 struct GrowDetailView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            GrowDetailView(grow: GrowDetailViewModel(grow: Grow())).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            GrowDetailView(grow: GrowDetailViewModel(grow: Grow(context:PersistenceController.preview.container.viewContext)))
         }
     }
 }
