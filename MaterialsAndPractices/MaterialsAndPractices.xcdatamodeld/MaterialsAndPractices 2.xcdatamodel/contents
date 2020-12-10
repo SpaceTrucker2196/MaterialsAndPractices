@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17511" systemVersion="20B29" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Amendment" representedClassName="Amendment" syncable="YES" codeGenerationType="class">
+        <attribute name="applicationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="laborHours" optional="YES" attributeType="String"/>
+        <attribute name="material" optional="YES" attributeType="String"/>
+        <attribute name="materialIndex" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <relationship name="grow" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Grow" inverseName="amendments" inverseEntity="Grow"/>
+    </entity>
     <entity name="Grow" representedClassName="Grow" syncable="YES" codeGenerationType="class">
         <attribute name="address" optional="YES" attributeType="String"/>
         <attribute name="city" optional="YES" attributeType="String"/>
@@ -22,21 +31,14 @@
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="zip" optional="YES" attributeType="String"/>
-        <relationship name="materials" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Material" inverseName="grow" inverseEntity="Material"/>
-    </entity>
-    <entity name="Material" representedClassName="Material" syncable="YES" codeGenerationType="class">
-        <attribute name="applicationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="laborHours" optional="YES" attributeType="String"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="notes" optional="YES" attributeType="String"/>
-        <relationship name="grow" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Grow" inverseName="materials" inverseEntity="Grow"/>
+        <relationship name="amendments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Amendment" inverseName="grow" inverseEntity="Amendment"/>
     </entity>
     <entity name="Practice" representedClassName="Practice" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
     </entity>
     <elements>
+        <element name="Amendment" positionX="0" positionY="-9" width="128" height="134"/>
         <element name="Grow" positionX="0" positionY="0" width="128" height="359"/>
-        <element name="Material" positionX="0" positionY="-9" width="128" height="104"/>
         <element name="Practice" positionX="9" positionY="9" width="128" height="44"/>
     </elements>
 </model>

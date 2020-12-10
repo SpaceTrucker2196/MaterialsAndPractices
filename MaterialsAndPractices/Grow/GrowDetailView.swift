@@ -16,8 +16,6 @@ struct GrowDetailViewModel  {
     var harvestDate = Date()
     var daysTillHarvest = 90
     var locationName = "My Location"
-    var materials : [Material] = []
-    var practices : [Practice] = []
     var previewImage = Grow.Image(grow:Grow())
     init(grow:Grow) {
         self.grow = grow
@@ -102,30 +100,28 @@ struct GrowDetailView: View {
                 .fontWeight(.medium)
                 .multilineTextAlignment(.leading)
                 
-            Text("Material Applications:")
+            Text("Ammendment Applications:")
                 .font(.subheadline)
                 .fontWeight(.bold)
                 .foregroundColor(Color.green)
                 .multilineTextAlignment(.leading)
                 .padding(.top)
  
-            MaterialsView(selectedGrow:growViewModel.grow).frame(maxWidth: .infinity)
+            Amendments(selectedGrow:growViewModel.grow).frame(maxWidth: .infinity)
             
             Button(action: {
-                let newMaterial = Material(context: viewContext)
-                newMaterial.name = "New Application"
-                growViewModel.grow.addToMaterials(newMaterial)
+                let newAmendment = Amendment(context: viewContext)
+                growViewModel.grow.addToAmendments(newAmendment)
             }, label: {
                 Text("Apply")
                     .font(.headline)
                     .fontWeight(.medium)
                     .multilineTextAlignment(.center)
-                    .padding([.top, .leading, .bottom], 4.0)
-                    .accentColor(.white)
+                    .padding(.all, 4.0)
                     .frame(maxWidth: .infinity)
                     
-            }).background(Color("OrganicMaterialColor"))
-            .cornerRadius(4.0)
+            }).border(Color.accentColor, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+            .cornerRadius(4.0) .padding()
             
             Text("Practices:")
                 .font(.subheadline)
@@ -137,18 +133,18 @@ struct GrowDetailView: View {
            // MaterialsView().frame(maxWidth: .infinity)
             
             Button(action: {
-                let newMaterial = Material(context: viewContext)
+                let newMaterial = Amendment(context: viewContext)
                 newMaterial.name = "Add"
                 
             }, label: {
                 Text("Perform").font(.headline)
                     .fontWeight(.medium)
                     .multilineTextAlignment(.trailing) 
-                    .padding(.all, 8.0) .accentColor(.white)
+                    .padding(.all, 4.0)
                     .frame(maxWidth: .infinity)
                     
-            }).background(Color("OrganicMaterialColor"))
-            .cornerRadius(4.0)
+            }).border(Color.accentColor, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+            .cornerRadius(4.0) .padding()
             Spacer()
         }.padding(.all).navigationTitle("\(growViewModel.name)")
     }

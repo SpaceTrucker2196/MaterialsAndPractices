@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-extension Material {
+extension Amendment {
     struct Image: View {
-       let materialTitle: String
+       let amendmentTitle: String
        
        var body: some View {
          let symbol =
-           SwiftUI.Image(materialTitle: materialTitle)
-           ?? .init(systemName: "book")
+           SwiftUI.Image(materialTitle: amendmentTitle)
+           ?? .init(systemName: "leaf.arrow.triangle.circlepath")
         
         VStack(alignment: .center) {
             symbol
@@ -24,7 +24,7 @@ extension Material {
               .font(Font.title.weight(.light))
               .foregroundColor(Color("OrganicMaterialColor"))
             
-            Text(materialTitle).font(Font.caption.weight(.medium))
+            Text(amendmentTitle).font(Font.caption.weight(.medium))
                 .font(.callout)
                 .foregroundColor(Color("OrganicMaterialColor"))
                 .multilineTextAlignment(.center)
@@ -52,7 +52,7 @@ extension Image {
 struct Material_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            Material.Image(materialTitle:"test")
+            Amendment.Image(amendmentTitle:"test")
         }
     }
 }

@@ -7,34 +7,33 @@
 
 import SwiftUI
 
-struct MaterialsView: View {
+struct Amendments: View {
     
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.managedObjectContext) private var viewContext
     
     @State private var showCreateMaterial = false
-    @State private var selectedMaterial = Material()
+    @State private var selectedMaterial = Amendment()
     @State var selectedGrow : Grow = Grow()
     
-    
-    var fetchRequest: FetchRequest<Material>
+    var fetchRequest: FetchRequest<Amendment>
 
     @State private var showEditView = false
     
     init(selectedGrow: Grow) {
-        fetchRequest = FetchRequest<Material>(entity:Material.entity(),
-                                            sortDescriptors: [NSSortDescriptor(keyPath: \Material.name, ascending: true)], predicate: NSPredicate(format: "grow == %@",selectedGrow),
+        fetchRequest = FetchRequest<Amendment>(entity:Amendment.entity(),
+                                            sortDescriptors: [NSSortDescriptor(keyPath: \Amendment.name, ascending: true)], predicate: NSPredicate(format: "grow == %@",selectedGrow),
                                             animation: .default)
     }
     
     var body: some View {
         LazyVGrid(columns: [GridItem(.fixed(94), spacing: 16, alignment: .leading),GridItem(.fixed(94), spacing: 16, alignment: .leading), GridItem(.fixed(94), spacing: 16, alignment: .leading)],
                   content: {
-                    ForEach(fetchRequest.wrappedValue) { material in
+                    ForEach(fetchRequest.wrappedValue) { amendment in
                         NavigationLink(
-                            destination: MaterialDetailView(isPresented: $showEditView, material:material),
+                            destination: AmendmentDetail(amendment:amendment),
                             label: {
-                                Material.Image(materialTitle:material.name ?? "")
+                                Amendment.Image(amendmentTitle:amendment.name ?? "")
                             })
                     }
                   }).frame(maxWidth: .infinity,maxHeight: .infinity )
@@ -44,7 +43,7 @@ struct MaterialsView: View {
 struct MaterialsView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            MaterialsView(selectedGrow: Grow(context:PersistenceController.preview.container.viewContext) ).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            Amendments(selectedGrow: Grow(context:PersistenceController.preview.container.viewContext) ).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         }
     }
 }

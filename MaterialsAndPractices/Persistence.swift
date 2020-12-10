@@ -15,7 +15,7 @@ struct PersistenceController {
         let viewContext = result.container.viewContext
         for itemNum in 0..<10 {
             let newGrow = Grow(context: viewContext)
-            let newMaterial = Material(context: viewContext)
+            let newMaterial = Amendment(context: viewContext)
             newGrow.timestamp = Date()
             
             switch itemNum {
