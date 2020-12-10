@@ -9,6 +9,7 @@ import SwiftUI
 import CoreData
 
 struct GrowDetailViewModel  {
+    var grow : Grow
     var cultivar = "New Cultivar"
     var name = "My Grow"
     var plantedDate = Date()
@@ -19,6 +20,7 @@ struct GrowDetailViewModel  {
     var practices : [Practice] = []
     var previewImage = Grow.Image(grow:Grow())
     init(grow:Grow) {
+        self.grow = grow
         cultivar = grow.cultivar ?? ""
         name = grow.title ?? ""
         plantedDate = grow.plantedDate ?? Date()
@@ -37,20 +39,22 @@ private let itemFormatter: DateFormatter = {
 
 struct GrowDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @State var grow:GrowDetailViewModel
+    @State var growViewModel:GrowDetailViewModel
     
     var body: some View {
+        ScrollView {
+            
         VStack(alignment: .leading) {
             VStack(alignment: .leading){
                 HStack {
-                    grow.previewImage
+                    growViewModel.previewImage
                     VStack(alignment: .leading) {
                         Text("Cultivar:")
                             .font(.subheadline)
                             .fontWeight(.bold)
                             .foregroundColor(Color.green)
                             .multilineTextAlignment(.leading)
-                        Text("\(grow.cultivar )")
+                        Text("\(growViewModel.cultivar )")
                             .font(.headline)
                             .fontWeight(.heavy)
                             .multilineTextAlignment(.leading)
@@ -63,7 +67,7 @@ struct GrowDetailView: View {
                     .foregroundColor(Color.green)
                     .multilineTextAlignment(.leading)
                     .padding(.top, 4.0)
-                Text("\(grow.plantedDate, formatter: itemFormatter)")
+                Text("\(growViewModel.plantedDate, formatter: itemFormatter)")
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .multilineTextAlignment(.leading)
@@ -72,7 +76,7 @@ struct GrowDetailView: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.green)
                     .multilineTextAlignment(.leading)
-                Text("\(grow.harvestDate, formatter: itemFormatter)")
+                Text("\(growViewModel.harvestDate, formatter: itemFormatter)")
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .multilineTextAlignment(.leading)
@@ -93,49 +97,68 @@ struct GrowDetailView: View {
                 .foregroundColor(Color.green)
                 .multilineTextAlignment(.leading)
                 .padding(.top, 2.0)
-            Text("\(grow.locationName)")
+            Text("\(growViewModel.locationName)")
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .multilineTextAlignment(.leading)
                 
-            HStack {
-                Text("Material Applications:")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.green)
-                    .multilineTextAlignment(.leading)
-                    .padding(.top)
-                
-                Button(action: {
-                    let newMaterial = Material(context: viewContext)
-                    newMaterial.name = "New Application"
+            Text("Material Applications:")
+                .font(.subheadline)
+                .fontWeight(.bold)
+                .foregroundColor(Color.green)
+                .multilineTextAlignment(.leading)
+                .padding(.top)
+ 
+            MaterialsView(selectedGrow:growViewModel.grow).frame(maxWidth: .infinity)
+            
+            Button(action: {
+                let newMaterial = Material(context: viewContext)
+                newMaterial.name = "New Application"
+                growViewModel.grow.addToMaterials(newMaterial)
+            }, label: {
+                Text("Apply")
+                    .font(.headline)
+                    .fontWeight(.medium)
+                    .multilineTextAlignment(.center)
+                    .padding([.top, .leading, .bottom], 4.0)
+                    .accentColor(.white)
+                    .frame(maxWidth: .infinity)
                     
-                }, label: {
-                    Text("New Application")
-                })
-            }
-                MaterialsView()
-                        
+            }).background(Color("OrganicMaterialColor"))
+            .cornerRadius(4.0)
+            
             Text("Practices:")
                 .font(.subheadline)
                 .fontWeight(.bold)
                 .foregroundColor(Color.green)
                 .multilineTextAlignment(.leading)
                 .padding(.top)
-            List {
-                Text("Till")
-                Text("Cover")
-                Text("Till")
-            }
+           
+           // MaterialsView().frame(maxWidth: .infinity)
+            
+            Button(action: {
+                let newMaterial = Material(context: viewContext)
+                newMaterial.name = "Add"
+                
+            }, label: {
+                Text("Perform").font(.headline)
+                    .fontWeight(.medium)
+                    .multilineTextAlignment(.trailing) 
+                    .padding(.all, 8.0) .accentColor(.white)
+                    .frame(maxWidth: .infinity)
+                    
+            }).background(Color("OrganicMaterialColor"))
+            .cornerRadius(4.0)
             Spacer()
-        }.padding(.leading).navigationTitle("\(grow.name)")
+        }.padding(.all).navigationTitle("\(growViewModel.name)")
+    }
     }
 }
 
 struct GrowDetailView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            GrowDetailView(grow: GrowDetailViewModel(grow: Grow(context:PersistenceController.preview.container.viewContext)))
+            GrowDetailView(growViewModel: GrowDetailViewModel(grow: Grow(context:PersistenceController.preview.container.viewContext)))
         }
     }
 }

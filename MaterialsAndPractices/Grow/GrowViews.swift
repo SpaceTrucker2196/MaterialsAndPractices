@@ -15,7 +15,7 @@ extension Grow {
        var body: some View {
          let symbol =
            SwiftUI.Image(grow: grow)
-           ?? .init(systemName: "book")
+           ?? .init(systemName: "leaf")
 
          symbol
            .resizable()

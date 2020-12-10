@@ -65,7 +65,7 @@ struct GrowRow: View {
     var grow:Grow
     var body: some View {
         NavigationLink(
-            destination: GrowDetailView(grow: GrowDetailViewModel.init(grow: grow)),
+            destination: GrowDetailView(growViewModel: GrowDetailViewModel.init(grow: grow)),
             label: {
                 VStack(alignment: .leading, spacing: 1.0) {
                     HStack(alignment: .center) {
