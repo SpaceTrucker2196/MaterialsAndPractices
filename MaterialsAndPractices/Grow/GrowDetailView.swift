@@ -99,7 +99,31 @@ struct GrowDetailView: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .multilineTextAlignment(.leading)
+             
+            Text("Work:")
+                .font(.subheadline)
+                .fontWeight(.bold)
+                .foregroundColor(Color.green)
+                .multilineTextAlignment(.leading)
+                .padding(.top)
+           
+            WorkPractices(selectedGrow:growViewModel.grow).frame(maxWidth:.infinity)
+            
+            Button(action: {
+                let newWork = Work(context: viewContext)
+                growViewModel.grow.addToWork(newWork)
                 
+            }, label: {
+                Text("Perform").font(.headline)
+                    .fontWeight(.medium)
+                    .multilineTextAlignment(.trailing)
+                    .padding(.all, 4.0)
+                    .frame(maxWidth: .infinity)
+                    
+            }).border(Color.accentColor, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+            .cornerRadius(4.0) .padding()
+            Spacer()
+            
             Text("Ammendment Applications:")
                 .font(.subheadline)
                 .fontWeight(.bold)
@@ -123,29 +147,7 @@ struct GrowDetailView: View {
             }).border(Color.accentColor, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
             .cornerRadius(4.0) .padding()
             
-            Text("Practices:")
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .foregroundColor(Color.green)
-                .multilineTextAlignment(.leading)
-                .padding(.top)
-           
-           // MaterialsView().frame(maxWidth: .infinity)
             
-            Button(action: {
-                let newMaterial = Amendment(context: viewContext)
-                newMaterial.name = "Add"
-                
-            }, label: {
-                Text("Perform").font(.headline)
-                    .fontWeight(.medium)
-                    .multilineTextAlignment(.trailing) 
-                    .padding(.all, 4.0)
-                    .frame(maxWidth: .infinity)
-                    
-            }).border(Color.accentColor, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
-            .cornerRadius(4.0) .padding()
-            Spacer()
         }.padding(.all).navigationTitle("\(growViewModel.name)")
     }
     }

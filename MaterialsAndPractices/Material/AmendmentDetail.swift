@@ -13,7 +13,6 @@ struct AmendmentDetail: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @State var amendment : Amendment
-    @State var nameCache : String = ""
     @State private var selectedMaterialIndex = 0
     
     var materials = ["Compost","Bat Guano","Manure","Worm Compost","Greensand","Azomite","Comfrey","Cover Crop","Wood Chips","Leaf Mold","Bone Meal","Wood Ash","Humus","Humic Acid","Blood Meal","Straw","Paper"]

@@ -32,13 +32,17 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="zip" optional="YES" attributeType="String"/>
         <relationship name="amendments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Amendment" inverseName="grow" inverseEntity="Amendment"/>
+        <relationship name="work" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Work" inverseName="grow" inverseEntity="Work"/>
     </entity>
-    <entity name="Practice" representedClassName="Practice" syncable="YES" codeGenerationType="class">
+    <entity name="Work" representedClassName="Work" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="practice" optional="YES" attributeType="String"/>
+        <attribute name="practiceIndex" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="grow" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Grow" inverseName="work" inverseEntity="Grow"/>
     </entity>
     <elements>
         <element name="Amendment" positionX="0" positionY="-9" width="128" height="134"/>
-        <element name="Grow" positionX="0" positionY="0" width="128" height="359"/>
-        <element name="Practice" positionX="9" positionY="9" width="128" height="44"/>
+        <element name="Grow" positionX="0" positionY="0" width="128" height="374"/>
+        <element name="Work" positionX="9" positionY="153" width="128" height="89"/>
     </elements>
 </model>

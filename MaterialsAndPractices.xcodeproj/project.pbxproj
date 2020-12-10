@@ -17,6 +17,9 @@
 		1F4F48C2257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48C0257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld */; };
 		1F4F48CD257DB4C4005E559D /* MaterialsAndPracticesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48CC257DB4C4005E559D /* MaterialsAndPracticesTests.swift */; };
 		1F4F48D8257DB4C4005E559D /* MaterialsAndPracticesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48D7257DB4C4005E559D /* MaterialsAndPracticesUITests.swift */; };
+		1F812225258281EC007394D0 /* WorkPractices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812224258281EC007394D0 /* WorkPractices.swift */; };
+		1F81222A258295D0007394D0 /* WorkPracticeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812229258295D0007394D0 /* WorkPracticeDetailView.swift */; };
+		1F812235258298EC007394D0 /* WorkViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812234258298EC007394D0 /* WorkViews.swift */; };
 		1FE293EF257DDBAC00C93102 /* GrowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */; };
 		1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B63257EAED600A6D9DD /* GrowViews.swift */; };
 		1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */; };
@@ -59,6 +62,9 @@
 		1F4F48D3257DB4C4005E559D /* MaterialsAndPracticesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MaterialsAndPracticesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F4F48D7257DB4C4005E559D /* MaterialsAndPracticesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsAndPracticesUITests.swift; sourceTree = "<group>"; };
 		1F4F48D9257DB4C4005E559D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1F812224258281EC007394D0 /* WorkPractices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkPractices.swift; sourceTree = "<group>"; };
+		1F812229258295D0007394D0 /* WorkPracticeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkPracticeDetailView.swift; sourceTree = "<group>"; };
+		1F812234258298EC007394D0 /* WorkViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkViews.swift; sourceTree = "<group>"; };
 		1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowDetailView.swift; sourceTree = "<group>"; };
 		1FEA2B63257EAED600A6D9DD /* GrowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowViews.swift; sourceTree = "<group>"; };
 		1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGrowView.swift; sourceTree = "<group>"; };
@@ -114,6 +120,7 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
+				1F81223C25829E33007394D0 /* Practice */,
 				1FEA2B7D257FCF0000A6D9DD /* Material */,
 				1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */,
 				1FDC8616257E872000EF71E0 /* Grow */,
@@ -151,6 +158,16 @@
 				1F4F48D9257DB4C4005E559D /* Info.plist */,
 			);
 			path = MaterialsAndPracticesUITests;
+			sourceTree = "<group>";
+		};
+		1F81223C25829E33007394D0 /* Practice */ = {
+			isa = PBXGroup;
+			children = (
+				1F812224258281EC007394D0 /* WorkPractices.swift */,
+				1F812229258295D0007394D0 /* WorkPracticeDetailView.swift */,
+				1F812234258298EC007394D0 /* WorkViews.swift */,
+			);
+			path = Practice;
 			sourceTree = "<group>";
 		};
 		1FDC8616257E872000EF71E0 /* Grow */ = {
@@ -307,9 +324,12 @@
 				1F4F48BF257DB4C4005E559D /* Persistence.swift in Sources */,
 				1F06C21E257FEF7E006F8C83 /* AmendmentDetail.swift in Sources */,
 				1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */,
+				1F81222A258295D0007394D0 /* WorkPracticeDetailView.swift in Sources */,
+				1F812225258281EC007394D0 /* WorkPractices.swift in Sources */,
 				1FEA2B79257FCE1D00A6D9DD /* Amendments.swift in Sources */,
 				1FEA2B6E257F440900A6D9DD /* AmendmentViews.swift in Sources */,
 				1F4F48C2257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld in Sources */,
+				1F812235258298EC007394D0 /* WorkViews.swift in Sources */,
 				1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */,
 				1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */,
 				1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */,
