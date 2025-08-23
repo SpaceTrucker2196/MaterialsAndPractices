@@ -46,6 +46,7 @@ private let itemFormatter: DateFormatter = {
 struct GrowDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @State var growViewModel:GrowDetailViewModel
+    @State private var showingHarvestChecklist = false
     
     var body: some View {
         ScrollView {
@@ -187,6 +188,28 @@ struct GrowDetailView: View {
             }).border(Color.accentColor, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
             .cornerRadius(4.0) .padding()
             
+            Text("Harvest Safety:")
+                .font(.subheadline)
+                .fontWeight(.bold)
+                .foregroundColor(Color.green)
+                .multilineTextAlignment(.leading)
+                .padding(.top)
+            
+            Button(action: {
+                showingHarvestChecklist = true
+            }, label: {
+                Text("Safety Checklist")
+                    .font(.headline)
+                    .fontWeight(.medium)
+                    .multilineTextAlignment(.center)
+                    .padding(.all, 4.0)
+                    .frame(maxWidth: .infinity)
+                    
+            }).border(Color.accentColor, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+            .cornerRadius(4.0) .padding()
+            .sheet(isPresented: $showingHarvestChecklist) {
+                HarvestSafetyChecklistView()
+            }
             
         }.padding(.all).navigationTitle("\(growViewModel.name)")
     }

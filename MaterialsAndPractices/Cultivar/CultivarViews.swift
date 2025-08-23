@@ -46,15 +46,17 @@ struct CultivarDetailView: View {
                 HStack {
                     Cultivar.Image(cultivar: cultivar)
                     VStack(alignment: .leading) {
+                        if let family = cultivar.family, !family.isEmpty {
+                            Text(family)
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .foregroundColor(.primary)
+                        }
+                        
                         Text(cultivar.name ?? "Unknown Cultivar")
                             .font(.title2)
-                            .fontWeight(.bold)
-                        
-                        if let family = cultivar.family, !family.isEmpty {
-                            Text("Family: \(family)")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
                     }
                     Spacer()
                 }
@@ -114,7 +116,7 @@ struct CultivarDetailView: View {
             }
             .padding()
         }
-        .navigationTitle(cultivar.name ?? "Cultivar")
+        .navigationTitle(cultivar.family ?? "Cultivar")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -183,6 +185,15 @@ struct CultivarListView: View {
                                                         .padding(.horizontal, 6)
                                                         .padding(.vertical, 2)
                                                         .background(Color.green.opacity(0.2))
+                                                        .cornerRadius(4)
+                                                }
+                                                
+                                                if let plantingWeek = cultivar.plantingWeek, !plantingWeek.isEmpty {
+                                                    Text("Week \(plantingWeek)")
+                                                        .font(.caption2)
+                                                        .padding(.horizontal, 6)
+                                                        .padding(.vertical, 2)
+                                                        .background(Color.orange.opacity(0.2))
                                                         .cornerRadius(4)
                                                 }
                                             }
