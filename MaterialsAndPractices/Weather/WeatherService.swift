@@ -35,8 +35,8 @@ class WeatherService: ObservableObject {
         error = nil
         
         // First, get the grid point information
-        fetchGridPoint(latitude: location.coordinate.latitude, 
-                      longitude: location.coordinate.longitude)
+        fetchGridPoint(latitude: location.coordinate.latitude,
+                       longitude: location.coordinate.longitude)
     }
     
     // MARK: - Private Methods
@@ -107,7 +107,7 @@ class WeatherService: ObservableObject {
         return session.dataTaskPublisher(for: request)
             .map(\.data)
             .decode(type: NOAAForecastResponse.self, decoder: JSONDecoder())
-            .map { response in
+            .tryMap { response in
                 guard let current = response.properties.periods.first else {
                     throw WeatherError.parsingError("No current conditions available")
                 }
@@ -140,15 +140,15 @@ class WeatherService: ObservableObject {
     private func createWeatherData(current: NOAAForecastPeriod, hourly: [NOAAForecastPeriod]) {
         let currentConditions = WeatherConditions(
             temperature: Double(current.temperature),
-            humidity: 0, // NOAA doesn't provide humidity in basic forecast
+            humidity: 0, // NOAA basic forecast lacks humidity
             windSpeed: parseWindSpeed(current.windSpeed),
             windDirection: current.windDirection,
             condition: current.shortForecast,
             icon: current.icon,
             timestamp: Date(),
-            visibility: 0, // Not available in basic forecast
-            dewPoint: 0, // Not available in basic forecast
-            pressure: 0 // Not available in basic forecast
+            visibility: 0,
+            dewPoint: 0,
+            pressure: 0
         )
         
         let hourlyForecast = hourly.compactMap { period -> HourlyForecast? in
@@ -191,14 +191,11 @@ class WeatherService: ObservableObject {
         return formatter.date(from: dateString)
     }
     
-    /// Calculates daylight information for the given date
+    /// Calculates daylight information for the given date (simplified)
     private func calculateDaylight(for date: Date) -> DaylightInfo {
-        // This is a simplified calculation. In a production app, you'd use
-        // a proper solar calculation library or API
         let calendar = Calendar.current
         let components = calendar.dateComponents([.year, .month, .day], from: date)
         
-        // Approximate sunrise/sunset (would need actual solar calculations)
         var sunriseComponents = components
         sunriseComponents.hour = 6
         sunriseComponents.minute = 30
@@ -215,8 +212,8 @@ class WeatherService: ObservableObject {
             sunset: sunset,
             daylightDuration: sunset.timeIntervalSince(sunrise),
             solarNoon: Date(timeInterval: sunset.timeIntervalSince(sunrise) / 2, since: sunrise),
-            twilightBegin: Date(timeInterval: -1800, since: sunrise), // 30 min before sunrise
-            twilightEnd: Date(timeInterval: 1800, since: sunset) // 30 min after sunset
+            twilightBegin: Date(timeInterval: -1800, since: sunrise),
+            twilightEnd: Date(timeInterval: 1800, since: sunset)
         )
     }
 }
