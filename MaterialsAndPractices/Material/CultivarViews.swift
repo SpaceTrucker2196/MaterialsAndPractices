@@ -2,11 +2,18 @@
 //  CultivarViews.swift
 //  MaterialsAndPractices
 //
+//  Provides comprehensive cultivar management views including detailed information display,
+//  active and completed grow tracking, and seamless navigation throughout the application.
+//  Implements MVVM architecture with clean separation of concerns.
+//
 //  Created by Jeffrey Kunzelman on 12/6/20.
 //
 
 import SwiftUI
+import CoreData
 
+/// Extension providing standardized image representation for cultivars
+/// Uses system images with fallback to leaf icon for consistent UI appearance
 extension Cultivar {
     struct Image: View {
         let cultivar: Cultivar
@@ -19,11 +26,13 @@ extension Cultivar {
                 .scaledToFit()
                 .frame(width: 40, height: 40)
                 .font(Font.title.weight(.light))
-                .foregroundColor(.green)
+                .foregroundColor(AppTheme.Colors.primary)
         }
     }
 }
 
+/// Extension providing dynamic system image generation based on cultivar name
+/// Implements first-letter mapping to square system icons with proper fallback handling
 extension SwiftUI.Image {
     init?(cultivar: Cultivar) {
         guard let name = cultivar.name,
@@ -37,79 +46,47 @@ extension SwiftUI.Image {
     }
 }
 
+/// Comprehensive cultivar detail view displaying all cultivar information,
+/// associated active grows, and historical completed grows with navigation support
 struct CultivarDetailView: View {
     let cultivar: Cultivar
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    /// Computed property to filter active grows (those without harvest dates)
+    private var activeGrows: [Grow] {
+        guard let grows = cultivar.grows else { return [] }
+        return grows.compactMap { $0 as? Grow }
+            .filter { $0.harvestDate == nil }
+            .sorted { ($0.title ?? "") < ($1.title ?? "") }
+    }
+    
+    /// Computed property to filter completed grows (those with harvest dates)
+    private var completedGrows: [Grow] {
+        guard let grows = cultivar.grows else { return [] }
+        return grows.compactMap { $0 as? Grow }
+            .filter { $0.harvestDate != nil }
+            .sorted { ($0.harvestDate ?? Date.distantPast) > ($1.harvestDate ?? Date.distantPast) }
+    }
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Cultivar.Image(cultivar: cultivar)
-                    VStack(alignment: .leading) {
-                        Text(cultivar.name ?? "Unknown Cultivar")
-                            .font(.title2)
-                            .fontWeight(.bold)
-
-                        if let family = cultivar.family, !family.isEmpty {
-                            Text("Family: \(family)")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    Spacer()
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                // MARK: - Cultivar Header Section
+                cultivarHeaderSection
+                
+                // MARK: - Cultivar Details Grid
+                cultivarDetailsGrid
+                
+                // MARK: - Active Grows Section
+                if !activeGrows.isEmpty {
+                    activeGrowsSection
                 }
-
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 12) {
-
-                    if let season = cultivar.season, !season.isEmpty {
-                        VStack(alignment: .leading) {
-                            Text("Season")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.green)
-                            Text(season)
-                                .font(.subheadline)
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                    }
-
-                    if let hardyZone = cultivar.hardyZone, !hardyZone.isEmpty {
-                        VStack(alignment: .leading) {
-                            Text("Hardy Zone")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.green)
-                            Text(hardyZone)
-                                .font(.subheadline)
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                    }
-
-                    if let plantingWeek = cultivar.plantingWeek, !plantingWeek.isEmpty {
-                        VStack(alignment: .leading) {
-                            Text("Planting Week")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.green)
-                            Text(plantingWeek)
-                                .font(.subheadline)
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                    }
+                
+                // MARK: - Completed Grows Section
+                if !completedGrows.isEmpty {
+                    completedGrowsSection
                 }
-
+                
                 Spacer()
             }
             .padding()
@@ -117,8 +94,220 @@ struct CultivarDetailView: View {
         .navigationTitle(cultivar.name ?? "Cultivar")
         .navigationBarTitleDisplayMode(.inline)
     }
+    
+    // MARK: - Header Section
+    
+    /// Header section displaying cultivar name, image, and family information
+    private var cultivarHeaderSection: some View {
+        HStack {
+            Cultivar.Image(cultivar: cultivar)
+            VStack(alignment: .leading) {
+                Text(cultivar.name ?? "Unknown Cultivar")
+                    .font(AppTheme.Typography.displaySmall)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+
+                if let family = cultivar.family, !family.isEmpty {
+                    Text("Family: \(family)")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+            }
+            Spacer()
+        }
+    }
+    
+    // MARK: - Details Grid
+    
+    /// Grid layout displaying cultivar attributes in organized cards
+    private var cultivarDetailsGrid: some View {
+        LazyVGrid(columns: [
+            GridItem(.flexible()),
+            GridItem(.flexible())
+        ], spacing: AppTheme.Spacing.medium) {
+
+            if let season = cultivar.season, !season.isEmpty {
+                DetailCard(
+                    title: "Season",
+                    value: season,
+                    backgroundColor: AppTheme.Colors.seasonIndicator.opacity(0.1),
+                    titleColor: AppTheme.Colors.seasonIndicator
+                )
+            }
+
+            if let hardyZone = cultivar.hardyZone, !hardyZone.isEmpty {
+                DetailCard(
+                    title: "Hardy Zone",
+                    value: hardyZone,
+                    backgroundColor: AppTheme.Colors.zoneIndicator.opacity(0.1),
+                    titleColor: AppTheme.Colors.zoneIndicator
+                )
+            }
+
+            if let plantingWeek = cultivar.plantingWeek, !plantingWeek.isEmpty {
+                DetailCard(
+                    title: "Planting Week",
+                    value: plantingWeek,
+                    backgroundColor: AppTheme.Colors.organicPractice.opacity(0.1),
+                    titleColor: AppTheme.Colors.organicPractice
+                )
+            }
+        }
+    }
+    
+    // MARK: - Active Grows Section
+    
+    /// Section displaying active grows in a grid layout with small tiles
+    private var activeGrowsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            HStack {
+                Text("Active Grows")
+                    .font(AppTheme.Typography.headlineLarge)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                Spacer()
+                
+                Text("\(activeGrows.count)")
+                    .font(AppTheme.Typography.labelMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible()),
+                GridItem(.flexible())
+            ], spacing: AppTheme.Spacing.small) {
+                ForEach(activeGrows, id: \.self) { grow in
+                    NavigationLink(destination: GrowDetailView(growViewModel: GrowDetailViewModel(grow: grow))) {
+                        GrowTile(grow: grow, isActive: true)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+        }
+    }
+    
+    // MARK: - Completed Grows Section
+    
+    /// Section displaying completed grows in a grid layout with historical information
+    private var completedGrowsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            HStack {
+                Text("Completed Grows")
+                    .font(AppTheme.Typography.headlineLarge)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                Spacer()
+                
+                Text("\(completedGrows.count)")
+                    .font(AppTheme.Typography.labelMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible()),
+                GridItem(.flexible())
+            ], spacing: AppTheme.Spacing.small) {
+                ForEach(completedGrows, id: \.self) { grow in
+                    NavigationLink(destination: GrowDetailView(growViewModel: GrowDetailViewModel(grow: grow))) {
+                        GrowTile(grow: grow, isActive: false)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+        }
+    }
 }
 
+// MARK: - Supporting Views
+
+/// Reusable card component for displaying cultivar detail information
+/// Provides consistent styling and theming across detail sections
+private struct DetailCard: View {
+    let title: String
+    let value: String
+    let backgroundColor: Color
+    let titleColor: Color
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(title)
+                .font(AppTheme.Typography.labelMedium)
+                .foregroundColor(titleColor)
+            Text(value)
+                .font(AppTheme.Typography.bodyMedium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(backgroundColor)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+}
+
+/// Compact tile component for displaying grow information in grid layouts
+/// Adapts styling based on active/completed status for clear visual distinction
+private struct GrowTile: View {
+    let grow: Grow
+    let isActive: Bool
+    
+    private var tileColor: Color {
+        isActive ? AppTheme.Colors.primary : AppTheme.Colors.textSecondary
+    }
+    
+    private var backgroundColor: Color {
+        isActive ? AppTheme.Colors.primary.opacity(0.1) : Color(.systemGray6)
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.extraSmall) {
+            HStack {
+                Image(systemName: isActive ? "leaf.fill" : "checkmark.circle.fill")
+                    .foregroundColor(tileColor)
+                    .font(.caption)
+                Spacer()
+            }
+            
+            Text(grow.title ?? "Untitled")
+                .font(AppTheme.Typography.labelMedium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
+            
+            if let location = grow.locationName, !location.isEmpty {
+                Text(location)
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .lineLimit(1)
+            }
+            
+            if let harvestDate = grow.harvestDate, !isActive {
+                Text("Harvested: \(harvestDate, formatter: dateFormatter)")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textTertiary)
+            } else if let plantedDate = grow.plantedDate, isActive {
+                Text("Planted: \(plantedDate, formatter: dateFormatter)")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textTertiary)
+            }
+        }
+        .padding(AppTheme.Spacing.small)
+        .frame(height: 100)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(backgroundColor)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+}
+
+/// Date formatter for consistent date display across grow tiles
+private let dateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .short
+    return formatter
+}()
+
+/// Main cultivar list view providing searchable, grouped display of all available cultivars
+/// Implements USDA plant database with family-based organization and enhanced visual design
 struct CultivarListView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
@@ -130,6 +319,7 @@ struct CultivarListView: View {
 
     @State private var searchText = ""
 
+    /// Filtered cultivars based on search text matching name or family
     var filteredCultivars: [Cultivar] {
         if searchText.isEmpty {
             return Array(cultivars)
@@ -141,6 +331,7 @@ struct CultivarListView: View {
         }
     }
 
+    /// Cultivars grouped by family for organized display
     var groupedCultivars: [(key: String, value: [Cultivar])] {
         let grouped = Dictionary(grouping: filteredCultivars) { $0.family ?? "Unknown" }
         return grouped.sorted(by: { $0.key < $1.key })
@@ -149,102 +340,114 @@ struct CultivarListView: View {
     var body: some View {
         NavigationView {
             if #available(iOS 15.0, *) {
-                List {
-                    ForEach(groupedCultivars, id: \.key) { family, cultivarsInFamily in
-                        Section(header:
-                                    HStack {
-                            Text(family)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                            Spacer()
-                            Text("\(cultivarsInFamily.count)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        ) {
-                            ForEach(cultivarsInFamily.sorted { ($0.name ?? "") < ($1.name ?? "") }, id: \.self) { cultivar in
-                                NavigationLink(destination: CultivarDetailView(cultivar: cultivar)) {
-                                    HStack(spacing: 12) {
-                                        Cultivar.Image(cultivar: cultivar)
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(cultivar.name ?? "Unknown")
-                                                .font(.headline)
-                                                .foregroundColor(.primary)
-                                            
-                                            HStack(spacing: 6) {
-                                                if let season = cultivar.season, !season.isEmpty {
-                                                    Text(season)
-                                                        .font(.caption2)
-                                                        .padding(.horizontal, 6)
-                                                        .padding(.vertical, 2)
-                                                        .background(Color.blue.opacity(0.2))
-                                                        .cornerRadius(4)
-                                                }
-                                                
-                                                if let hardyZone = cultivar.hardyZone, !hardyZone.isEmpty {
-                                                    Text("Zone \(hardyZone)")
-                                                        .font(.caption2)
-                                                        .padding(.horizontal, 6)
-                                                        .padding(.vertical, 2)
-                                                        .background(Color.green.opacity(0.2))
-                                                        .cornerRadius(4)
-                                                }
-                                            }
-                                        }
-                                        Spacer()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                .searchable(text: $searchText, prompt: "Search cultivars...")
-                .navigationTitle("Cultivars")
+                modernListView
             } else {
-                // Fallback on earlier versions
-                List {
-                    ForEach(groupedCultivars, id: \.key) { family, cultivarsInFamily in
-                        Section(header: Text(family)) {
-                            ForEach(cultivarsInFamily.sorted { ($0.name ?? "") < ($1.name ?? "") }, id: \.self) { cultivar in
-                                NavigationLink(destination: CultivarDetailView(cultivar: cultivar)) {
-                                    HStack(spacing: 12) {
-                                        Cultivar.Image(cultivar: cultivar)
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(cultivar.name ?? "Unknown")
-                                                .font(.headline)
-                                                .foregroundColor(.primary)
-                                            
-                                            HStack(spacing: 6) {
-                                                if let season = cultivar.season, !season.isEmpty {
-                                                    Text(season)
-                                                        .font(.caption2)
-                                                        .padding(.horizontal, 6)
-                                                        .padding(.vertical, 2)
-                                                        .background(Color.blue.opacity(0.2))
-                                                        .cornerRadius(4)
-                                                }
-                                                
-                                                if let hardyZone = cultivar.hardyZone, !hardyZone.isEmpty {
-                                                    Text("Zone \(hardyZone)")
-                                                        .font(.caption2)
-                                                        .padding(.horizontal, 6)
-                                                        .padding(.vertical, 2)
-                                                        .background(Color.green.opacity(0.2))
-                                                        .cornerRadius(4)
-                                                }
-                                            }
-                                        }
-                                        Spacer()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                .navigationTitle("Cultivars")
+                fallbackListView
             }
         }
+    }
+    
+    // MARK: - Modern List View (iOS 15+)
+    
+    /// Enhanced list view with improved styling for iOS 15 and later
+    @available(iOS 15.0, *)
+    private var modernListView: some View {
+        List {
+            ForEach(groupedCultivars, id: \.key) { family, cultivarsInFamily in
+                Section(header: familyHeader(family: family, count: cultivarsInFamily.count)) {
+                    ForEach(cultivarsInFamily.sorted { ($0.name ?? "") < ($1.name ?? "") }, id: \.self) { cultivar in
+                        NavigationLink(destination: CultivarDetailView(cultivar: cultivar)) {
+                            CultivarRow(cultivar: cultivar)
+                        }
+                    }
+                }
+            }
+        }
+        .searchable(text: $searchText, prompt: "Search cultivars...")
+        .navigationTitle("Cultivars")
+    }
+    
+    // MARK: - Fallback List View
+    
+    /// Fallback list view for iOS versions prior to 15
+    private var fallbackListView: some View {
+        List {
+            ForEach(groupedCultivars, id: \.key) { family, cultivarsInFamily in
+                Section(header: Text(family)) {
+                    ForEach(cultivarsInFamily.sorted { ($0.name ?? "") < ($1.name ?? "") }, id: \.self) { cultivar in
+                        NavigationLink(destination: CultivarDetailView(cultivar: cultivar)) {
+                            CultivarRow(cultivar: cultivar)
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Cultivars")
+    }
+    
+    // MARK: - Supporting Methods
+    
+    /// Creates enhanced family header with count and styling
+    private func familyHeader(family: String, count: Int) -> some View {
+        HStack {
+            Text(family)
+                .font(AppTheme.Typography.headlineMedium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+            Spacer()
+            Text("\(count)")
+                .font(AppTheme.Typography.labelMedium)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+        }
+    }
+}
+
+// MARK: - Cultivar Row Component
+
+/// Individual row component for displaying cultivar information in lists
+/// Provides consistent layout with icon, name, and metadata tags
+private struct CultivarRow: View {
+    let cultivar: Cultivar
+    
+    var body: some View {
+        HStack(spacing: AppTheme.Spacing.medium) {
+            Cultivar.Image(cultivar: cultivar)
+            
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.extraSmall) {
+                Text(cultivar.name ?? "Unknown")
+                    .font(AppTheme.Typography.headlineSmall)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                HStack(spacing: AppTheme.Spacing.extraSmall) {
+                    if let season = cultivar.season, !season.isEmpty {
+                        MetadataTag(text: season, color: AppTheme.Colors.seasonIndicator)
+                    }
+                    
+                    if let hardyZone = cultivar.hardyZone, !hardyZone.isEmpty {
+                        MetadataTag(text: "Zone \(hardyZone)", color: AppTheme.Colors.zoneIndicator)
+                    }
+                }
+            }
+            Spacer()
+        }
+    }
+}
+
+// MARK: - Metadata Tag Component
+
+/// Small tag component for displaying cultivar metadata (season, zone, etc.)
+/// Provides consistent styling and color coding for different metadata types
+private struct MetadataTag: View {
+    let text: String
+    let color: Color
+    
+    var body: some View {
+        Text(text)
+            .font(AppTheme.Typography.labelSmall)
+            .padding(.horizontal, AppTheme.Spacing.extraSmall)
+            .padding(.vertical, AppTheme.Spacing.tiny)
+            .background(color.opacity(0.2))
+            .cornerRadius(AppTheme.CornerRadius.small)
+            .foregroundColor(color)
     }
 }
 
