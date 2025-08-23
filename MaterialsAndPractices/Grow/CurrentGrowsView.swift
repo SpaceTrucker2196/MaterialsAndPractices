@@ -32,10 +32,25 @@ struct CurrentGrowsView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(grows) { grow in
-                    GrowRow(grow: grow)
+                // Weather information section at the top
+                Section {
+                    WeatherView()
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                } header: {
+                    Text("Current Conditions")
+                        .font(AppTheme.Typography.headlineSmall)
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .textCase(nil)
                 }
-                .onDelete(perform: deleteItems)
+                
+                // Active grows section
+                Section("Active Grows") {
+                    ForEach(grows) { grow in
+                        GrowRow(grow: grow)
+                    }
+                    .onDelete(perform: deleteItems)
+                }
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -46,7 +61,7 @@ struct CurrentGrowsView: View {
                     }
                 }
             }
-            .navigationTitle("Active Grows")
+            .navigationTitle("Growing Dashboard")
         }
         .sheet(isPresented: $showCreateGrow) {
             EditGrowView(isPresented: $showCreateGrow)
