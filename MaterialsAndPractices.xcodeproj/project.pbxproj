@@ -9,6 +9,14 @@
 /* Begin PBXBuildFile section */
 		1F06C21E257FEF7E006F8C83 /* AmendmentDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F06C21D257FEF7E006F8C83 /* AmendmentDetail.swift */; };
 		1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F06C22225807A59006F8C83 /* OptionalBinding.swift */; };
+		1F2E92232E5A1F9E003962BA /* MaterialsAndPracticesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92222E5A1F9E003962BA /* MaterialsAndPracticesApp.swift */; };
+		1F2E92262E5A1FA2003962BA /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92242E5A1FA2003962BA /* AppTheme.swift */; };
+		1F2E92302E5A2BE4003962BA /* WeatherModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E922C2E5A2BE4003962BA /* WeatherModels.swift */; };
+		1F2E92312E5A2BE4003962BA /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E922D2E5A2BE4003962BA /* WeatherService.swift */; };
+		1F2E92322E5A2BE4003962BA /* WeatherDemonstration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E922B2E5A2BE4003962BA /* WeatherDemonstration.swift */; };
+		1F2E92332E5A2BE4003962BA /* DaylightChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92292E5A2BE4003962BA /* DaylightChart.swift */; };
+		1F2E92342E5A2BE4003962BA /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E922A2E5A2BE4003962BA /* LocationManager.swift */; };
+		1F2E92352E5A2BE4003962BA /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E922E2E5A2BE4003962BA /* WeatherView.swift */; };
 		1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */; };
 		1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48B7257DB4C2005E559D /* CurrentGrowsView.swift */; };
 		1F4F48BA257DB4C4005E559D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F4F48B9257DB4C4005E559D /* Assets.xcassets */; };
@@ -22,7 +30,7 @@
 		1F812235258298EC007394D0 /* WorkViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812234258298EC007394D0 /* WorkViews.swift */; };
 		1FD918352E595AB900D18920 /* CultivarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD918342E595AB900D18920 /* CultivarViews.swift */; };
 		1FD918362E595AB900D18920 /* CultivarSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD918332E595AB900D18920 /* CultivarSeeder.swift */; };
-		1FD9188E2E59EFC900D18920 /* HarvestSafetyChecklist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD9188D2E59EFC900D18920 /* HarvestSafetyChecklist.swift */; };
+		1FD9188E2E59EFC900D18920 /* HarvestSafetyChecklist 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD9188D2E59EFC900D18920 /* HarvestSafetyChecklist 2.swift */; };
 		1FE293EF257DDBAC00C93102 /* GrowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */; };
 		1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B63257EAED600A6D9DD /* GrowViews.swift */; };
 		1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */; };
@@ -51,6 +59,14 @@
 		1F06C21D257FEF7E006F8C83 /* AmendmentDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmendmentDetail.swift; sourceTree = "<group>"; };
 		1F06C22225807A59006F8C83 /* OptionalBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalBinding.swift; sourceTree = "<group>"; };
 		1F188AB7257E7A0900C7B804 /* MaterialsAndPractices 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 2.xcdatamodel"; sourceTree = "<group>"; };
+		1F2E92222E5A1F9E003962BA /* MaterialsAndPracticesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsAndPracticesApp.swift; sourceTree = "<group>"; };
+		1F2E92242E5A1FA2003962BA /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		1F2E92292E5A2BE4003962BA /* DaylightChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaylightChart.swift; sourceTree = "<group>"; };
+		1F2E922A2E5A2BE4003962BA /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		1F2E922B2E5A2BE4003962BA /* WeatherDemonstration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDemonstration.swift; sourceTree = "<group>"; };
+		1F2E922C2E5A2BE4003962BA /* WeatherModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModels.swift; sourceTree = "<group>"; };
+		1F2E922D2E5A2BE4003962BA /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
+		1F2E922E2E5A2BE4003962BA /* WeatherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherView.swift; sourceTree = "<group>"; };
 		1F4F48B2257DB4C2005E559D /* MaterialsAndPractices.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MaterialsAndPractices.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsAndPracticesApp.swift; sourceTree = "<group>"; };
 		1F4F48B7257DB4C2005E559D /* CurrentGrowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentGrowsView.swift; sourceTree = "<group>"; };
@@ -70,7 +86,7 @@
 		1F812234258298EC007394D0 /* WorkViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkViews.swift; sourceTree = "<group>"; };
 		1FD918332E595AB900D18920 /* CultivarSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarSeeder.swift; sourceTree = "<group>"; };
 		1FD918342E595AB900D18920 /* CultivarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarViews.swift; sourceTree = "<group>"; };
-		1FD9188D2E59EFC900D18920 /* HarvestSafetyChecklist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HarvestSafetyChecklist.swift; sourceTree = "<group>"; };
+		1FD9188D2E59EFC900D18920 /* HarvestSafetyChecklist 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HarvestSafetyChecklist 2.swift"; sourceTree = "<group>"; };
 		1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowDetailView.swift; sourceTree = "<group>"; };
 		1FEA2B63257EAED600A6D9DD /* GrowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowViews.swift; sourceTree = "<group>"; };
 		1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGrowView.swift; sourceTree = "<group>"; };
@@ -103,6 +119,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1F2E92252E5A1FA2003962BA /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				1F2E92242E5A1FA2003962BA /* AppTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		1F2E922F2E5A2BE4003962BA /* Weather */ = {
+			isa = PBXGroup;
+			children = (
+				1F2E92292E5A2BE4003962BA /* DaylightChart.swift */,
+				1F2E922A2E5A2BE4003962BA /* LocationManager.swift */,
+				1F2E922B2E5A2BE4003962BA /* WeatherDemonstration.swift */,
+				1F2E922C2E5A2BE4003962BA /* WeatherModels.swift */,
+				1F2E922D2E5A2BE4003962BA /* WeatherService.swift */,
+				1F2E922E2E5A2BE4003962BA /* WeatherView.swift */,
+			);
+			path = Weather;
+			sourceTree = "<group>";
+		};
 		1F4F48A9257DB4C2005E559D = {
 			isa = PBXGroup;
 			children = (
@@ -126,14 +163,16 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
+				1F2E922F2E5A2BE4003962BA /* Weather */,
+				1F2E92222E5A1F9E003962BA /* MaterialsAndPracticesApp.swift */,
 				1F81223C25829E33007394D0 /* Practice */,
 				1FEA2B7D257FCF0000A6D9DD /* Material */,
+				1F2E92252E5A1FA2003962BA /* Theme */,
 				1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */,
 				1FDC8616257E872000EF71E0 /* Grow */,
 				1F4F48B9257DB4C4005E559D /* Assets.xcassets */,
 				1F4F48BE257DB4C4005E559D /* Persistence.swift */,
 				1F4F48C3257DB4C4005E559D /* Info.plist */,
-				1FD9188D2E59EFC900D18920 /* HarvestSafetyChecklist.swift */,
 				1F4F48C0257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld */,
 				1F4F48BB257DB4C4005E559D /* Preview Content */,
 				1F06C22225807A59006F8C83 /* OptionalBinding.swift */,
@@ -180,6 +219,7 @@
 		1FDC8616257E872000EF71E0 /* Grow */ = {
 			isa = PBXGroup;
 			children = (
+				1FD9188D2E59EFC900D18920 /* HarvestSafetyChecklist 2.swift */,
 				1F4F48B7257DB4C2005E559D /* CurrentGrowsView.swift */,
 				1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */,
 				1FEA2B63257EAED600A6D9DD /* GrowViews.swift */,
@@ -331,6 +371,7 @@
 			files = (
 				1FE293EF257DDBAC00C93102 /* GrowDetailView.swift in Sources */,
 				1F4F48BF257DB4C4005E559D /* Persistence.swift in Sources */,
+				1F2E92262E5A1FA2003962BA /* AppTheme.swift in Sources */,
 				1F06C21E257FEF7E006F8C83 /* AmendmentDetail.swift in Sources */,
 				1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */,
 				1F81222A258295D0007394D0 /* WorkPracticeDetailView.swift in Sources */,
@@ -342,7 +383,14 @@
 				1FD918352E595AB900D18920 /* CultivarViews.swift in Sources */,
 				1FD918362E595AB900D18920 /* CultivarSeeder.swift in Sources */,
 				1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */,
-				1FD9188E2E59EFC900D18920 /* HarvestSafetyChecklist.swift in Sources */,
+				1F2E92232E5A1F9E003962BA /* MaterialsAndPracticesApp.swift in Sources */,
+				1F2E92302E5A2BE4003962BA /* WeatherModels.swift in Sources */,
+				1F2E92312E5A2BE4003962BA /* WeatherService.swift in Sources */,
+				1F2E92322E5A2BE4003962BA /* WeatherDemonstration.swift in Sources */,
+				1F2E92332E5A2BE4003962BA /* DaylightChart.swift in Sources */,
+				1F2E92342E5A2BE4003962BA /* LocationManager.swift in Sources */,
+				1F2E92352E5A2BE4003962BA /* WeatherView.swift in Sources */,
+				1FD9188E2E59EFC900D18920 /* HarvestSafetyChecklist 2.swift in Sources */,
 				1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */,
 				1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */,
 				1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */,
@@ -507,7 +555,7 @@
 				DEVELOPMENT_TEAM = U3Z59VXPUB;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = MaterialsAndPractices/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -529,7 +577,7 @@
 				DEVELOPMENT_TEAM = U3Z59VXPUB;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = MaterialsAndPractices/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -549,7 +597,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = U3Z59VXPUB;
 				INFOPLIST_FILE = MaterialsAndPracticesTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -571,7 +619,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = U3Z59VXPUB;
 				INFOPLIST_FILE = MaterialsAndPracticesTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
