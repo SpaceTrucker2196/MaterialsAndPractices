@@ -82,16 +82,54 @@ struct FarmDetailView: View {
     /// Map view showing the farm location
     private var mapSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            Text("Location")
-                .font(AppTheme.Typography.headlineMedium)
-                .foregroundColor(AppTheme.Colors.textPrimary)
+            HStack {
+                Text("Location")
+                    .font(AppTheme.Typography.headlineMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                Spacer()
+                
+                Button(action: {
+                    openInMaps()
+                }) {
+                    Label("Open in Maps", systemImage: "map")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+            }
             
-            Map(coordinateRegion: .constant(region), annotationItems: [farm]) { farm in
-                MapPin(coordinate: CLLocationCoordinate2D(latitude: farm.latitude, longitude: farm.longitude), tint: AppTheme.Colors.primary)
+            Map(coordinateRegion: .constant(region), annotationItems: [FarmAnnotation(farm: farm)]) { annotation in
+                MapAnnotation(coordinate: annotation.coordinate) {
+                    VStack {
+                        Image(systemName: "location.fill")
+                            .foregroundColor(AppTheme.Colors.primary)
+                            .font(.title2)
+                        Text(annotation.title)
+                            .font(AppTheme.Typography.bodySmall)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.white)
+                            .cornerRadius(AppTheme.CornerRadius.small)
+                            .shadow(radius: 2)
+                    }
+                }
             }
             .frame(height: 200)
             .cornerRadius(AppTheme.CornerRadius.medium)
+            .onTapGesture {
+                openInMaps()
+            }
         }
+    }
+    
+    // MARK: - Methods
+    
+    /// Opens the farm location in Apple Maps
+    private func openInMaps() {
+        let coordinate = CLLocationCoordinate2D(latitude: farm.latitude, longitude: farm.longitude)
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
+        mapItem.name = farm.name
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
     }
     
     // MARK: - Farm Information Section
@@ -276,31 +314,57 @@ struct FarmDetailView: View {
                 
                 Spacer()
                 
-                Button("View All") {
-                    // TODO: Navigate to full photo view
+                NavigationLink(destination: FarmPhotoView(farm: farm)) {
+                    Text("View All")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.primary)
                 }
-                .font(AppTheme.Typography.labelMedium)
-                .foregroundColor(AppTheme.Colors.primary)
             }
             
             if let photos = farm.photos?.allObjects as? [FarmPhoto], !photos.isEmpty {
+                let sortedPhotos = photos.sorted { ($0.captureDate ?? Date.distantPast) > ($1.captureDate ?? Date.distantPast) }
+                
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible()),
                     GridItem(.flexible())
                 ], spacing: AppTheme.Spacing.small) {
-                    ForEach(photos.prefix(3), id: \.self) { photo in
-                        PhotoThumbnail(photo: photo)
+                    ForEach(sortedPhotos.prefix(3), id: \.self) { photo in
+                        NavigationLink(destination: FarmPhotoView(farm: farm)) {
+                            PhotoThumbnailCard(photo: photo)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
+                
+                if photos.count > 3 {
+                    HStack {
+                        Spacer()
+                        NavigationLink(destination: FarmPhotoView(farm: farm)) {
+                            Text("View \(photos.count - 3) more photos")
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.primary)
+                        }
+                        Spacer()
+                    }
+                    .padding(.top, AppTheme.Spacing.small)
+                }
             } else {
-                Text("No photos available")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
-                    .background(AppTheme.Colors.backgroundTertiary)
-                    .cornerRadius(AppTheme.CornerRadius.medium)
+                VStack(spacing: AppTheme.Spacing.medium) {
+                    Text("No photos available")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    NavigationLink(destination: FarmPhotoView(farm: farm)) {
+                        Label("Add Photos", systemImage: "camera")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.primary)
+                    }
+                }
+                .padding()
+                .background(AppTheme.Colors.backgroundTertiary)
+                .cornerRadius(AppTheme.CornerRadius.medium)
             }
         }
     }
@@ -327,6 +391,18 @@ struct FarmDetailView: View {
 
 // MARK: - Supporting Views
 
+/// Farm annotation for map display
+struct FarmAnnotation: Identifiable {
+    let id = UUID()
+    let coordinate: CLLocationCoordinate2D
+    let title: String
+    
+    init(farm: Farm) {
+        self.coordinate = CLLocationCoordinate2D(latitude: farm.latitude, longitude: farm.longitude)
+        self.title = farm.name ?? "Farm"
+    }
+}
+
 /// Reusable card component for displaying farm detail information
 private struct DetailCard: View {
     let title: String
@@ -351,19 +427,40 @@ private struct DetailCard: View {
 }
 
 /// Photo thumbnail component for displaying farm photos
-private struct PhotoThumbnail: View {
+private struct PhotoThumbnailCard: View {
     let photo: FarmPhoto
     
     var body: some View {
-        Rectangle()
-            .fill(AppTheme.Colors.backgroundTertiary)
-            .frame(height: 80)
-            .cornerRadius(AppTheme.CornerRadius.small)
-            .overlay(
-                Image(systemName: "photo")
+        VStack(spacing: AppTheme.Spacing.extraSmall) {
+            // Photo thumbnail
+            if let thumbnailData = photo.thumbnailData,
+               let thumbnail = UIImage(data: thumbnailData) {
+                Image(uiImage: thumbnail)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 80, height: 80)
+                    .clipped()
+                    .cornerRadius(AppTheme.CornerRadius.small)
+            } else {
+                Rectangle()
+                    .fill(AppTheme.Colors.backgroundTertiary)
+                    .frame(width: 80, height: 80)
+                    .cornerRadius(AppTheme.CornerRadius.small)
+                    .overlay(
+                        Image(systemName: "photo")
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                            .font(.title3)
+                    )
+            }
+            
+            // Photo metadata
+            if let captureDate = photo.captureDate {
+                Text(captureDate.formatted(date: .abbreviated, time: .omitted))
+                    .font(AppTheme.Typography.bodySmall)
                     .foregroundColor(AppTheme.Colors.textSecondary)
-                    .font(.title2)
-            )
+                    .lineLimit(1)
+            }
+        }
     }
 }
 
