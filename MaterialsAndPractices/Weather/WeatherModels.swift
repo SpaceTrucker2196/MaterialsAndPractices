@@ -104,27 +104,69 @@ struct LocationInfo {
     let country: String
 }
 
-// MARK: - Weather Error Types
+// MARK: - Enhanced Weather Error Types
 
-enum WeatherError: Error, LocalizedError {
-    case locationNotAvailable
+/// Enhanced weather error enumeration with detailed error descriptions
+enum WeatherError: LocalizedError {
     case networkError(String)
     case apiError(String)
-    case parsingError(String)
+    case invalidLocation(String)
+    case decodingError(String)
     case permissionDenied
+    case locationNotAvailable
+    case parsingError(String)
     
     var errorDescription: String? {
         switch self {
-        case .locationNotAvailable:
-            return "Location information is not available"
         case .networkError(let message):
-            return "Network error: \(message)"
+            return "Network Error: \(message)"
         case .apiError(let message):
-            return "Weather API error: \(message)"
-        case .parsingError(let message):
-            return "Data parsing error: \(message)"
+            return "API Error: \(message)"
+        case .invalidLocation(let message):
+            return "Location Error: \(message)"
+        case .decodingError(let message):
+            return "Data Error: \(message)"
         case .permissionDenied:
             return "Location permission denied"
+        case .locationNotAvailable:
+            return "Location information is not available"
+        case .parsingError(let message):
+            return "Data parsing error: \(message)"
+        }
+    }
+    
+    var failureReason: String? {
+        switch self {
+        case .networkError:
+            return "Unable to connect to weather service"
+        case .apiError:
+            return "Weather service returned an error"
+        case .invalidLocation:
+            return "The provided location is invalid"
+        case .decodingError, .parsingError:
+            return "Unable to process weather data"
+        case .permissionDenied:
+            return "Location access was denied"
+        case .locationNotAvailable:
+            return "Location services are not available"
+        }
+    }
+    
+    var recoverySuggestion: String? {
+        switch self {
+        case .networkError:
+            return "Check your internet connection and try again"
+        case .apiError:
+            return "The weather service may be temporarily unavailable"
+        case .invalidLocation:
+            return "Please check your location settings"
+        case .decodingError, .parsingError:
+            return "Please try again later"
+        case .permissionDenied:
+            return "Enable location services in Settings to get weather data"
+        case .locationNotAvailable:
+            return "Check that location services are enabled for this app"
         }
     }
 }
+
