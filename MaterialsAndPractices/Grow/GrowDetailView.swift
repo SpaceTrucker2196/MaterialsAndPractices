@@ -2,14 +2,22 @@
 //  GrowDetailView.swift
 //  MaterialsAndPractices
 //
+//  Provides comprehensive grow management and tracking functionality including
+//  cultivar information, work practices, amendments, and safety compliance.
+//  Implements MVVM architecture with clean separation of concerns.
+//
 //  Created by Jeffrey Kunzelman on 12/6/20.
 //
 
 import SwiftUI
 import CoreData
 
+/// View model for grow detail presentation and data management
+/// Encapsulates grow data and provides computed properties for UI consumption
 struct GrowDetailViewModel  {
-    var grow : Grow
+    // MARK: - Properties
+    
+    var grow: Grow
     var cultivar = "New Cultivar"
     var cultivarFamily = ""
     var hardyZone = ""
@@ -20,8 +28,14 @@ struct GrowDetailViewModel  {
     var harvestDate = Date()
     var daysTillHarvest = 90
     var locationName = "My Location"
-    var previewImage = Grow.Image(grow:Grow())
-    init(grow:Grow) {
+    var previewImage = Grow.Image(grow: Grow())
+    
+    // MARK: - Initialization
+    
+    /// Initializes view model with grow entity data
+    /// Extracts and formats all necessary information for display
+    /// - Parameter grow: The Core Data grow entity
+    init(grow: Grow) {
         self.grow = grow
         cultivar = grow.cultivar?.name ?? "No Cultivar Selected"
         cultivarFamily = grow.cultivar?.family ?? ""
@@ -32,10 +46,11 @@ struct GrowDetailViewModel  {
         plantedDate = grow.plantedDate ?? Date()
         harvestDate = grow.harvestDate ?? Date()
         locationName = grow.locationName ?? ""
-        previewImage = Grow.Image(grow:grow)
+        previewImage = Grow.Image(grow: grow)
     }
 }
 
+/// Date formatter for consistent date display throughout the application
 private let itemFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .short
@@ -43,176 +58,271 @@ private let itemFormatter: DateFormatter = {
     return formatter
 }()
 
+/// Comprehensive grow detail view providing complete grow information and management
+/// Displays cultivar details, dates, location, work practices, amendments, and safety compliance
 struct GrowDetailView: View {
+    // MARK: - Properties
+    
     @Environment(\.managedObjectContext) private var viewContext
-    @State var growViewModel:GrowDetailViewModel
+    @State var growViewModel: GrowDetailViewModel
     @State private var showingHarvestChecklist = false
+    
+    // MARK: - Body
     
     var body: some View {
         ScrollView {
-            
-        VStack(alignment: .leading) {
-            VStack(alignment: .leading){
-                HStack {
-                    growViewModel.previewImage
-                    VStack(alignment: .leading) {
-                        Text("Cultivar:")
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                            .foregroundColor(Color.green)
-                            .multilineTextAlignment(.leading)
-                        Text("\(growViewModel.cultivar )")
-                            .font(.headline)
-                            .fontWeight(.heavy)
-                            .multilineTextAlignment(.leading)
-                        
-                        if !growViewModel.cultivarFamily.isEmpty {
-                            Text("Family: \(growViewModel.cultivarFamily)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                // MARK: - Cultivar Information Section
+                cultivarInformationSection
+                
+                // MARK: - Timeline Information Section  
+                timelineInformationSection
+                
+                // MARK: - Location Information Section
+                locationInformationSection
+                
+                // MARK: - Work Practices Section
+                workPracticesSection
+                
+                // MARK: - Amendments Section
+                amendmentsSection
+                
+                // MARK: - Harvest Safety Section
+                harvestSafetySection
+            }
+            .padding()
+        }
+        .navigationTitle(growViewModel.name)
+    }
+    
+    // MARK: - Section Components
+    
+    /// Section displaying comprehensive cultivar information with metadata tags
+    private var cultivarInformationSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            HStack {
+                growViewModel.previewImage
+                
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.extraSmall) {
+                    Text("Cultivar:")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.primary)
+                    
+                    Text(growViewModel.cultivar)
+                        .font(AppTheme.Typography.headlineLarge)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    if !growViewModel.cultivarFamily.isEmpty {
+                        Text("Family: \(growViewModel.cultivarFamily)")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    // Metadata tags for season and zone information
+                    HStack(spacing: AppTheme.Spacing.extraSmall) {
+                        if !growViewModel.season.isEmpty {
+                            MetadataTag(
+                                text: "Season: \(growViewModel.season)",
+                                backgroundColor: AppTheme.Colors.seasonIndicator.opacity(0.2),
+                                textColor: AppTheme.Colors.seasonIndicator
+                            )
                         }
                         
-                        HStack {
-                            if !growViewModel.season.isEmpty {
-                                Text("Season: \(growViewModel.season)")
-                                    .font(.caption2)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color.blue.opacity(0.2))
-                                    .cornerRadius(4)
-                            }
-                            
-                            if !growViewModel.hardyZone.isEmpty {
-                                Text("Zone: \(growViewModel.hardyZone)")
-                                    .font(.caption2)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color.green.opacity(0.2))
-                                    .cornerRadius(4)
-                            }
+                        if !growViewModel.hardyZone.isEmpty {
+                            MetadataTag(
+                                text: "Zone: \(growViewModel.hardyZone)",
+                                backgroundColor: AppTheme.Colors.zoneIndicator.opacity(0.2),
+                                textColor: AppTheme.Colors.zoneIndicator
+                            )
                         }
-                        
-                        if !growViewModel.plantingWeek.isEmpty {
-                            Text("Planting Week: \(growViewModel.plantingWeek)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
+                    }
+                    
+                    if !growViewModel.plantingWeek.isEmpty {
+                        Text("Planting Week: \(growViewModel.plantingWeek)")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
                     }
                 }
                 
-                Text("Planted Date:")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.green)
-                    .multilineTextAlignment(.leading)
-                    .padding(.top, 4.0)
-                Text("\(growViewModel.plantedDate, formatter: itemFormatter)")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .multilineTextAlignment(.leading)
-                Text("Expected Harvest:")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.green)
-                    .multilineTextAlignment(.leading)
-                Text("\(growViewModel.harvestDate, formatter: itemFormatter)")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .multilineTextAlignment(.leading)
-                Text("Remaining:")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.green)
-                    .multilineTextAlignment(.leading)
-                Text("90 Days")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .multilineTextAlignment(.leading)
+                Spacer()
             }
+        }
+    }
+    
+    /// Section displaying timeline information including planted and harvest dates
+    private var timelineInformationSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            SectionHeader(title: "Timeline")
             
-            Text("Location:")
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .foregroundColor(Color.green)
-                .multilineTextAlignment(.leading)
-                .padding(.top, 2.0)
-            Text("\(growViewModel.locationName)")
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .multilineTextAlignment(.leading)
-             
-            Text("Work:")
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .foregroundColor(Color.green)
-                .multilineTextAlignment(.leading)
-                .padding(.top)
-           
-            WorkPractices(selectedGrow:growViewModel.grow).frame(maxWidth:.infinity)
-            
-            Button(action: {
-                let newWork = Work(context: viewContext)
-                growViewModel.grow.addToWork(newWork)
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.extraSmall) {
+                DateInfoRow(
+                    label: "Planted Date:",
+                    date: growViewModel.plantedDate,
+                    formatter: itemFormatter
+                )
                 
-            }, label: {
-                Text("Perform").font(.headline)
-                    .fontWeight(.medium)
-                    .multilineTextAlignment(.trailing)
-                    .padding(.all, 4.0)
-                    .frame(maxWidth: .infinity)
-                    
-            }).border(Color.accentColor, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
-            .cornerRadius(4.0) .padding()
-            Spacer()
+                DateInfoRow(
+                    label: "Expected Harvest:",
+                    date: growViewModel.harvestDate,
+                    formatter: itemFormatter
+                )
+                
+                InfoRow(
+                    label: "Remaining:",
+                    value: "90 Days" // TODO: Calculate actual remaining days
+                )
+            }
+        }
+    }
+    
+    /// Section displaying location information
+    private var locationInformationSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            SectionHeader(title: "Location")
             
-            Text("Ammendment Applications:")
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .foregroundColor(Color.green)
-                .multilineTextAlignment(.leading)
-                .padding(.top)
- 
-            Amendments(selectedGrow:growViewModel.grow).frame(maxWidth: .infinity)
+            Text(growViewModel.locationName)
+                .font(AppTheme.Typography.bodyMedium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+        }
+    }
+    
+    /// Section for managing work practices with add functionality
+    private var workPracticesSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Work")
             
-            Button(action: {
-                let newAmendment = Amendment(context: viewContext)
-                growViewModel.grow.addToAmendments(newAmendment)
-            }, label: {
-                Text("Apply")
-                    .font(.headline)
-                    .fontWeight(.medium)
-                    .multilineTextAlignment(.center)
-                    .padding(.all, 4.0)
-                    .frame(maxWidth: .infinity)
-                    
-            }).border(Color.accentColor, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
-            .cornerRadius(4.0) .padding()
+            WorkPractices(selectedGrow: growViewModel.grow)
+                .frame(maxWidth: .infinity)
             
-            Text("Harvest Safety:")
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .foregroundColor(Color.green)
-                .multilineTextAlignment(.leading)
-                .padding(.top)
+            ActionButton(
+                title: "Perform",
+                action: addWorkPractice
+            )
+        }
+    }
+    
+    /// Section for managing amendments with add functionality
+    private var amendmentsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Amendment Applications")
             
-            Button(action: {
-                showingHarvestChecklist = true
-            }, label: {
-                Text("Safety Checklist")
-                    .font(.headline)
-                    .fontWeight(.medium)
-                    .multilineTextAlignment(.center)
-                    .padding(.all, 4.0)
-                    .frame(maxWidth: .infinity)
-                    
-            }).border(Color.accentColor, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
-            .cornerRadius(4.0) .padding()
+            Amendments(selectedGrow: growViewModel.grow)
+                .frame(maxWidth: .infinity)
+            
+            ActionButton(
+                title: "Apply",
+                action: addAmendment
+            )
+        }
+    }
+    
+    /// Section for harvest safety compliance with checklist access
+    private var harvestSafetySection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Harvest Safety")
+            
+            ActionButton(
+                title: "Safety Checklist",
+                action: { showingHarvestChecklist = true }
+            )
             .sheet(isPresented: $showingHarvestChecklist) {
                 HarvestSafetyChecklistView()
             }
-            
-        }.padding(.all).navigationTitle("\(growViewModel.name)")
+        }
     }
+    
+    // MARK: - Action Methods
+    
+    /// Adds a new work practice entry to the current grow
+    private func addWorkPractice() {
+        let newWork = Work(context: viewContext)
+        growViewModel.grow.addToWork(newWork)
+    }
+    
+    /// Adds a new amendment application to the current grow
+    private func addAmendment() {
+        let newAmendment = Amendment(context: viewContext)
+        growViewModel.grow.addToAmendments(newAmendment)
+    }
+}
+
+// MARK: - Supporting View Components
+
+/// Reusable section header component with consistent styling
+private struct SectionHeader: View {
+    let title: String
+    
+    var body: some View {
+        Text(title)
+            .font(AppTheme.Typography.headlineMedium)
+            .foregroundColor(AppTheme.Colors.primary)
+    }
+}
+
+/// Reusable component for displaying label-value information pairs
+private struct InfoRow: View {
+    let label: String
+    let value: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+            Text(label)
+                .font(AppTheme.Typography.labelMedium)
+                .foregroundColor(AppTheme.Colors.primary)
+            
+            Text(value)
+                .font(AppTheme.Typography.bodyMedium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+        }
+    }
+}
+
+/// Specialized component for displaying date information with formatting
+private struct DateInfoRow: View {
+    let label: String
+    let date: Date
+    let formatter: DateFormatter
+    
+    var body: some View {
+        InfoRow(label: label, value: formatter.string(from: date))
+    }
+}
+
+/// Reusable metadata tag component for displaying categorical information
+private struct MetadataTag: View {
+    let text: String
+    let backgroundColor: Color
+    let textColor: Color
+    
+    var body: some View {
+        Text(text)
+            .font(AppTheme.Typography.labelSmall)
+            .padding(.horizontal, AppTheme.Spacing.extraSmall)
+            .padding(.vertical, AppTheme.Spacing.tiny)
+            .background(backgroundColor)
+            .cornerRadius(AppTheme.CornerRadius.small)
+            .foregroundColor(textColor)
+    }
+}
+
+/// Reusable action button component with consistent styling
+private struct ActionButton: View {
+    let title: String
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(AppTheme.Typography.headlineSmall)
+                .frame(maxWidth: .infinity)
+                .padding()
+        }
+        .background(AppTheme.Colors.primary.opacity(0.1))
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .overlay(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .stroke(AppTheme.Colors.primary, lineWidth: 1)
+        )
     }
 }
 
