@@ -182,6 +182,12 @@ class WeatherService: ObservableObject {
             logger.warning("Location error: \(message)")
         case .decodingError(let message):
             logger.error("Data parsing error: \(message)")
+        case .permissionDenied:
+            logger.error("Permission Error")
+        case .locationNotAvailable:
+            logger.error("Location error")
+        case .parsingError(_):
+            logger.error("Arsing error:")
         }
         
         error = weatherError

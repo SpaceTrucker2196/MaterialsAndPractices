@@ -91,7 +91,7 @@ class LocationManager: NSObject, ObservableObject {
         locationManager.distanceFilter = 1000 // Only update if moved 1km
         authorizationStatus = locationManager.authorizationStatus
         
-        logger.debug("Location manager configured with \(locationManager.desiredAccuracy)m accuracy")
+        logger.debug("Location manager configured with \(self.locationManager.desiredAccuracy)m accuracy")
     }
     
     /// Starts location updates if authorized
@@ -150,7 +150,7 @@ class LocationManager: NSObject, ObservableObject {
         stopLocationUpdates()
         isLoading = false
         
-        logger.info("Location updated successfully - Zone: \(currentUSDAZone ?? 0)")
+        logger.info("Location updated successfully - Zone: \(self.currentUSDAZone ?? 0)")
     }
     
     /// Performs reverse geocoding to get human-readable location information

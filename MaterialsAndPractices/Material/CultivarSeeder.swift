@@ -37,7 +37,7 @@ struct CultivarSeeder {
     /// Checks if cultivars have already been seeded to prevent duplicate data
     /// - Parameter context: The Core Data context to check
     /// - Returns: Boolean indicating if cultivars exist in the database
-    private static func cultivarsAlreadySeeded(in: context: NSManagedObjectContext) -> Bool {
+    private static func cultivarsAlreadySeeded(in context: NSManagedObjectContext) -> Bool {
         let request: NSFetchRequest<Cultivar> = Cultivar.fetchRequest()
         
         do {

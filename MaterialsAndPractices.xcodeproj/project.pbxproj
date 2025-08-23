@@ -17,6 +17,11 @@
 		1F2E92332E5A2BE4003962BA /* DaylightChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92292E5A2BE4003962BA /* DaylightChart.swift */; };
 		1F2E92342E5A2BE4003962BA /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E922A2E5A2BE4003962BA /* LocationManager.swift */; };
 		1F2E92352E5A2BE4003962BA /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E922E2E5A2BE4003962BA /* WeatherView.swift */; };
+		1F2E923B2E5A5352003962BA /* HarvestHeatMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92392E5A5352003962BA /* HarvestHeatMapView.swift */; };
+		1F2E923C2E5A5352003962BA /* CultivarDataTestUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92362E5A5352003962BA /* CultivarDataTestUtility.swift */; };
+		1F2E923D2E5A5352003962BA /* GrowingSeasonTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92382E5A5352003962BA /* GrowingSeasonTimelineView.swift */; };
+		1F2E92422E5A5641003962BA /* SecureConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92402E5A5641003962BA /* SecureConfiguration.swift */; };
+		1F2E92442E5A5945003962BA /* vegetable_cultivars_master_enriched_with_family_common.csv in Resources */ = {isa = PBXBuildFile; fileRef = 1F2E92432E5A5945003962BA /* vegetable_cultivars_master_enriched_with_family_common.csv */; };
 		1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */; };
 		1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48B7257DB4C2005E559D /* CurrentGrowsView.swift */; };
 		1F4F48BA257DB4C4005E559D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F4F48B9257DB4C4005E559D /* Assets.xcassets */; };
@@ -67,6 +72,12 @@
 		1F2E922C2E5A2BE4003962BA /* WeatherModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModels.swift; sourceTree = "<group>"; };
 		1F2E922D2E5A2BE4003962BA /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		1F2E922E2E5A2BE4003962BA /* WeatherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherView.swift; sourceTree = "<group>"; };
+		1F2E92362E5A5352003962BA /* CultivarDataTestUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarDataTestUtility.swift; sourceTree = "<group>"; };
+		1F2E92372E5A5352003962BA /* CultivarSeeder_old.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarSeeder_old.swift; sourceTree = "<group>"; };
+		1F2E92382E5A5352003962BA /* GrowingSeasonTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowingSeasonTimelineView.swift; sourceTree = "<group>"; };
+		1F2E92392E5A5352003962BA /* HarvestHeatMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HarvestHeatMapView.swift; sourceTree = "<group>"; };
+		1F2E92402E5A5641003962BA /* SecureConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureConfiguration.swift; sourceTree = "<group>"; };
+		1F2E92432E5A5945003962BA /* vegetable_cultivars_master_enriched_with_family_common.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = vegetable_cultivars_master_enriched_with_family_common.csv; sourceTree = "<group>"; };
 		1F4F48B2257DB4C2005E559D /* MaterialsAndPractices.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MaterialsAndPractices.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsAndPracticesApp.swift; sourceTree = "<group>"; };
 		1F4F48B7257DB4C2005E559D /* CurrentGrowsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentGrowsView.swift; sourceTree = "<group>"; };
@@ -140,9 +151,18 @@
 			path = Weather;
 			sourceTree = "<group>";
 		};
+		1F2E92412E5A5641003962BA /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				1F2E92402E5A5641003962BA /* SecureConfiguration.swift */,
+			);
+			path = Configuration;
+			sourceTree = "<group>";
+		};
 		1F4F48A9257DB4C2005E559D = {
 			isa = PBXGroup;
 			children = (
+				1F2E92432E5A5945003962BA /* vegetable_cultivars_master_enriched_with_family_common.csv */,
 				1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */,
 				1F4F48CB257DB4C4005E559D /* MaterialsAndPracticesTests */,
 				1F4F48D6257DB4C4005E559D /* MaterialsAndPracticesUITests */,
@@ -163,6 +183,11 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
+				1F2E92412E5A5641003962BA /* Configuration */,
+				1F2E92362E5A5352003962BA /* CultivarDataTestUtility.swift */,
+				1F2E92372E5A5352003962BA /* CultivarSeeder_old.swift */,
+				1F2E92382E5A5352003962BA /* GrowingSeasonTimelineView.swift */,
+				1F2E92392E5A5352003962BA /* HarvestHeatMapView.swift */,
 				1F2E922F2E5A2BE4003962BA /* Weather */,
 				1F2E92222E5A1F9E003962BA /* MaterialsAndPracticesApp.swift */,
 				1F81223C25829E33007394D0 /* Practice */,
@@ -344,6 +369,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F4F48BD257DB4C4005E559D /* Preview Assets.xcassets in Resources */,
+				1F2E92442E5A5945003962BA /* vegetable_cultivars_master_enriched_with_family_common.csv in Resources */,
 				1F4F48BA257DB4C4005E559D /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -385,12 +411,16 @@
 				1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */,
 				1F2E92232E5A1F9E003962BA /* MaterialsAndPracticesApp.swift in Sources */,
 				1F2E92302E5A2BE4003962BA /* WeatherModels.swift in Sources */,
+				1F2E92422E5A5641003962BA /* SecureConfiguration.swift in Sources */,
 				1F2E92312E5A2BE4003962BA /* WeatherService.swift in Sources */,
 				1F2E92322E5A2BE4003962BA /* WeatherDemonstration.swift in Sources */,
 				1F2E92332E5A2BE4003962BA /* DaylightChart.swift in Sources */,
 				1F2E92342E5A2BE4003962BA /* LocationManager.swift in Sources */,
 				1F2E92352E5A2BE4003962BA /* WeatherView.swift in Sources */,
 				1FD9188E2E59EFC900D18920 /* HarvestSafetyChecklist 2.swift in Sources */,
+				1F2E923B2E5A5352003962BA /* HarvestHeatMapView.swift in Sources */,
+				1F2E923C2E5A5352003962BA /* CultivarDataTestUtility.swift in Sources */,
+				1F2E923D2E5A5352003962BA /* GrowingSeasonTimelineView.swift in Sources */,
 				1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */,
 				1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */,
 				1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */,
