@@ -77,13 +77,25 @@ struct GrowRow: View {
                                 .multilineTextAlignment(.center)
                                 .lineLimit(nil)
 
+                            Text("Cultivar")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color.green)
+                                .multilineTextAlignment(.leading)
+                            
+                            Text("\(grow.cultivar?.name ?? "No Cultivar Selected")")
+                                .font(.subheadline)
+                                .fontWeight(.regular)
+                                .foregroundColor(Color.primary)
+                                .multilineTextAlignment(.leading)
+
                             Text("Planted Date")
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color.green)
                                 .multilineTextAlignment(.leading)
                             
-                            Text("\(grow.plantedDate!, formatter: itemFormatter)")
+                            Text(grow.plantedDate != nil ? "\(grow.plantedDate!, formatter: itemFormatter)" : "Not Set")
                                 .font(.subheadline)
                                 .fontWeight(.regular)
                                 .foregroundColor(Color.black)

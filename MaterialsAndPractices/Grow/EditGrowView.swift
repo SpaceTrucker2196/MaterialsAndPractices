@@ -13,7 +13,7 @@ struct EditGrowView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
     @State var name: String = ""
-    @State var cultivar: String = ""
+    @State var selectedCultivar: Cultivar?
     @State var location: String = ""
     @State var plantedDate: Date = Date()
     @State var expectedHarvestDate: Date = Date()
@@ -31,13 +31,35 @@ struct EditGrowView: View {
     @State var size : String = ""
     @Binding var isPresented: Bool
     
+    @FetchRequest(
+        entity: Cultivar.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \Cultivar.name, ascending: true)]
+    ) var cultivars: FetchedResults<Cultivar>
+    
     var body: some View {
         VStack {
             NavigationView {
                         Form {
                             Section(header: Text("Details")) {
                                 TextField("My New Grow", text: $name)
-                                TextField("Cultivar", text:$cultivar)
+                                
+                                Picker("Cultivar", selection: $selectedCultivar) {
+                                    Text("Select Cultivar").tag(nil as Cultivar?)
+                                    ForEach(cultivars, id: \.self) { cultivar in
+                                        VStack(alignment: .leading) {
+                                            Text(cultivar.name ?? "Unknown")
+                                                .font(.headline)
+                                            if let family = cultivar.family, !family.isEmpty {
+                                                Text(family)
+                                                    .font(.caption)
+                                                    .foregroundColor(.secondary)
+                                            }
+                                        }
+                                        .tag(cultivar as Cultivar?)
+                                    }
+                                }
+                                .pickerStyle(.navigationLink)
+                                
                                 TextField("Location", text:$location)
                                 DatePicker("Planted:", selection: $plantedDate)
                                 DatePicker("Harvest:", selection: $expectedHarvestDate)
@@ -65,7 +87,7 @@ struct EditGrowView: View {
         
                                 let newGrow = Grow(context: self.viewContext)
                                 newGrow.title = name
-                                newGrow.cultivar = cultivar
+                                newGrow.cultivar = selectedCultivar
                                 newGrow.locationName = location
                                 newGrow.plantedDate = plantedDate
                                 newGrow.harvestDate = expectedHarvestDate

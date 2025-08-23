@@ -13,10 +13,24 @@ struct MaterialsAndPracticesApp: App {
 
     var body: some Scene {
         WindowGroup {
-            CurrentGrowsView()
+            ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
-    
-    
+}
+
+struct ContentView: View {
+    var body: some View {
+        TabView {
+            CurrentGrowsView()
+                .tabItem {
+                    Label("Grows", systemImage: "leaf.fill")
+                }
+            
+            CultivarListView()
+                .tabItem {
+                    Label("Cultivars", systemImage: "list.bullet.rectangle")
+                }
+        }
+    }
 }
