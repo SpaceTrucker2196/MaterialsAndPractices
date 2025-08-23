@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24D81" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Amendment" representedClassName="Amendment" syncable="YES" codeGenerationType="class">
+        <attribute name="applicationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="laborHours" optional="YES" attributeType="String"/>
+        <attribute name="material" optional="YES" attributeType="String"/>
+        <attribute name="materialIndex" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <relationship name="grow" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Grow" inverseName="amendments" inverseEntity="Grow"/>
+    </entity>
+    <entity name="Cultivar" representedClassName="Cultivar" syncable="YES" codeGenerationType="class">
+        <attribute name="amendments" optional="YES" attributeType="String"/>
+        <attribute name="bestHarvest" optional="YES" attributeType="String"/>
+        <attribute name="bestPlantingDates" optional="YES" attributeType="String"/>
+        <attribute name="commonName" optional="YES" attributeType="String"/>
+        <attribute name="cultivarName" optional="YES" attributeType="String"/>
+        <attribute name="cultivarDescription" optional="YES" attributeType="String"/>
+        <attribute name="family" optional="YES" attributeType="String"/>
+        <attribute name="genus" optional="YES" attributeType="String"/>
+        <attribute name="greenhouseInstructions" optional="YES" attributeType="String"/>
+        <attribute name="growingAdvice" optional="YES" attributeType="String"/>
+        <attribute name="growingDays" optional="YES" attributeType="String"/>
+        <attribute name="hardyZone" optional="YES" attributeType="String"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="optimalZones" optional="YES" attributeType="String"/>
+        <attribute name="pests" optional="YES" attributeType="String"/>
+        <attribute name="plantingWeek" optional="YES" attributeType="String"/>
+        <attribute name="season" optional="YES" attributeType="String"/>
+        <attribute name="soilConditions" optional="YES" attributeType="String"/>
+        <attribute name="soilInfo" optional="YES" attributeType="String"/>
+        <attribute name="transplantAge" optional="YES" attributeType="String"/>
+        <attribute name="usdaZoneList" optional="YES" attributeType="String"/>
+        <attribute name="weatherTolerance" optional="YES" attributeType="String"/>
+        <relationship name="grows" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Grow" inverseName="cultivar" inverseEntity="Grow"/>
+    </entity>
+    <entity name="Grow" representedClassName="Grow" syncable="YES" codeGenerationType="class">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="city" optional="YES" attributeType="String"/>
+        <attribute name="county" optional="YES" attributeType="String"/>
+        <attribute name="drivingDirections" optional="YES" attributeType="String"/>
+        <attribute name="expectedHavestDate" optional="YES" attributeType="String"/>
+        <attribute name="growType" optional="YES" attributeType="String"/>
+        <attribute name="harvestDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="locationName" optional="YES" attributeType="String"/>
+        <attribute name="manager" optional="YES" attributeType="String"/>
+        <attribute name="managerPhone" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="plantedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="propertyOwner" optional="YES" attributeType="String"/>
+        <attribute name="propertyOwnerPhone" optional="YES" attributeType="String"/>
+        <attribute name="propertyType" optional="YES" attributeType="String"/>
+        <attribute name="size" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="state" optional="YES" attributeType="String"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="zip" optional="YES" attributeType="String"/>
+        <relationship name="amendments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Amendment" inverseName="grow" inverseEntity="Amendment"/>
+        <relationship name="cultivar" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cultivar" inverseName="grows" inverseEntity="Cultivar"/>
+        <relationship name="work" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Work" inverseName="grow" inverseEntity="Work"/>
+    </entity>
+    <entity name="Work" representedClassName="Work" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="practice" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="practiceIndex" optional="YES" attributeType="Integer 32" defaultValueString="0" allowsCloudEncryption="YES" usesScalarValueType="YES"/>
+        <relationship name="grow" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Grow" inverseName="work" inverseEntity="Grow"/>
+    </entity>
+    <entity name="Farm" representedClassName="Farm" syncable="YES" codeGenerationType="class">
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="farmDescription" optional="YES" attributeType="String"/>
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="city" optional="YES" attributeType="String"/>
+        <attribute name="state" optional="YES" attributeType="String"/>
+        <attribute name="zip" optional="YES" attributeType="String"/>
+        <attribute name="county" optional="YES" attributeType="String"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="totalAcres" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="leaseAcres" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="leaseTerm" optional="YES" attributeType="String"/>
+        <attribute name="leasePaymentDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="leaseAmount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="propertyOwnerName" optional="YES" attributeType="String"/>
+        <attribute name="propertyOwnerPhone" optional="YES" attributeType="String"/>
+        <attribute name="propertyOwnerEmail" optional="YES" attributeType="String"/>
+        <attribute name="propertyOwnerAddress" optional="YES" attributeType="String"/>
+        <attribute name="paymentMethod" optional="YES" attributeType="String"/>
+        <attribute name="paymentAccountInfo" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="updatedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="photos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="FarmPhoto" inverseName="farm" inverseEntity="FarmPhoto"/>
+    </entity>
+    <entity name="FarmPhoto" representedClassName="FarmPhoto" syncable="YES" codeGenerationType="class">
+        <attribute name="photoData" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="thumbnailData" optional="YES" attributeType="Binary"/>
+        <attribute name="captureDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="season" optional="YES" attributeType="String"/>
+        <attribute name="week" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <relationship name="farm" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Farm" inverseName="photos" inverseEntity="Farm"/>
+    </entity>
+    <elements>
+        <element name="Amendment" positionX="-45" positionY="0" width="128" height="148"/>
+        <element name="Cultivar" positionX="-54" positionY="-9" width="128" height="478"/>
+        <element name="Grow" positionX="-63" positionY="-18" width="128" height="403"/>
+        <element name="Work" positionX="-36" positionY="9" width="128" height="103"/>
+        <element name="Farm" positionX="-27" positionY="18" width="128" height="403"/>
+        <element name="FarmPhoto" positionX="-18" positionY="27" width="128" height="178"/>
+    </elements>
+</model>

@@ -43,6 +43,12 @@ struct ContentView: View {
                     Label("Grows", systemImage: "leaf.fill")
                 }
             
+            // Farm management tab
+            FarmListView()
+                .tabItem {
+                    Label("Farms", systemImage: "location.fill")
+                }
+            
             // Plant cultivar database tab
             CultivarListView()
                 .tabItem {
