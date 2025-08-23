@@ -22,6 +22,7 @@
 		1F812235258298EC007394D0 /* WorkViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812234258298EC007394D0 /* WorkViews.swift */; };
 		1FD918352E595AB900D18920 /* CultivarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD918342E595AB900D18920 /* CultivarViews.swift */; };
 		1FD918362E595AB900D18920 /* CultivarSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD918332E595AB900D18920 /* CultivarSeeder.swift */; };
+		1FD9188E2E59EFC900D18920 /* HarvestSafetyChecklist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD9188D2E59EFC900D18920 /* HarvestSafetyChecklist.swift */; };
 		1FE293EF257DDBAC00C93102 /* GrowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */; };
 		1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B63257EAED600A6D9DD /* GrowViews.swift */; };
 		1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */; };
@@ -69,6 +70,7 @@
 		1F812234258298EC007394D0 /* WorkViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkViews.swift; sourceTree = "<group>"; };
 		1FD918332E595AB900D18920 /* CultivarSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarSeeder.swift; sourceTree = "<group>"; };
 		1FD918342E595AB900D18920 /* CultivarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarViews.swift; sourceTree = "<group>"; };
+		1FD9188D2E59EFC900D18920 /* HarvestSafetyChecklist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HarvestSafetyChecklist.swift; sourceTree = "<group>"; };
 		1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowDetailView.swift; sourceTree = "<group>"; };
 		1FEA2B63257EAED600A6D9DD /* GrowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowViews.swift; sourceTree = "<group>"; };
 		1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGrowView.swift; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 				1F4F48B9257DB4C4005E559D /* Assets.xcassets */,
 				1F4F48BE257DB4C4005E559D /* Persistence.swift */,
 				1F4F48C3257DB4C4005E559D /* Info.plist */,
+				1FD9188D2E59EFC900D18920 /* HarvestSafetyChecklist.swift */,
 				1F4F48C0257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld */,
 				1F4F48BB257DB4C4005E559D /* Preview Content */,
 				1F06C22225807A59006F8C83 /* OptionalBinding.swift */,
@@ -339,6 +342,7 @@
 				1FD918352E595AB900D18920 /* CultivarViews.swift in Sources */,
 				1FD918362E595AB900D18920 /* CultivarSeeder.swift in Sources */,
 				1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */,
+				1FD9188E2E59EFC900D18920 /* HarvestSafetyChecklist.swift in Sources */,
 				1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */,
 				1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */,
 				1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */,
