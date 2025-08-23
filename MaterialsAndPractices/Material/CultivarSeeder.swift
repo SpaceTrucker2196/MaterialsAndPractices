@@ -2,30 +2,55 @@
 //  CultivarSeeder.swift
 //  MaterialsAndPractices
 //
+//  Provides USDA plant cultivar data seeding functionality for initial application setup.
+//  Implements comprehensive vegetable cultivar database population from official USDA sources
+//  with proper error handling and duplicate prevention mechanisms.
+//
 //  Created by Jeffrey Kunzelman on 12/6/20.
 //
 
 import CoreData
 import Foundation
 
+/// Utility structure for seeding Core Data with USDA vegetable cultivar information
+/// Ensures application has comprehensive plant database for organic farming operations
 struct CultivarSeeder {
     
+    // MARK: - Public Methods
+    
+    /// Seeds the Core Data context with USDA vegetable cultivar data
+    /// Implements duplicate prevention and proper error handling
+    /// - Parameter context: The NSManagedObjectContext to seed with data
     static func seedCultivars(context: NSManagedObjectContext) {
-        // Check if cultivars are already seeded
+        guard !cultivarsAlreadySeeded(in: context) else {
+            // Database already contains cultivar data, no seeding required
+            return
+        }
+        
+        seedUSDAVegetableCultivars(in: context)
+    }
+    
+    // MARK: - Private Implementation Methods
+    
+    /// Checks if cultivars have already been seeded to prevent duplicate data
+    /// - Parameter context: The Core Data context to check
+    /// - Returns: Boolean indicating if cultivars exist in the database
+    private static func cultivarsAlreadySeeded(in context: NSManagedObjectContext) -> Bool {
         let request: NSFetchRequest<Cultivar> = Cultivar.fetchRequest()
         
         do {
             let existingCultivars = try context.fetch(request)
-            if !existingCultivars.isEmpty {
-                // Already seeded
-                return
-            }
+            return !existingCultivars.isEmpty
         } catch {
             print("Error checking existing cultivars: \(error)")
-            return
+            return false
         }
-        
-        // Seed USDA vegetable cultivar data
+    }
+    
+    /// Performs the actual seeding of USDA vegetable cultivar data
+    /// Creates Cultivar entities with comprehensive plant information
+    /// - Parameter context: The Core Data context for entity creation
+    private static func seedUSDAVegetableCultivars(in context: NSManagedObjectContext) {
         let cultivarData = getUSDAVegetableCultivars()
         
         for cultivarInfo in cultivarData {
@@ -39,12 +64,18 @@ struct CultivarSeeder {
         
         do {
             try context.save()
-            print("Successfully seeded \(cultivarData.count) cultivars")
+            print("Successfully seeded \(cultivarData.count) cultivars from USDA database")
         } catch {
             print("Error seeding cultivars: \(error)")
         }
     }
     
+    // MARK: - USDA Cultivar Database
+    
+    /// Comprehensive USDA vegetable cultivar database with growing information
+    /// Data sourced from official USDA plant databases for accuracy and completeness
+    /// Organized by plant family for botanical classification and management
+    /// - Returns: Array of tuples containing cultivar information (name, family, season, hardyZone, plantingWeek)
     private static func getUSDAVegetableCultivars() -> [(name: String, family: String, season: String, hardyZone: String, plantingWeek: String)] {
         return [
             // AMARANTH
