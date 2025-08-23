@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17511" systemVersion="20B29" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24D81" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="Amendment" representedClassName="Amendment" syncable="YES" codeGenerationType="class">
         <attribute name="applicationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="laborHours" optional="YES" attributeType="String"/>
@@ -9,11 +9,18 @@
         <attribute name="notes" optional="YES" attributeType="String"/>
         <relationship name="grow" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Grow" inverseName="amendments" inverseEntity="Grow"/>
     </entity>
+    <entity name="Cultivar" representedClassName="Cultivar" syncable="YES" codeGenerationType="class">
+        <attribute name="family" optional="YES" attributeType="String"/>
+        <attribute name="hardyZone" optional="YES" attributeType="String"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="plantingWeek" optional="YES" attributeType="String"/>
+        <attribute name="season" optional="YES" attributeType="String"/>
+        <relationship name="grows" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Grow" inverseName="cultivar" inverseEntity="Grow"/>
+    </entity>
     <entity name="Grow" representedClassName="Grow" syncable="YES" codeGenerationType="class">
         <attribute name="address" optional="YES" attributeType="String"/>
         <attribute name="city" optional="YES" attributeType="String"/>
         <attribute name="county" optional="YES" attributeType="String"/>
-        <attribute name="cultivar" optional="YES" attributeType="String"/>
         <attribute name="drivingDirections" optional="YES" attributeType="String"/>
         <attribute name="expectedHavestDate" optional="YES" attributeType="String"/>
         <attribute name="growType" optional="YES" attributeType="String"/>
@@ -32,17 +39,13 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="zip" optional="YES" attributeType="String"/>
         <relationship name="amendments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Amendment" inverseName="grow" inverseEntity="Amendment"/>
+        <relationship name="cultivar" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cultivar" inverseName="grows" inverseEntity="Cultivar"/>
         <relationship name="work" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Work" inverseName="grow" inverseEntity="Work"/>
     </entity>
     <entity name="Work" representedClassName="Work" syncable="YES" codeGenerationType="class">
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="practice" optional="YES" attributeType="String"/>
-        <attribute name="practiceIndex" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="practice" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="practiceIndex" optional="YES" attributeType="Integer 32" defaultValueString="0" allowsCloudEncryption="YES" usesScalarValueType="YES"/>
         <relationship name="grow" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Grow" inverseName="work" inverseEntity="Grow"/>
     </entity>
-    <elements>
-        <element name="Amendment" positionX="0" positionY="-9" width="128" height="134"/>
-        <element name="Grow" positionX="0" positionY="0" width="128" height="374"/>
-        <element name="Work" positionX="9" positionY="153" width="128" height="89"/>
-    </elements>
 </model>

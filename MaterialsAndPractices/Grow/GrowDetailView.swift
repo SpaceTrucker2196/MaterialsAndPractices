@@ -11,6 +11,10 @@ import CoreData
 struct GrowDetailViewModel  {
     var grow : Grow
     var cultivar = "New Cultivar"
+    var cultivarFamily = ""
+    var hardyZone = ""
+    var season = ""
+    var plantingWeek = ""
     var name = "My Grow"
     var plantedDate = Date()
     var harvestDate = Date()
@@ -19,7 +23,11 @@ struct GrowDetailViewModel  {
     var previewImage = Grow.Image(grow:Grow())
     init(grow:Grow) {
         self.grow = grow
-        cultivar = grow.cultivar ?? ""
+        cultivar = grow.cultivar?.name ?? "No Cultivar Selected"
+        cultivarFamily = grow.cultivar?.family ?? ""
+        hardyZone = grow.cultivar?.hardyZone ?? ""
+        season = grow.cultivar?.season ?? ""
+        plantingWeek = grow.cultivar?.plantingWeek ?? ""
         name = grow.title ?? ""
         plantedDate = grow.plantedDate ?? Date()
         harvestDate = grow.harvestDate ?? Date()
@@ -56,6 +64,38 @@ struct GrowDetailView: View {
                             .font(.headline)
                             .fontWeight(.heavy)
                             .multilineTextAlignment(.leading)
+                        
+                        if !growViewModel.cultivarFamily.isEmpty {
+                            Text("Family: \(growViewModel.cultivarFamily)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        HStack {
+                            if !growViewModel.season.isEmpty {
+                                Text("Season: \(growViewModel.season)")
+                                    .font(.caption2)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.blue.opacity(0.2))
+                                    .cornerRadius(4)
+                            }
+                            
+                            if !growViewModel.hardyZone.isEmpty {
+                                Text("Zone: \(growViewModel.hardyZone)")
+                                    .font(.caption2)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.green.opacity(0.2))
+                                    .cornerRadius(4)
+                            }
+                        }
+                        
+                        if !growViewModel.plantingWeek.isEmpty {
+                            Text("Planting Week: \(growViewModel.plantingWeek)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
                 
