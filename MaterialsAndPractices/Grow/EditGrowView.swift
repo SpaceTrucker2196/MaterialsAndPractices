@@ -36,18 +36,23 @@ struct EditGrowView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Cultivar.name, ascending: true)]
     ) var cultivars: FetchedResults<Cultivar>
     
+    var isFormValid: Bool {
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        selectedCultivar != nil &&
+        !location.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    
     var body: some View {
-        VStack {
-            NavigationView {
-                        Form {
-                            Section(header: Text("Details")) {
-                                TextField("My New Grow", text: $name)
-                                
-                                Picker("Cultivar", selection: $selectedCultivar) {
-                                    Text("Select Cultivar").tag(nil as Cultivar?)
-                                    ForEach(cultivars, id: \.self) { cultivar in
-                                        VStack(alignment: .leading) {
-                                            Text(cultivar.name ?? "Unknown")
+        NavigationView {
+            Form {
+                Section(header: Text("Details")) {
+                    TextField("Grow Name", text: $name, prompt: Text("Enter grow name"))
+                    
+                    Picker("Cultivar", selection: $selectedCultivar) {
+                        Text("Select Cultivar").tag(nil as Cultivar?)
+                        ForEach(cultivars, id: \.self) { cultivar in
+                            VStack(alignment: .leading) {
+                                Text(cultivar.name ?? "Unknown")
                                                 .font(.headline)
                                             if let family = cultivar.family, !family.isEmpty {
                                                 Text(family)
@@ -60,65 +65,81 @@ struct EditGrowView: View {
                                 }
                                 .pickerStyle(.navigationLink)
                                 
-                                TextField("Location", text:$location)
-                                DatePicker("Planted:", selection: $plantedDate)
-                                DatePicker("Harvest:", selection: $expectedHarvestDate)
+                                TextField("Location", text: $location, prompt: Text("Enter location"))
+                                DatePicker("Planted:", selection: $plantedDate, displayedComponents: .date)
+                                DatePicker("Expected Harvest:", selection: $expectedHarvestDate, displayedComponents: .date)
         
-                                TextField("Size", text:$size)
+                                TextField("Size (acres)", text: $size, prompt: Text("0.0"))
+                                    .keyboardType(.decimalPad)
                             }
-                            Section(header: Text("Property")) {
-                                TextField("Owner", text: $propertyOwner)
-                                TextField("Phone", text:$propertyOwnerPhone)
-                                TextField("Address", text:$address)
-                                TextField("City", text:$city)
-                                TextField("State", text:$state)
-                                TextField("Zip", text:$zip)
-                                TextField("County", text:$county)
-                                TextField("Manager", text: $manager)
-                                TextField("Phone", text:$managerPhone)
+                            Section(header: Text("Property Information")) {
+                                TextField("Property Owner", text: $propertyOwner, prompt: Text("Owner name"))
+                                TextField("Owner Phone", text: $propertyOwnerPhone, prompt: Text("Phone number"))
+                                    .keyboardType(.phonePad)
+                                TextField("Address", text: $address, prompt: Text("Street address"))
+                                TextField("City", text: $city, prompt: Text("City"))
+                                TextField("State", text: $state, prompt: Text("State"))
+                                TextField("Zip Code", text: $zip, prompt: Text("ZIP"))
+                                    .keyboardType(.numberPad)
+                                TextField("County", text: $county, prompt: Text("County"))
+                                TextField("Manager", text: $manager, prompt: Text("Property manager"))
+                                TextField("Manager Phone", text: $managerPhone, prompt: Text("Manager phone"))
+                                    .keyboardType(.phonePad)
                             }
                             
-                            Section(header: Text("Notes")) {
-                                TextField("Notes", text: $notes)
+                            Section(header: Text("Additional Notes")) {
+                                TextField("Notes", text: $notes, prompt: Text("Any additional information..."), axis: .vertical)
+                                    .lineLimit(3...6)
                             }
-                            
-                            Button(action: {
-                                isPresented = false
-        
-                                let newGrow = Grow(context: self.viewContext)
-                                newGrow.title = name
-                                newGrow.cultivar = selectedCultivar
-                                newGrow.locationName = location
-                                newGrow.plantedDate = plantedDate
-                                newGrow.harvestDate = expectedHarvestDate
-                                newGrow.timestamp = Date()
-                                newGrow.city = city
-                                newGrow.county = county
-                                newGrow.drivingDirections = drivingDirections
-                                newGrow.growType = "field"
-                                newGrow.locationName = location
-                                newGrow.manager = manager
-                                newGrow.managerPhone = managerPhone
-                                newGrow.notes = notes
-                                newGrow.propertyOwner = propertyOwner
-                                newGrow.propertyOwnerPhone = propertyOwnerPhone
-                                newGrow.propertyType = "own"
-                                newGrow.size = Double(size) ?? 0
-                                newGrow.state = state
-                                newGrow.zip = zip
-                                
-                                do {
-                                    try viewContext.save()
-                                } catch {
-                                    let nsError = error as NSError
-                                    fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-                                }
+                            Section {
+                                Button(action: {
+                                    isPresented = false
+            
+                                    let newGrow = Grow(context: self.viewContext)
+                                    newGrow.title = name.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    newGrow.cultivar = selectedCultivar
+                                    newGrow.locationName = location.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    newGrow.plantedDate = plantedDate
+                                    newGrow.harvestDate = expectedHarvestDate
+                                    newGrow.timestamp = Date()
+                                    newGrow.city = city.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    newGrow.county = county.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    newGrow.drivingDirections = drivingDirections.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    newGrow.growType = "field"
+                                    newGrow.manager = manager.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    newGrow.managerPhone = managerPhone.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    newGrow.notes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    newGrow.propertyOwner = propertyOwner.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    newGrow.propertyOwnerPhone = propertyOwnerPhone.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    newGrow.propertyType = "own"
+                                    newGrow.size = Double(size.trimmingCharacters(in: .whitespacesAndNewlines)) ?? 0
+                                    newGrow.state = state.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    newGrow.zip = zip.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    
+                                    do {
+                                        try viewContext.save()
+                                    } catch {
+                                        let nsError = error as NSError
+                                        fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                                    }
 
-                            }, label: {
-                                Text("Create New Grow")
-                                    .multilineTextAlignment(.center)
-                            })
-                        } .navigationTitle("New Grow")
+                                }) {
+                                    Text("Create New Grow")
+                                        .frame(maxWidth: .infinity)
+                                        .font(.headline)
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .disabled(!isFormValid)
+                            }
+            }
+            .navigationTitle("New Grow")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                }
             }
         }
        

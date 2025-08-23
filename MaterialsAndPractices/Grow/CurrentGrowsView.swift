@@ -29,15 +29,19 @@ struct CurrentGrowsView: View {
                     .onDelete(perform: deleteItems)
                 }
                 .toolbar {
-                    Button(action: {
-                        showCreateGrow = true
-                    }) {
-                        Label("Add New Grow", systemImage: "plus")
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            showCreateGrow = true
+                        }) {
+                            Label("Add New Grow", systemImage: "plus")
+                        }
                     }
-                }.navigationTitle("Active Grows")
-        }.sheet(isPresented: $showCreateGrow, content: {
-            EditGrowView(isPresented:$showCreateGrow)
-        })
+                }
+                .navigationTitle("Active Grows")
+        }
+        .sheet(isPresented: $showCreateGrow) {
+            EditGrowView(isPresented: $showCreateGrow)
+        }
     }
     
     private func deleteItems(offsets: IndexSet) {

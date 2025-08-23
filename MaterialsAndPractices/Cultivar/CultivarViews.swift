@@ -146,37 +146,49 @@ struct CultivarListView: View {
             List {
                 ForEach(Dictionary(grouping: filteredCultivars) { $0.family ?? "Unknown" }.sorted(by: { $0.key < $1.key }), id: \.key) { family, cultivarsInFamily in
                     
-                    Section(header: Text(family)) {
+                    Section(header: 
+                        HStack {
+                            Text(family)
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.primary)
+                            Spacer()
+                            Text("\(cultivarsInFamily.count)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    ) {
                         ForEach(cultivarsInFamily.sorted { ($0.name ?? "") < ($1.name ?? "") }, id: \.self) { cultivar in
                             NavigationLink(destination: CultivarDetailView(cultivar: cultivar)) {
-                                HStack {
-                                    Cultivar.Image(cultivar: cultivar)
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(cultivar.name ?? "Unknown")
-                                            .font(.headline)
-                                        
-                                        HStack {
-                                            if let season = cultivar.season, !season.isEmpty {
-                                                Text(season)
-                                                    .font(.caption2)
-                                                    .padding(.horizontal, 6)
-                                                    .padding(.vertical, 2)
-                                                    .background(Color.blue.opacity(0.2))
-                                                    .cornerRadius(4)
-                                            }
+                                    HStack(spacing: 12) {
+                                        Cultivar.Image(cultivar: cultivar)
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(cultivar.name ?? "Unknown")
+                                                .font(.headline)
+                                                .foregroundColor(.primary)
                                             
-                                            if let hardyZone = cultivar.hardyZone, !hardyZone.isEmpty {
-                                                Text("Zone \(hardyZone)")
-                                                    .font(.caption2)
-                                                    .padding(.horizontal, 6)
-                                                    .padding(.vertical, 2)
-                                                    .background(Color.green.opacity(0.2))
-                                                    .cornerRadius(4)
+                                            HStack(spacing: 6) {
+                                                if let season = cultivar.season, !season.isEmpty {
+                                                    Text(season)
+                                                        .font(.caption2)
+                                                        .padding(.horizontal, 6)
+                                                        .padding(.vertical, 2)
+                                                        .background(Color.blue.opacity(0.2))
+                                                        .cornerRadius(4)
+                                                }
+                                                
+                                                if let hardyZone = cultivar.hardyZone, !hardyZone.isEmpty {
+                                                    Text("Zone \(hardyZone)")
+                                                        .font(.caption2)
+                                                        .padding(.horizontal, 6)
+                                                        .padding(.vertical, 2)
+                                                        .background(Color.green.opacity(0.2))
+                                                        .cornerRadius(4)
+                                                }
                                             }
                                         }
+                                        Spacer()
                                     }
-                                    Spacer()
-                                }
                             }
                         }
                     }
