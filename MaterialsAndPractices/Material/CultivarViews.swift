@@ -203,22 +203,9 @@ struct CultivarListView: View {
                 .navigationTitle("Cultivars")
             } else {
                 // Fallback on earlier versions
-            }
-            if #available(iOS 15.0, *) {
                 List {
                     ForEach(groupedCultivars, id: \.key) { family, cultivarsInFamily in
-                        Section(header:
-                                    HStack {
-                            Text(family)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                            Spacer()
-                            Text("\(cultivarsInFamily.count)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        ) {
+                        Section(header: Text(family)) {
                             ForEach(cultivarsInFamily.sorted { ($0.name ?? "") < ($1.name ?? "") }, id: \.self) { cultivar in
                                 NavigationLink(destination: CultivarDetailView(cultivar: cultivar)) {
                                     HStack(spacing: 12) {
@@ -255,10 +242,7 @@ struct CultivarListView: View {
                         }
                     }
                 }
-                .searchable(text: $searchText, prompt: "Search cultivars...")
                 .navigationTitle("Cultivars")
-            } else {
-                // Fallback on earlier versions
             }
         }
     }
