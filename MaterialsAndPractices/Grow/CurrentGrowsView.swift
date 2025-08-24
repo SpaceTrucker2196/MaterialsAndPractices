@@ -32,18 +32,6 @@ struct CurrentGrowsView: View {
     var body: some View {
         NavigationView {
             List {
-                // Weather information section at the top
-                Section {
-                    WeatherView()
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
-                } header: {
-                    Text("Current Conditions")
-                        .font(AppTheme.Typography.headlineSmall)
-                        .foregroundColor(AppTheme.Colors.primary)
-                        .textCase(nil)
-                }
-                
                 // Active grows section
                 Section("Active Grows") {
                     ForEach(grows) { grow in
