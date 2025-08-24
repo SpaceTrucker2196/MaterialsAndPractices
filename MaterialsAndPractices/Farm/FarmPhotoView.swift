@@ -23,7 +23,7 @@ struct FarmPhotoView: View {
     @State private var showingCamera = false
     @State private var selectedSeason: String = "Spring"
     @State private var groupBySeason = true
-    @StateObject private var locationManager = LocationManager()
+    @StateObject private var locationService = BasicLocationService()
     
     @FetchRequest var photos: FetchedResults<FarmPhoto>
     
@@ -254,7 +254,7 @@ struct FarmPhotoView: View {
         }
         
         // Try to get location data
-        locationManager.requestLocation { result in
+        locationService.requestLocation { result in
             switch result {
             case .success(let location):
                 newPhoto.latitude = location.coordinate.latitude

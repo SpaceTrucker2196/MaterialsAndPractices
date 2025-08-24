@@ -49,7 +49,7 @@ struct EditFarmView: View {
     @State private var showingAddressSuggestions = false
     
     // Location services
-    @StateObject private var locationManager = LocationManager()
+    @StateObject private var locationService = BasicLocationService()
     @StateObject private var addressSearchCompleter = AddressSearchCompleter()
     
     @Binding var isPresented: Bool
@@ -306,7 +306,7 @@ struct EditFarmView: View {
     private func useCurrentLocation() {
         isLoadingLocation = true
         
-        locationManager.requestLocation { result in
+        locationService.requestLocation { result in
             DispatchQueue.main.async {
                 self.isLoadingLocation = false
                 
@@ -428,26 +428,7 @@ class AddressSearchCompleter: NSObject, ObservableObject, MKLocalSearchCompleter
 
 // MARK: - Location Manager Extension
 
-extension LocationManager {
-    func requestLocation(completion: @escaping (Result<CLLocation, Error>) -> Void) {
-        // Use the existing location if available, otherwise request a new one
-        if let currentLocation = location {
-            completion(.success(currentLocation))
-        } else {
-            // Request location and call completion when available
-            requestLocation()
-            
-            // Monitor for location updates
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                if let newLocation = self.location {
-                    completion(.success(newLocation))
-                } else {
-                    completion(.failure(NSError(domain: "LocationError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to get location"])))
-                }
-            }
-        }
-    }
-}
+
 
 struct EditFarmView_Previews: PreviewProvider {
     static var previews: some View {
