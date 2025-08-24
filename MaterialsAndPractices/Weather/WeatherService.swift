@@ -21,7 +21,7 @@ import WeatherKit
 class WeatherService: ObservableObject {
     // MARK: - Properties
     
-    private var weatherKitService: Any? // Will be WeatherKitService when available
+    private var weatherKitService: WeatherKitService = WeatherKitService() // Will be WeatherKitService when available
     private var noaaService: NOAAWeatherService?
     private let logger = Logger(subsystem: "MaterialsAndPractices", category: "WeatherService")
     
@@ -42,7 +42,7 @@ class WeatherService: ObservableObject {
         if #available(iOS 16.0, *) {
             // Use WeatherKit for iOS 16+
             logger.info("Initializing WeatherKit service")
-            weatherKitService = WeatherKitService()
+          //  weatherKitService
             
             // Subscribe to WeatherKit service updates
             if let service = weatherKitService as? WeatherKitService {
