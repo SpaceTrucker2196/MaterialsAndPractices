@@ -234,6 +234,69 @@ struct PersistenceController {
             }
             
         }
+        
+        // Seed sample farms for preview
+        for farmNum in 0..<3 {
+            let newFarm = Farm(context: viewContext)
+            newFarm.createdDate = Date()
+            newFarm.updatedDate = Date()
+            
+            switch farmNum {
+            case 0:
+                newFarm.name = "Kunzelman Family Farm"
+                newFarm.farmDescription = "Organic vegetable and grain production farm in the heart of Wisconsin"
+                newFarm.address = "N20545 County Rd DD"
+                newFarm.city = "Ettrick"
+                newFarm.state = "WI"
+                newFarm.zip = "54627"
+                newFarm.county = "Trempealeau"
+                newFarm.latitude = 44.1508
+                newFarm.longitude = -91.2957
+                newFarm.totalAcres = 120.0
+                newFarm.leaseAcres = 40.0
+                newFarm.leaseTerm = "5 years"
+                newFarm.leaseAmount = 2500.0
+                newFarm.propertyOwnerName = "John Kunzelman"
+                newFarm.propertyOwnerPhone = "608-525-5432"
+                newFarm.propertyOwnerEmail = "john@kunzelmanfarm.com"
+                newFarm.notes = "Excellent soil quality with good drainage. South-facing slopes ideal for vegetables."
+                
+            case 1:
+                newFarm.name = "Riverside Organic Farm"
+                newFarm.farmDescription = "Small-scale organic farm specializing in heirloom vegetables"
+                newFarm.address = "W15230 River Road"
+                newFarm.city = "Galesville"
+                newFarm.state = "WI"
+                newFarm.zip = "54630"
+                newFarm.county = "Trempealeau"
+                newFarm.latitude = 44.0819
+                newFarm.longitude = -91.3496
+                newFarm.totalAcres = 45.0
+                newFarm.leaseAcres = 15.0
+                newFarm.leaseTerm = "3 years"
+                newFarm.leaseAmount = 1200.0
+                newFarm.propertyOwnerName = "Mary Johnson"
+                newFarm.propertyOwnerPhone = "608-582-4321"
+                newFarm.notes = "Close to river, requires attention to flooding in spring. Organic certified since 2015."
+                
+            case 2:
+                newFarm.name = "Hillside Market Garden"
+                newFarm.farmDescription = "Intensive market garden operation for direct sales"
+                newFarm.address = "S12845 Hillside Lane"
+                newFarm.city = "Blair"
+                newFarm.state = "WI"
+                newFarm.zip = "54616"
+                newFarm.county = "Trempealeau"
+                newFarm.latitude = 44.2961
+                newFarm.longitude = -91.2207
+                newFarm.totalAcres = 25.0
+                newFarm.notes = "Young farm with excellent soil amendments program. Focus on salad greens and herbs."
+                
+            default:
+                newFarm.name = "Unknown Farm"
+            }
+        }
+        
         do {
             try viewContext.save()
         } catch {
