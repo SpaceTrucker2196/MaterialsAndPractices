@@ -1,0 +1,47 @@
+language: swift
+os: osx
+osx_image: xcode15.2
+
+env:
+  global:
+    - WORKSPACE=MaterialsAndPractices.xcworkspace
+    - IOS_SCHEME="MaterialsAndPractices"
+    - IOS_DESTINATION="platform=iOS Simulator,OS=17.2,name=iPhone 15"
+
+before_install:
+  - gem install xcpretty
+
+script:
+  # Clean build directory
+  - xcodebuild clean -workspace $WORKSPACE -scheme $IOS_SCHEME -destination "$IOS_DESTINATION" | xcpretty
+  
+  # Build the project
+  - xcodebuild build -workspace $WORKSPACE -scheme $IOS_SCHEME -destination "$IOS_DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO | xcpretty
+  
+  # Run tests
+  - xcodebuild test -workspace $WORKSPACE -scheme $IOS_SCHEME -destination "$IOS_DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO | xcpretty
+
+# If no workspace exists, use project instead
+alternate_script:
+  - xcodebuild clean -project MaterialsAndPractices.xcodeproj -scheme $IOS_SCHEME -destination "$IOS_DESTINATION" | xcpretty
+  - xcodebuild build -project MaterialsAndPractices.xcodeproj -scheme $IOS_SCHEME -destination "$IOS_DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO | xcpretty
+  - xcodebuild test -project MaterialsAndPractices.xcodeproj -scheme $IOS_SCHEME -destination "$IOS_DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO | xcpretty
+
+cache:
+  directories:
+    - ~/Library/Caches/org.carthage.CarthageKit
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+branches:
+  only:
+    - main
+    - develop
+    - /^release\/.*$/
+    - /^hotfix\/.*$/
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
