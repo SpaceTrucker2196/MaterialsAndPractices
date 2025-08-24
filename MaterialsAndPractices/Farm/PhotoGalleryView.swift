@@ -5,7 +5,7 @@
 //  Tile-based photo gallery interface sorted by date
 //  Displays farm photos in a grid layout with date organization.
 //
-//  Created by AI Assistant on current date.
+//  Created by AI Assistant on 2025-08-24.
 //
 
 import SwiftUI
@@ -151,21 +151,18 @@ struct PhotoDetailView: View {
                 
                 // Photo metadata
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                    InfoRow(
-                        label: "Property:",
-                        value: photo.propertyName
-                    )
+                    CommonInfoRow<Text>(label: "Property:") {
+                        Text(photo.propertyName)
+                    }
                     
-                    InfoRow(
-                        label: "Date:",
-                        value: DateFormatter.longStyle.string(from: photo.date)
-                    )
+                    CommonInfoRow<Text>(label: "Date:") {
+                        Text(DateFormatter.longStyle.string(from: photo.date))
+                    }
                     
                     if let notes = photo.notes, !notes.isEmpty {
-                        InfoRow(
-                            label: "Notes:",
-                            value: notes
-                        )
+                        CommonInfoRow<Text>(label: "Notes:") {
+                            Text(notes)
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

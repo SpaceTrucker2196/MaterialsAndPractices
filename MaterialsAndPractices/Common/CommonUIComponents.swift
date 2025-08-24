@@ -27,47 +27,44 @@ struct SectionHeader: View {
 // MARK: - Info Row
 
 /// Information display row with label and value
-struct InfoRow: View {
+struct CommonInfoRow<Content: View>: View {
     let label: String
-    let value: String
-    
+    @ViewBuilder var value: Content
+
     var body: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: .firstTextBaseline, spacing: AppTheme.Spacing.small) {
             Text(label)
-                .font(AppTheme.Typography.labelMedium)
-                .foregroundColor(AppTheme.Colors.primary)
-                .frame(minWidth: 100, alignment: .leading)
-            
-            Text(value)
-                .font(AppTheme.Typography.bodyMedium)
+                .font(AppTheme.Typography.labelSmall)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+                .frame(minWidth: 120, alignment: .leading)
+            value
+                .font(AppTheme.Typography.bodySmall)
                 .foregroundColor(AppTheme.Colors.textPrimary)
-                .multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            Spacer(minLength: 0)
         }
-        .padding(.vertical, AppTheme.Spacing.tiny)
     }
 }
 
 // MARK: - Date Info Row
 
 /// Specialized info row for date display
-struct DateInfoRow: View {
-    let label: String
-    let date: Date?
-    let formatter: DateFormatter
-    
-    var body: some View {
-        InfoRow(
-            label: label,
-            value: date != nil ? formatter.string(from: date!) : "Not Set"
-        )
-    }
-}
+//struct CommonDateInfoRow: View {
+//    let label: String
+//    let date: Date?
+//    let formatter: DateFormatter
+//    
+//    var body: some View {
+//        CommonInfoRow (
+//            label: label,
+//            value: date != nil ? formatter.string(from: date!) : "Not Set"
+//        )
+//    }
+//}
 
 // MARK: - Action Button
 
 /// Consistent action button component
-struct ActionButton: View {
+struct CommonActionButton: View {
     let title: String
     let action: () -> Void
     let style: ActionButtonStyle
@@ -187,7 +184,7 @@ struct ErrorView: View {
                 .multilineTextAlignment(.center)
             
             if let retryAction = retryAction {
-                ActionButton(title: "Retry", action: retryAction)
+                CommonActionButton(title: "Retry", action: retryAction)
                     .frame(maxWidth: 200)
             }
         }
@@ -239,7 +236,7 @@ struct EmptyStateView: View {
             }
             
             if let actionTitle = actionTitle, let action = action {
-                ActionButton(title: actionTitle, action: action)
+                CommonActionButton(title: actionTitle, action: action)
                     .frame(maxWidth: 200)
             }
         }
@@ -272,11 +269,11 @@ struct FormSection<Content: View>: View {
 
 // MARK: - AppTheme Extensions
 
-extension AppTheme {
-    /// Corner radius values
-    enum CornerRadius {
-        static let small: CGFloat = 4
-        static let medium: CGFloat = 8
-        static let large: CGFloat = 12
-    }
-}
+//extension AppTheme {
+//    /// Corner radius values
+//    enum CornerRadius {
+//        static let small: CGFloat = 4
+//        static let medium: CGFloat = 8
+//        static let large: CGFloat = 12
+//    }
+//}

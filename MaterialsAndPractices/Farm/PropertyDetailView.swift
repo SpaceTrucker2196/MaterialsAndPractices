@@ -52,55 +52,42 @@ struct PropertyDetailView: View {
             SectionHeader(title: "Property Information")
             
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                InfoRow(
-                    label: "Display Name:",
-                    value: property.displayName ?? "N/A"
-                )
-                
-                InfoRow(
-                    label: "Total Acres:",
-                    value: "\(property.totalAcres, specifier: "%.1f")"
-                )
-                
+                CommonInfoRow(label: "Display Name:") {
+                    Text(property.displayName ?? "N/A")
+                }
+
+                CommonInfoRow(label: "Total Acres:") {
+                    Text("\(property.totalAcres, specifier: "%.1f")")
+                }
+
                 if isAdvancedMode {
-                    InfoRow(
-                        label: "Tillable Acres:",
-                        value: "\(property.tillableAcres, specifier: "%.1f")"
-                    )
-                    
-                    InfoRow(
-                        label: "Pasture Acres:",
-                        value: "\(property.pastureAcres, specifier: "%.1f")"
-                    )
-                    
-                    InfoRow(
-                        label: "Woodland Acres:",
-                        value: "\(property.woodlandAcres, specifier: "%.1f")"
-                    )
-                    
-                    InfoRow(
-                        label: "Wetland Acres:",
-                        value: "\(property.wetlandAcres, specifier: "%.1f")"
-                    )
-                    
-                    InfoRow(
-                        label: "Has Irrigation:",
-                        value: property.hasIrrigation ? "Yes" : "No"
-                    )
+                    CommonInfoRow(label: "Tillable Acres:") {
+                        Text("\(property.tillableAcres, specifier: "%.1f")")
+                    }
+                    CommonInfoRow(label: "Pasture Acres:") {
+                        Text("\(property.pastureAcres, specifier: "%.1f")")
+                    }
+                    CommonInfoRow(label: "Woodland Acres:") {
+                        Text("\(property.woodlandAcres, specifier: "%.1f")")
+                    }
+                    CommonInfoRow(label: "Wetland Acres:") {
+                        Text("\(property.wetlandAcres, specifier: "%.1f")")
+                    }
+                    CommonInfoRow(label: "Has Irrigation:") {
+                        Text(property.hasIrrigation ? "Yes" : "No")
+                    }
                 }
-                
+
                 if let county = property.county, let state = property.state {
-                    InfoRow(
-                        label: "Location:",
-                        value: "\(county), \(state)"
-                    )
+                    CommonInfoRow(label: "Location:") {
+                        Text("\(county), \(state)")
+                    }
                 }
-                
+
                 if let notes = property.notes, !notes.isEmpty {
-                    InfoRow(
-                        label: "Notes:",
-                        value: notes
-                    )
+                    CommonInfoRow(label: "Notes:") {
+                        Text(notes)
+                    }
                 }
             }
         }

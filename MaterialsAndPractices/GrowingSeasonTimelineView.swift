@@ -33,7 +33,7 @@ struct GrowingSeasonTimelineView: View {
         }
         .padding(AppTheme.Spacing.medium)
         .background(AppTheme.Colors.backgroundSecondary)
-        .cornerRadius(AppTheme.CornerRadius.medium)
+        .cornerRadius(3.0)
     }
     
     // MARK: - Header Section
