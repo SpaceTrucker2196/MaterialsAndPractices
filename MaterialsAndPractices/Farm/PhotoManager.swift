@@ -11,6 +11,7 @@
 import SwiftUI
 import UIKit
 import Photos
+import AVFoundation
 
 /// Manages photo capture, storage, and overlay functionality for farm management
 class PhotoManager: ObservableObject {
