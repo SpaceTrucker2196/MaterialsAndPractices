@@ -155,19 +155,19 @@ struct GrowDetailView: View {
             SectionHeader(title: "Timeline")
             
             VStack(alignment: .leading, spacing: AppTheme.Spacing.extraSmall) {
-                DateInfoRow(
+                GrowDateInfoRow(
                     label: "Planted Date:",
                     date: growViewModel.plantedDate,
                     formatter: itemFormatter
                 )
                 
-                DateInfoRow(
+                GrowDateInfoRow(
                     label: "Expected Harvest:",
                     date: growViewModel.harvestDate,
                     formatter: itemFormatter
                 )
                 
-                InfoRow(
+                GrowInfoRow(
                     label: "Remaining:",
                     value: "90 Days" // TODO: Calculate actual remaining days
                 )
@@ -194,7 +194,7 @@ struct GrowDetailView: View {
             WorkPractices(selectedGrow: growViewModel.grow)
                 .frame(maxWidth: .infinity)
             
-            ActionButton(
+            CommonActionButton(
                 title: "Perform",
                 action: addWorkPractice
             )
@@ -209,7 +209,7 @@ struct GrowDetailView: View {
             Amendments(selectedGrow: growViewModel.grow)
                 .frame(maxWidth: .infinity)
             
-            ActionButton(
+            CommonActionButton(
                 title: "Apply",
                 action: addAmendment
             )
@@ -221,7 +221,7 @@ struct GrowDetailView: View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             SectionHeader(title: "Harvest Safety")
             
-            ActionButton(
+            CommonActionButton(
                 title: "Safety Checklist",
                 action: { showingHarvestChecklist = true }
             )
@@ -249,18 +249,18 @@ struct GrowDetailView: View {
 // MARK: - Supporting View Components
 
 /// Reusable section header component with consistent styling
-private struct SectionHeader: View {
-    let title: String
-    
-    var body: some View {
-        Text(title)
-            .font(AppTheme.Typography.headlineMedium)
-            .foregroundColor(AppTheme.Colors.primary)
-    }
-}
+//private struct SectionHeader: View {
+//    let title: String
+//    
+//    var body: some View {
+//        Text(title)
+//            .font(AppTheme.Typography.headlineMedium)
+//            .foregroundColor(AppTheme.Colors.primary)
+//    }
+//}
 
 /// Reusable component for displaying label-value information pairs
-private struct InfoRow: View {
+private struct GrowInfoRow: View {
     let label: String
     let value: String
     
@@ -276,20 +276,20 @@ private struct InfoRow: View {
         }
     }
 }
-
-/// Specialized component for displaying date information with formatting
-private struct DateInfoRow: View {
+//
+///// Specialized component for displaying date information with formatting
+private struct GrowDateInfoRow: View {
     let label: String
     let date: Date
     let formatter: DateFormatter
     
     var body: some View {
-        InfoRow(label: label, value: formatter.string(from: date))
+        GrowInfoRow(label: label, value: formatter.string(from: date))
     }
 }
 
 /// Reusable metadata tag component for displaying categorical information
-private struct MetadataTag: View {
+private struct GrowMetadataTag: View {
     let text: String
     let backgroundColor: Color
     let textColor: Color
@@ -306,25 +306,25 @@ private struct MetadataTag: View {
 }
 
 /// Reusable action button component with consistent styling
-private struct ActionButton: View {
-    let title: String
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(AppTheme.Typography.headlineSmall)
-                .frame(maxWidth: .infinity)
-                .padding()
-        }
-        .background(AppTheme.Colors.primary.opacity(0.1))
-        .cornerRadius(AppTheme.CornerRadius.medium)
-        .overlay(
-            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
-                .stroke(AppTheme.Colors.primary, lineWidth: 1)
-        )
-    }
-}
+//private struct ActionButton: View {
+//    let title: String
+//    let action: () -> Void
+//    
+//    var body: some View {
+//        Button(action: action) {
+//            Text(title)
+//                .font(AppTheme.Typography.headlineSmall)
+//                .frame(maxWidth: .infinity)
+//                .padding()
+//        }
+//        .background(AppTheme.Colors.primary.opacity(0.1))
+//        .cornerRadius(AppTheme.CornerRadius.medium)
+//        .overlay(
+//            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+//                .stroke(AppTheme.Colors.primary, lineWidth: 1)
+//        )
+//    }
+//}
 
 struct GrowDetailView_Previews: PreviewProvider {
     static var previews: some View {

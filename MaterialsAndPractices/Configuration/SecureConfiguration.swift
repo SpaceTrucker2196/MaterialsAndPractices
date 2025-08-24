@@ -34,6 +34,7 @@ class SecureConfiguration {
         case debugLoggingEnabled = "debug_logging_enabled"
         case networkTimeoutSeconds = "network_timeout_seconds"
         case maxRetryAttempts = "max_retry_attempts"
+        case farmManagementAdvancedMode = "farm_management_advanced_mode"
         
         var defaultValue: String? {
             switch self {
@@ -43,6 +44,8 @@ class SecureConfiguration {
                 return "30"
             case .maxRetryAttempts:
                 return "3"
+            case .farmManagementAdvancedMode:
+                return "false"
             }
         }
     }
@@ -119,6 +122,11 @@ class SecureConfiguration {
             return 3
         }
         return retries
+    }
+    
+    /// Farm management advanced mode enabled status
+    var farmManagementAdvancedMode: Bool {
+        return getValue(for: .farmManagementAdvancedMode)?.lowercased() == "true"
     }
     
     // MARK: - Private Methods

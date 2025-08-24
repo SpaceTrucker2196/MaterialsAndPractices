@@ -48,6 +48,18 @@ struct ContentView: View {
                 .tabItem {
                     Label("Cultivars", systemImage: "list.bullet.rectangle")
                 }
+            
+            // Farm management tab
+            FarmListView()
+                .tabItem {
+                    Label("Farms", systemImage: "building.2.fill")
+                }
+            
+            // App settings tab
+            AppSettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gear")
+                }
         }
         .accentColor(AppTheme.Colors.primary)
     }

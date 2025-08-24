@@ -585,11 +585,11 @@ private struct CultivarRow: View {
                 
                 HStack(spacing: AppTheme.Spacing.extraSmall) {
                     if let season = cultivar.season, !season.isEmpty {
-                        MetadataTag(text: season, color: AppTheme.Colors.seasonIndicator)
+                        CultivarMetadataTag(text: season, color:AppTheme.Colors.seasonIndicator)
                     }
                     
                     if let hardyZone = cultivar.hardyZone, !hardyZone.isEmpty {
-                        MetadataTag(text: "Zone \(hardyZone)", color: AppTheme.Colors.zoneIndicator)
+                        CultivarMetadataTag(text: "Zone \(hardyZone)", color: AppTheme.Colors.zoneIndicator)
                     }
                 }
             }
@@ -602,7 +602,7 @@ private struct CultivarRow: View {
 
 /// Small tag component for displaying cultivar metadata (season, zone, etc.)
 /// Provides consistent styling and color coding for different metadata types
-private struct MetadataTag: View {
+private struct CultivarMetadataTag: View {
     let text: String
     let color: Color
     

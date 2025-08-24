@@ -234,6 +234,10 @@ struct PersistenceController {
             }
             
         }
+        
+        // Add sample farm management data for preview
+        addSampleFarmData(context: viewContext)
+        
         do {
             try viewContext.save()
         } catch {
@@ -264,4 +268,95 @@ struct PersistenceController {
             CultivarSeeder.seedCultivars(context: viewContext)
         })
     }
+}
+
+// MARK: - Sample Farm Data
+
+/// Adds sample farm management data for preview and testing
+private func addSampleFarmData(context: NSManagedObjectContext) {
+    // Create sample owner
+    let owner = Owner(context: context)
+    owner.id = UUID()
+    owner.name = "John Smith"
+    owner.email = "john.smith@example.com"
+    owner.phone = "555-123-4567"
+    owner.notes = "Local farm owner"
+    
+    // Create sample farmer
+    let farmer = Farmer(context: context)
+    farmer.id = UUID()
+    farmer.name = "Brady Johnson"
+    farmer.email = "brady@farmcorp.com"
+    farmer.phone = "555-987-6543"
+    farmer.orgName = "Johnson Farming Corp"
+    farmer.notes = "Experienced organic farmer"
+    
+    // Create sample properties
+    let property1 = Property(context: context)
+    property1.id = UUID()
+    property1.displayName = "North Field"
+    property1.county = "Trempealeau"
+    property1.state = "Wisconsin"
+    property1.totalAcres = 120.5
+    property1.tillableAcres = 100.0
+    property1.pastureAcres = 15.0
+    property1.woodlandAcres = 5.5
+    property1.wetlandAcres = 0.0
+    property1.hasIrrigation = true
+    property1.notes = "Prime farmland with excellent soil"
+    property1.owner = owner
+    
+    let property2 = Property(context: context)
+    property2.id = UUID()
+    property2.displayName = "South Pasture"
+    property2.county = "Trempealeau"
+    property2.state = "Wisconsin"
+    property2.totalAcres = 80.0
+    property2.tillableAcres = 20.0
+    property2.pastureAcres = 55.0
+    property2.woodlandAcres = 5.0
+    property2.wetlandAcres = 0.0
+    property2.hasIrrigation = false
+    property2.notes = "Primarily pasture land"
+    property2.owner = owner
+    
+    // Create sample fields
+    let field1 = Field(context: context)
+    field1.id = UUID()
+    field1.name = "Field A"
+    field1.acres = 40.0
+    field1.hasDrainTile = true
+    field1.notes = "High productivity field"
+    field1.property = property1
+    
+    let field2 = Field(context: context)
+    field2.id = UUID()
+    field2.name = "Field B"
+    field2.acres = 35.0
+    field2.hasDrainTile = false
+    field2.notes = "Organic field"
+    field2.property = property1
+    
+    // Create sample lease
+    let lease = Lease(context: context)
+    lease.id = UUID()
+    lease.startDate = Calendar.current.date(byAdding: .year, value: -1, to: Date())
+    lease.endDate = Calendar.current.date(byAdding: .year, value: 2, to: Date())
+    lease.leaseType = "cash"
+    lease.rentAmount = NSDecimalNumber(value: 250.00)
+    lease.rentFrequency = "annual"
+    lease.status = "active"
+    lease.notes = "Standard cash lease agreement"
+    lease.owner = owner
+    lease.farmer = farmer
+    lease.properties = NSSet(array: [property1])
+    
+    // Create sample infrastructure
+    let infrastructure = Infrastructure(context: context)
+    infrastructure.id = UUID()
+    infrastructure.type = "fence"
+    infrastructure.status = "good"
+    infrastructure.installDate = Calendar.current.date(byAdding: .year, value: -5, to: Date())
+    infrastructure.notes = "Perimeter fencing"
+    infrastructure.property = property1
 }
