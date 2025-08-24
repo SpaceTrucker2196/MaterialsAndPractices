@@ -19,6 +19,7 @@ struct PropertyDetailView: View {
     let isAdvancedMode: Bool
     @Environment(\.managedObjectContext) private var viewContext
     @State private var showingPhotoCapture = false
+    @State private var showingEditView = false
     
     // MARK: - Body
     
@@ -42,6 +43,16 @@ struct PropertyDetailView: View {
         }
         .navigationTitle(property.displayName ?? "Property Details")
         .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Edit") {
+                    showingEditView = true
+                }
+            }
+        }
+        .sheet(isPresented: $showingEditView) {
+            EditPropertyView(property: property, isPresented: $showingEditView)
+        }
     }
     
     // MARK: - Section Components

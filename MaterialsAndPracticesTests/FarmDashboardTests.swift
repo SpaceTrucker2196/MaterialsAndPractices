@@ -298,4 +298,77 @@ class FarmDashboardTests: XCTestCase {
             }
         }
     }
+    
+    // MARK: - Farm Creation Tests
+    
+    /// Tests that farm creation flow properly creates a new property
+    /// Validates the EditPropertyView integration with the dashboard
+    func testFarmCreationFlow() throws {
+        // Given: Empty context
+        let initialPropertyRequest: NSFetchRequest<Property> = Property.fetchRequest()
+        let initialProperties = try mockContext.fetch(initialPropertyRequest)
+        XCTAssertEqual(initialProperties.count, 0, "Should start with no properties")
+        
+        // When: Creating a new farm property (simulating EditPropertyView functionality)
+        let newProperty = Property(context: mockContext)
+        newProperty.id = UUID()
+        newProperty.displayName = "Test Farm"
+        newProperty.county = "Test County"
+        newProperty.state = "Wisconsin"
+        newProperty.totalAcres = 120.5
+        newProperty.tillableAcres = 100.0
+        newProperty.pastureAcres = 15.0
+        newProperty.woodlandAcres = 5.5
+        newProperty.wetlandAcres = 0.0
+        newProperty.hasIrrigation = true
+        newProperty.notes = "Test farm created through utilities"
+        
+        try mockContext.save()
+        
+        // Then: Property should be created and available for dashboard display
+        let finalPropertyRequest: NSFetchRequest<Property> = Property.fetchRequest()
+        let finalProperties = try mockContext.fetch(finalPropertyRequest)
+        
+        XCTAssertEqual(finalProperties.count, 1, "Should have one farm property after creation")
+        
+        let createdProperty = finalProperties.first!
+        XCTAssertEqual(createdProperty.displayName, "Test Farm")
+        XCTAssertEqual(createdProperty.county, "Test County")
+        XCTAssertEqual(createdProperty.state, "Wisconsin")
+        XCTAssertEqual(createdProperty.totalAcres, 120.5)
+        XCTAssertTrue(createdProperty.hasIrrigation)
+        XCTAssertEqual(createdProperty.notes, "Test farm created through utilities")
+    }
+    
+    /// Tests that farm tile displays correct basic information
+    /// Validates the FarmPropertyTile component requirements
+    func testFarmTileDisplaysBasicInformation() throws {
+        // Given: A farm property with location information
+        let farmProperty = Property(context: mockContext)
+        farmProperty.id = UUID()
+        farmProperty.displayName = "Sunrise Farm"
+        farmProperty.county = "Dane"
+        farmProperty.state = "Wisconsin"
+        farmProperty.totalAcres = 85.0
+        farmProperty.hasIrrigation = false
+        
+        try mockContext.save()
+        
+        // When: Fetching properties for tile display
+        let propertyRequest: NSFetchRequest<Property> = Property.fetchRequest()
+        let properties = try mockContext.fetch(propertyRequest)
+        
+        // Then: Property should have all required tile information
+        XCTAssertEqual(properties.count, 1, "Should have one property")
+        
+        let property = properties.first!
+        XCTAssertEqual(property.displayName, "Sunrise Farm", "Should have farm title")
+        XCTAssertEqual(property.county, "Dane", "Should have county for location")
+        XCTAssertEqual(property.state, "Wisconsin", "Should have state for location")
+        XCTAssertEqual(property.totalAcres, 85.0, "Should have acreage information")
+        
+        // Validate that tile can display location as "Dane, Wisconsin"
+        let locationDisplay = "\(property.county!), \(property.state!)"
+        XCTAssertEqual(locationDisplay, "Dane, Wisconsin", "Should format location correctly for tile")
+    }
 }

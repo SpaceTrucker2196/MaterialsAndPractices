@@ -18,6 +18,9 @@ struct EditPropertyView: View {
     @Binding var isPresented: Bool
     @Environment(\.managedObjectContext) private var viewContext
     
+    /// Optional property to edit - if nil, creates new property
+    let propertyToEdit: Property?
+    
     // Form data
     @State private var farmDisplayName = ""
     @State private var farmCounty = ""
@@ -29,6 +32,23 @@ struct EditPropertyView: View {
     @State private var farmWetlandAcres = ""
     @State private var farmHasIrrigation = false
     @State private var farmNotes = ""
+    
+    /// Computed property to determine if this is editing mode
+    private var isEditingMode: Bool {
+        propertyToEdit != nil
+    }
+    
+    /// Initialize for creating a new property
+    init(isPresented: Binding<Bool>) {
+        self._isPresented = isPresented
+        self.propertyToEdit = nil
+    }
+    
+    /// Initialize for editing an existing property
+    init(property: Property, isPresented: Binding<Bool>) {
+        self._isPresented = isPresented
+        self.propertyToEdit = property
+    }
     
     // MARK: - Body
     
@@ -101,8 +121,23 @@ struct EditPropertyView: View {
                         .frame(minHeight: 100)
                 }
             }
-            .navigationTitle("Create New Farm")
+            .navigationTitle(isEditingMode ? "Edit Farm" : "Create New Farm")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                // Populate fields when editing existing property
+                if let property = propertyToEdit {
+                    farmDisplayName = property.displayName ?? ""
+                    farmCounty = property.county ?? ""
+                    farmState = property.state ?? ""
+                    farmTotalAcres = String(property.totalAcres)
+                    farmTillableAcres = String(property.tillableAcres)
+                    farmPastureAcres = String(property.pastureAcres)
+                    farmWoodlandAcres = String(property.woodlandAcres)
+                    farmWetlandAcres = String(property.wetlandAcres)
+                    farmHasIrrigation = property.hasIrrigation
+                    farmNotes = property.notes ?? ""
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
@@ -111,7 +146,7 @@ struct EditPropertyView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Create") {
+                    Button(isEditingMode ? "Save" : "Create") {
                         saveProperty()
                     }
                     .disabled(farmDisplayName.isEmpty)
@@ -122,20 +157,30 @@ struct EditPropertyView: View {
     
     // MARK: - Methods
     
-    /// Saves the new property to Core Data
+    /// Saves the property to Core Data (creates new or updates existing)
     private func saveProperty() {
-        let newProperty = Property(context: viewContext)
-        newProperty.id = UUID()
-        newProperty.displayName = farmDisplayName.isEmpty ? nil : farmDisplayName
-        newProperty.county = farmCounty.isEmpty ? nil : farmCounty
-        newProperty.state = farmState.isEmpty ? nil : farmState
-        newProperty.totalAcres = Double(farmTotalAcres) ?? 0.0
-        newProperty.tillableAcres = Double(farmTillableAcres) ?? 0.0
-        newProperty.pastureAcres = Double(farmPastureAcres) ?? 0.0
-        newProperty.woodlandAcres = Double(farmWoodlandAcres) ?? 0.0
-        newProperty.wetlandAcres = Double(farmWetlandAcres) ?? 0.0
-        newProperty.hasIrrigation = farmHasIrrigation
-        newProperty.notes = farmNotes.isEmpty ? nil : farmNotes
+        let targetProperty: Property
+        
+        if let existingProperty = propertyToEdit {
+            // Update existing property
+            targetProperty = existingProperty
+        } else {
+            // Create new property
+            targetProperty = Property(context: viewContext)
+            targetProperty.id = UUID()
+        }
+        
+        // Update property fields
+        targetProperty.displayName = farmDisplayName.isEmpty ? nil : farmDisplayName
+        targetProperty.county = farmCounty.isEmpty ? nil : farmCounty
+        targetProperty.state = farmState.isEmpty ? nil : farmState
+        targetProperty.totalAcres = Double(farmTotalAcres) ?? 0.0
+        targetProperty.tillableAcres = Double(farmTillableAcres) ?? 0.0
+        targetProperty.pastureAcres = Double(farmPastureAcres) ?? 0.0
+        targetProperty.woodlandAcres = Double(farmWoodlandAcres) ?? 0.0
+        targetProperty.wetlandAcres = Double(farmWetlandAcres) ?? 0.0
+        targetProperty.hasIrrigation = farmHasIrrigation
+        targetProperty.notes = farmNotes.isEmpty ? nil : farmNotes
         
         do {
             try viewContext.save()
