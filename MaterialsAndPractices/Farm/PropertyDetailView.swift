@@ -179,12 +179,6 @@ struct PropertyDetailView: View {
             }
         }
     }
-                Text("No infrastructure recorded")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-            }
-        }
-    }
     
     /// Section displaying leases (advanced mode only)
     private var leasesSection: some View {
@@ -205,108 +199,108 @@ struct PropertyDetailView: View {
 }
 
 /// Helper view for field information rows
-struct FieldRow: View {
-    let field: Field
-    
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                Text(field.name ?? "Unknown Field")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                
-                Text("\(field.acres, specifier: "%.1f") acres")
-                    .font(AppTheme.Typography.bodySmall)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-            }
-            
-            Spacer()
-            
-            if field.hasDrainTile {
-                Image(systemName: "drop.triangle.fill")
-                    .foregroundColor(AppTheme.Colors.info)
-                    .font(AppTheme.Typography.labelMedium)
-            }
-        }
-        .padding(.vertical, AppTheme.Spacing.extraSmall)
-    }
-}
-
-/// Helper view for infrastructure information rows
-struct InfrastructureRow: View {
-    let infrastructure: Infrastructure
-    
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                Text(infrastructure.type?.capitalized ?? "Unknown Type")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                
-                Text(infrastructure.status?.capitalized ?? "Unknown Status")
-                    .font(AppTheme.Typography.bodySmall)
-                    .foregroundColor(statusColor(for: infrastructure.status))
-            }
-            
-            Spacer()
-        }
-        .padding(.vertical, AppTheme.Spacing.extraSmall)
-    }
-    
-    private func statusColor(for status: String?) -> Color {
-        switch status?.lowercased() {
-        case "good":
-            return AppTheme.Colors.success
-        case "needsrepair":
-            return AppTheme.Colors.warning
-        case "outofservice":
-            return AppTheme.Colors.error
-        default:
-            return AppTheme.Colors.textSecondary
-        }
-    }
-}
+//struct FieldRow: View {
+//    let field: Field
+//    
+//    var body: some View {
+//        HStack {
+//            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+//                Text(field.name ?? "Unknown Field")
+//                    .font(AppTheme.Typography.bodyMedium)
+//                    .foregroundColor(AppTheme.Colors.textPrimary)
+//                
+//                Text("\(field.acres, specifier: "%.1f") acres")
+//                    .font(AppTheme.Typography.bodySmall)
+//                    .foregroundColor(AppTheme.Colors.textSecondary)
+//            }
+//            
+//            Spacer()
+//            
+//            if field.hasDrainTile {
+//                Image(systemName: "drop.triangle.fill")
+//                    .foregroundColor(AppTheme.Colors.info)
+//                    .font(AppTheme.Typography.labelMedium)
+//            }
+//        }
+//        .padding(.vertical, AppTheme.Spacing.extraSmall)
+//    }
+//}
+//
+///// Helper view for infrastructure information rows
+//struct InfrastructureRow: View {
+//    let infrastructure: Infrastructure
+//    
+//    var body: some View {
+//        HStack {
+//            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+//                Text(infrastructure.type?.capitalized ?? "Unknown Type")
+//                    .font(AppTheme.Typography.bodyMedium)
+//                    .foregroundColor(AppTheme.Colors.textPrimary)
+//                
+//                Text(infrastructure.status?.capitalized ?? "Unknown Status")
+//                    .font(AppTheme.Typography.bodySmall)
+//                    .foregroundColor(statusColor(for: infrastructure.status))
+//            }
+//            
+//            Spacer()
+//        }
+//        .padding(.vertical, AppTheme.Spacing.extraSmall)
+//    }
+//    
+//    private func statusColor(for status: String?) -> Color {
+//        switch status?.lowercased() {
+//        case "good":
+//            return AppTheme.Colors.success
+//        case "needsrepair":
+//            return AppTheme.Colors.warning
+//        case "outofservice":
+//            return AppTheme.Colors.error
+//        default:
+//            return AppTheme.Colors.textSecondary
+//        }
+//    }
+//}
 
 /// Helper view for lease information rows
-struct LeaseRow: View {
-    let lease: Lease
-    
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                Text(lease.leaseType?.capitalized ?? "Unknown Type")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                
-                if let startDate = lease.startDate {
-                    Text("Started: \(startDate, style: .date)")
-                        .font(AppTheme.Typography.bodySmall)
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                }
-                
-                Text(lease.status?.capitalized ?? "Unknown Status")
-                    .font(AppTheme.Typography.bodySmall)
-                    .foregroundColor(leaseStatusColor(for: lease.status))
-            }
-            
-            Spacer()
-        }
-        .padding(.vertical, AppTheme.Spacing.extraSmall)
-    }
-    
-    private func leaseStatusColor(for status: String?) -> Color {
-        switch status?.lowercased() {
-        case "active":
-            return AppTheme.Colors.success
-        case "expired":
-            return AppTheme.Colors.error
-        case "pending":
-            return AppTheme.Colors.warning
-        default:
-            return AppTheme.Colors.textSecondary
-        }
-    }
-}
+//struct LeaseRow: View {
+//    let lease: Lease
+//    
+//    var body: some View {
+//        HStack {
+//            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+//                Text(lease.leaseType?.capitalized ?? "Unknown Type")
+//                    .font(AppTheme.Typography.bodyMedium)
+//                    .foregroundColor(AppTheme.Colors.textPrimary)
+//                
+//                if let startDate = lease.startDate {
+//                    Text("Started: \(startDate, style: .date)")
+//                        .font(AppTheme.Typography.bodySmall)
+//                        .foregroundColor(AppTheme.Colors.textSecondary)
+//                }
+//                
+//                Text(lease.status?.capitalized ?? "Unknown Status")
+//                    .font(AppTheme.Typography.bodySmall)
+//                    .foregroundColor(leaseStatusColor(for: lease.status))
+//            }
+//            
+//            Spacer()
+//        }
+//        .padding(.vertical, AppTheme.Spacing.extraSmall)
+//    }
+//    
+//    private func leaseStatusColor(for status: String?) -> Color {
+//        switch status?.lowercased() {
+//        case "active":
+//            return AppTheme.Colors.success
+//        case "expired":
+//            return AppTheme.Colors.error
+//        case "pending":
+//            return AppTheme.Colors.warning
+//        default:
+//            return AppTheme.Colors.textSecondary
+//        }
+//    }
+//}
 
 // MARK: - Preview Provider
 

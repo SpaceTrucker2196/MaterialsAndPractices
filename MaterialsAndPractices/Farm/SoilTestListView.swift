@@ -31,7 +31,7 @@ struct SoilTestListView: View {
             }
         }
         .navigationTitle("Soil Tests")
-        .navigationSubtitle(field.name ?? "Field")
+        //.navigationSubtitle(field.name ?? "Field")
     }
 }
 

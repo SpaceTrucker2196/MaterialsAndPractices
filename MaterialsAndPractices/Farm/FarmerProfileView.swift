@@ -32,7 +32,7 @@ struct FarmerProfileView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
+            ScrollView(.vertical, showsIndicators: true) {
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
                     // Profile photo section
                     profilePhotoSection
@@ -47,32 +47,25 @@ struct FarmerProfileView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Farmer Profile")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(isEditing ? "Save" : "Edit") {
-                        if isEditing {
-                            saveFarmerProfile()
-                        } else {
-                            enterEditMode()
-                        }
+            .navigationBarTitle("Farmer Profile", displayMode: .large)
+            .navigationBarItems(
+                leading: isEditing ? Button("Cancel") {
+                    cancelEditing()
+                } : nil,
+                trailing: Button(isEditing ? "Save" : "Edit") {
+                    if isEditing {
+                        saveFarmerProfile()
+                    } else {
+                        enterEditMode()
                     }
                 }
-                
-                if isEditing {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel") {
-                            cancelEditing()
-                        }
-                    }
-                }
-            }
+            )
         }
         .onAppear {
             loadFarmerProfile()
         }
         .sheet(isPresented: $showingPhotoPicker) {
-            PhotoCaptureView(farmer: farmer, isPresented: $showingPhotoPicker)
+         //   PhotoCaptureView(farmer: farmer, isPresented: $showingPhotoPicker)
         }
     }
     
@@ -289,7 +282,7 @@ struct FarmerProfileImage: View {
             Image(systemName: "person.fill")
                 .font(.system(size: 50))
                 .foregroundColor(AppTheme.Colors.primary)
-                .background(AppTheme.Colors.surfaceVariant)
+                .background(AppTheme.Colors.backgroundSecondary)
         }
     }
 }

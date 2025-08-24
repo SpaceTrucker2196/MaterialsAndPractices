@@ -16,10 +16,10 @@ import CoreData
 /// Provides list interface with add, delete, and navigation capabilities
 struct CurrentGrowsView: View {
     // MARK: - Properties
-    
+
     @State private var showCreateGrow = false
     @Environment(\.managedObjectContext) private var viewContext
-    
+
     @FetchRequest(
         entity: Grow.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \Grow.title, ascending: true)],
@@ -28,7 +28,7 @@ struct CurrentGrowsView: View {
     private var grows: FetchedResults<Grow>
 
     // MARK: - Body
-    
+
     var body: some View {
         NavigationView {
             List {
@@ -40,24 +40,19 @@ struct CurrentGrowsView: View {
                     .onDelete(perform: deleteItems)
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        showCreateGrow = true
-                    }) {
-                        Label("Add New Grow", systemImage: "plus")
-                    }
-                }
-            }
             .navigationTitle("Growing Dashboard")
+            // Disambiguate toolbar by supplying explicit ToolbarContent
+            .toolbar {
+                AddGrowToolbar(showCreateGrow: $showCreateGrow)
+            }
         }
         .sheet(isPresented: $showCreateGrow) {
             EnhancedEditGrowView(isPresented: $showCreateGrow)
         }
     }
-    
+
     // MARK: - Methods
-    
+
     /// Deletes selected grow items from Core Data
     /// Handles Core Data save operation with error handling
     /// - Parameter offsets: IndexSet of items to delete
@@ -75,6 +70,22 @@ struct CurrentGrowsView: View {
     }
 }
 
+/// Dedicated toolbar content to avoid ambiguity with any custom .toolbar extensions
+private struct AddGrowToolbar: ToolbarContent {
+    @Binding var showCreateGrow: Bool
+
+    var body: some ToolbarContent {
+        // Use SwiftUI.ToolbarItem explicitly to avoid symbol collisions
+        SwiftUI.ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                showCreateGrow = true
+            } label: {
+                Label("Add New Grow", systemImage: "plus")
+            }
+        }
+    }
+}
+
 /// Date formatter for consistent date display in grow rows
 private let itemFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -87,11 +98,11 @@ private let itemFormatter: DateFormatter = {
 /// Provides comprehensive grow details with navigation to detail view
 struct GrowRow: View {
     // MARK: - Properties
-    
+
     let grow: Grow
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         NavigationLink(
             destination: GrowDetailView(growViewModel: GrowDetailViewModel(grow: grow))
@@ -99,28 +110,28 @@ struct GrowRow: View {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
                 HStack(alignment: .center, spacing: AppTheme.Spacing.medium) {
                     Grow.Image(grow: grow)
-                    
+
                     VStack(alignment: .leading, spacing: AppTheme.Spacing.extraSmall) {
                         // Grow title with fallback
                         Text(grow.title ?? "My Grow")
                             .font(AppTheme.Typography.headlineMedium)
-                            .foregroundColor(AppTheme.Colors.textPrimary)
+                            .foregroundStyle(AppTheme.Colors.textPrimary)
                             .lineLimit(nil)
-                        
+
                         // Cultivar information section
                         cultivarInfoSection
-                        
+
                         // Field and farm information section
                         fieldAndFarmInfoSection
-                        
+
                         // Planted date information section
                         plantedDateSection
-                        
+
                         // Location information section
                         locationSection
                     }
                     .padding(.leading, AppTheme.Spacing.tiny)
-                    
+
                     Spacer()
                 }
                 .padding([.top, .leading, .bottom], AppTheme.Spacing.extraSmall)
@@ -128,81 +139,81 @@ struct GrowRow: View {
             .padding(.all, AppTheme.Spacing.extraSmall)
         }
     }
-    
+
     // MARK: - Section Components
-    
+
     /// Section displaying cultivar name with appropriate styling
     private var cultivarInfoSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
             Text("Cultivar")
                 .font(AppTheme.Typography.labelMedium)
-                .foregroundColor(AppTheme.Colors.primary)
-            
+                .foregroundStyle(AppTheme.Colors.primary)
+
             Text(grow.cultivar?.name ?? "No Cultivar Selected")
                 .font(AppTheme.Typography.bodyMedium)
-                .foregroundColor(AppTheme.Colors.textPrimary)
+                .foregroundStyle(AppTheme.Colors.textPrimary)
         }
     }
-    
+
     /// Section displaying planted date with proper formatting
     private var plantedDateSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
             Text("Planted Date")
                 .font(AppTheme.Typography.labelMedium)
-                .foregroundColor(AppTheme.Colors.primary)
-            
+                .foregroundStyle(AppTheme.Colors.primary)
+
             Text(plantedDateText)
                 .font(AppTheme.Typography.bodyMedium)
-                .foregroundColor(AppTheme.Colors.textPrimary)
+                .foregroundStyle(AppTheme.Colors.textPrimary)
         }
     }
-    
+
     /// Section displaying location information
     private var locationSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
             Text("Location")
                 .font(AppTheme.Typography.labelMedium)
-                .foregroundColor(AppTheme.Colors.primary)
-            
+                .foregroundStyle(AppTheme.Colors.primary)
+
             Text(grow.locationName ?? "")
                 .font(AppTheme.Typography.bodyMedium)
-                .foregroundColor(AppTheme.Colors.textPrimary)
+                .foregroundStyle(AppTheme.Colors.textPrimary)
         }
     }
-    
+
     /// Section displaying field and farm information
     private var fieldAndFarmInfoSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
             if let field = grow.field {
                 Text("Field & Farm")
                     .font(AppTheme.Typography.labelMedium)
-                    .foregroundColor(AppTheme.Colors.primary)
-                
+                    .foregroundStyle(AppTheme.Colors.primary)
+
                 HStack {
                     Text("\(field.property?.displayName ?? "Unknown Farm") - \(field.name ?? "Unknown Field")")
                         .font(AppTheme.Typography.bodyMedium)
-                        .foregroundColor(AppTheme.Colors.textPrimary)
-                    
+                        .foregroundStyle(AppTheme.Colors.textPrimary)
+
                     if field.hasDrainTile {
                         Image(systemName: "drop.fill")
-                            .foregroundColor(AppTheme.Colors.info)
+                            .foregroundStyle(AppTheme.Colors.info)
                             .font(.caption)
                     }
                 }
             } else {
                 Text("Field & Farm")
                     .font(AppTheme.Typography.labelMedium)
-                    .foregroundColor(AppTheme.Colors.primary)
-                
+                    .foregroundStyle(AppTheme.Colors.primary)
+
                 Text("No field assigned")
                     .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .foregroundStyle(AppTheme.Colors.textSecondary)
             }
         }
     }
-    
+
     // MARK: - Computed Properties
-    
+
     /// Formatted planted date text with fallback for nil dates
     private var plantedDateText: String {
         guard let plantedDate = grow.plantedDate else {

@@ -84,66 +84,66 @@ extension GenericPhotoCaptureView {
 }
 
 /// Photo capture view specifically for farmer profiles
-struct PhotoCaptureView: View {
-    let farmer: Farmer?
-    @Binding var isPresented: Bool
-    @State private var showingImagePicker = false
-    @State private var showingPhotoLibrary = false
-    
-    var body: some View {
-        NavigationView {
-            VStack(spacing: AppTheme.Spacing.large) {
-                Text("Add Profile Photo")
-                    .font(AppTheme.Typography.headlineLarge)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                
-                VStack(spacing: AppTheme.Spacing.medium) {
-                    Button(action: {
-                        showingImagePicker = true
-                    }) {
-                        Label("Take Photo", systemImage: "camera.fill")
-                            .font(AppTheme.Typography.bodyLarge)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(AppTheme.Colors.primary)
-                            .cornerRadius(AppTheme.CornerRadius.medium)
-                    }
-                    
-                    Button(action: {
-                        showingPhotoLibrary = true
-                    }) {
-                        Label("Choose from Library", systemImage: "photo.fill")
-                            .font(AppTheme.Typography.bodyLarge)
-                            .foregroundColor(AppTheme.Colors.primary)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(AppTheme.Colors.backgroundSecondary)
-                            .cornerRadius(AppTheme.CornerRadius.medium)
-                    }
-                }
-                
-                Spacer()
-            }
-            .padding()
-            .navigationTitle("Profile Photo")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        isPresented = false
-                    }
-                }
-            }
-        }
-        .sheet(isPresented: $showingImagePicker) {
-            GenericPhotoCaptureView(farmer: farmer, isPresented: $showingImagePicker)
-        }
-        .sheet(isPresented: $showingPhotoLibrary) {
-            PhotoLibraryPicker(farmer: farmer, isPresented: $showingPhotoLibrary)
-        }
-    }
-}
+//struct PhotoCaptureView: View {
+//    let farmer: Farmer?
+//    @Binding var isPresented: Bool
+//    @State private var showingImagePicker = false
+//    @State private var showingPhotoLibrary = false
+//    
+//    var body: some View {
+//        NavigationView {
+//            VStack(spacing: AppTheme.Spacing.large) {
+//                Text("Add Profile Photo")
+//                    .font(AppTheme.Typography.headlineLarge)
+//                    .foregroundColor(AppTheme.Colors.textPrimary)
+//                
+//                VStack(spacing: AppTheme.Spacing.medium) {
+//                    Button(action: {
+//                        showingImagePicker = true
+//                    }) {
+//                        Label("Take Photo", systemImage: "camera.fill")
+//                            .font(AppTheme.Typography.bodyLarge)
+//                            .foregroundColor(.white)
+//                            .frame(maxWidth: .infinity)
+//                            .padding()
+//                            .background(AppTheme.Colors.primary)
+//                            .cornerRadius(AppTheme.CornerRadius.medium)
+//                    }
+//                    
+//                    Button(action: {
+//                        showingPhotoLibrary = true
+//                    }) {
+//                        Label("Choose from Library", systemImage: "photo.fill")
+//                            .font(AppTheme.Typography.bodyLarge)
+//                            .foregroundColor(AppTheme.Colors.primary)
+//                            .frame(maxWidth: .infinity)
+//                            .padding()
+//                            .background(AppTheme.Colors.backgroundSecondary)
+//                            .cornerRadius(AppTheme.CornerRadius.medium)
+//                    }
+//                }
+//                
+//                Spacer()
+//            }
+//            .padding()
+//            .navigationTitle("Profile Photo")
+//            .navigationBarTitleDisplayMode(.inline)
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarLeading) {
+//                    Button("Cancel") {
+//                        isPresented = false
+//                    }
+//                }
+//            }
+//        }
+//        .sheet(isPresented: $showingImagePicker) {
+//            GenericPhotoCaptureView(farmer: farmer, isPresented: $showingImagePicker)
+//        }
+//        .sheet(isPresented: $showingPhotoLibrary) {
+//            PhotoLibraryPicker(farmer: farmer, isPresented: $showingPhotoLibrary)
+//        }
+//    }
+//}
 
 /// Photo library picker for selecting existing photos
 struct PhotoLibraryPicker: UIViewControllerRepresentable {

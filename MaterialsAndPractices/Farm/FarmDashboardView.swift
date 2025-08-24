@@ -33,6 +33,9 @@ struct FarmDashboardView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Lease.startDate, ascending: false)]
     ) var leases: FetchedResults<Lease>
     
+    @State private var selectedProperty: Property?
+    @State private var showingPropertyDetail = false
+    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -56,6 +59,11 @@ struct FarmDashboardView: View {
             }
             .navigationTitle("Farm Dashboard")
             .navigationBarTitleDisplayMode(.large)
+            .sheet(isPresented: $showingPropertyDetail) {
+                if let property = selectedProperty {
+                    PropertyDetailView(property: property, isAdvancedMode: true)
+                }
+            }
         }
     }
     
@@ -142,10 +150,27 @@ struct FarmDashboardView: View {
                     systemImage: "building.2",
                     actionTitle: "Add Farm"
                 ) {
-                    // Navigation to create farm
+                    createNewFarm()
                 }
                 .frame(height: 120)
             }
+        }
+    }
+    
+    private func createNewFarm() {
+        let newProperty = Property(context: viewContext)
+        newProperty.id = UUID()
+        newProperty.displayName = "New Farm"
+       // newProperty.dateAdded = Date()
+        newProperty.totalAcres = 0.0
+        newProperty.hasIrrigation = false
+        
+        do {
+            try viewContext.save()
+            selectedProperty = newProperty
+            showingPropertyDetail = true
+        } catch {
+            print("Error creating new farm property: \(error)")
         }
     }
     
@@ -245,11 +270,11 @@ struct FarmDashboardView: View {
                 }
                 
                 QuickActionTile(
-                    title: "Safety Check",
-                    icon: "checkmark.shield",
+                    title: "Add Farm",
+                    icon: "building.2.fill",
                     color: AppTheme.Colors.compliance
                 ) {
-                    // Navigate to safety checklist
+                    createNewFarm()
                 }
             }
         }
