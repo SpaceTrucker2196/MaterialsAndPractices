@@ -138,6 +138,7 @@
         <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="orgName" optional="YES" attributeType="String"/>
         <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="profilePhotoData" optional="YES" attributeType="Binary"/>
         <relationship name="leases" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Lease" inverseName="farmer" inverseEntity="Lease"/>
         <fetchIndex name="byIdIndex">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
