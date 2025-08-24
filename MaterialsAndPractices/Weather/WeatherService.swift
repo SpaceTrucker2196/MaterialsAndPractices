@@ -13,6 +13,8 @@ import Foundation
 import Combine
 import CoreLocation
 import os.log
+import WeatherKit
+
 
 /// Enhanced weather service with WeatherKit and NOAA fallback
 /// Automatically uses the best available weather service based on iOS version

@@ -30,6 +30,11 @@
 		1F4F48C2257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48C0257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld */; };
 		1F4F48CD257DB4C4005E559D /* MaterialsAndPracticesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48CC257DB4C4005E559D /* MaterialsAndPracticesTests.swift */; };
 		1F4F48D8257DB4C4005E559D /* MaterialsAndPracticesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48D7257DB4C4005E559D /* MaterialsAndPracticesUITests.swift */; };
+		1F5848CE2E5A9EE00031E068 /* WeatherKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F5848CD2E5A9EE00031E068 /* WeatherKit.framework */; };
+		1F5848D02E5A9F340031E068 /* WeatherKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5848CF2E5A9F340031E068 /* WeatherKitService.swift */; };
+		1F5848D22E5AA2F30031E068 /* SeasonMoonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5848D12E5AA2F30031E068 /* SeasonMoonView.swift */; };
+		1F5848D42E5AA3640031E068 /* SeasonCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5848D32E5AA3640031E068 /* SeasonCalculator.swift */; };
+		1F5848D62E5AA3840031E068 /* MoonPhaseCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5848D52E5AA3840031E068 /* MoonPhaseCalculator.swift */; };
 		1F812225258281EC007394D0 /* WorkPractices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812224258281EC007394D0 /* WorkPractices.swift */; };
 		1F81222A258295D0007394D0 /* WorkPracticeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812229258295D0007394D0 /* WorkPracticeDetailView.swift */; };
 		1F812235258298EC007394D0 /* WorkViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812234258298EC007394D0 /* WorkViews.swift */; };
@@ -92,6 +97,11 @@
 		1F4F48D3257DB4C4005E559D /* MaterialsAndPracticesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MaterialsAndPracticesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F4F48D7257DB4C4005E559D /* MaterialsAndPracticesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsAndPracticesUITests.swift; sourceTree = "<group>"; };
 		1F4F48D9257DB4C4005E559D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1F5848CD2E5A9EE00031E068 /* WeatherKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WeatherKit.framework; path = System/Library/Frameworks/WeatherKit.framework; sourceTree = SDKROOT; };
+		1F5848CF2E5A9F340031E068 /* WeatherKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherKitService.swift; sourceTree = "<group>"; };
+		1F5848D12E5AA2F30031E068 /* SeasonMoonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonMoonView.swift; sourceTree = "<group>"; };
+		1F5848D32E5AA3640031E068 /* SeasonCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonCalculator.swift; sourceTree = "<group>"; };
+		1F5848D52E5AA3840031E068 /* MoonPhaseCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoonPhaseCalculator.swift; sourceTree = "<group>"; };
 		1F812224258281EC007394D0 /* WorkPractices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkPractices.swift; sourceTree = "<group>"; };
 		1F812229258295D0007394D0 /* WorkPracticeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkPracticeDetailView.swift; sourceTree = "<group>"; };
 		1F812234258298EC007394D0 /* WorkViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkViews.swift; sourceTree = "<group>"; };
@@ -110,6 +120,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F5848CE2E5A9EE00031E068 /* WeatherKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,6 +152,10 @@
 		1F2E922F2E5A2BE4003962BA /* Weather */ = {
 			isa = PBXGroup;
 			children = (
+				1F5848D52E5AA3840031E068 /* MoonPhaseCalculator.swift */,
+				1F5848D32E5AA3640031E068 /* SeasonCalculator.swift */,
+				1F5848D12E5AA2F30031E068 /* SeasonMoonView.swift */,
+				1F5848CF2E5A9F340031E068 /* WeatherKitService.swift */,
 				1F2E92292E5A2BE4003962BA /* DaylightChart.swift */,
 				1F2E922A2E5A2BE4003962BA /* LocationManager.swift */,
 				1F2E922B2E5A2BE4003962BA /* WeatherDemonstration.swift */,
@@ -166,6 +181,7 @@
 				1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */,
 				1F4F48CB257DB4C4005E559D /* MaterialsAndPracticesTests */,
 				1F4F48D6257DB4C4005E559D /* MaterialsAndPracticesUITests */,
+				1F5848CC2E5A9EE00031E068 /* Frameworks */,
 				1F4F48B3257DB4C2005E559D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -229,6 +245,14 @@
 				1F4F48D9257DB4C4005E559D /* Info.plist */,
 			);
 			path = MaterialsAndPracticesUITests;
+			sourceTree = "<group>";
+		};
+		1F5848CC2E5A9EE00031E068 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1F5848CD2E5A9EE00031E068 /* WeatherKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		1F81223C25829E33007394D0 /* Practice */ = {
@@ -399,13 +423,16 @@
 				1F4F48BF257DB4C4005E559D /* Persistence.swift in Sources */,
 				1F2E92262E5A1FA2003962BA /* AppTheme.swift in Sources */,
 				1F06C21E257FEF7E006F8C83 /* AmendmentDetail.swift in Sources */,
+				1F5848D42E5AA3640031E068 /* SeasonCalculator.swift in Sources */,
 				1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */,
 				1F81222A258295D0007394D0 /* WorkPracticeDetailView.swift in Sources */,
 				1F812225258281EC007394D0 /* WorkPractices.swift in Sources */,
+				1F5848D02E5A9F340031E068 /* WeatherKitService.swift in Sources */,
 				1FEA2B79257FCE1D00A6D9DD /* Amendments.swift in Sources */,
 				1FEA2B6E257F440900A6D9DD /* AmendmentViews.swift in Sources */,
 				1F4F48C2257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld in Sources */,
 				1F812235258298EC007394D0 /* WorkViews.swift in Sources */,
+				1F5848D22E5AA2F30031E068 /* SeasonMoonView.swift in Sources */,
 				1FD918352E595AB900D18920 /* CultivarViews.swift in Sources */,
 				1FD918362E595AB900D18920 /* CultivarSeeder.swift in Sources */,
 				1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */,
@@ -424,6 +451,7 @@
 				1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */,
 				1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */,
 				1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */,
+				1F5848D62E5AA3840031E068 /* MoonPhaseCalculator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,10 +610,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"MaterialsAndPractices/Preview Content\"";
-				DEVELOPMENT_TEAM = U3Z59VXPUB;
+				DEVELOPMENT_TEAM = QYJ6FSH533;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = MaterialsAndPractices/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -604,10 +633,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"MaterialsAndPractices/Preview Content\"";
-				DEVELOPMENT_TEAM = U3Z59VXPUB;
+				DEVELOPMENT_TEAM = QYJ6FSH533;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = MaterialsAndPractices/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

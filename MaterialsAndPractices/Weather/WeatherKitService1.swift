@@ -20,8 +20,7 @@ import os.log
 class WeatherKitService: ObservableObject {
     // MARK: - Properties
     
-    private let weatherService = WeatherService()
-    private let wkService = WeatherKit.WeatherService()
+    private let weatherService = WeatherService.shared
     private var cancellables = Set<AnyCancellable>()
     private let logger = Logger(subsystem: "MaterialsAndPractices", category: "WeatherKitService")
     
@@ -33,11 +32,11 @@ class WeatherKitService: ObservableObject {
     
     /// Gets configuration values from secure configuration manager
     private var timeout: TimeInterval {
-        SecureConfiguration.shared.networkTimeoutSeconds
+        return SecureConfiguration.shared.networkTimeoutSeconds
     }
     
     private var maxRetries: Int {
-        SecureConfiguration.shared.maxRetryAttempts
+        return SecureConfiguration.shared.maxRetryAttempts
     }
     
     // MARK: - Public Methods
@@ -55,12 +54,12 @@ class WeatherKitService: ObservableObject {
             return
         }
         
-        logger.info("Starting weather fetch for location: \(location.coordinate.latitude), \(location.coordinate.longitude)")
+        logger.info("Starting weather fetch for location: \\(location.coordinate.latitude), \\(location.coordinate.longitude)")
         
         isLoading = true
         error = nil
         
-        Task { @MainActor in
+        Task {
             await fetchWeatherData(for: location)
         }
     }
@@ -79,35 +78,43 @@ class WeatherKitService: ObservableObject {
     /// - Parameter location: Location to fetch weather for
     @MainActor
     private func fetchWeatherData(for location: CLLocation) async {
-        defer { isLoading = false }
         do {
             logger.debug("Requesting weather data from WeatherKit")
-
-            // Call Apple’s WeatherKit explicitly via wkService
-            async let currentTask: CurrentWeather = wkService.weather(for: location, including: .current)
-            async let hourlyTask: Forecast<HourWeather> = wkService.weather(for: location, including: .hourly)
-            async let dailyTask:  Forecast<DayWeather>  = wkService.weather(for: location, including: .daily)
-
-            let (current, hourly, daily) = try await (currentTask, hourlyTask, dailyTask)
-
+            
+            // Request current weather and hourly forecast
+            let weather = try await weatherService.weather(
+                for: location,
+                including: .current, .hourly, .daily
+            )
+            
             logger.info("Successfully received weather data from WeatherKit")
-
-            let converted = convertWeatherKitData(
-                current: current,
-                hourly: hourly,
-                daily: daily,
+            
+            // Convert WeatherKit data to our app's format
+            let convertedData = convertWeatherKitData(
+                current: weather.0,
+                hourly: weather.1,
+                daily: weather.2,
                 location: location
             )
-
-            self.weatherData = converted
+            
+            self.weatherData = convertedData
+            self.isLoading = false
+            
             logger.debug("Weather data conversion completed successfully")
-
+            
         } catch {
-            logger.error("WeatherKit request failed: \(error.localizedDescription)")
+            logger.error("WeatherKit request failed: \\(error.localizedDescription)")
             await handleWeatherKitError(error)
         }
     }
+    
     /// Converts WeatherKit data to our app's WeatherData format
+    /// - Parameters:
+    ///   - current: Current weather from WeatherKit
+    ///   - hourly: Hourly forecast from WeatherKit
+    ///   - daily: Daily forecast from WeatherKit
+    ///   - location: Location for the weather data
+    /// - Returns: Converted WeatherData object
     private func convertWeatherKitData(
         current: CurrentWeather,
         hourly: Forecast<HourWeather>,
@@ -118,12 +125,11 @@ class WeatherKitService: ObservableObject {
         logger.debug("Converting WeatherKit data to app format")
         
         // Convert current conditions
-        let windDirString: String = windDirectionString(from: current.wind.direction)
         let currentConditions = WeatherConditions(
             temperature: current.temperature.value,
-            humidity: current.humidity, // 0.0 ... 1.0
+            humidity: current.humidity,
             windSpeed: current.wind.speed.value,
-            windDirection: windDirString,
+            windDirection: windDirectionString(from: current.wind.direction),
             condition: current.condition.description,
             icon: symbolNameForCondition(current.condition),
             timestamp: current.date,
@@ -139,17 +145,17 @@ class WeatherKitService: ObservableObject {
                 temperature: hourWeather.temperature.value,
                 condition: hourWeather.condition.description,
                 icon: symbolNameForCondition(hourWeather.condition),
-                precipitationProbability: hourWeather.precipitationChance, // 0.0 ... 1.0
+                precipitationProbability: hourWeather.precipitationChance,
                 windSpeed: hourWeather.wind.speed.value
             )
         }
         
-        // Daylight info (from today's DayWeather if available)
+        // Calculate daylight information from daily forecast
         let today = daily.forecast.first
         let daylightInfo = calculateDaylightInfo(from: today, location: location)
         
-        // Simple coordinate label
-        let locationName = "\(String(format: "%.2f", location.coordinate.latitude)), \(String(format: "%.2f", location.coordinate.longitude))"
+        // Get location name (simplified for now)
+        let locationName = "\\(String(format: "%.2f", location.coordinate.latitude)), \\(String(format: "%.2f", location.coordinate.longitude))"
         
         return WeatherData(
             current: currentConditions,
@@ -161,54 +167,84 @@ class WeatherKitService: ObservableObject {
     }
     
     /// Converts wind direction to string representation
+    /// - Parameter direction: Wind direction in Measurement<UnitAngle>
+    /// - Returns: String representation of wind direction
     private func windDirectionString(from direction: Measurement<UnitAngle>?) -> String {
-        guard let direction else { return "N/A" }
+        guard let direction = direction else { return "N/A" }
+        
         let degrees = direction.converted(to: .degrees).value
         let directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-                          "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+                         "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
         let index = Int((degrees + 11.25) / 22.5) % 16
         return directions[index]
     }
     
-    /// Maps WeatherKit condition to an SF Symbol
+    /// Converts WeatherKit condition to symbol name
+    /// - Parameter condition: WeatherCondition from WeatherKit
+    /// - Returns: SF Symbol name for the condition
     private func symbolNameForCondition(_ condition: WeatherCondition) -> String {
         switch condition {
-        case .clear:            return "sun.max"
-        case .mostlyClear:      return "sun.min"
-        case .partlyCloudy:     return "cloud.sun"
-        case .mostlyCloudy:     return "cloud.sun"
-        case .cloudy:           return "cloud"
-        case .rain:             return "cloud.rain"
-        case .heavyRain:        return "cloud.heavyrain"
-        case .drizzle:          return "cloud.drizzle"
-        case .thunderstorms:    return "cloud.bolt"
-        case .snow:             return "cloud.snow"
-        case .sleet:            return "cloud.sleet"
-        case .hail:             return "cloud.hail"
-        case .foggy:            return "cloud.fog"
-        case .haze:             return "sun.haze"
-        case .smoky:            return "smoke"
-        case .windy, .breezy:   return "wind"
-        default:                return "questionmark"
+        case .clear:
+            return "sun.max"
+        case .cloudy:
+            return "cloud"
+        case .mostlyCloudy:
+            return "cloud.sun"
+        case .partlyCloudy:
+            return "cloud.sun"
+        case .mostlyClear:
+            return "sun.min"
+        case .rain:
+            return "cloud.rain"
+        case .snow:
+            return "cloud.snow"
+        case .sleet:
+            return "cloud.sleet"
+        case .hail:
+            return "cloud.hail"
+        case .thunderstorms:
+            return "cloud.bolt"
+        case .heavyRain:
+            return "cloud.heavyrain"
+        case .heavySnow:
+            return "cloud.snow"
+        case .foggy:
+            return "cloud.fog"
+        case .haze:
+            return "sun.haze"
+        case .smoky:
+            return "smoke"
+        case .drizzle:
+            return "cloud.drizzle"
+        case .windy:
+            return "wind"
+        case .breezy:
+            return "wind"
+        default:
+            return "questionmark"
         }
     }
     
     /// Calculates daylight information from daily weather data
+    /// - Parameters:
+    ///   - dayWeather: DayWeather from WeatherKit
+    ///   - location: Location for calculations
+    /// - Returns: DaylightInfo object
     private func calculateDaylightInfo(from dayWeather: DayWeather?, location: CLLocation) -> DaylightInfo {
-        guard let dayWeather else {
+        guard let dayWeather = dayWeather else {
+            // Fallback daylight calculation
             return calculateFallbackDaylight(for: location)
         }
         
-        // DayWeather.sun.{sunrise,sunset} can be nil—fall back if needed
         let sunrise = dayWeather.sun.sunrise ?? calculateSunrise(for: location)
         let sunset = dayWeather.sun.sunset ?? calculateSunset(for: location)
         
-        let daylightDuration = max(0, sunset.timeIntervalSince(sunrise))
+        let daylightDuration = sunset.timeIntervalSince(sunrise)
         let solarNoon = Date(timeInterval: daylightDuration / 2, since: sunrise)
         
-        // Approximate civil twilight: ±30 minutes around sunrise/sunset
-        let twilightBegin = Date(timeInterval: -30 * 60, since: sunrise)
-        let twilightEnd = Date(timeInterval:  30 * 60, since: sunset)
+        // Calculate twilight times (approximate)
+        let twilightBegin = Date(timeInterval: -30 * 60, since: sunrise) // 30 minutes before sunrise
+        let twilightEnd = Date(timeInterval: 30 * 60, since: sunset) // 30 minutes after sunset
         
         return DaylightInfo(
             sunrise: sunrise,
@@ -220,15 +256,19 @@ class WeatherKitService: ObservableObject {
         )
     }
     
-    // MARK: - Fallback sunrise/sunset (very rough approximations)
-    
+    /// Calculates fallback daylight information when WeatherKit data is unavailable
+    /// - Parameter location: Location for calculations
+    /// - Returns: Fallback DaylightInfo
     private func calculateFallbackDaylight(for location: CLLocation) -> DaylightInfo {
+        // Simplified sunrise/sunset calculation
         let sunrise = calculateSunrise(for: location)
-        let sunset  = calculateSunset(for: location)
-        let daylightDuration = max(0, sunset.timeIntervalSince(sunrise))
+        let sunset = calculateSunset(for: location)
+        
+        let daylightDuration = sunset.timeIntervalSince(sunrise)
         let solarNoon = Date(timeInterval: daylightDuration / 2, since: sunrise)
+        
         let twilightBegin = Date(timeInterval: -30 * 60, since: sunrise)
-        let twilightEnd = Date(timeInterval:  30 * 60, since: sunset)
+        let twilightEnd = Date(timeInterval: 30 * 60, since: sunset)
         
         return DaylightInfo(
             sunrise: sunrise,
@@ -240,43 +280,66 @@ class WeatherKitService: ObservableObject {
         )
     }
     
+    /// Simplified sunrise calculation
+    /// - Parameter location: Location for calculation
+    /// - Returns: Approximate sunrise time
     private func calculateSunrise(for location: CLLocation) -> Date {
         let calendar = Calendar.current
         let today = Date()
-        let baseHour = 6 + (location.coordinate.longitude / 15.0) // extremely rough
-        let comps = calendar.dateComponents([.year, .month, .day], from: today)
+        
+        // Very simplified calculation - in production, use proper astronomical algorithms
+        let baseHour = 6 + (location.coordinate.longitude / 15.0) // Rough timezone adjustment
+        let components = calendar.dateComponents([.year, .month, .day], from: today)
+        
         return calendar.date(from: DateComponents(
-            year: comps.year, month: comps.month, day: comps.day,
-            hour: Int(baseHour), minute: Int((baseHour.truncatingRemainder(dividingBy: 1)) * 60)
+            year: components.year,
+            month: components.month,
+            day: components.day,
+            hour: Int(baseHour),
+            minute: Int((baseHour.truncatingRemainder(dividingBy: 1)) * 60)
         )) ?? today
     }
     
+    /// Simplified sunset calculation
+    /// - Parameter location: Location for calculation
+    /// - Returns: Approximate sunset time
     private func calculateSunset(for location: CLLocation) -> Date {
         let calendar = Calendar.current
         let today = Date()
-        let baseHour = 18 + (location.coordinate.longitude / 15.0) // extremely rough
-        let comps = calendar.dateComponents([.year, .month, .day], from: today)
+        
+        // Very simplified calculation - in production, use proper astronomical algorithms
+        let baseHour = 18 + (location.coordinate.longitude / 15.0) // Rough timezone adjustment
+        let components = calendar.dateComponents([.year, .month, .day], from: today)
+        
         return calendar.date(from: DateComponents(
-            year: comps.year, month: comps.month, day: comps.day,
-            hour: Int(baseHour), minute: Int((baseHour.truncatingRemainder(dividingBy: 1)) * 60)
+            year: components.year,
+            month: components.month,
+            day: components.day,
+            hour: Int(baseHour),
+            minute: Int((baseHour.truncatingRemainder(dividingBy: 1)) * 60)
         )) ?? today
     }
     
-    // MARK: - Error handling
-    
+    /// Handles WeatherKit-specific errors
+    /// - Parameter error: Error from WeatherKit
     @MainActor
     private func handleWeatherKitError(_ error: Error) async {
-        logger.error("WeatherKit error: \(error.localizedDescription)")
+        logger.error("WeatherKit error: \\(error.localizedDescription)")
         
         if let weatherError = error as? WeatherError {
             self.error = weatherError
-        } else if error.localizedDescription.localizedCaseInsensitiveContains("authorization") {
-            self.error = .permissionDenied
-        } else if error.localizedDescription.localizedCaseInsensitiveContains("network") {
-            self.error = .networkError("WeatherKit network error: \(error.localizedDescription)")
         } else {
-            self.error = .apiError("WeatherKit error: \(error.localizedDescription)")
+            // Convert other errors to our weather error format
+            if error.localizedDescription.contains("authorization") {
+                self.error = .permissionDenied
+            } else if error.localizedDescription.contains("network") {
+                self.error = .networkError("WeatherKit network error: \\(error.localizedDescription)")
+            } else {
+                self.error = .apiError("WeatherKit error: \\(error.localizedDescription)")
+            }
         }
+        
+        self.isLoading = false
     }
 }
 
@@ -292,7 +355,8 @@ class LegacyWeatherService: ObservableObject {
     
     func fetchWeather(for location: CLLocation) {
         logger.warning("WeatherKit not available on this iOS version, using legacy NOAA service")
-        // TODO: call your NOAA service here
+        // Here you would call the original NOAA service
+        // For now, we'll just show an error
         error = .apiError("WeatherKit requires iOS 16.0 or later")
     }
     
