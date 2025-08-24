@@ -96,7 +96,7 @@ struct FarmDashboardView: View {
                 }
             }
             .sheet(isPresented: $isPresentingFarmCreation) {
-             //   CreateFarmView(isPresented: $isPresentingFarmCreation)
+                EditPropertyView(isPresented: $isPresentingFarmCreation)
             }
         }
     }

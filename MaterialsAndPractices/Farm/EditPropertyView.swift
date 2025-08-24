@@ -19,16 +19,16 @@ struct EditPropertyView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
     // Form data
-    @State private var displayName = ""
-    @State private var county = ""
-    @State private var state = ""
-    @State private var totalAcres = ""
-    @State private var tillableAcres = ""
-    @State private var pastureAcres = ""
-    @State private var woodlandAcres = ""
-    @State private var wetlandAcres = ""
-    @State private var hasIrrigation = false
-    @State private var notes = ""
+    @State private var farmDisplayName = ""
+    @State private var farmCounty = ""
+    @State private var farmState = ""
+    @State private var farmTotalAcres = ""
+    @State private var farmTillableAcres = ""
+    @State private var farmPastureAcres = ""
+    @State private var farmWoodlandAcres = ""
+    @State private var farmWetlandAcres = ""
+    @State private var farmHasIrrigation = false
+    @State private var farmNotes = ""
     
     // MARK: - Body
     
@@ -38,19 +38,19 @@ struct EditPropertyView: View {
                 Section("Basic Information") {
                     HStack {
                         Text("Property Name")
-                        TextField("Display Name", text: $displayName)
+                        TextField("Display Name", text: $farmDisplayName)
                             .multilineTextAlignment(.trailing)
                     }
                     
                     HStack {
                         Text("County")
-                        TextField("County", text: $county)
+                        TextField("County", text: $farmCounty)
                             .multilineTextAlignment(.trailing)
                     }
                     
                     HStack {
                         Text("State")
-                        TextField("State", text: $state)
+                        TextField("State", text: $farmState)
                             .multilineTextAlignment(.trailing)
                     }
                 }
@@ -58,50 +58,50 @@ struct EditPropertyView: View {
                 Section("Acreage") {
                     HStack {
                         Text("Total Acres")
-                        TextField("0.0", text: $totalAcres)
+                        TextField("0.0", text: $farmTotalAcres)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                     }
                     
                     HStack {
                         Text("Tillable Acres")
-                        TextField("0.0", text: $tillableAcres)
+                        TextField("0.0", text: $farmTillableAcres)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                     }
                     
                     HStack {
                         Text("Pasture Acres")
-                        TextField("0.0", text: $pastureAcres)
+                        TextField("0.0", text: $farmPastureAcres)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                     }
                     
                     HStack {
                         Text("Woodland Acres")
-                        TextField("0.0", text: $woodlandAcres)
+                        TextField("0.0", text: $farmWoodlandAcres)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                     }
                     
                     HStack {
                         Text("Wetland Acres")
-                        TextField("0.0", text: $wetlandAcres)
+                        TextField("0.0", text: $farmWetlandAcres)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                     }
                 }
                 
                 Section("Features") {
-                    Toggle("Has Irrigation", isOn: $hasIrrigation)
+                    Toggle("Has Irrigation", isOn: $farmHasIrrigation)
                 }
                 
                 Section("Notes") {
-                    TextEditor(text: $notes)
+                    TextEditor(text: $farmNotes)
                         .frame(minHeight: 100)
                 }
             }
-            .navigationTitle("Add Property")
+            .navigationTitle("Create New Farm")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -111,10 +111,10 @@ struct EditPropertyView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
+                    Button("Create") {
                         saveProperty()
                     }
-                    .disabled(displayName.isEmpty)
+                    .disabled(farmDisplayName.isEmpty)
                 }
             }
         }
@@ -126,16 +126,16 @@ struct EditPropertyView: View {
     private func saveProperty() {
         let newProperty = Property(context: viewContext)
         newProperty.id = UUID()
-        newProperty.displayName = displayName.isEmpty ? nil : displayName
-        newProperty.county = county.isEmpty ? nil : county
-        newProperty.state = state.isEmpty ? nil : state
-        newProperty.totalAcres = Double(totalAcres) ?? 0.0
-        newProperty.tillableAcres = Double(tillableAcres) ?? 0.0
-        newProperty.pastureAcres = Double(pastureAcres) ?? 0.0
-        newProperty.woodlandAcres = Double(woodlandAcres) ?? 0.0
-        newProperty.wetlandAcres = Double(wetlandAcres) ?? 0.0
-        newProperty.hasIrrigation = hasIrrigation
-        newProperty.notes = notes.isEmpty ? nil : notes
+        newProperty.displayName = farmDisplayName.isEmpty ? nil : farmDisplayName
+        newProperty.county = farmCounty.isEmpty ? nil : farmCounty
+        newProperty.state = farmState.isEmpty ? nil : farmState
+        newProperty.totalAcres = Double(farmTotalAcres) ?? 0.0
+        newProperty.tillableAcres = Double(farmTillableAcres) ?? 0.0
+        newProperty.pastureAcres = Double(farmPastureAcres) ?? 0.0
+        newProperty.woodlandAcres = Double(farmWoodlandAcres) ?? 0.0
+        newProperty.wetlandAcres = Double(farmWetlandAcres) ?? 0.0
+        newProperty.hasIrrigation = farmHasIrrigation
+        newProperty.notes = farmNotes.isEmpty ? nil : farmNotes
         
         do {
             try viewContext.save()

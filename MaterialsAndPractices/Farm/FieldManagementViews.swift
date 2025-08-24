@@ -242,32 +242,32 @@ struct EditFieldView: View {
     @Binding var isPresented: Bool
     @Environment(\.managedObjectContext) private var viewContext
     
-    @State private var name: String
-    @State private var acres: String
-    @State private var hasDrainTile: Bool
-    @State private var notes: String
+    @State private var fieldName: String
+    @State private var fieldAcres: String
+    @State private var fieldHasDrainTile: Bool
+    @State private var fieldNotes: String
     
     init(field: Field, isPresented: Binding<Bool>) {
         self.field = field
         self._isPresented = isPresented
-        self._name = State(initialValue: field.name ?? "")
-        self._acres = State(initialValue: String(field.acres))
-        self._hasDrainTile = State(initialValue: field.hasDrainTile)
-        self._notes = State(initialValue: field.notes ?? "")
+        self._fieldName = State(initialValue: field.name ?? "")
+        self._fieldAcres = State(initialValue: String(field.acres))
+        self._fieldHasDrainTile = State(initialValue: field.hasDrainTile)
+        self._fieldNotes = State(initialValue: field.notes ?? "")
     }
     
     var body: some View {
         NavigationView {
             Form {
                 Section("Field Details") {
-                    TextField("Field Name", text: $name)
+                    TextField("Field Name", text: $fieldName)
                     
-                    TextField("Acres", text: $acres)
+                    TextField("Acres", text: $fieldAcres)
                         .keyboardType(.decimalPad)
                     
-                    Toggle("Has Drain Tile", isOn: $hasDrainTile)
+                    Toggle("Has Drain Tile", isOn: $fieldHasDrainTile)
                     
-                    TextField("Notes", text: $notes, axis: .vertical)
+                    TextField("Notes", text: $fieldNotes, axis: .vertical)
                         .lineLimit(3...6)
                 }
             }
@@ -284,17 +284,17 @@ struct EditFieldView: View {
                     Button("Save") {
                         saveField()
                     }
-                    .disabled(name.isEmpty)
+                    .disabled(fieldName.isEmpty)
                 }
             }
         }
     }
     
     private func saveField() {
-        field.name = name.isEmpty ? nil : name
-        field.acres = Double(acres) ?? 0.0
-        field.hasDrainTile = hasDrainTile
-        field.notes = notes.isEmpty ? nil : notes
+        field.name = fieldName.isEmpty ? nil : fieldName
+        field.acres = Double(fieldAcres) ?? 0.0
+        field.hasDrainTile = fieldHasDrainTile
+        field.notes = fieldNotes.isEmpty ? nil : fieldNotes
         
         do {
             try viewContext.save()
