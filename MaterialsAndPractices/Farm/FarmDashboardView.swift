@@ -30,18 +30,18 @@ import CoreData
 /// Features conditional interface behavior based on farm existence and operational state
 struct FarmDashboardView: View {
     // MARK: - Core Data Environment
-    
+
     /// Managed object context for Core Data operations
     @Environment(\.managedObjectContext) private var viewContext
-    
+
     // MARK: - Data Access Layer
-    
+
     /// Farm properties fetch request with alphabetical sorting for consistent presentation
     @FetchRequest(
         entity: Property.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \Property.displayName, ascending: true)]
     ) var farmProperties: FetchedResults<Property>
-    
+
     /// Active workers fetch request prioritizing active status for operational visibility
     @FetchRequest(
         entity: Worker.entity(),
@@ -50,36 +50,36 @@ struct FarmDashboardView: View {
             NSSortDescriptor(keyPath: \Worker.name, ascending: true)
         ]
     ) var teamMembers: FetchedResults<Worker>
-    
+
     /// Lease agreements fetch request ordered by start date for chronological review
     @FetchRequest(
         entity: Lease.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \Lease.startDate, ascending: false)]
     ) var leaseAgreements: FetchedResults<Lease>
-    
+
     // MARK: - Navigation State Management
-    
+
     /// Currently selected farm property for detailed view presentation
     @State private var selectedFarmProperty: Property?
-    
+
     /// Controls presentation of property detail sheet
     @State private var isPresentingPropertyDetail = false
-    
+
     /// Controls presentation of farm creation flow
     @State private var isPresentingFarmCreation = false
-    
+
     // MARK: - Main Interface
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
                 LazyVStack(spacing: AppTheme.Spacing.large) {
                     // Header with operational status overview
                     operationalStatusHeader
-                    
+
                     // Primary section: Active farm properties (required for all other features)
                     activeFarmPropertiesSection
-                    
+
                     // Secondary sections: Only visible when farms exist
                     if hasFarmProperties {
                         teamMembersOverviewSection
@@ -96,13 +96,13 @@ struct FarmDashboardView: View {
                 }
             }
             .sheet(isPresented: $isPresentingFarmCreation) {
-                CreateFarmView(isPresented: $isPresentingFarmCreation)
+             //   CreateFarmView(isPresented: $isPresentingFarmCreation)
             }
         }
     }
-    
+
     // MARK: - Dashboard Header Section
-    
+
     /// Operational status header displaying time-based greeting and key metrics
     /// Provides immediate visibility into current farm operational state
     private var operationalStatusHeader: some View {
@@ -110,9 +110,9 @@ struct FarmDashboardView: View {
             HStack {
                 // Greeting and welcome message
                 welcomeMessageContent
-                
+
                 Spacer()
-                
+
                 // Real-time operational indicators
                 operationalStatusIndicators
             }
@@ -130,7 +130,7 @@ struct FarmDashboardView: View {
         )
         .cornerRadius(AppTheme.CornerRadius.large)
     }
-    
+
     /// Welcome message content with context-sensitive greeting
     /// Adapts messaging based on time of day for personalized experience
     private var welcomeMessageContent: some View {
@@ -138,13 +138,13 @@ struct FarmDashboardView: View {
             Text("Good \(currentGreetingTime)!")
                 .font(AppTheme.Typography.headlineLarge)
                 .foregroundColor(AppTheme.Colors.textPrimary)
-            
+
             Text("Welcome to your farm operations dashboard")
                 .font(AppTheme.Typography.bodyMedium)
                 .foregroundColor(AppTheme.Colors.textSecondary)
         }
     }
-    
+
     /// Operational status indicators showing active workers and urgent items
     /// Provides at-a-glance operational awareness for farm managers
     private var operationalStatusIndicators: some View {
@@ -157,7 +157,7 @@ struct FarmDashboardView: View {
                     color: AppTheme.Colors.success
                 )
             }
-            
+
             // Urgent lease payments indicator
             if urgentLeasePayments.count > 0 {
                 operationalIndicator(
@@ -168,7 +168,7 @@ struct FarmDashboardView: View {
             }
         }
     }
-    
+
     /// Individual operational indicator component for consistent presentation
     /// - Parameters:
     ///   - count: Number to display in indicator
@@ -180,15 +180,15 @@ struct FarmDashboardView: View {
             Circle()
                 .fill(color)
                 .frame(width: 8, height: 8)
-            
+
             Text("\(count) \(label)")
                 .font(AppTheme.Typography.labelSmall)
                 .foregroundColor(color)
         }
     }
-    
+
     // MARK: - Primary Section: Farm Properties
-    
+
     /// Active farm properties section - the foundational requirement for all operations
     /// Displays farm tiles when available, or guided creation flow when none exist
     /// This section determines the availability of all other dashboard features
@@ -196,10 +196,10 @@ struct FarmDashboardView: View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             sectionHeaderWithNavigation(
                 title: "Active Farms",
-                destination: FarmListView(),
+                destination: hasFarmProperties ? AnyView(FarmListView()) : nil,
                 showNavigation: hasFarmProperties
             )
-            
+
             if hasFarmProperties {
                 // Display existing farm properties in organized grid
                 activeFarmPropertiesGrid
@@ -209,7 +209,7 @@ struct FarmDashboardView: View {
             }
         }
     }
-    
+
     /// Grid layout for active farm properties with responsive design
     /// Presents farm information in an easily scannable tile format
     private var activeFarmPropertiesGrid: some View {
@@ -222,7 +222,7 @@ struct FarmDashboardView: View {
             }
         }
     }
-    
+
     /// No farms exist prompt with guided creation flow
     /// Encourages users to create their first farm to unlock dashboard functionality
     private var noFarmsExistPrompt: some View {
@@ -236,19 +236,19 @@ struct FarmDashboardView: View {
         }
         .frame(height: 120)
     }
-    
+
     // MARK: - Secondary Sections: Available When Farms Exist
-    
+
     /// Team members overview section showing worker status and availability
     /// Only displayed when farm properties exist to maintain logical flow
     private var teamMembersOverviewSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             sectionHeaderWithNavigation(
                 title: "Team Members",
-                destination: WorkerListView(),
+                destination: AnyView(WorkerListView()),
                 showNavigation: true
             )
-            
+
             if !activeTeamMembers.isEmpty {
                 teamMembersGrid
             } else {
@@ -256,7 +256,7 @@ struct FarmDashboardView: View {
             }
         }
     }
-    
+
     /// Grid layout for team member tiles with status indicators
     private var teamMembersGrid: some View {
         LazyVGrid(columns: responsiveGridColumns, spacing: AppTheme.Spacing.medium) {
@@ -268,7 +268,7 @@ struct FarmDashboardView: View {
             }
         }
     }
-    
+
     /// Empty state for team members when none are registered
     private var teamMembersEmptyState: some View {
         EmptyStateView(
@@ -280,7 +280,7 @@ struct FarmDashboardView: View {
         )
         .frame(height: 120)
     }
-    
+
     /// Lease agreements overview section showing active leases and payment status
     /// Provides financial oversight for farm property agreements
     private var leaseAgreementsOverviewSection: some View {
@@ -290,7 +290,7 @@ struct FarmDashboardView: View {
                 destination: nil,
                 showNavigation: false
             )
-            
+
             if !activeLeaseAgreements.isEmpty {
                 leaseAgreementsContent
             } else {
@@ -298,7 +298,7 @@ struct FarmDashboardView: View {
             }
         }
     }
-    
+
     /// Content display for active lease agreements with payment indicators
     private var leaseAgreementsContent: some View {
         VStack(spacing: AppTheme.Spacing.small) {
@@ -308,45 +308,41 @@ struct FarmDashboardView: View {
                     requiresUrgentAttention: urgentLeasePayments.contains(leaseAgreement)
                 )
             }
-            
+
             if activeLeaseAgreements.count > 3 {
                 additionalLeasesIndicator
             }
         }
     }
-    
+
     /// Indicator showing additional leases beyond the displayed preview
     private var additionalLeasesIndicator: some View {
         Text("+ \(activeLeaseAgreements.count - 3) more lease agreements")
             .font(AppTheme.Typography.bodySmall)
             .foregroundColor(AppTheme.Colors.textSecondary)
     }
-    
+
     /// Empty state for lease agreements when none are active
     private var leaseAgreementsEmptyState: some View {
         Text("No active lease agreements")
             .font(AppTheme.Typography.bodyMedium)
             .foregroundColor(AppTheme.Colors.textSecondary)
     }
-    
+
     // MARK: - Helper Components
-    
+
     /// Section header with optional navigation link for consistent interface presentation
-    /// - Parameters:
-    ///   - title: Section title to display
-    ///   - destination: Optional navigation destination view
-    ///   - showNavigation: Whether to show the "View All" navigation link
-    /// - Returns: Configured section header view
-    private func sectionHeaderWithNavigation<Destination: View>(
+    /// Type-erased destination avoids generic inference failures when passing `nil`.
+    private func sectionHeaderWithNavigation(
         title: String,
-        destination: Destination?,
+        destination: AnyView?,
         showNavigation: Bool
     ) -> some View {
         HStack {
             SectionHeader(title: title)
-            
+
             Spacer()
-            
+
             if showNavigation, let destination = destination {
                 NavigationLink(destination: destination) {
                     Text("View All")
@@ -356,9 +352,9 @@ struct FarmDashboardView: View {
             }
         }
     }
-    
+
     // MARK: - Business Logic Methods
-    
+
     /// Selects a farm property for detailed viewing
     /// Encapsulates navigation state management for property details
     /// - Parameter property: Farm property to view in detail
@@ -366,21 +362,21 @@ struct FarmDashboardView: View {
         selectedFarmProperty = property
         isPresentingPropertyDetail = true
     }
-    
+
     /// Initiates the first farm creation flow for new users
     /// Provides guided onboarding experience when no farms exist
     private func initiateFirstFarmCreation() {
         isPresentingFarmCreation = true
     }
-    
+
     // MARK: - Computed Properties for Business Logic
-    
+
     /// Determines if any farm properties exist in the system
     /// Critical for conditional UI presentation and feature availability
     private var hasFarmProperties: Bool {
         !farmProperties.isEmpty
     }
-    
+
     /// Responsive grid columns adapting to content and screen size
     /// Provides consistent layout across different device orientations
     private var responsiveGridColumns: [GridItem] {
@@ -389,7 +385,7 @@ struct FarmDashboardView: View {
             GridItem(.flexible(), spacing: AppTheme.Spacing.medium)
         ]
     }
-    
+
     /// Context-sensitive greeting based on current time of day
     /// Enhances user experience with personalized interaction
     private var currentGreetingTime: String {
@@ -403,24 +399,24 @@ struct FarmDashboardView: View {
             return "Evening"
         }
     }
-    
+
     /// Active team members filtered from all workers
     /// Focuses interface on currently relevant workforce
     private var activeTeamMembers: [Worker] {
         teamMembers.filter { $0.isActive }
     }
-    
+
     /// Workers currently clocked in for today's operations
     /// Provides real-time operational visibility for farm managers
     private var currentlyActiveworkers: [Worker] {
         let todayStart = Calendar.current.startOfDay(for: Date())
         let tomorrowStart = Calendar.current.date(byAdding: .day, value: 1, to: todayStart)!
-        
+
         return activeTeamMembers.filter { worker in
             guard let timeEntries = worker.timeClockEntries?.allObjects as? [TimeClock] else {
                 return false
             }
-            
+
             return timeEntries.contains { timeEntry in
                 guard let entryDate = timeEntry.date,
                       entryDate >= todayStart && entryDate < tomorrowStart else {
@@ -430,24 +426,24 @@ struct FarmDashboardView: View {
             }
         }
     }
-    
+
     /// Active lease agreements requiring management attention
     /// Filters leases to show only currently relevant agreements
     private var activeLeaseAgreements: [Lease] {
         leaseAgreements.filter { $0.status == "active" }
     }
-    
+
     /// Lease agreements requiring urgent payment attention
     /// Identifies financial obligations needing immediate action
     private var urgentLeasePayments: [Lease] {
         let calendar = Calendar.current
         let currentMonth = calendar.component(.month, from: Date())
-        
+
         return activeLeaseAgreements.filter { lease in
             // Determine if lease has payment due this month
             // Note: This is simplified logic - production systems would use more sophisticated payment tracking
             guard let paymentFrequency = lease.rentFrequency else { return false }
-            
+
             switch paymentFrequency.lowercased() {
             case "monthly":
                 // All monthly leases are potentially due each month
@@ -472,21 +468,21 @@ struct FarmDashboardView: View {
 /// Displays essential farm information in a scannable, actionable format
 struct FarmPropertyTile: View {
     // MARK: - Properties
-    
+
     let property: Property
     let onTap: () -> Void
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
                 // Header with farm icon and irrigation indicator
                 farmPropertyHeader
-                
+
                 // Farm identification and basic metrics
                 farmPropertyContent
-                
+
                 // Location information when available
                 farmLocationDisplay
             }
@@ -497,16 +493,16 @@ struct FarmPropertyTile: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
+
     /// Header section with primary icon and feature indicators
     private var farmPropertyHeader: some View {
         HStack {
             Image(systemName: "building.2.fill")
                 .foregroundColor(AppTheme.Colors.primary)
                 .font(.title2)
-            
+
             Spacer()
-            
+
             if property.hasIrrigation {
                 Image(systemName: "drop.fill")
                     .foregroundColor(AppTheme.Colors.info)
@@ -514,7 +510,7 @@ struct FarmPropertyTile: View {
             }
         }
     }
-    
+
     /// Main content with farm name and acreage information
     private var farmPropertyContent: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
@@ -522,13 +518,13 @@ struct FarmPropertyTile: View {
                 .font(AppTheme.Typography.bodyMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
                 .lineLimit(2)
-            
+
             Text("\(property.totalAcres, specifier: "%.1f") acres")
                 .font(AppTheme.Typography.bodySmall)
                 .foregroundColor(AppTheme.Colors.textSecondary)
         }
     }
-    
+
     /// Location display when county and state information is available
     private var farmLocationDisplay: some View {
         Group {
@@ -546,21 +542,21 @@ struct FarmPropertyTile: View {
 /// Provides visual indicators for clock status and essential worker information
 struct TeamMemberTile: View {
     // MARK: - Properties
-    
+
     let worker: Worker
     let isClockedIn: Bool
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         NavigationLink(destination: WorkerDetailView(worker: worker)) {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
                 // Header with worker photo and clock status
                 workerStatusHeader
-                
+
                 // Worker identification and role information
                 workerIdentificationContent
-                
+
                 // Current status display
                 workerCurrentStatus
             }
@@ -572,22 +568,22 @@ struct TeamMemberTile: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
+
     /// Header section with worker photo/placeholder and clock status indicator
     private var workerStatusHeader: some View {
         HStack {
             // Worker profile photo or default placeholder
             workerProfileDisplay
-            
+
             Spacer()
-            
+
             // Clock status indicator
             Circle()
                 .fill(clockStatusColor)
                 .frame(width: 8, height: 8)
         }
     }
-    
+
     /// Worker profile photo or default placeholder with consistent sizing
     private var workerProfileDisplay: some View {
         Group {
@@ -610,7 +606,7 @@ struct TeamMemberTile: View {
             }
         }
     }
-    
+
     /// Worker identification content with name and position
     private var workerIdentificationContent: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
@@ -618,7 +614,7 @@ struct TeamMemberTile: View {
                 .font(AppTheme.Typography.bodyMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
                 .lineLimit(2)
-            
+
             if let position = worker.position {
                 Text(position)
                     .font(AppTheme.Typography.bodySmall)
@@ -627,26 +623,26 @@ struct TeamMemberTile: View {
             }
         }
     }
-    
+
     /// Current clock status display with appropriate styling
     private var workerCurrentStatus: some View {
         Text(isClockedIn ? "Clocked In" : "Clocked Out")
             .font(AppTheme.Typography.labelSmall)
             .foregroundColor(clockStatusColor)
     }
-    
+
     // MARK: - Computed Properties for Styling
-    
+
     /// Background color based on clock status for visual distinction
     private var clockStatusBackgroundColor: Color {
         isClockedIn ? AppTheme.Colors.success.opacity(0.1) : AppTheme.Colors.backgroundSecondary
     }
-    
+
     /// Border color for clock status indication
     private var clockStatusColor: Color {
         isClockedIn ? AppTheme.Colors.success : AppTheme.Colors.textSecondary
     }
-    
+
     /// Border overlay for clocked-in workers
     private var clockStatusBorderOverlay: some View {
         RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
@@ -658,19 +654,19 @@ struct TeamMemberTile: View {
 /// Shows essential lease information with payment urgency indicators
 struct LeaseAgreementRow: View {
     // MARK: - Properties
-    
+
     let lease: Lease
     let requiresUrgentAttention: Bool
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         HStack {
             // Lease identification and term information
             leaseIdentificationContent
-            
+
             Spacer()
-            
+
             // Financial information and urgency indicators
             leaseFinancialContent
         }
@@ -679,14 +675,14 @@ struct LeaseAgreementRow: View {
         .cornerRadius(AppTheme.CornerRadius.medium)
         .overlay(urgencyBorderOverlay)
     }
-    
+
     /// Lease identification content with type and expiration
     private var leaseIdentificationContent: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
             Text(lease.leaseType?.capitalized ?? "Lease")
                 .font(AppTheme.Typography.bodyMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
-            
+
             if let endDate = lease.endDate {
                 Text("Expires: \(endDate, style: .date)")
                     .font(AppTheme.Typography.bodySmall)
@@ -694,7 +690,7 @@ struct LeaseAgreementRow: View {
             }
         }
     }
-    
+
     /// Financial content with rent amount and payment urgency
     private var leaseFinancialContent: some View {
         VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
@@ -703,13 +699,13 @@ struct LeaseAgreementRow: View {
                     .font(AppTheme.Typography.bodyMedium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
             }
-            
+
             if requiresUrgentAttention {
                 urgentPaymentIndicator
             }
         }
     }
-    
+
     /// Urgent payment indicator with appropriate styling
     private var urgentPaymentIndicator: some View {
         Text("Payment Due")
@@ -720,14 +716,14 @@ struct LeaseAgreementRow: View {
             .background(AppTheme.Colors.warning.opacity(0.1))
             .cornerRadius(AppTheme.CornerRadius.small)
     }
-    
+
     // MARK: - Computed Properties for Styling
-    
+
     /// Background color based on urgency for visual priority
     private var urgencyBackgroundColor: Color {
         requiresUrgentAttention ? AppTheme.Colors.warning.opacity(0.05) : AppTheme.Colors.backgroundSecondary
     }
-    
+
     /// Border overlay for urgent lease payments
     private var urgencyBorderOverlay: some View {
         RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)

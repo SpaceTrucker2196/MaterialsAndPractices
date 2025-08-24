@@ -84,13 +84,13 @@ struct UtilitiesView: View {
             }
         }
         .sheet(isPresented: $showingFarmCreation) {
-            CreateFarmView(isPresented: $showingFarmCreation)
+           // CreateFarmView(isPresented: $showingFarmCreation)
         }
         .sheet(isPresented: $showingWorkerCreation) {
-            CreateWorkerView(isPresented: $showingWorkerCreation)
+           // CreateWorkerView(isPresented: $showingWorkerCreation)
         }
         .sheet(isPresented: $showingInfrastructureCreation) {
-            CreateInfrastructureView(isPresented: $showingInfrastructureCreation)
+           //CreateInfrastructureView(property:  $showingWorkerCreation)
         }
     }
     
@@ -328,93 +328,93 @@ struct UtilityActionRow: View {
 
 /// Placeholder view for farm creation flow
 /// This will be replaced with a comprehensive farm creation interface
-struct CreateFarmView: View {
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        NavigationView {
-            VStack {
-                Text("Create New Farm")
-                    .font(AppTheme.Typography.displayMedium)
-                
-                Text("Farm creation interface will be implemented here")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-                
-                Spacer()
-                
-                CommonActionButton(title: "Close") {
-                    isPresented = false
-                }
-            }
-            .padding()
-            .navigationTitle("New Farm")
-            .navigationBarItems(trailing: Button("Cancel") {
-                isPresented = false
-            })
-        }
-    }
-}
+//struct CreateFarmView: View {
+//    @Binding var isPresented: Bool
+//    
+//    var body: some View {
+//        NavigationView {
+//            VStack {
+//                Text("Create New Farm")
+//                    .font(AppTheme.Typography.displayMedium)
+//                
+//                Text("Farm creation interface will be implemented here")
+//                    .font(AppTheme.Typography.bodyMedium)
+//                    .foregroundColor(AppTheme.Colors.textSecondary)
+//                
+//                Spacer()
+//                
+//                CommonActionButton(title: "Close") {
+//                    isPresented = false
+//                }
+//            }
+//            .padding()
+//            .navigationTitle("New Farm")
+//            .navigationBarItems(trailing: Button("Cancel") {
+//                isPresented = false
+//            })
+//        }
+//    }
+//}
 
 /// Placeholder view for worker creation flow
 /// This will be replaced with a comprehensive worker onboarding interface
-struct CreateWorkerView: View {
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        NavigationView {
-            VStack {
-                Text("Add New Worker")
-                    .font(AppTheme.Typography.displayMedium)
-                
-                Text("Worker creation interface will be implemented here")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-                
-                Spacer()
-                
-                CommonActionButton(title: "Close") {
-                    isPresented = false
-                }
-            }
-            .padding()
-            .navigationTitle("New Worker")
-            .navigationBarItems(trailing: Button("Cancel") {
-                isPresented = false
-            })
-        }
-    }
-}
+//struct CreateWorkerView: View {
+//    @Binding var isPresented: Bool
+//    
+//    var body: some View {
+//        NavigationView {
+//            VStack {
+//                Text("Add New Worker")
+//                    .font(AppTheme.Typography.displayMedium)
+//                
+//                Text("Worker creation interface will be implemented here")
+//                    .font(AppTheme.Typography.bodyMedium)
+//                    .foregroundColor(AppTheme.Colors.textSecondary)
+//                
+//                Spacer()
+//                
+//                CommonActionButton(title: "Close") {
+//                    isPresented = false
+//                }
+//            }
+//            .padding()
+//            .navigationTitle("New Worker")
+//            .navigationBarItems(trailing: Button("Cancel") {
+//                isPresented = false
+//            })
+//        }
+//    }
+//}
 
 /// Placeholder view for infrastructure creation flow
 /// This will be replaced with a comprehensive infrastructure management interface
-struct CreateInfrastructureView: View {
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        NavigationView {
-            VStack {
-                Text("Add Infrastructure")
-                    .font(AppTheme.Typography.displayMedium)
-                
-                Text("Infrastructure creation interface will be implemented here")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-                
-                Spacer()
-                
-                CommonActionButton(title: "Close") {
-                    isPresented = false
-                }
-            }
-            .padding()
-            .navigationTitle("New Infrastructure")
-            .navigationBarItems(trailing: Button("Cancel") {
-                isPresented = false
-            })
-        }
-    }
-}
+//struct CreateInfrastructureView: View {
+//    @Binding var isPresented: Bool
+//    
+//    var body: some View {
+//        NavigationView {
+//            VStack {
+//                Text("Add Infrastructure")
+//                    .font(AppTheme.Typography.displayMedium)
+//                
+//                Text("Infrastructure creation interface will be implemented here")
+//                    .font(AppTheme.Typography.bodyMedium)
+//                    .foregroundColor(AppTheme.Colors.textSecondary)
+//                
+//                Spacer()
+//                
+//                CommonActionButton(title: "Close") {
+//                    isPresented = false
+//                }
+//            }
+//            .padding()
+//            .navigationTitle("New Infrastructure")
+//            .navigationBarItems(trailing: Button("Cancel") {
+//                isPresented = false
+//            })
+//        }
+//    }
+//}
 
 // MARK: - Preview Provider
 
