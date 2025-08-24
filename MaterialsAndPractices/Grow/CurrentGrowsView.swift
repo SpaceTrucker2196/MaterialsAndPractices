@@ -44,6 +44,18 @@ struct CurrentGrowsView: View {
                         .textCase(nil)
                 }
                 
+                // Season and Moon Phase section
+                Section {
+                    SeasonMoonView()
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                } header: {
+                    Text("Agricultural Timing")
+                        .font(AppTheme.Typography.headlineSmall)
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .textCase(nil)
+                }
+                
                 // Active grows section
                 Section("Active Grows") {
                     ForEach(grows) { grow in
