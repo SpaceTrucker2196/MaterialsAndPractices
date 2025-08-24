@@ -153,12 +153,15 @@
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="photoData" optional="YES" attributeType="Binary"/>
         <attribute name="polygonWKB" optional="YES" attributeType="Binary"/>
         <attribute name="soilMapUnits" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <relationship name="conservationPractices" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ConservationPractice" inverseName="field" inverseEntity="ConservationPractice"/>
         <relationship name="cropPlans" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CropPlan" inverseName="field" inverseEntity="CropPlan"/>
+        <relationship name="grows" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Grow" inverseName="field" inverseEntity="Grow"/>
         <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="fields" inverseEntity="Property"/>
         <relationship name="soilTests" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SoilTest" inverseName="field" inverseEntity="SoilTest"/>
+        <relationship name="wells" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Well" inverseName="field" inverseEntity="Well"/>
         <fetchIndex name="byIdIndex">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -189,6 +192,7 @@
         <attribute name="zip" optional="YES" attributeType="String"/>
         <relationship name="amendments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Amendment" inverseName="grow" inverseEntity="Amendment"/>
         <relationship name="cultivar" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cultivar" inverseName="grows" inverseEntity="Cultivar"/>
+        <relationship name="field" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Field" inverseName="grows" inverseEntity="Field"/>
         <relationship name="work" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Work" inverseName="grow" inverseEntity="Work"/>
     </entity>
     <entity name="Harvest" representedClassName="Harvest" syncable="YES" codeGenerationType="class">
@@ -350,6 +354,7 @@
         <relationship name="leases" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Lease" inverseName="properties" inverseEntity="Lease"/>
         <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Owner" inverseName="properties" inverseEntity="Owner"/>
         <relationship name="waterTests" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WaterTest" inverseName="property" inverseEntity="WaterTest"/>
+        <relationship name="wells" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Well" inverseName="property" inverseEntity="Well"/>
         <fetchIndex name="byDisplayNameIndex">
             <fetchIndexElement property="displayName" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -386,11 +391,30 @@
         <attribute name="source" optional="YES" attributeType="String"/>
         <relationship name="document" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="waterTest" inverseEntity="Document"/>
         <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="waterTests" inverseEntity="Property"/>
+        <relationship name="well" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Well" inverseName="waterTests" inverseEntity="Well"/>
         <fetchIndex name="byDateIndex">
             <fetchIndexElement property="date" type="Binary" order="ascending"/>
         </fetchIndex>
         <fetchIndex name="byIdIndex">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Well" representedClassName="Well" syncable="YES" codeGenerationType="class">
+        <attribute name="depth" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="drillDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="wellType" optional="YES" attributeType="String"/>
+        <relationship name="field" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Field" inverseName="wells" inverseEntity="Field"/>
+        <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="wells" inverseEntity="Property"/>
+        <relationship name="waterTests" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WaterTest" inverseName="well" inverseEntity="WaterTest"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
     <entity name="Work" representedClassName="Work" syncable="YES" codeGenerationType="class">

@@ -119,16 +119,31 @@ struct PropertyDetailView: View {
     /// Section displaying fields (advanced mode only)
     private var fieldsSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            SectionHeader(title: "Fields")
+            HStack {
+                SectionHeader(title: "Fields")
+                
+                Spacer()
+                
+                NavigationLink(destination: CreateFieldView(property: property)) {
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+            }
             
             if let fields = property.fields?.allObjects as? [Field], !fields.isEmpty {
                 ForEach(fields.sorted(by: { ($0.name ?? "") < ($1.name ?? "") }), id: \.id) { field in
                     FieldRow(field: field)
                 }
             } else {
-                Text("No fields configured")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
+                EmptyStateView(
+                    title: "No Fields",
+                    message: "Add fields to track cultivation areas",
+                    systemImage: "grid",
+                    actionTitle: "Add Field"
+                ) {
+                    // This will be handled by the NavigationLink above
+                }
+                .frame(height: 120)
             }
         }
     }
@@ -136,13 +151,34 @@ struct PropertyDetailView: View {
     /// Section displaying infrastructure (advanced mode only)
     private var infrastructureSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            SectionHeader(title: "Infrastructure")
+            HStack {
+                SectionHeader(title: "Infrastructure")
+                
+                Spacer()
+                
+                NavigationLink(destination: CreateInfrastructureView(property: property)) {
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+            }
             
             if let infrastructure = property.infrastructure?.allObjects as? [Infrastructure], !infrastructure.isEmpty {
                 ForEach(infrastructure.sorted(by: { ($0.type ?? "") < ($1.type ?? "") }), id: \.id) { item in
                     InfrastructureRow(infrastructure: item)
                 }
             } else {
+                EmptyStateView(
+                    title: "No Infrastructure",
+                    message: "Add infrastructure to track farm assets",
+                    systemImage: "building.2",
+                    actionTitle: "Add Infrastructure"
+                ) {
+                    // This will be handled by the NavigationLink above
+                }
+                .frame(height: 120)
+            }
+        }
+    }
                 Text("No infrastructure recorded")
                     .font(AppTheme.Typography.bodyMedium)
                     .foregroundColor(AppTheme.Colors.textSecondary)
