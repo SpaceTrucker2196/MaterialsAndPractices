@@ -17,23 +17,23 @@ struct CreateFieldView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) var presentationMode
     
-    @State private var name = ""
-    @State private var acres = ""
-    @State private var hasDrainTile = false
-    @State private var notes = ""
+    @State private var fieldName = ""
+    @State private var fieldAcres = ""
+    @State private var fieldHasDrainTile = false
+    @State private var fieldNotes = ""
     
     var body: some View {
         NavigationView {
             Form {
                 Section("Field Details") {
-                    TextField("Field Name", text: $name)
+                    TextField("Field Name", text: $fieldName)
                     
-                    TextField("Acres", text: $acres)
+                    TextField("Acres", text: $fieldAcres)
                         .keyboardType(.decimalPad)
                     
-                    Toggle("Has Drain Tile", isOn: $hasDrainTile)
+                    Toggle("Has Drain Tile", isOn: $fieldHasDrainTile)
                     
-                    TextField("Notes", text: $notes, axis: .vertical)
+                    TextField("Notes", text: $fieldNotes, axis: .vertical)
                         .lineLimit(3...6)
                 }
                 
@@ -59,7 +59,7 @@ struct CreateFieldView: View {
                     Button("Save") {
                         saveField()
                     }
-                    .disabled(name.isEmpty || acres.isEmpty)
+                    .disabled(fieldName.isEmpty || fieldAcres.isEmpty)
                 }
             }
         }
@@ -68,10 +68,10 @@ struct CreateFieldView: View {
     private func saveField() {
         let newField = Field(context: viewContext)
         newField.id = UUID()
-        newField.name = name.isEmpty ? nil : name
-        newField.acres = Double(acres) ?? 0.0
-        newField.hasDrainTile = hasDrainTile
-        newField.notes = notes.isEmpty ? nil : notes
+        newField.name = fieldName.isEmpty ? nil : fieldName
+        newField.acres = Double(fieldAcres) ?? 0.0
+        newField.hasDrainTile = fieldHasDrainTile
+        newField.notes = fieldNotes.isEmpty ? nil : fieldNotes
         newField.property = property
         
         do {
