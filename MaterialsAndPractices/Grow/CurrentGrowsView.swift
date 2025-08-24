@@ -52,7 +52,7 @@ struct CurrentGrowsView: View {
             .navigationTitle("Growing Dashboard")
         }
         .sheet(isPresented: $showCreateGrow) {
-            EditGrowView(isPresented: $showCreateGrow)
+            EnhancedEditGrowView(isPresented: $showCreateGrow)
         }
     }
     
@@ -110,6 +110,9 @@ struct GrowRow: View {
                         // Cultivar information section
                         cultivarInfoSection
                         
+                        // Field and farm information section
+                        fieldAndFarmInfoSection
+                        
                         // Planted date information section
                         plantedDateSection
                         
@@ -164,6 +167,37 @@ struct GrowRow: View {
             Text(grow.locationName ?? "")
                 .font(AppTheme.Typography.bodyMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
+        }
+    }
+    
+    /// Section displaying field and farm information
+    private var fieldAndFarmInfoSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+            if let field = grow.field {
+                Text("Field & Farm")
+                    .font(AppTheme.Typography.labelMedium)
+                    .foregroundColor(AppTheme.Colors.primary)
+                
+                HStack {
+                    Text("\(field.property?.displayName ?? "Unknown Farm") - \(field.name ?? "Unknown Field")")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    if field.hasDrainTile {
+                        Image(systemName: "drop.fill")
+                            .foregroundColor(AppTheme.Colors.info)
+                            .font(.caption)
+                    }
+                }
+            } else {
+                Text("Field & Farm")
+                    .font(AppTheme.Typography.labelMedium)
+                    .foregroundColor(AppTheme.Colors.primary)
+                
+                Text("No field assigned")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
         }
     }
     

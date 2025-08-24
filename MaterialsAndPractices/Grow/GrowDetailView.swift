@@ -75,6 +75,9 @@ struct GrowDetailView: View {
                 // MARK: - Cultivar Information Section
                 cultivarInformationSection
                 
+                // MARK: - Field and Farm Information Section
+                fieldAndFarmInformationSection
+                
                 // MARK: - Timeline Information Section  
                 timelineInformationSection
                 
@@ -145,6 +148,132 @@ struct GrowDetailView: View {
                 }
                 
                 Spacer()
+            }
+        }
+    }
+    
+    /// Section displaying field and farm information with navigation links
+    private var fieldAndFarmInformationSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Location")
+            
+            if let field = growViewModel.grow.field {
+                // Field information
+                NavigationLink(destination: FieldDetailView(field: field)) {
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        HStack {
+                            Image(systemName: "grid")
+                                .foregroundColor(AppTheme.Colors.primary)
+                                .font(.title2)
+                            
+                            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                                Text("Field: \(field.name ?? "Unnamed Field")")
+                                    .font(AppTheme.Typography.bodyLarge)
+                                    .foregroundColor(AppTheme.Colors.textPrimary)
+                                
+                                Text("\(field.acres, specifier: "%.1f") acres")
+                                    .font(AppTheme.Typography.bodyMedium)
+                                    .foregroundColor(AppTheme.Colors.textSecondary)
+                                
+                                if field.hasDrainTile {
+                                    MetadataTag(
+                                        text: "Drain Tile",
+                                        backgroundColor: AppTheme.Colors.info.opacity(0.2),
+                                        textColor: AppTheme.Colors.info
+                                    )
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(AppTheme.Colors.textTertiary)
+                                .font(.caption)
+                        }
+                        
+                        // Farm/Property information
+                        if let property = field.property {
+                            Divider()
+                            
+                            NavigationLink(destination: PropertyDetailView(property: property, isAdvancedMode: true)) {
+                                HStack {
+                                    Image(systemName: "building.2")
+                                        .foregroundColor(AppTheme.Colors.secondary)
+                                        .font(.title2)
+                                    
+                                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                                        Text("Farm: \(property.displayName ?? "Unnamed Property")")
+                                            .font(AppTheme.Typography.bodyLarge)
+                                            .foregroundColor(AppTheme.Colors.textPrimary)
+                                        
+                                        if let county = property.county, let state = property.state {
+                                            Text("\(county), \(state)")
+                                                .font(AppTheme.Typography.bodyMedium)
+                                                .foregroundColor(AppTheme.Colors.textSecondary)
+                                        }
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(AppTheme.Colors.textTertiary)
+                                        .font(.caption)
+                                }
+                            }
+                        }
+                    }
+                    .padding(AppTheme.Spacing.medium)
+                    .background(AppTheme.Colors.backgroundSecondary)
+                    .cornerRadius(AppTheme.CornerRadius.medium)
+                }
+                
+                // Link to soil test information
+                if let field = growViewModel.grow.field,
+                   let soilTests = field.soilTests?.allObjects as? [SoilTest],
+                   !soilTests.isEmpty {
+                    NavigationLink(destination: SoilTestListView(field: field)) {
+                        HStack {
+                            Image(systemName: "flask")
+                                .foregroundColor(AppTheme.Colors.organicMaterial)
+                            
+                            Text("View Soil Test Information")
+                                .font(AppTheme.Typography.bodyMedium)
+                                .foregroundColor(AppTheme.Colors.primary)
+                            
+                            Spacer()
+                            
+                            Text("\(soilTests.count) test\(soilTests.count == 1 ? "" : "s")")
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textSecondary)
+                            
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(AppTheme.Colors.textTertiary)
+                                .font(.caption)
+                        }
+                        .padding(AppTheme.Spacing.small)
+                        .background(AppTheme.Colors.backgroundSecondary)
+                        .cornerRadius(AppTheme.CornerRadius.small)
+                    }
+                }
+            } else {
+                // No field assigned
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle")
+                            .foregroundColor(AppTheme.Colors.warning)
+                        
+                        Text("No Field Assigned")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.warning)
+                    }
+                    
+                    Text("This grow is not associated with a specific field. Consider editing to add field information.")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                .padding(AppTheme.Spacing.medium)
+                .background(AppTheme.Colors.warning.opacity(0.1))
+                .cornerRadius(AppTheme.CornerRadius.medium)
             }
         }
     }
