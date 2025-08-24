@@ -158,7 +158,7 @@ struct FarmDetailView: View {
                 if farm.totalAcres > 0 {
                     DetailCard(
                         title: "Total Acres",
-                        value: "\(farm.totalAcres, specifier: "%.1f")",
+                        value: farm.totalAcres.formatted(.number.precision(.fractionLength(1))),
                         backgroundColor: AppTheme.Colors.organicMaterial.opacity(0.1),
                         titleColor: AppTheme.Colors.organicMaterial
                     )
@@ -224,7 +224,7 @@ struct FarmDetailView: View {
                 if farm.leaseAcres > 0 {
                     DetailCard(
                         title: "Lease Acres",
-                        value: "\(farm.leaseAcres, specifier: "%.1f")",
+                        value: "-" + farm.leaseAcres.formatted(.number.precision(.fractionLength(2))),
                         backgroundColor: AppTheme.Colors.primary.opacity(0.1),
                         titleColor: AppTheme.Colors.primary
                     )
@@ -242,7 +242,7 @@ struct FarmDetailView: View {
                 if farm.leaseAmount > 0 {
                     DetailCard(
                         title: "Lease Amount",
-                        value: "$\(farm.leaseAmount, specifier: "%.2f")",
+                        value: "$" + farm.leaseAmount.formatted(.number.precision(.fractionLength(2))),
                         backgroundColor: AppTheme.Colors.success.opacity(0.1),
                         titleColor: AppTheme.Colors.success
                     )

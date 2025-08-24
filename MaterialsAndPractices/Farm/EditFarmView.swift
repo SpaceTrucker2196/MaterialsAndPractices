@@ -149,7 +149,7 @@ struct EditFarmView: View {
             }
         }
         .onAppear {
-            setupAddressSearchCompleter()
+          
         }
     }
     
@@ -264,12 +264,7 @@ struct EditFarmView: View {
     }
     
     // MARK: - Methods
-    
-    private func setupAddressSearchCompleter() {
-        addressSearchCompleter.delegate = addressSearchCompleter
-        showingAddressSuggestions = false
-    }
-    
+
     private func selectAddressSuggestion(_ suggestion: MKLocalSearchCompletion) {
         showingAddressSuggestions = false
         
