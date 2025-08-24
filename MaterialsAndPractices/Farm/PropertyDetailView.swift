@@ -262,45 +262,45 @@ struct PropertyDetailView: View {
 //}
 
 /// Helper view for lease information rows
-//struct LeaseRow: View {
-//    let lease: Lease
-//    
-//    var body: some View {
-//        HStack {
-//            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-//                Text(lease.leaseType?.capitalized ?? "Unknown Type")
-//                    .font(AppTheme.Typography.bodyMedium)
-//                    .foregroundColor(AppTheme.Colors.textPrimary)
-//                
-//                if let startDate = lease.startDate {
-//                    Text("Started: \(startDate, style: .date)")
-//                        .font(AppTheme.Typography.bodySmall)
-//                        .foregroundColor(AppTheme.Colors.textSecondary)
-//                }
-//                
-//                Text(lease.status?.capitalized ?? "Unknown Status")
-//                    .font(AppTheme.Typography.bodySmall)
-//                    .foregroundColor(leaseStatusColor(for: lease.status))
-//            }
-//            
-//            Spacer()
-//        }
-//        .padding(.vertical, AppTheme.Spacing.extraSmall)
-//    }
-//    
-//    private func leaseStatusColor(for status: String?) -> Color {
-//        switch status?.lowercased() {
-//        case "active":
-//            return AppTheme.Colors.success
-//        case "expired":
-//            return AppTheme.Colors.error
-//        case "pending":
-//            return AppTheme.Colors.warning
-//        default:
-//            return AppTheme.Colors.textSecondary
-//        }
-//    }
-//}
+struct LeaseRow: View {
+    let lease: Lease
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                Text(lease.leaseType?.capitalized ?? "Unknown Type")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                if let startDate = lease.startDate {
+                    Text("Started: \(startDate, style: .date)")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                Text(lease.status?.capitalized ?? "Unknown Status")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(leaseStatusColor(for: lease.status))
+            }
+            
+            Spacer()
+        }
+        .padding(.vertical, AppTheme.Spacing.extraSmall)
+    }
+    
+    private func leaseStatusColor(for status: String?) -> Color {
+        switch status?.lowercased() {
+        case "active":
+            return AppTheme.Colors.success
+        case "expired":
+            return AppTheme.Colors.error
+        case "pending":
+            return AppTheme.Colors.warning
+        default:
+            return AppTheme.Colors.textSecondary
+        }
+    }
+}
 
 // MARK: - Preview Provider
 

@@ -35,7 +35,6 @@
 		1FB247B92E5ACC3000F7BAF7 /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247B12E5ACC3000F7BAF7 /* PhotoManager.swift */; };
 		1FB247BA2E5ACC3000F7BAF7 /* PhotoCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247AF2E5ACC3000F7BAF7 /* PhotoCaptureView.swift */; };
 		1FB247BB2E5ACC3000F7BAF7 /* PhotoOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */; };
-		1FB247BE2E5ACC4B00F7BAF7 /* AppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247BC2E5ACC4B00F7BAF7 /* AppSettingsView.swift */; };
 		1FB247C12E5ACD7C00F7BAF7 /* CommonUIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */; };
 		1FCEB4532E5B790100021D62 /* CreateFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB44C2E5B790100021D62 /* CreateFieldView.swift */; };
 		1FCEB4542E5B790100021D62 /* SoilTestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB4512E5B790100021D62 /* SoilTestListView.swift */; };
@@ -49,6 +48,7 @@
 		1FCEB45F2E5B7ACC00021D62 /* GenericPhotoCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB45E2E5B7ACC00021D62 /* GenericPhotoCaptureView.swift */; };
 		1FCEB4622E5B7C0E00021D62 /* HarvestSafetyChecklist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB4612E5B7C0E00021D62 /* HarvestSafetyChecklist.swift */; };
 		1FCEB4632E5B7C0E00021D62 /* EnhancedEditGrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB4602E5B7C0E00021D62 /* EnhancedEditGrowView.swift */; };
+		1FCEB4652E5B940300021D62 /* UtilitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB4642E5B940300021D62 /* UtilitiesView.swift */; };
 		1FD918352E595AB900D18920 /* CultivarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD918342E595AB900D18920 /* CultivarViews.swift */; };
 		1FD918362E595AB900D18920 /* CultivarSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD918332E595AB900D18920 /* CultivarSeeder.swift */; };
 		1FE293EF257DDBAC00C93102 /* GrowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */; };
@@ -114,7 +114,6 @@
 		1FB247B12E5ACC3000F7BAF7 /* PhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
 		1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoOverlay.swift; sourceTree = "<group>"; };
 		1FB247B32E5ACC3000F7BAF7 /* PropertyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyDetailView.swift; sourceTree = "<group>"; };
-		1FB247BC2E5ACC4B00F7BAF7 /* AppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsView.swift; sourceTree = "<group>"; };
 		1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUIComponents.swift; sourceTree = "<group>"; };
 		1FCEB44C2E5B790100021D62 /* CreateFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateFieldView.swift; sourceTree = "<group>"; };
 		1FCEB44D2E5B790100021D62 /* CreateInfrastructureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateInfrastructureView.swift; sourceTree = "<group>"; };
@@ -128,6 +127,7 @@
 		1FCEB45E2E5B7ACC00021D62 /* GenericPhotoCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPhotoCaptureView.swift; sourceTree = "<group>"; };
 		1FCEB4602E5B7C0E00021D62 /* EnhancedEditGrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedEditGrowView.swift; sourceTree = "<group>"; };
 		1FCEB4612E5B7C0E00021D62 /* HarvestSafetyChecklist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HarvestSafetyChecklist.swift; sourceTree = "<group>"; };
+		1FCEB4642E5B940300021D62 /* UtilitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilitiesView.swift; sourceTree = "<group>"; };
 		1FD918332E595AB900D18920 /* CultivarSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarSeeder.swift; sourceTree = "<group>"; };
 		1FD918342E595AB900D18920 /* CultivarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarViews.swift; sourceTree = "<group>"; };
 		1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowDetailView.swift; sourceTree = "<group>"; };
@@ -277,10 +277,7 @@
 				1FCEB4522E5B790100021D62 /* WorkerManagementViews.swift */,
 				1FB247AD2E5ACC3000F7BAF7 /* EditPropertyView.swift */,
 				1FB247AE2E5ACC3000F7BAF7 /* FarmListView.swift */,
-				1FB247AF2E5ACC3000F7BAF7 /* PhotoCaptureView.swift */,
-				1FB247B02E5ACC3000F7BAF7 /* PhotoGalleryView.swift */,
 				1FB247B12E5ACC3000F7BAF7 /* PhotoManager.swift */,
-				1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */,
 				1FB247B32E5ACC3000F7BAF7 /* PropertyDetailView.swift */,
 			);
 			path = Farm;
@@ -289,8 +286,7 @@
 		1FB247BD2E5ACC4B00F7BAF7 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				1FCEB45E2E5B7ACC00021D62 /* GenericPhotoCaptureView.swift */,
-				1FB247BC2E5ACC4B00F7BAF7 /* AppSettingsView.swift */,
+				1FCEB4642E5B940300021D62 /* UtilitiesView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -298,7 +294,11 @@
 		1FB247C02E5ACD7C00F7BAF7 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				1FB247AF2E5ACC3000F7BAF7 /* PhotoCaptureView.swift */,
+				1FB247B02E5ACC3000F7BAF7 /* PhotoGalleryView.swift */,
+				1FCEB45E2E5B7ACC00021D62 /* GenericPhotoCaptureView.swift */,
 				1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */,
+				1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -483,6 +483,7 @@
 				1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */,
 				1F2E92232E5A1F9E003962BA /* MaterialsAndPracticesApp.swift in Sources */,
 				1F2E92422E5A5641003962BA /* SecureConfiguration.swift in Sources */,
+				1FCEB4652E5B940300021D62 /* UtilitiesView.swift in Sources */,
 				1F2E923B2E5A5352003962BA /* HarvestHeatMapView.swift in Sources */,
 				1FB247C12E5ACD7C00F7BAF7 /* CommonUIComponents.swift in Sources */,
 				1FCEB45D2E5B7A5C00021D62 /* FarmerProfileView.swift in Sources */,
@@ -490,7 +491,6 @@
 				1F2E923D2E5A5352003962BA /* GrowingSeasonTimelineView.swift in Sources */,
 				1FB247AC2E5AC71800F7BAF7 /* DefaultIDGenerator.swift in Sources */,
 				1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */,
-				1FB247BE2E5ACC4B00F7BAF7 /* AppSettingsView.swift in Sources */,
 				1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */,
 				1FCEB4532E5B790100021D62 /* CreateFieldView.swift in Sources */,
 				1FCEB4542E5B790100021D62 /* SoilTestListView.swift in Sources */,
