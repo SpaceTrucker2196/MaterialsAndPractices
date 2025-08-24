@@ -31,20 +31,12 @@ class SecureConfiguration {
     // MARK: - Configuration Keys
     
     enum ConfigKey: String, CaseIterable {
-        case weatherAPIKey = "weather_api_key"
-        case noaaAPIEndpoint = "noaa_api_endpoint"
-        case backupWeatherAPIKey = "backup_weather_api_key"
-        case locationServiceKey = "location_service_key"
         case debugLoggingEnabled = "debug_logging_enabled"
         case networkTimeoutSeconds = "network_timeout_seconds"
         case maxRetryAttempts = "max_retry_attempts"
         
         var defaultValue: String? {
             switch self {
-            case .weatherAPIKey, .backupWeatherAPIKey, .locationServiceKey:
-                return nil // These should be provided through configuration
-            case .noaaAPIEndpoint:
-                return "https://api.weather.gov"
             case .debugLoggingEnabled:
                 return "true"
             case .networkTimeoutSeconds:
@@ -97,7 +89,6 @@ class SecureConfiguration {
     /// - Returns: Array of missing required keys
     func validateConfiguration() -> [ConfigKey] {
         let requiredKeys: [ConfigKey] = [
-            .noaaAPIEndpoint,
             .networkTimeoutSeconds,
             .maxRetryAttempts
         ]
@@ -106,16 +97,6 @@ class SecureConfiguration {
     }
     
     // MARK: - Convenience Accessors
-    
-    /// Weather API key for backup weather services
-    var weatherAPIKey: String? {
-        return getValue(for: .weatherAPIKey)
-    }
-    
-    /// NOAA API endpoint URL
-    var noaaAPIEndpoint: String {
-        return getValue(for: .noaaAPIEndpoint) ?? "https://api.weather.gov"
-    }
     
     /// Debug logging enabled status
     var debugLoggingEnabled: Bool {
@@ -253,12 +234,10 @@ struct ConfigurationSetup {
             print("⚠️ Warning: Missing configuration values for keys: \(missingKeys.map { $0.rawValue })")
         }
         
-        // Log configuration status (without sensitive values)
+        // Log configuration status
         print("📊 Configuration Status:")
-        print("  - NOAA Endpoint: \(config.noaaAPIEndpoint)")
         print("  - Debug Logging: \(config.debugLoggingEnabled)")
         print("  - Network Timeout: \(config.networkTimeoutSeconds)s")
         print("  - Max Retries: \(config.maxRetryAttempts)")
-        print("  - Weather API Key: \(config.weatherAPIKey != nil ? "✅ Present" : "❌ Missing")")
     }
 }

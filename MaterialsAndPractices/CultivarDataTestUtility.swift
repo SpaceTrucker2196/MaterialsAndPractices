@@ -124,35 +124,6 @@ struct CultivarDataTestUtility {
         return results
     }
     
-    /// Tests location services and USDA zone detection
-    /// - Parameter testLocations: Array of test coordinates
-    /// - Returns: Dictionary of location test results
-    static func testLocationServices(testLocations: [(lat: Double, lon: Double, expectedZone: Int)]) -> [String: Any] {
-        var results: [String: Any] = [:]
-        let locationManager = LocationManager()
-        
-        for (index, location) in testLocations.enumerated() {
-            locationManager.setTestLocation(latitude: location.lat, longitude: location.lon)
-            
-            if let detectedZone = locationManager.getCurrentUSDAZone() {
-                let isCorrect = abs(detectedZone - location.expectedZone) <= 1 // Allow 1 zone difference
-                results["Location \(index + 1)"] = [
-                    "coordinates": "\(location.lat), \(location.lon)",
-                    "expected_zone": location.expectedZone,
-                    "detected_zone": detectedZone,
-                    "correct": isCorrect
-                ]
-            } else {
-                results["Location \(index + 1)"] = [
-                    "coordinates": "\(location.lat), \(location.lon)",
-                    "error": "Could not detect zone"
-                ]
-            }
-        }
-        
-        return results
-    }
-    
     /// Validates cultivar data after seeding
     /// - Parameter context: Core Data context to validate
     /// - Returns: Validation results
@@ -233,8 +204,8 @@ struct CultivarDataTestUtility {
             (lat: 33.4484, lon: -112.0740, expectedZone: 9), // Phoenix, AZ
             (lat: 47.6062, lon: -122.3321, expectedZone: 4)  // Seattle, WA
         ]
-        let locationResults = testLocationServices(testLocations: testLocations)
-        results["location_services"] = locationResults
+      //  let locationResults = testLocationServices(testLocations: testLocations)
+       // results["location_services"] = locationResults
         
         // Test cultivar data validation
         print("🌱 Validating cultivar data...")
