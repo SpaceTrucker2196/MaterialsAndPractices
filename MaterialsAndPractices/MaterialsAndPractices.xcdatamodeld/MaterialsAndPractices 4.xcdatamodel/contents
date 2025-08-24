@@ -138,6 +138,8 @@
         <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="orgName" optional="YES" attributeType="String"/>
         <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="profilePhotoData" optional="YES" attributeType="Binary"/>
+        <relationship name="healthSafetyTrainings" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="HealthSafetyTraining" inverseName="farmer" inverseEntity="HealthSafetyTraining"/>
         <relationship name="leases" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Lease" inverseName="farmer" inverseEntity="Lease"/>
         <fetchIndex name="byIdIndex">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
@@ -152,12 +154,15 @@
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="photoData" optional="YES" attributeType="Binary"/>
         <attribute name="polygonWKB" optional="YES" attributeType="Binary"/>
         <attribute name="soilMapUnits" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <relationship name="conservationPractices" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ConservationPractice" inverseName="field" inverseEntity="ConservationPractice"/>
         <relationship name="cropPlans" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CropPlan" inverseName="field" inverseEntity="CropPlan"/>
+        <relationship name="grows" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Grow" inverseName="field" inverseEntity="Grow"/>
         <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="fields" inverseEntity="Property"/>
         <relationship name="soilTests" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SoilTest" inverseName="field" inverseEntity="SoilTest"/>
+        <relationship name="wells" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Well" inverseName="field" inverseEntity="Well"/>
         <fetchIndex name="byIdIndex">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -188,6 +193,7 @@
         <attribute name="zip" optional="YES" attributeType="String"/>
         <relationship name="amendments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Amendment" inverseName="grow" inverseEntity="Amendment"/>
         <relationship name="cultivar" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cultivar" inverseName="grows" inverseEntity="Cultivar"/>
+        <relationship name="field" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Field" inverseName="grows" inverseEntity="Field"/>
         <relationship name="work" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Work" inverseName="grow" inverseEntity="Work"/>
     </entity>
     <entity name="Harvest" representedClassName="Harvest" syncable="YES" codeGenerationType="class">
@@ -349,6 +355,7 @@
         <relationship name="leases" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Lease" inverseName="properties" inverseEntity="Lease"/>
         <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Owner" inverseName="properties" inverseEntity="Owner"/>
         <relationship name="waterTests" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WaterTest" inverseName="property" inverseEntity="WaterTest"/>
+        <relationship name="wells" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Well" inverseName="property" inverseEntity="Well"/>
         <fetchIndex name="byDisplayNameIndex">
             <fetchIndexElement property="displayName" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -385,11 +392,89 @@
         <attribute name="source" optional="YES" attributeType="String"/>
         <relationship name="document" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="waterTest" inverseEntity="Document"/>
         <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="waterTests" inverseEntity="Property"/>
+        <relationship name="well" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Well" inverseName="waterTests" inverseEntity="Well"/>
         <fetchIndex name="byDateIndex">
             <fetchIndexElement property="date" type="Binary" order="ascending"/>
         </fetchIndex>
         <fetchIndex name="byIdIndex">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="HealthSafetyTraining" representedClassName="HealthSafetyTraining" syncable="YES" codeGenerationType="class">
+        <attribute name="completedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="trainingName" optional="YES" attributeType="String"/>
+        <attribute name="trainingType" optional="YES" attributeType="String"/>
+        <relationship name="farmer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Farmer" inverseName="healthSafetyTrainings" inverseEntity="Farmer"/>
+        <relationship name="worker" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Worker" inverseName="healthSafetyTrainings" inverseEntity="Worker"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byTrainingNameIndex">
+            <fetchIndexElement property="trainingName" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="TimeClock" representedClassName="TimeClock" syncable="YES" codeGenerationType="class">
+        <attribute name="clockInTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="clockOutTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="hoursWorked" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isActive" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="weekNumber" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="year" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <relationship name="worker" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Worker" inverseName="timeClockEntries" inverseEntity="Worker"/>
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byWeekYearIndex">
+            <fetchIndexElement property="year" type="Binary" order="ascending"/>
+            <fetchIndexElement property="weekNumber" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Worker" representedClassName="Worker" syncable="YES" codeGenerationType="class">
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="emergencyContact" optional="YES" attributeType="String"/>
+        <attribute name="emergencyPhone" optional="YES" attributeType="String"/>
+        <attribute name="hireDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isActive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="position" optional="YES" attributeType="String"/>
+        <attribute name="profilePhotoData" optional="YES" attributeType="Binary"/>
+        <relationship name="healthSafetyTrainings" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="HealthSafetyTraining" inverseName="worker" inverseEntity="HealthSafetyTraining"/>
+        <relationship name="timeClockEntries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TimeClock" inverseName="worker" inverseEntity="TimeClock"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Well" representedClassName="Well" syncable="YES" codeGenerationType="class">
+        <attribute name="depth" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="drillDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="wellType" optional="YES" attributeType="String"/>
+        <relationship name="field" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Field" inverseName="wells" inverseEntity="Field"/>
+        <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="wells" inverseEntity="Property"/>
+        <relationship name="waterTests" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WaterTest" inverseName="well" inverseEntity="WaterTest"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
     <entity name="Work" representedClassName="Work" syncable="YES" codeGenerationType="class">

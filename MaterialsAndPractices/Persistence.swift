@@ -359,4 +359,56 @@ private func addSampleFarmData(context: NSManagedObjectContext) {
     infrastructure.installDate = Calendar.current.date(byAdding: .year, value: -5, to: Date())
     infrastructure.notes = "Perimeter fencing"
     infrastructure.property = property1
+    
+    // Create sample workers
+    let worker1 = Worker(context: context)
+    worker1.id = UUID()
+    worker1.name = "John Smith"
+    worker1.position = "Farm Supervisor"
+    worker1.email = "john@farm.com"
+    worker1.phone = "555-123-4567"
+    worker1.hireDate = Calendar.current.date(byAdding: .year, value: -2, to: Date())
+    worker1.isActive = true
+    
+    let worker2 = Worker(context: context)
+    worker2.id = UUID()
+    worker2.name = "Maria Garcia"
+    worker2.position = "Field Worker"
+    worker2.email = "maria@farm.com"
+    worker2.phone = "555-234-5678"
+    worker2.hireDate = Calendar.current.date(byAdding: .month, value: -6, to: Date())
+    worker2.isActive = true
+    
+    // Create sample time clock entry (worker1 clocked in)
+    let timeClock = TimeClock(context: context)
+    timeClock.id = UUID()
+    timeClock.worker = worker1
+    timeClock.date = Calendar.current.startOfDay(for: Date())
+    timeClock.clockInTime = Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: Date())
+    timeClock.isActive = true
+    let calendar = Calendar.current
+    timeClock.year = Int16(calendar.component(.yearForWeekOfYear, from: Date()))
+    timeClock.weekNumber = Int16(calendar.component(.weekOfYear, from: Date()))
+    
+    // Create sample health safety training
+    let training = HealthSafetyTraining(context: context)
+    training.id = UUID()
+    training.trainingName = "Harvest Safety"
+    training.trainingType = "Required"
+    training.completedDate = Calendar.current.date(byAdding: .month, value: -2, to: Date())
+    training.expiryDate = Calendar.current.date(byAdding: .year, value: 1, to: Date())
+    training.farmer = farmer
+    training.notes = "Annual harvest safety training completed"
+    
+    // Create sample well
+    let well = Well(context: context)
+    well.id = UUID()
+    well.name = "North Well"
+    well.wellType = "irrigation"
+    well.status = "active"
+    well.depth = 120.0
+    well.drillDate = Calendar.current.date(byAdding: .year, value: -3, to: Date())
+    well.property = property1
+    well.field = field1
+    well.notes = "Primary irrigation well"
 }

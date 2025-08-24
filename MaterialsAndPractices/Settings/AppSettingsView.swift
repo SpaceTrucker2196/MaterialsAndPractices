@@ -33,6 +33,9 @@ struct AppSettingsView: View {
     var body: some View {
         NavigationView {
             List {
+                // Profile Section
+                profileSection
+                
                 // App Information Section
                 appInformationSection
                 
@@ -58,6 +61,30 @@ struct AppSettingsView: View {
     }
     
     // MARK: - Sections
+    
+    /// Profile section with farmer profile access
+    private var profileSection: some View {
+        Section("Profile") {
+            NavigationLink(destination: FarmerProfileView()) {
+                HStack {
+                    Image(systemName: "person.circle.fill")
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading) {
+                        Text("Farmer Profile")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("View and edit your profile information")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
+                .padding(.vertical, AppTheme.Spacing.tiny)
+            }
+        }
+    }
     
     /// App information and version details
     private var appInformationSection: some View {

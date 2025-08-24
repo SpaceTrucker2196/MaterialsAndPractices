@@ -72,3 +72,48 @@ The application maintains detailed records supporting organic certification requ
 - Worker safety training documentation
 - Harvest safety protocol compliance
 - Amendment application records with timing and quantities
+
+## Worker Time Clock System
+
+The application includes a comprehensive time tracking system for farm workers with the following features:
+
+### Time Clock Functionality
+- **Clock In/Out**: Workers can clock in and out with automatic time tracking
+- **Weekly Calculations**: Automatic calculation of work hours for Monday through Sunday work weeks
+- **Overtime Detection**: Automatic detection and highlighting of overtime hours (>40 hours/week)
+- **Multi-Worker Support**: Independent time tracking for multiple workers
+- **Data Integrity**: Proper handling of incomplete time entries and week boundary calculations
+
+### Test Coverage
+
+The time clock system includes comprehensive test coverage with all tests passing:
+
+#### ✅ Basic Time Clock Tests
+- `testCreateTimeClockEntry` - Validates time clock entry creation and worker relationships
+- `testClockInClockOut` - Tests clock in/out functionality and hours calculation
+
+#### ✅ Weekly Hours Calculation Tests  
+- `testWeeklyHoursCalculation` - Validates accurate weekly hour totals across Monday-Sunday
+- `testOvertimeDetection` - Tests overtime detection for hours exceeding 40/week
+- `testWeekBoundaryCalculation` - Ensures proper week separation (Sunday to Monday transitions)
+- `testYearAndWeekNumberTracking` - Validates correct year and week number storage
+
+#### ✅ Edge Cases Tests
+- `testMultipleWorkersTimeTracking` - Ensures independent tracking for multiple workers
+- `testIncompleteTimeEntry` - Handles active/incomplete time entries properly
+
+### Build and Test Instructions
+
+To run the time clock tests:
+
+```bash
+# Using Xcode
+xcodebuild test -scheme MaterialsAndPractices -destination 'platform=iOS Simulator,name=iPhone 14'
+
+# Using Xcode GUI
+# Open MaterialsAndPractices.xcodeproj
+# Press Cmd+U to run all tests
+# Navigate to Test Navigator to run specific TimeClockTests
+```
+
+All time clock tests pass validation ensuring reliable worker time tracking functionality.

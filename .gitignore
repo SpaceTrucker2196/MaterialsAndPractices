@@ -1,0 +1,83 @@
+# Xcode user-specific files
+*.xcuserstate
+xcuserdata/
+
+## macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+## Xcode
+*.xcuserdata
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+
+## Derived Data
+DerivedData/
+build/
+*.hmap
+*.ipa
+
+## SwiftPM
+.build/
+Packages/
+Package.pins
+Package.resolved
+
+## CocoaPods
+Pods/
+Podfile.lock
+
+## Carthage
+Carthage/Build/
+
+## Swift Package Manager
+.swiftpm/
+.idea/
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+## Xcode Server
+xcscheme*
+
+## Archives
+*.xcarchive
+
+## Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+
+## Temporary files
+*.tmp
+*.swp
+*.lock
+*.orig
+
+## Logs
+*.log
+
+## Simulator devices
+coreSimulatorDevices/
+
+## Firebase
+GoogleService-Info.plist
+
+## XCFrameworks
+*.xcframework
+
+## SPM Xcode 11 cache
+.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+
+# ENV / Secrets
+.env
+.env.*
+
+## User settings
+*.orig

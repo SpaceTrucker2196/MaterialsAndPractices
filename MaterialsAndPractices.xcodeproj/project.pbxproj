@@ -37,9 +37,20 @@
 		1FB247BB2E5ACC3000F7BAF7 /* PhotoOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */; };
 		1FB247BE2E5ACC4B00F7BAF7 /* AppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247BC2E5ACC4B00F7BAF7 /* AppSettingsView.swift */; };
 		1FB247C12E5ACD7C00F7BAF7 /* CommonUIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */; };
+		1FCEB4532E5B790100021D62 /* CreateFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB44C2E5B790100021D62 /* CreateFieldView.swift */; };
+		1FCEB4542E5B790100021D62 /* SoilTestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB4512E5B790100021D62 /* SoilTestListView.swift */; };
+		1FCEB4552E5B790100021D62 /* InfrastructureViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB4502E5B790100021D62 /* InfrastructureViews.swift */; };
+		1FCEB4562E5B790100021D62 /* FarmDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB44E2E5B790100021D62 /* FarmDashboardView.swift */; };
+		1FCEB4572E5B790100021D62 /* CreateInfrastructureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB44D2E5B790100021D62 /* CreateInfrastructureView.swift */; };
+		1FCEB4582E5B790100021D62 /* FieldManagementViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB44F2E5B790100021D62 /* FieldManagementViews.swift */; };
+		1FCEB4592E5B790100021D62 /* WorkerManagementViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB4522E5B790100021D62 /* WorkerManagementViews.swift */; };
+		1FCEB45B2E5B797E00021D62 /* PropertyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB45A2E5B797E00021D62 /* PropertyDetailView.swift */; };
+		1FCEB45D2E5B7A5C00021D62 /* FarmerProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB45C2E5B7A5C00021D62 /* FarmerProfileView.swift */; };
+		1FCEB45F2E5B7ACC00021D62 /* GenericPhotoCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB45E2E5B7ACC00021D62 /* GenericPhotoCaptureView.swift */; };
+		1FCEB4622E5B7C0E00021D62 /* HarvestSafetyChecklist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB4612E5B7C0E00021D62 /* HarvestSafetyChecklist.swift */; };
+		1FCEB4632E5B7C0E00021D62 /* EnhancedEditGrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB4602E5B7C0E00021D62 /* EnhancedEditGrowView.swift */; };
 		1FD918352E595AB900D18920 /* CultivarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD918342E595AB900D18920 /* CultivarViews.swift */; };
 		1FD918362E595AB900D18920 /* CultivarSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD918332E595AB900D18920 /* CultivarSeeder.swift */; };
-		1FD9188E2E59EFC900D18920 /* HarvestSafetyChecklist 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD9188D2E59EFC900D18920 /* HarvestSafetyChecklist 2.swift */; };
 		1FE293EF257DDBAC00C93102 /* GrowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */; };
 		1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B63257EAED600A6D9DD /* GrowViews.swift */; };
 		1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */; };
@@ -105,9 +116,20 @@
 		1FB247B32E5ACC3000F7BAF7 /* PropertyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyDetailView.swift; sourceTree = "<group>"; };
 		1FB247BC2E5ACC4B00F7BAF7 /* AppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsView.swift; sourceTree = "<group>"; };
 		1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUIComponents.swift; sourceTree = "<group>"; };
+		1FCEB44C2E5B790100021D62 /* CreateFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateFieldView.swift; sourceTree = "<group>"; };
+		1FCEB44D2E5B790100021D62 /* CreateInfrastructureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateInfrastructureView.swift; sourceTree = "<group>"; };
+		1FCEB44E2E5B790100021D62 /* FarmDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FarmDashboardView.swift; sourceTree = "<group>"; };
+		1FCEB44F2E5B790100021D62 /* FieldManagementViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldManagementViews.swift; sourceTree = "<group>"; };
+		1FCEB4502E5B790100021D62 /* InfrastructureViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfrastructureViews.swift; sourceTree = "<group>"; };
+		1FCEB4512E5B790100021D62 /* SoilTestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestListView.swift; sourceTree = "<group>"; };
+		1FCEB4522E5B790100021D62 /* WorkerManagementViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkerManagementViews.swift; sourceTree = "<group>"; };
+		1FCEB45A2E5B797E00021D62 /* PropertyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyDetailView.swift; sourceTree = "<group>"; };
+		1FCEB45C2E5B7A5C00021D62 /* FarmerProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FarmerProfileView.swift; sourceTree = "<group>"; };
+		1FCEB45E2E5B7ACC00021D62 /* GenericPhotoCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPhotoCaptureView.swift; sourceTree = "<group>"; };
+		1FCEB4602E5B7C0E00021D62 /* EnhancedEditGrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedEditGrowView.swift; sourceTree = "<group>"; };
+		1FCEB4612E5B7C0E00021D62 /* HarvestSafetyChecklist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HarvestSafetyChecklist.swift; sourceTree = "<group>"; };
 		1FD918332E595AB900D18920 /* CultivarSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarSeeder.swift; sourceTree = "<group>"; };
 		1FD918342E595AB900D18920 /* CultivarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarViews.swift; sourceTree = "<group>"; };
-		1FD9188D2E59EFC900D18920 /* HarvestSafetyChecklist 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HarvestSafetyChecklist 2.swift"; sourceTree = "<group>"; };
 		1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowDetailView.swift; sourceTree = "<group>"; };
 		1FEA2B63257EAED600A6D9DD /* GrowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowViews.swift; sourceTree = "<group>"; };
 		1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGrowView.swift; sourceTree = "<group>"; };
@@ -244,6 +266,15 @@
 		1FB247B42E5ACC3000F7BAF7 /* Farm */ = {
 			isa = PBXGroup;
 			children = (
+				1FCEB45C2E5B7A5C00021D62 /* FarmerProfileView.swift */,
+				1FCEB45A2E5B797E00021D62 /* PropertyDetailView.swift */,
+				1FCEB44C2E5B790100021D62 /* CreateFieldView.swift */,
+				1FCEB44D2E5B790100021D62 /* CreateInfrastructureView.swift */,
+				1FCEB44E2E5B790100021D62 /* FarmDashboardView.swift */,
+				1FCEB44F2E5B790100021D62 /* FieldManagementViews.swift */,
+				1FCEB4502E5B790100021D62 /* InfrastructureViews.swift */,
+				1FCEB4512E5B790100021D62 /* SoilTestListView.swift */,
+				1FCEB4522E5B790100021D62 /* WorkerManagementViews.swift */,
 				1FB247AD2E5ACC3000F7BAF7 /* EditPropertyView.swift */,
 				1FB247AE2E5ACC3000F7BAF7 /* FarmListView.swift */,
 				1FB247AF2E5ACC3000F7BAF7 /* PhotoCaptureView.swift */,
@@ -258,6 +289,7 @@
 		1FB247BD2E5ACC4B00F7BAF7 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				1FCEB45E2E5B7ACC00021D62 /* GenericPhotoCaptureView.swift */,
 				1FB247BC2E5ACC4B00F7BAF7 /* AppSettingsView.swift */,
 			);
 			path = Settings;
@@ -274,7 +306,8 @@
 		1FDC8616257E872000EF71E0 /* Grow */ = {
 			isa = PBXGroup;
 			children = (
-				1FD9188D2E59EFC900D18920 /* HarvestSafetyChecklist 2.swift */,
+				1FCEB4602E5B7C0E00021D62 /* EnhancedEditGrowView.swift */,
+				1FCEB4612E5B7C0E00021D62 /* HarvestSafetyChecklist.swift */,
 				1F4F48B7257DB4C2005E559D /* CurrentGrowsView.swift */,
 				1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */,
 				1FEA2B63257EAED600A6D9DD /* GrowViews.swift */,
@@ -428,8 +461,10 @@
 				1FE293EF257DDBAC00C93102 /* GrowDetailView.swift in Sources */,
 				1F4F48BF257DB4C4005E559D /* Persistence.swift in Sources */,
 				1F2E92262E5A1FA2003962BA /* AppTheme.swift in Sources */,
+				1FCEB45B2E5B797E00021D62 /* PropertyDetailView.swift in Sources */,
 				1F06C21E257FEF7E006F8C83 /* AmendmentDetail.swift in Sources */,
 				1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */,
+				1FCEB45F2E5B7ACC00021D62 /* GenericPhotoCaptureView.swift in Sources */,
 				1F81222A258295D0007394D0 /* WorkPracticeDetailView.swift in Sources */,
 				1F812225258281EC007394D0 /* WorkPractices.swift in Sources */,
 				1FEA2B79257FCE1D00A6D9DD /* Amendments.swift in Sources */,
@@ -448,15 +483,24 @@
 				1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */,
 				1F2E92232E5A1F9E003962BA /* MaterialsAndPracticesApp.swift in Sources */,
 				1F2E92422E5A5641003962BA /* SecureConfiguration.swift in Sources */,
-				1FD9188E2E59EFC900D18920 /* HarvestSafetyChecklist 2.swift in Sources */,
 				1F2E923B2E5A5352003962BA /* HarvestHeatMapView.swift in Sources */,
 				1FB247C12E5ACD7C00F7BAF7 /* CommonUIComponents.swift in Sources */,
+				1FCEB45D2E5B7A5C00021D62 /* FarmerProfileView.swift in Sources */,
 				1F2E923C2E5A5352003962BA /* CultivarDataTestUtility.swift in Sources */,
 				1F2E923D2E5A5352003962BA /* GrowingSeasonTimelineView.swift in Sources */,
 				1FB247AC2E5AC71800F7BAF7 /* DefaultIDGenerator.swift in Sources */,
 				1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */,
 				1FB247BE2E5ACC4B00F7BAF7 /* AppSettingsView.swift in Sources */,
 				1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */,
+				1FCEB4532E5B790100021D62 /* CreateFieldView.swift in Sources */,
+				1FCEB4542E5B790100021D62 /* SoilTestListView.swift in Sources */,
+				1FCEB4622E5B7C0E00021D62 /* HarvestSafetyChecklist.swift in Sources */,
+				1FCEB4632E5B7C0E00021D62 /* EnhancedEditGrowView.swift in Sources */,
+				1FCEB4552E5B790100021D62 /* InfrastructureViews.swift in Sources */,
+				1FCEB4562E5B790100021D62 /* FarmDashboardView.swift in Sources */,
+				1FCEB4572E5B790100021D62 /* CreateInfrastructureView.swift in Sources */,
+				1FCEB4582E5B790100021D62 /* FieldManagementViews.swift in Sources */,
+				1FCEB4592E5B790100021D62 /* WorkerManagementViews.swift in Sources */,
 				1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

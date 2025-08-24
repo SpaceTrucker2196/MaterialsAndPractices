@@ -50,9 +50,9 @@ struct ContentView: View {
                 }
             
             // Farm management tab
-            FarmListView()
+            FarmDashboardView()
                 .tabItem {
-                    Label("Farms", systemImage: "building.2.fill")
+                    Label("Dashboard", systemImage: "building.2.fill")
                 }
             
             // App settings tab
