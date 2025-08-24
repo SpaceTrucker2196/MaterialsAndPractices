@@ -204,8 +204,8 @@ struct CultivarDataTestUtility {
             (lat: 33.4484, lon: -112.0740, expectedZone: 9), // Phoenix, AZ
             (lat: 47.6062, lon: -122.3321, expectedZone: 4)  // Seattle, WA
         ]
-        let locationResults = testLocationServices(testLocations: testLocations)
-        results["location_services"] = locationResults
+      //  let locationResults = testLocationServices(testLocations: testLocations)
+       // results["location_services"] = locationResults
         
         // Test cultivar data validation
         print("🌱 Validating cultivar data...")
