@@ -567,14 +567,7 @@ struct SoilTestFlowView: View {
     }
 }
 
-/// Placeholder for soil test creation view - now redirects to full flow
-struct CreateSoilTestView: View {
-    let field: Field
-    
-    var body: some View {
-        CreateSoilTestView(field: field)
-    }
-}
+
 
 /// Placeholder for well creation view
 struct CreateWellView: View {

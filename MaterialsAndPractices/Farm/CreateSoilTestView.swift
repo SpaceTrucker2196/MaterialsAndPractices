@@ -323,9 +323,9 @@ struct CreateSoilTestView: View {
     }
     
     // Nutrient range definitions
-    private let phosphorusRanges = [(0..<15.0, "Low"), (15.0..<30.0, "Medium"), (30.0...200.0, "High")]
-    private let potassiumRanges = [(0..<100.0, "Low"), (100.0..<200.0, "Medium"), (200.0...500.0, "High")]
-    private let cecRanges = [(0..<10.0, "Low"), (10.0..<20.0, "Medium"), (20.0...40.0, "High")]
+    private let phosphorusRanges: [(Range<Double>, String)] = [(0..<15.0, "Low"), (15.0..<30.0, "Medium"), (30.0...200.0, "High")]
+    private let potassiumRanges: [(Range<Double>, String)] = [(0..<100.0, "Low"), (100.0..<200.0, "Medium"), (200.0...500.0, "High")]
+    private let cecRanges: [(Range<Double>, String)] = [(0..<10.0, "Low"), (10.0..<20.0, "Medium"), (20.0...40.0, "High")]
     
     private func colorForNutrient(_ value: Double, ranges: [(Range<Double>, String)]) -> Color {
         for (range, level) in ranges {
