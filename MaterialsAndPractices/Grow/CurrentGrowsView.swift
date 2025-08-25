@@ -40,7 +40,7 @@ struct CurrentGrowsView: View {
                     .onDelete(perform: deleteItems)
                 }
             }
-            .navigationTitle("Growing Dashboard")
+            .navigationTitle("Current Grows")
             // Disambiguate toolbar by supplying explicit ToolbarContent
             .toolbar {
                 AddGrowToolbar(showCreateGrow: $showCreateGrow)
@@ -108,24 +108,26 @@ struct GrowRow: View {
             destination: GrowDetailView(growViewModel: GrowDetailViewModel(grow: grow))
         ) {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                Text(grow.title ?? "My Grow")
+                    .font(AppTheme.Typography.headlineMedium)
+                    .foregroundStyle(AppTheme.Colors.textPrimary)
+                    .lineLimit(nil)
+
+              
+
                 HStack(alignment: .center, spacing: AppTheme.Spacing.medium) {
                     Grow.Image(grow: grow)
-
                     VStack(alignment: .leading, spacing: AppTheme.Spacing.extraSmall) {
                         // Grow title with fallback
-                        Text(grow.title ?? "My Grow")
-                            .font(AppTheme.Typography.headlineMedium)
-                            .foregroundStyle(AppTheme.Colors.textPrimary)
-                            .lineLimit(nil)
-
+                       
                         // Cultivar information section
-                        cultivarInfoSection
+                       // cultivarInfoSection
 
-                        // Field and farm information section
-                        fieldAndFarmInfoSection
+                      //  // Field and farm information section
+                        //fieldAndFarmInfoSection
 
                         // Planted date information section
-                        plantedDateSection
+                        //plantedDateSection
 
                         // Location information section
                         locationSection

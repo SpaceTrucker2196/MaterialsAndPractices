@@ -46,6 +46,15 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+    <key>UIAppFonts</key>
+    <array>
+        <string>FiraCode-Regular.ttf</string>
+        <string>FiraCode-Bold.ttf</string>
+        <string>FiraCode-SemiBold.ttf</string>
+        <string>FiraCode-Medium.ttf</string>
+        <string>FiraCode-Light.ttf</string>
+        <string>FiraCode-Retina.ttf</string>
+    </array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs location access to provide current weather information for your growing locations.</string>
 </dict>

@@ -35,9 +35,9 @@ extension Cultivar {
 /// Implements first-letter mapping to square system icons with proper fallback handling
 extension SwiftUI.Image {
     init?(cultivar: Cultivar) {
-        guard let name = cultivar.name,
+        guard let name = cultivar.emoji,
               let firstChar = name.first,
-              case let symbolName = "\(firstChar.lowercased()).square",
+              case let symbolName = "\(firstChar.lowercased())",
               UIImage(systemName: symbolName) != nil
         else {
             return nil
@@ -100,7 +100,9 @@ struct CultivarDetailView: View {
     /// Header section displaying cultivar name, image, and family information
     private var cultivarHeaderSection: some View {
         HStack {
-            Cultivar.Image(cultivar: cultivar)
+            Text(cultivar.emoji ?? "0")
+                .font(AppTheme.Typography.displayLarge)
+                .foregroundColor(AppTheme.Colors.textPrimary)
             VStack(alignment: .leading) {
                 Text(cultivar.name ?? "Unknown Cultivar")
                     .font(AppTheme.Typography.displaySmall)
@@ -576,8 +578,9 @@ private struct CultivarRow: View {
     
     var body: some View {
         HStack(spacing: AppTheme.Spacing.medium) {
-            Cultivar.Image(cultivar: cultivar)
-            
+            Text(cultivar.emoji ?? "Unknown")
+                .font(AppTheme.Typography.displayLarge)
+                .foregroundColor(AppTheme.Colors.textPrimary)
             VStack(alignment: .leading, spacing: AppTheme.Spacing.extraSmall) {
                 Text(cultivar.name ?? "Unknown")
                     .font(AppTheme.Typography.headlineSmall)

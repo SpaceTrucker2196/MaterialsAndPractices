@@ -54,7 +54,7 @@ struct CultivarSeeder {
     /// growing days, harvest timing, and planting schedules
     /// - Parameter context: The Core Data context for entity creation
     private static func seedEnrichedCultivarsFromCSV(in context: NSManagedObjectContext) {
-        guard let csvPath = Bundle.main.path(forResource: "vegetable_cultivars_master_enriched_with_family_common", ofType: "csv") else {
+        guard let csvPath = Bundle.main.path(forResource: "vegetable_cultivars_master", ofType: "csv") else {
             print("Error: Could not find CSV file in bundle")
             seedFallbackCultivars(in: context)
             return
@@ -78,6 +78,7 @@ struct CultivarSeeder {
                 // Growing information
                 cultivar.growingAdvice = cultivarInfo.growingAdvice
                 cultivar.growingDays = cultivarInfo.growingDays
+          
                 cultivar.transplantAge = cultivarInfo.transplantAge
                 cultivar.season = determineSeasonFromData(cultivarInfo)
                 
@@ -100,7 +101,16 @@ struct CultivarSeeder {
                 // Additional information
                 cultivar.pests = cultivarInfo.pests
                 cultivar.amendments = cultivarInfo.amendments
+                
+                // New enriched metadata
+                cultivar.approvedCommonName = cultivarInfo.approvedCommonName
+                cultivar.emoji = cultivarInfo.emoji
+                cultivar.iosColor = cultivarInfo.iosColor
+                cultivar.fruitName = cultivarInfo.fruitName
+                cultivar.harvestInstructions = cultivarInfo.harvestInstructions
+                cultivar.ripenessIndicators = cultivarInfo.ripenessIndicators
             }
+
             
             try context.save()
             print("Successfully seeded \(cultivarData.count) enriched cultivars from CSV")
@@ -131,26 +141,55 @@ struct CultivarSeeder {
             guard fields.count >= header.count else { continue }
             
             let cultivarInfo = CultivarInfo(
+                // Identity
                 commonName: getField(fields, header: header, name: "CommonName"),
                 family: getField(fields, header: header, name: "Family"),
                 genus: getField(fields, header: header, name: "Genus"),
                 cultivarName: getField(fields, header: header, name: "Cultivar"),
                 description: getField(fields, header: header, name: "Description"),
+                
+                // Naming enrichments
+                approvedCommonName: getField(fields, header: header, name: "ApprovedCommonName"),
+                fruitName: getField(fields, header: header, name: "FruitName"),
+                emoji: getField(fields, header: header, name: "Emoji"),
+                iosColor: getField(fields, header: header, name: "iosColor"),
+                
+                // Growing information
                 growingAdvice: getField(fields, header: header, name: "GrowingAdvice"),
+                growingDays: getField(fields, header: header, name: "GrowingDays"),
+                growingDaysEarly: getField(fields, header: header, name: "GrowingDaysEarly"),
+                growingDaysLate: getField(fields, header: header, name: "GrowingDaysLate"),
+                transplantAge: getField(fields, header: header, name: "TransplantAge"),
+                transplantAgeEarly: getField(fields, header: header, name: "TransplantAgeEarly"),
+                transplantAgeLate: getField(fields, header: header, name: "TransplantAgeLate"),
+                season: getField(fields, header: header, name: "Season"),
+                
+                // Zone and weather information
                 weatherTolerance: getField(fields, header: header, name: "WeatherTolerance"),
                 optimalZones: getField(fields, header: header, name: "OptimalZones"),
-                growingDays: getField(fields, header: header, name: "GrowingDays"),
-                transplantAge: getField(fields, header: header, name: "TransplantAge"),
                 usdaZoneList: getField(fields, header: header, name: "USDAZoneList"),
+                hardyZone: getField(fields, header: header, name: "HardyZone"),
+                
+                // Planting and harvest timing
                 bestHarvest: getField(fields, header: header, name: "BestHarvest"),
                 bestPlantingDates: getField(fields, header: header, name: "BestPlantingDates"),
+                harvestInstructions: getField(fields, header: header, name: "HarvestInstructions"),
+                ripenessIndicators: getField(fields, header: header, name: "RipenessIndicators"),
+                
+                // Growing conditions
                 greenhouseInstructions: getField(fields, header: header, name: "GreenhouseInstructions"),
                 soilInfo: getField(fields, header: header, name: "SoilInfo"),
+                soilConditions: getField(fields, header: header, name: "SoilConditions"),
+                
+                // Additional information
                 pests: getField(fields, header: header, name: "Pests"),
                 amendments: getField(fields, header: header, name: "Amendments"),
-                soilConditions: getField(fields, header: header, name: "SoilConditions")
+                
+                // Optional extras
+                notes: getField(fields, header: header, name: "Notes"),
+                sources: getField(fields, header: header, name: "Sources")
             )
-            
+
             cultivars.append(cultivarInfo)
         }
         
@@ -269,22 +308,51 @@ struct CultivarSeeder {
 
 /// Structure to hold parsed cultivar information from CSV
 private struct CultivarInfo {
+    // Identity
     let commonName: String?
     let family: String?
     let genus: String?
     let cultivarName: String?
     let description: String?
+    
+    // Naming enrichments
+    let approvedCommonName: String?
+    let fruitName: String?
+    let emoji: String?
+    let iosColor: String?
+    
+    // Growing information
     let growingAdvice: String?
+    let growingDays: String?
+    let growingDaysEarly: String?
+    let growingDaysLate: String?
+    let transplantAge: String?
+    let transplantAgeEarly: String?
+    let transplantAgeLate: String?
+    let season: String?
+    
+    // Zone and weather information
     let weatherTolerance: String?
     let optimalZones: String?
-    let growingDays: String?
-    let transplantAge: String?
     let usdaZoneList: String?
+    let hardyZone: String?
+    
+    // Planting and harvest timing
     let bestHarvest: String?
     let bestPlantingDates: String?
+    let harvestInstructions: String?
+    let ripenessIndicators: String?
+    
+    // Growing conditions
     let greenhouseInstructions: String?
     let soilInfo: String?
+    let soilConditions: String?
+    
+    // Additional information
     let pests: String?
     let amendments: String?
-    let soilConditions: String?
+    
+    // Optional extras
+    let notes: String?
+    let sources: String?
 }
