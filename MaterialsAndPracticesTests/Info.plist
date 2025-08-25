@@ -18,5 +18,14 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+    <key>UIAppFonts</key>
+    <array>
+        <string>FiraCode-Medium.ttf</string>
+        <string>FiraCode-Bold.ttf</string>
+        <string>FiraCode-Light.ttf</string>
+        <string>FiraCode-Regular.ttf</string>
+        <string>FiraCode-Retina.ttf</string>
+        <string>FiraCode-SemiBold.ttf</string>
+    </array>
 </dict>
 </plist>

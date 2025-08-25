@@ -555,7 +555,7 @@ struct CreateWorkerView: View {
                 }
             }
             .sheet(isPresented: $showingImagePicker) {
-                GenericPhotoCaptureView(selectedImage: $profileImage)
+                //GenericPhotoCaptureView(selectedImage: $profileImage)
             }
             .actionSheet(isPresented: $showingImageOptions) {
                 ActionSheet(

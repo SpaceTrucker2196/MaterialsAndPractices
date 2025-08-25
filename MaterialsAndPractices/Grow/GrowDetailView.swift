@@ -103,23 +103,24 @@ struct GrowDetailView: View {
     /// Section displaying comprehensive cultivar information with metadata tags
     private var cultivarInformationSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            Text("Cultivar:")
+                .font(AppTheme.Typography.labelMedium)
+                .foregroundColor(AppTheme.Colors.primary)
+            Text(growViewModel.cultivar)
+                .font(AppTheme.Typography.headlineLarge)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+            
+            if !growViewModel.cultivarFamily.isEmpty {
+                Text("Family: \(growViewModel.cultivarFamily)")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
             HStack {
                 growViewModel.previewImage
                 
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.extraSmall) {
-                    Text("Cultivar:")
-                        .font(AppTheme.Typography.labelMedium)
-                        .foregroundColor(AppTheme.Colors.primary)
                     
-                    Text(growViewModel.cultivar)
-                        .font(AppTheme.Typography.headlineLarge)
-                        .foregroundColor(AppTheme.Colors.textPrimary)
-                    
-                    if !growViewModel.cultivarFamily.isEmpty {
-                        Text("Family: \(growViewModel.cultivarFamily)")
-                            .font(AppTheme.Typography.bodyMedium)
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                    }
+                   
                     
                     // Metadata tags for season and zone information
                     HStack(spacing: AppTheme.Spacing.extraSmall) {
@@ -199,6 +200,9 @@ struct GrowDetailView: View {
                                 HStack {
                                     Image(systemName: "building.2")
                                         .foregroundColor(AppTheme.Colors.secondary)
+                                    
+                                    
+                                    
                                         .font(.title2)
                                     
                                     VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
