@@ -83,6 +83,7 @@ struct FarmDashboardView: View {
                     // Secondary sections: Only visible when farms exist
                     if hasFarmProperties {
                         teamMembersOverviewSection
+                        weeklyWorkerSummarySection
                         leaseAgreementsOverviewSection
                     }
                 }
@@ -276,6 +277,54 @@ struct FarmDashboardView: View {
             title: "No Team Members",
             message: "Add workers to manage your farm team and track operations",
             systemImage: "person.3",
+            actionTitle: nil,
+            action: nil
+        )
+        .frame(height: 120)
+    }
+
+    /// Weekly worker summary section showing hours worked and active work orders
+    /// Provides oversight of current week labor allocation and progress
+    private var weeklyWorkerSummarySection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            sectionHeaderWithNavigation(
+                title: "This Week's Work Summary",
+                destination: AnyView(WeeklyWorkerSummaryDetailView()),
+                showNavigation: true
+            )
+            
+            let weeklySummaries = WorkOrderManager.allWorkerWeeklySummaries(context: viewContext)
+            
+            if !weeklySummaries.isEmpty {
+                weeklyWorkerSummaryContent(summaries: weeklySummaries)
+            } else {
+                weeklyWorkerSummaryEmptyState
+            }
+        }
+    }
+    
+    /// Content display for weekly worker summaries
+    private func weeklyWorkerSummaryContent(summaries: [WorkerWeeklySummary]) -> some View {
+        VStack(spacing: AppTheme.Spacing.small) {
+            ForEach(summaries.prefix(4), id: \.worker.id) { summary in
+                WeeklyWorkerSummaryRow(summary: summary)
+            }
+            
+            if summaries.count > 4 {
+                Text("+ \(summaries.count - 4) more workers")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .padding(.top, AppTheme.Spacing.small)
+            }
+        }
+    }
+    
+    /// Empty state for weekly worker summary when no work is tracked
+    private var weeklyWorkerSummaryEmptyState: some View {
+        EmptyStateView(
+            title: "No Work Tracked This Week",
+            message: "Worker hours and work orders will appear here once time tracking begins",
+            systemImage: "clock.badge.checkmark",
             actionTitle: nil,
             action: nil
         )

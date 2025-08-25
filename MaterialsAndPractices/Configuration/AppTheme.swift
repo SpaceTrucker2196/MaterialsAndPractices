@@ -130,6 +130,9 @@ enum AppTheme {
         
         /// Default harvest weeks - Very light green
         static let defaultHarvest = Color(red: 0.9, green: 0.95, blue: 0.9)
+        
+        /// Off season - Brown color for times when harvest is not recommended
+        static let offSeason = Color(red: 0.6, green: 0.4, blue: 0.2)
     }
     
     // MARK: - Typography System
