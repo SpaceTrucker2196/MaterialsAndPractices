@@ -43,7 +43,7 @@ struct FieldRow: View {
                             // Show pH with appropriate color if recent test exists
                             if isRecentTest(soilTest) {
                                 MetadataTag(
-                                    text: "pH \(soilTest.ph, specifier: "%.1f")",
+                                    text: String(format: "pH %.1f", soilTest.ph),
                                     backgroundColor: colorForPH(soilTest.ph)
                                 )
                             } else {
