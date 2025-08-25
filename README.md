@@ -1,4 +1,4 @@
-# MaterialsAndPractices
+# Materials And Practices
 
 ## Executive Summary
 
