@@ -70,7 +70,7 @@ struct CommonActionButton: View {
     let style: ActionButtonStyle
     
     enum ActionButtonStyle {
-        case primary, secondary, destructive
+        case primary, secondary, destructive, outline
         
         var backgroundColor: Color {
             switch self {
@@ -80,11 +80,27 @@ struct CommonActionButton: View {
                 return AppTheme.Colors.secondary
             case .destructive:
                 return AppTheme.Colors.error
+            case .outline:
+                return Color.clear
             }
         }
         
         var foregroundColor: Color {
-            return .white
+            switch self {
+            case .primary, .secondary, .destructive:
+                return .white
+            case .outline:
+                return AppTheme.Colors.primary
+            }
+        }
+        
+        var borderColor: Color? {
+            switch self {
+            case .outline:
+                return AppTheme.Colors.primary
+            default:
+                return nil
+            }
         }
     }
     
@@ -103,6 +119,10 @@ struct CommonActionButton: View {
                 .padding()
                 .background(style.backgroundColor)
                 .cornerRadius(AppTheme.CornerRadius.medium)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                        .stroke(style.borderColor ?? Color.clear, lineWidth: style.borderColor != nil ? 1 : 0)
+                )
         }
     }
 }

@@ -2,18 +2,19 @@
 //  CurrentGrowsView.swift
 //  MaterialsAndPractices
 //
-//  Provides the main interface for managing active growing operations with
-//  comprehensive display of grow information and navigation to detailed views.
-//  Implements MVVM architecture with proper separation of concerns.
+//  Provides comprehensive tile-based overview of all active grows with
+//  worker assignments, harvest estimates, and farm categorization.
+//  Implements farm management system grow tracking functionality.
 //
 //  Created by Jeffrey Kunzelman on 12/6/20.
+//  Enhanced with tile view by GitHub Copilot on 12/18/24.
 //
 
 import SwiftUI
 import CoreData
 
 /// Main view for displaying and managing current active grows
-/// Provides list interface with add, delete, and navigation capabilities
+/// Provides comprehensive tile-based overview categorized by farm
 struct CurrentGrowsView: View {
     // MARK: - Properties
 
@@ -22,32 +23,112 @@ struct CurrentGrowsView: View {
 
     @FetchRequest(
         entity: Grow.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \Grow.title, ascending: true)],
+        sortDescriptors: [
+            NSSortDescriptor(keyPath: \Grow.field?.property?.displayName, ascending: true),
+            NSSortDescriptor(keyPath: \Grow.title, ascending: true)
+        ],
+        predicate: NSPredicate(format: "harvestDate == nil"),
         animation: .default
     )
-    private var grows: FetchedResults<Grow>
+    private var activeGrows: FetchedResults<Grow>
 
     // MARK: - Body
 
     var body: some View {
         NavigationView {
-            List {
-                // Active grows section
-                Section("Active Grows") {
-                    ForEach(grows) { grow in
-                        GrowRow(grow: grow)
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                    if activeGrows.isEmpty {
+                        emptyStateView
+                    } else {
+                        ForEach(growsByFarm.keys.sorted(), id: \.self) { farmName in
+                            farmSection(farmName: farmName, grows: growsByFarm[farmName] ?? [])
+                        }
                     }
-                    .onDelete(perform: deleteItems)
                 }
+                .padding()
             }
-            .navigationTitle("Current Grows")
-            // Disambiguate toolbar by supplying explicit ToolbarContent
+            .navigationTitle("Active Grows")
             .toolbar {
                 AddGrowToolbar(showCreateGrow: $showCreateGrow)
             }
         }
         .sheet(isPresented: $showCreateGrow) {
             EnhancedEditGrowView(isPresented: $showCreateGrow)
+        }
+    }
+
+    // MARK: - Computed Properties
+    
+    /// Groups active grows by farm property
+    private var growsByFarm: [String: [Grow]] {
+        let groupedGrows = Dictionary(grouping: activeGrows) { grow in
+            grow.field?.property?.displayName ?? "Unassigned Farm"
+        }
+        return groupedGrows
+    }
+
+    // MARK: - UI Components
+    
+    /// Empty state view when no active grows exist
+    private var emptyStateView: some View {
+        VStack(spacing: AppTheme.Spacing.large) {
+            Image(systemName: "leaf.circle")
+                .font(.system(size: 80))
+                .foregroundColor(AppTheme.Colors.textSecondary)
+            
+            Text("No Active Grows")
+                .font(AppTheme.Typography.headlineLarge)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+            
+            Text("Start your first grow to see it here")
+                .font(AppTheme.Typography.bodyMedium)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+                .multilineTextAlignment(.center)
+            
+            CommonActionButton(
+                title: "Create New Grow",
+                style: .primary
+            ) {
+                showCreateGrow = true
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 80)
+    }
+    
+    /// Farm section with grows grouped by property
+    private func farmSection(farmName: String, grows: [Grow]) -> some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            // Farm header
+            HStack {
+                Image(systemName: "building.2.fill")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .font(.title2)
+                
+                Text(farmName)
+                    .font(AppTheme.Typography.headlineLarge)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                Spacer()
+                
+                Text("\(grows.count) grow\(grows.count == 1 ? "" : "s")")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            // Grows tile grid
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible())
+            ], spacing: AppTheme.Spacing.medium) {
+                ForEach(grows, id: \.self) { grow in
+                    NavigationLink(destination: GrowDetailView(growViewModel: GrowDetailViewModel(grow: grow))) {
+                        GrowTileView(grow: grow)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
         }
     }
 
@@ -58,7 +139,7 @@ struct CurrentGrowsView: View {
     /// - Parameter offsets: IndexSet of items to delete
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
-            offsets.map { grows[$0] }.forEach(viewContext.delete)
+            offsets.map { activeGrows[$0] }.forEach(viewContext.delete)
 
             do {
                 try viewContext.save()
@@ -67,6 +148,178 @@ struct CurrentGrowsView: View {
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
+    }
+}
+
+// MARK: - Grow Tile View
+
+/// Individual tile component for displaying grow information in grid layout
+/// Shows crop emoji, worker assignments, harvest estimates, and field information
+struct GrowTileView: View {
+    let grow: Grow
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    // MARK: - Body
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            // Top row: Emoji and worker count
+            HStack {
+                // Crop emoji
+                Text(grow.cultivar?.emoji ?? "🌱")
+                    .font(.system(size: 32))
+                
+                Spacer()
+                
+                // Worker count indicator
+                workerCountIndicator
+            }
+            
+            // Grow title
+            Text(grow.title ?? "Untitled Grow")
+                .font(AppTheme.Typography.headlineSmall)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
+            
+            // Field information
+            if let field = grow.field {
+                HStack {
+                    Image(systemName: "grid")
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .font(.caption)
+                    
+                    Text(field.name ?? "Unknown Field")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .lineLimit(1)
+                }
+            }
+            
+            // Days to harvest
+            daysToHarvestView
+            
+            // Harvest estimate
+            harvestEstimateView
+        }
+        .padding(AppTheme.Spacing.medium)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+    }
+    
+    // MARK: - Computed Properties
+    
+    /// Worker count indicator showing assigned and clocked-in workers
+    private var workerCountIndicator: some View {
+        HStack(spacing: AppTheme.Spacing.tiny) {
+            Image(systemName: "person.2.fill")
+                .font(.caption)
+                .foregroundColor(AppTheme.Colors.info)
+            
+            Text("\(clockedInWorkerCount)/\(assignedWorkerCount)")
+                .font(AppTheme.Typography.labelSmall)
+                .foregroundColor(AppTheme.Colors.info)
+        }
+        .padding(.horizontal, AppTheme.Spacing.small)
+        .padding(.vertical, AppTheme.Spacing.tiny)
+        .background(AppTheme.Colors.info.opacity(0.1))
+        .cornerRadius(AppTheme.CornerRadius.small)
+    }
+    
+    /// Days to harvest display
+    private var daysToHarvestView: some View {
+        HStack {
+            Image(systemName: "calendar")
+                .foregroundColor(AppTheme.Colors.primary)
+                .font(.caption)
+            
+            Text(daysToHarvestText)
+                .font(AppTheme.Typography.bodySmall)
+                .foregroundColor(AppTheme.Colors.primary)
+        }
+    }
+    
+    /// Harvest estimate display
+    private var harvestEstimateView: some View {
+        HStack {
+            Image(systemName: "scissors")
+                .foregroundColor(AppTheme.Colors.organicPractice)
+                .font(.caption)
+            
+            Text(harvestEstimateText)
+                .font(AppTheme.Typography.bodySmall)
+                .foregroundColor(AppTheme.Colors.organicPractice)
+                .lineLimit(1)
+        }
+    }
+    
+    // MARK: - Helper Properties
+    
+    /// Number of workers assigned to this grow (via work orders)
+    private var assignedWorkerCount: Int {
+        guard let workOrders = grow.workOrders?.allObjects as? [WorkOrder] else {
+            return 0
+        }
+        
+        var workers = Set<Worker>()
+        for workOrder in workOrders {
+            workers.formUnion(workOrder.assignedWorkers())
+        }
+        
+        return workers.count
+    }
+    
+    /// Number of workers currently clocked in to this grow
+    private var clockedInWorkerCount: Int {
+        guard let workOrders = grow.workOrders?.allObjects as? [WorkOrder] else {
+            return 0
+        }
+        
+        var clockedInWorkers = Set<Worker>()
+        for workOrder in workOrders {
+            if let team = workOrder.assignedTeam {
+                clockedInWorkers.formUnion(team.clockedInMembers())
+            }
+        }
+        
+        return clockedInWorkers.count
+    }
+    
+    /// Formatted days to harvest text
+    private var daysToHarvestText: String {
+        guard let cultivar = grow.cultivar,
+              let plantedDate = grow.plantedDate else {
+            return "Unknown"
+        }
+        
+        let daysUntilHarvest = HarvestCalculator.daysUntilHarvest(
+            cultivar: cultivar,
+            plantDate: plantedDate
+        )
+        
+        if daysUntilHarvest == 0 {
+            return "Ready!"
+        } else if daysUntilHarvest < 0 {
+            return "Overdue"
+        } else {
+            return "\(daysUntilHarvest) days"
+        }
+    }
+    
+    /// Formatted harvest estimate text
+    private var harvestEstimateText: String {
+        guard let cultivar = grow.cultivar,
+              let plantedDate = grow.plantedDate else {
+            return "Unknown"
+        }
+        
+        let harvestEstimate = HarvestCalculator.calculateHarvestEstimate(
+            cultivar: cultivar,
+            plantDate: plantedDate
+        )
+        
+        return harvestEstimate.estimatedRange
     }
 }
 
@@ -86,148 +339,9 @@ private struct AddGrowToolbar: ToolbarContent {
     }
 }
 
-/// Date formatter for consistent date display in grow rows
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
-/// Individual row component for displaying grow information in list format
-/// Provides comprehensive grow details with navigation to detail view
-struct GrowRow: View {
-    // MARK: - Properties
-
-    let grow: Grow
-
-    // MARK: - Body
-
-    var body: some View {
-        NavigationLink(
-            destination: GrowDetailView(growViewModel: GrowDetailViewModel(grow: grow))
-        ) {
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                Text(grow.title ?? "My Grow")
-                    .font(AppTheme.Typography.headlineMedium)
-                    .foregroundStyle(AppTheme.Colors.textPrimary)
-                    .lineLimit(nil)
-
-              
-
-                HStack(alignment: .center, spacing: AppTheme.Spacing.medium) {
-                    Grow.Image(grow: grow)
-                    VStack(alignment: .leading, spacing: AppTheme.Spacing.extraSmall) {
-                        // Grow title with fallback
-                       
-                        // Cultivar information section
-                       // cultivarInfoSection
-
-                      //  // Field and farm information section
-                        //fieldAndFarmInfoSection
-
-                        // Planted date information section
-                        //plantedDateSection
-
-                        // Location information section
-                        locationSection
-                    }
-                    .padding(.leading, AppTheme.Spacing.tiny)
-
-                    Spacer()
-                }
-                .padding([.top, .leading, .bottom], AppTheme.Spacing.extraSmall)
-            }
-            .padding(.all, AppTheme.Spacing.extraSmall)
-        }
-    }
-
-    // MARK: - Section Components
-
-    /// Section displaying cultivar name with appropriate styling
-    private var cultivarInfoSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-            Text("Cultivar")
-                .font(AppTheme.Typography.labelMedium)
-                .foregroundStyle(AppTheme.Colors.primary)
-
-            Text(grow.cultivar?.name ?? "No Cultivar Selected")
-                .font(AppTheme.Typography.bodyMedium)
-                .foregroundStyle(AppTheme.Colors.textPrimary)
-        }
-    }
-
-    /// Section displaying planted date with proper formatting
-    private var plantedDateSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-            Text("Planted Date")
-                .font(AppTheme.Typography.labelMedium)
-                .foregroundStyle(AppTheme.Colors.primary)
-
-            Text(plantedDateText)
-                .font(AppTheme.Typography.bodyMedium)
-                .foregroundStyle(AppTheme.Colors.textPrimary)
-        }
-    }
-
-    /// Section displaying location information
-    private var locationSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-            Text("Location")
-                .font(AppTheme.Typography.labelMedium)
-                .foregroundStyle(AppTheme.Colors.primary)
-
-            Text(grow.locationName ?? "")
-                .font(AppTheme.Typography.bodyMedium)
-                .foregroundStyle(AppTheme.Colors.textPrimary)
-        }
-    }
-
-    /// Section displaying field and farm information
-    private var fieldAndFarmInfoSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-            if let field = grow.field {
-                Text("Field & Farm")
-                    .font(AppTheme.Typography.labelMedium)
-                    .foregroundStyle(AppTheme.Colors.primary)
-
-                HStack {
-                    Text("\(field.property?.displayName ?? "Unknown Farm") - \(field.name ?? "Unknown Field")")
-                        .font(AppTheme.Typography.bodyMedium)
-                        .foregroundStyle(AppTheme.Colors.textPrimary)
-
-                    if field.hasDrainTile {
-                        Image(systemName: "drop.fill")
-                            .foregroundStyle(AppTheme.Colors.info)
-                            .font(.caption)
-                    }
-                }
-            } else {
-                Text("Field & Farm")
-                    .font(AppTheme.Typography.labelMedium)
-                    .foregroundStyle(AppTheme.Colors.primary)
-
-                Text("No field assigned")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundStyle(AppTheme.Colors.textSecondary)
-            }
-        }
-    }
-
-    // MARK: - Computed Properties
-
-    /// Formatted planted date text with fallback for nil dates
-    private var plantedDateText: String {
-        guard let plantedDate = grow.plantedDate else {
-            return "Not Set"
-        }
-        return itemFormatter.string(from: plantedDate)
-    }
-}
-
 // MARK: - Preview Provider
 
-struct ContentView_Previews: PreviewProvider {
+struct CurrentGrowsView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             CurrentGrowsView()

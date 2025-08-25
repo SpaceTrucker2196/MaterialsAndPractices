@@ -66,6 +66,7 @@ struct GrowDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @State var growViewModel: GrowDetailViewModel
     @State private var showingHarvestChecklist = false
+    @State private var showingPerformWorkView = false
     
     // MARK: - Body
     
@@ -96,6 +97,9 @@ struct GrowDetailView: View {
             .padding()
         }
         .navigationTitle(growViewModel.name)
+        .sheet(isPresented: $showingPerformWorkView) {
+            PerformWorkView(grow: growViewModel.grow, isPresented: $showingPerformWorkView)
+        }
     }
     
     // MARK: - Section Components
@@ -346,8 +350,9 @@ struct GrowDetailView: View {
                 .frame(maxWidth: .infinity)
             
             CommonActionButton(
-                title: "Perform",
-                action: addWorkPractice
+                title: "Perform Work",
+                style: .outline,
+                action: performWork
             )
         }
     }
@@ -383,6 +388,11 @@ struct GrowDetailView: View {
     }
     
     // MARK: - Action Methods
+    
+    /// Opens the perform work view to create new work order
+    private func performWork() {
+        showingPerformWorkView = true
+    }
     
     /// Adds a new work practice entry to the current grow
     private func addWorkPractice() {
