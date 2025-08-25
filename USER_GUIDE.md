@@ -32,9 +32,6 @@ This application bridges the gap between daily farm operations and the complex r
 ## Getting Started
 
 ### System Requirements
-- Modern web browser (Chrome, Firefox, Safari, or Edge)
-- Internet connection
-- User account credentials
 
 ### Logging In
 1. Navigate to the Materials and Practices login page
