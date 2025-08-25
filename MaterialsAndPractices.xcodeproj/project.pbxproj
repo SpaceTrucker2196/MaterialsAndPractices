@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1F06C21E257FEF7E006F8C83 /* AmendmentDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F06C21D257FEF7E006F8C83 /* AmendmentDetail.swift */; };
 		1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F06C22225807A59006F8C83 /* OptionalBinding.swift */; };
-		1F2E92232E5A1F9E003962BA /* MaterialsAndPracticesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92222E5A1F9E003962BA /* MaterialsAndPracticesApp.swift */; };
 		1F2E92262E5A1FA2003962BA /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92242E5A1FA2003962BA /* AppTheme.swift */; };
 		1F2E923B2E5A5352003962BA /* HarvestHeatMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92392E5A5352003962BA /* HarvestHeatMapView.swift */; };
 		1F2E923D2E5A5352003962BA /* GrowingSeasonTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92382E5A5352003962BA /* GrowingSeasonTimelineView.swift */; };
@@ -86,7 +85,6 @@
 		1F06C21D257FEF7E006F8C83 /* AmendmentDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmendmentDetail.swift; sourceTree = "<group>"; };
 		1F06C22225807A59006F8C83 /* OptionalBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalBinding.swift; sourceTree = "<group>"; };
 		1F188AB7257E7A0900C7B804 /* MaterialsAndPractices 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 2.xcdatamodel"; sourceTree = "<group>"; };
-		1F2E92222E5A1F9E003962BA /* MaterialsAndPracticesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsAndPracticesApp.swift; sourceTree = "<group>"; };
 		1F2E92242E5A1FA2003962BA /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		1F2E92362E5A5352003962BA /* CultivarDataTestUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarDataTestUtility.swift; sourceTree = "<group>"; };
 		1F2E92382E5A5352003962BA /* GrowingSeasonTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowingSeasonTimelineView.swift; sourceTree = "<group>"; };
@@ -177,13 +175,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1F2E92252E5A1FA2003962BA /* Theme */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Theme;
-			sourceTree = "<group>";
-		};
 		1F2E92412E5A5641003962BA /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
@@ -226,19 +217,14 @@
 				1F2E92362E5A5352003962BA /* CultivarDataTestUtility.swift */,
 				1F2E92382E5A5352003962BA /* GrowingSeasonTimelineView.swift */,
 				1F2E92392E5A5352003962BA /* HarvestHeatMapView.swift */,
-				1F2E92222E5A1F9E003962BA /* MaterialsAndPracticesApp.swift */,
 				1F81223C25829E33007394D0 /* Practice */,
 				1FEA2B7D257FCF0000A6D9DD /* Material */,
-				1F2E92252E5A1FA2003962BA /* Theme */,
 				1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */,
 				1FDC8616257E872000EF71E0 /* Grow */,
-				1F4F48B9257DB4C4005E559D /* Assets.xcassets */,
-				1F4F48BE257DB4C4005E559D /* Persistence.swift */,
 				1F4F48C3257DB4C4005E559D /* Info.plist */,
 				1F4F48C0257DB4C4005E559D /* MaterialsAndPractices.xcdatamodeld */,
 				1F4F48BB257DB4C4005E559D /* Preview Content */,
 				1F06C22225807A59006F8C83 /* OptionalBinding.swift */,
-				1FCCE72E2E5C06DC004FC07C /* ProduceColors.xcassets */,
 			);
 			path = MaterialsAndPractices;
 			sourceTree = "<group>";
@@ -316,6 +302,7 @@
 				1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */,
 				1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */,
 				1FCCE7302E5C0754004FC07C /* ProduceColors.swift */,
+				1F4F48BE257DB4C4005E559D /* Persistence.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -323,12 +310,14 @@
 		1FCCE7202E5BFE5E004FC07C /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				1F4F48B9257DB4C4005E559D /* Assets.xcassets */,
 				1FCCE7212E5BFEB6004FC07C /* FiraCode-Bold.ttf */,
 				1FCCE7222E5BFEB6004FC07C /* FiraCode-Light.ttf */,
 				1FCCE7232E5BFEB6004FC07C /* FiraCode-Medium.ttf */,
 				1FCCE7242E5BFEB6004FC07C /* FiraCode-Regular.ttf */,
 				1FCCE7252E5BFEB6004FC07C /* FiraCode-Retina.ttf */,
 				1FCCE7262E5BFEB6004FC07C /* FiraCode-SemiBold.ttf */,
+				1FCCE72E2E5C06DC004FC07C /* ProduceColors.xcassets */,
 			);
 			path = resources;
 			sourceTree = "<group>";
@@ -519,7 +508,6 @@
 				1FD918352E595AB900D18920 /* CultivarViews.swift in Sources */,
 				1FD918362E595AB900D18920 /* CultivarSeeder.swift in Sources */,
 				1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */,
-				1F2E92232E5A1F9E003962BA /* MaterialsAndPracticesApp.swift in Sources */,
 				1F2E92422E5A5641003962BA /* SecureConfiguration.swift in Sources */,
 				1FCEB4652E5B940300021D62 /* UtilitiesView.swift in Sources */,
 				1F2E923B2E5A5352003962BA /* HarvestHeatMapView.swift in Sources */,

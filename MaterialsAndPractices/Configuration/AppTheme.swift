@@ -183,8 +183,8 @@ enum AppTheme {
 
         // MARK: - Headlines
 
-        static let headlineLarge  = firaCode(relativeTo: .headline,    weight: .semibold)
-        static let headlineMedium = firaCode(relativeTo: .headline,    weight: .medium)
+        static let headlineLarge  = firaCode(relativeTo: .headline,    weight: .bold)
+        static let headlineMedium = firaCode(relativeTo: .headline,    weight: .semibold)
         static let headlineSmall  = firaCode(relativeTo: .subheadline, weight: .medium)
 
         // MARK: - Body
@@ -201,10 +201,10 @@ enum AppTheme {
 
         // MARK: - Direct weight accessors (optional sugar)
 
-        static func firaLight(relativeTo style: Font.TextStyle)    -> Font { firaCode(relativeTo: style, weight: .light) }
-        static func firaRegular(relativeTo style: Font.TextStyle)  -> Font { firaCode(relativeTo: style, weight: .regular) }
-        static func firaMedium(relativeTo style: Font.TextStyle)   -> Font { firaCode(relativeTo: style, weight: .medium) }
-        static func firaSemibold(relativeTo style: Font.TextStyle) -> Font { firaCode(relativeTo: style, weight: .semibold) }
+        static func firaLight(relativeTo style: Font.TextStyle)    -> Font { firaCode(relativeTo: style, weight: .regular) }
+        static func firaRegular(relativeTo style: Font.TextStyle)  -> Font { firaCode(relativeTo: style, weight: .medium) }
+        static func firaMedium(relativeTo style: Font.TextStyle)   -> Font { firaCode(relativeTo: style, weight: .semibold) }
+        static func firaSemibold(relativeTo style: Font.TextStyle) -> Font { firaCode(relativeTo: style, weight: .bold) }
         static func firaBold(relativeTo style: Font.TextStyle)     -> Font { firaCode(relativeTo: style, weight: .bold) }
     }
 
@@ -218,9 +218,9 @@ enum AppTheme {
         static let small: CGFloat = 8
         static let medium: CGFloat = 10
         static let large: CGFloat = 14
-        static let extraLarge: CGFloat = 24
-        static let huge: CGFloat = 32
-        static let massive: CGFloat = 48
+        static let extraLarge: CGFloat = 18
+        static let huge: CGFloat = 28
+        static let massive: CGFloat = 32
     }
     
     // MARK: - Corner Radius System
