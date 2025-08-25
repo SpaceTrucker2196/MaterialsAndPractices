@@ -290,9 +290,19 @@ struct WorkerDetailView: View {
         }
     }
     
+    
     private var weeklyHoursSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            SectionHeader(title: "This Week")
+            HStack {
+                SectionHeader(title: "This Week")
+                
+                Spacer()
+                
+                NavigationLink(destination: WorkerWeeklyTimeView(worker: worker)) {
+                    Image(systemName: "calendar")
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+            }
             
             VStack(spacing: AppTheme.Spacing.small) {
                 HStack {
@@ -480,21 +490,305 @@ struct HealthSafetyTrainingRow: View {
 
 // MARK: - Placeholder Views
 
-/// Placeholder for create worker view
+/// Comprehensive worker creation view with profile setup and photo capability
 struct CreateWorkerView: View {
     @Binding var isPresented: Bool
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    // MARK: - Form State
+    @State private var name = ""
+    @State private var position = ""
+    @State private var email = ""
+    @State private var phone = ""
+    @State private var emergencyContact = ""
+    @State private var emergencyPhone = ""
+    @State private var hireDate = Date()
+    @State private var notes = ""
+    @State private var isActive = true
+    
+    // MARK: - Photo Management
+    @State private var profileImage: UIImage?
+    @State private var showingImagePicker = false
+    @State private var showingImageOptions = false
+    @StateObject private var photoManager = PhotoManager()
+    
+    // MARK: - UI State
+    @State private var isSaving = false
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
     
     var body: some View {
         NavigationView {
-            Text("Create Worker - Coming Soon")
-                .navigationTitle("New Worker")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel") {
-                            isPresented = false
+            Form {
+                // Profile Photo Section
+                profilePhotoSection
+                
+                // Basic Information Section
+                basicInformationSection
+                
+                // Contact Information Section
+                contactInformationSection
+                
+                // Emergency Contact Section
+                emergencyContactSection
+                
+                // Employment Information Section
+                employmentInformationSection
+                
+                // Notes Section
+                notesSection
+            }
+            .navigationTitle("New Worker")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Save") {
+                        saveWorker()
+                    }
+                    .disabled(name.isEmpty || isSaving)
+                }
+            }
+            .sheet(isPresented: $showingImagePicker) {
+                GenericPhotoCaptureView(selectedImage: $profileImage)
+            }
+            .actionSheet(isPresented: $showingImageOptions) {
+                ActionSheet(
+                    title: Text("Profile Photo"),
+                    buttons: [
+                        .default(Text("Take Photo")) {
+                            if photoManager.isCameraAuthorized {
+                                showingImagePicker = true
+                            } else {
+                                photoManager.requestCameraPermission { granted in
+                                    if granted {
+                                        showingImagePicker = true
+                                    }
+                                }
+                            }
+                        },
+                        .default(Text("Choose from Library")) {
+                            showingImagePicker = true
+                        },
+                        .cancel()
+                    ]
+                )
+            }
+            .alert("Error", isPresented: $showingErrorAlert) {
+                Button("OK") { }
+            } message: {
+                Text(errorMessage)
+            }
+            .disabled(isSaving)
+        }
+    }
+    
+    // MARK: - Section Views
+    
+    private var profilePhotoSection: some View {
+        Section("Profile Photo") {
+            HStack {
+                Spacer()
+                
+                VStack(spacing: AppTheme.Spacing.medium) {
+                    // Photo display
+                    if let profileImage = profileImage {
+                        Image(uiImage: profileImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 120, height: 120)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(AppTheme.Colors.primary, lineWidth: 2)
+                            )
+                    } else {
+                        Circle()
+                            .fill(AppTheme.Colors.backgroundSecondary)
+                            .frame(width: 120, height: 120)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 48))
+                                    .foregroundColor(AppTheme.Colors.primary)
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(AppTheme.Colors.primary, lineWidth: 2)
+                            )
+                    }
+                    
+                    // Photo action buttons
+                    HStack(spacing: AppTheme.Spacing.medium) {
+                        if profileImage != nil {
+                            Button("Change Photo") {
+                                showingImageOptions = true
+                            }
+                            .font(AppTheme.Typography.bodySmall)
+                            
+                            Button("Remove") {
+                                profileImage = nil
+                            }
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.error)
+                        } else {
+                            Button("Add Photo") {
+                                showingImageOptions = true
+                            }
+                            .font(AppTheme.Typography.bodyMedium)
                         }
                     }
                 }
+                
+                Spacer()
+            }
+            .padding(.vertical, AppTheme.Spacing.medium)
+        }
+    }
+    
+    private var basicInformationSection: some View {
+        Section("Basic Information") {
+            HStack {
+                Image(systemName: "person")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                TextField("Full Name", text: $name)
+                    .textContentType(.name)
+            }
+            
+            HStack {
+                Image(systemName: "briefcase")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                TextField("Position/Title", text: $position)
+                    .textContentType(.jobTitle)
+            }
+            
+            HStack {
+                Image(systemName: "person.crop.circle.badge.checkmark")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                Toggle("Active Employee", isOn: $isActive)
+            }
+        }
+    }
+    
+    private var contactInformationSection: some View {
+        Section("Contact Information") {
+            HStack {
+                Image(systemName: "envelope")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                TextField("Email Address", text: $email)
+                    .textContentType(.emailAddress)
+                    .keyboardType(.emailAddress)
+                    .autocapitalization(.none)
+            }
+            
+            HStack {
+                Image(systemName: "phone")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                TextField("Phone Number", text: $phone)
+                    .textContentType(.telephoneNumber)
+                    .keyboardType(.phonePad)
+            }
+        }
+    }
+    
+    private var emergencyContactSection: some View {
+        Section("Emergency Contact") {
+            HStack {
+                Image(systemName: "person.2")
+                    .foregroundColor(AppTheme.Colors.error)
+                    .frame(width: 20)
+                
+                TextField("Emergency Contact Name", text: $emergencyContact)
+                    .textContentType(.name)
+            }
+            
+            HStack {
+                Image(systemName: "phone.badge.plus")
+                    .foregroundColor(AppTheme.Colors.error)
+                    .frame(width: 20)
+                
+                TextField("Emergency Phone Number", text: $emergencyPhone)
+                    .textContentType(.telephoneNumber)
+                    .keyboardType(.phonePad)
+            }
+        }
+    }
+    
+    private var employmentInformationSection: some View {
+        Section("Employment Information") {
+            HStack {
+                Image(systemName: "calendar.badge.plus")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                DatePicker("Hire Date", selection: $hireDate, displayedComponents: .date)
+            }
+        }
+    }
+    
+    private var notesSection: some View {
+        Section("Notes") {
+            HStack(alignment: .top) {
+                Image(systemName: "note.text")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                    .padding(.top, 4)
+                
+                TextField("Additional notes or comments", text: $notes, axis: .vertical)
+                    .lineLimit(3...6)
+            }
+        }
+    }
+    
+    // MARK: - Actions
+    
+    private func saveWorker() {
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            errorMessage = "Worker name is required"
+            showingErrorAlert = true
+            return
+        }
+        
+        isSaving = true
+        
+        let newWorker = Worker(context: viewContext)
+        newWorker.id = UUID()
+        newWorker.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        newWorker.position = position.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : position.trimmingCharacters(in: .whitespacesAndNewlines)
+        newWorker.email = email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : email.trimmingCharacters(in: .whitespacesAndNewlines)
+        newWorker.phone = phone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : phone.trimmingCharacters(in: .whitespacesAndNewlines)
+        newWorker.emergencyContact = emergencyContact.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : emergencyContact.trimmingCharacters(in: .whitespacesAndNewlines)
+        newWorker.emergencyPhone = emergencyPhone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : emergencyPhone.trimmingCharacters(in: .whitespacesAndNewlines)
+        newWorker.hireDate = hireDate
+        newWorker.notes = notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : notes.trimmingCharacters(in: .whitespacesAndNewlines)
+        newWorker.isActive = isActive
+        
+        // Save profile photo if provided
+        if let profileImage = profileImage {
+            newWorker.profilePhotoData = profileImage.jpegData(compressionQuality: 0.7)
+        }
+        
+        do {
+            try viewContext.save()
+            isPresented = false
+        } catch {
+            isSaving = false
+            errorMessage = "Failed to save worker: \(error.localizedDescription)"
+            showingErrorAlert = true
         }
     }
 }
@@ -529,11 +823,278 @@ struct HealthSafetyTrainingView: View {
     }
 }
 
+/// Weekly time tracking view showing punch in/out calendar
+struct WorkerWeeklyTimeView: View {
+    let worker: Worker
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @State private var currentWeekStart: Date = Date()
+    @State private var weeklyTimeEntries: [TimeClock] = []
+    
+    private let calendar = Calendar.current
+    
+    var body: some View {
+        VStack(spacing: AppTheme.Spacing.large) {
+            // Week navigation
+            weekNavigationHeader
+            
+            // Daily time entries
+            ScrollView {
+                LazyVStack(spacing: AppTheme.Spacing.medium) {
+                    ForEach(daysInWeek, id: \.self) { day in
+                        DailyTimeEntryRow(
+                            date: day,
+                            timeEntry: timeEntryForDate(day),
+                            worker: worker
+                        )
+                    }
+                }
+                .padding()
+            }
+            
+            // Weekly summary
+            weeklySummarySection
+        }
+        .navigationTitle("Time Clock")
+        .navigationBarTitleDisplayMode(.large)
+        .onAppear {
+            setupCurrentWeek()
+            loadWeeklyTimeEntries()
+        }
+        .onChange(of: currentWeekStart) { _ in
+            loadWeeklyTimeEntries()
+        }
+    }
+    
+    private var weekNavigationHeader: some View {
+        HStack {
+            Button(action: previousWeek) {
+                Image(systemName: "chevron.left")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .font(.title2)
+            }
+            
+            Spacer()
+            
+            VStack {
+                Text("Week of")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                Text(weekDisplayString)
+                    .font(AppTheme.Typography.headlineMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+            }
+            
+            Spacer()
+            
+            Button(action: nextWeek) {
+                Image(systemName: "chevron.right")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .font(.title2)
+            }
+        }
+        .padding(.horizontal)
+    }
+    
+    private var weeklySummarySection: some View {
+        VStack(spacing: AppTheme.Spacing.small) {
+            HStack {
+                Text("Weekly Total:")
+                    .font(AppTheme.Typography.bodyMedium)
+                
+                Spacer()
+                
+                Text("\(weeklyTotalHours, specifier: "%.1f") hours")
+                    .font(AppTheme.Typography.headlineMedium)
+                    .foregroundColor(AppTheme.Colors.primary)
+            }
+            
+            if weeklyTotalHours >= 40 {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(AppTheme.Colors.warning)
+                    
+                    Text("Overtime: \(weeklyTotalHours - 40, specifier: "%.1f") hours")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.warning)
+                    
+                    Spacer()
+                }
+            }
+        }
+        .padding()
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .padding(.horizontal)
+    }
+    
+    // MARK: - Computed Properties
+    
+    private var daysInWeek: [Date] {
+        (0..<7).compactMap { dayOffset in
+            calendar.date(byAdding: .day, value: dayOffset, to: currentWeekStart)
+        }
+    }
+    
+    private var weekDisplayString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        
+        let startString = formatter.string(from: currentWeekStart)
+        let endDate = calendar.date(byAdding: .day, value: 6, to: currentWeekStart) ?? currentWeekStart
+        let endString = formatter.string(from: endDate)
+        
+        return "\(startString) - \(endString)"
+    }
+    
+    private var weeklyTotalHours: Double {
+        weeklyTimeEntries.reduce(0) { $0 + $1.hoursWorked }
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func setupCurrentWeek() {
+        let now = Date()
+        let weekday = calendar.component(.weekday, from: now)
+        let daysFromMonday = (weekday + 5) % 7 // Convert Sunday=1 to Monday=0
+        currentWeekStart = calendar.date(byAdding: .day, value: -daysFromMonday, to: calendar.startOfDay(for: now)) ?? now
+    }
+    
+    private func loadWeeklyTimeEntries() {
+        let weekEnd = calendar.date(byAdding: .day, value: 7, to: currentWeekStart) ?? currentWeekStart
+        
+        if let timeEntries = worker.timeClockEntries?.allObjects as? [TimeClock] {
+            weeklyTimeEntries = timeEntries.filter { entry in
+                guard let entryDate = entry.date else { return false }
+                return entryDate >= currentWeekStart && entryDate < weekEnd
+            }.sorted { ($0.date ?? Date.distantPast) < ($1.date ?? Date.distantPast) }
+        }
+    }
+    
+    private func timeEntryForDate(_ date: Date) -> TimeClock? {
+        let dayStart = calendar.startOfDay(for: date)
+        let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart) ?? date
+        
+        return weeklyTimeEntries.first { entry in
+            guard let entryDate = entry.date else { return false }
+            return entryDate >= dayStart && entryDate < dayEnd
+        }
+    }
+    
+    private func previousWeek() {
+        currentWeekStart = calendar.date(byAdding: .day, value: -7, to: currentWeekStart) ?? currentWeekStart
+    }
+    
+    private func nextWeek() {
+        currentWeekStart = calendar.date(byAdding: .day, value: 7, to: currentWeekStart) ?? currentWeekStart
+    }
+}
+
+/// Daily time entry row showing punch in/out times for a specific date
+struct DailyTimeEntryRow: View {
+    let date: Date
+    let timeEntry: TimeClock?
+    let worker: Worker
+    
+    private let calendar = Calendar.current
+    
+    var body: some View {
+        VStack(spacing: AppTheme.Spacing.small) {
+            // Date header
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(dayOfWeekString)
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    Text(dateString)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                Spacer()
+                
+                if let entry = timeEntry {
+                    Text("\(entry.hoursWorked, specifier: "%.1f") hrs")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+            }
+            
+            // Time details
+            if let entry = timeEntry {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("Clock In")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                        
+                        if let clockInTime = entry.clockInTime {
+                            Text(clockInTime, style: .time)
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textPrimary)
+                        } else {
+                            Text("--")
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textSecondary)
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    VStack(alignment: .trailing) {
+                        Text("Clock Out")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                        
+                        if let clockOutTime = entry.clockOutTime {
+                            Text(clockOutTime, style: .time)
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textPrimary)
+                        } else if entry.isActive {
+                            Text("Active")
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.success)
+                        } else {
+                            Text("--")
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textSecondary)
+                        }
+                    }
+                }
+            } else {
+                Text("No time recorded")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .padding()
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+    
+    private var dayOfWeekString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE"
+        return formatter.string(from: date)
+    }
+    
+    private var dateString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        return formatter.string(from: date)
+    }
+}
+
 // MARK: - Preview Provider
 
-struct WorkerListView_Previews: PreviewProvider {
+struct WorkerWeeklyTimeView_Previews: PreviewProvider {
     static var previews: some View {
-        WorkerListView()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        NavigationView {
+            WorkerWeeklyTimeView(worker: Worker(context: PersistenceController.preview.container.viewContext))
+        }
+        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

@@ -478,6 +478,8 @@
         </fetchIndex>
     </entity>
     <entity name="Work" representedClassName="Work" syncable="YES" codeGenerationType="class">
+        <attribute name="jobCompleted" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="jobCompleteTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="practice" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="practiceIndex" optional="YES" attributeType="Integer 32" defaultValueString="0" allowsCloudEncryption="YES" usesScalarValueType="YES"/>

@@ -87,7 +87,7 @@ struct UtilitiesView: View {
             EditPropertyView(isPresented: $showingFarmCreation)
         }
         .sheet(isPresented: $showingWorkerCreation) {
-           // CreateWorkerView(isPresented: $showingWorkerCreation)
+            CreateWorkerView(isPresented: $showingWorkerCreation)
         }
         .sheet(isPresented: $showingInfrastructureCreation) {
            //CreateInfrastructureView(property:  $showingWorkerCreation)

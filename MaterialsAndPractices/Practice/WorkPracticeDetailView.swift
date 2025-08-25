@@ -37,8 +37,29 @@ struct WorkPracticeDetailView: View {
                         })
                     }
                     
-                    Section(header: Text("Labor")) {
-                       
+                    Section(header: Text("Job Status")) {
+                        Toggle("Job Completed", isOn: Binding(
+                            get: { work.jobCompleted },
+                            set: { newValue in
+                                work.jobCompleted = newValue
+                                if newValue {
+                                    work.jobCompleteTimestamp = Date()
+                                } else {
+                                    work.jobCompleteTimestamp = nil
+                                }
+                            }
+                        ))
+                        
+                        if work.jobCompleted, let timestamp = work.jobCompleteTimestamp {
+                            HStack {
+                                Text("Completed:")
+                                Spacer()
+                                Text(timestamp, style: .date)
+                                    .foregroundColor(.secondary)
+                                Text(timestamp, style: .time)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
                     }
                     
                     Button(action: {

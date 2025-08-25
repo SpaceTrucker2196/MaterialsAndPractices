@@ -263,7 +263,8 @@ struct FarmDashboardView: View {
             ForEach(activeTeamMembers, id: \.id) { teamMember in
                 TeamMemberTile(
                     worker: teamMember,
-                    isClockedIn: currentlyActiveworkers.contains(teamMember)
+                    isClockedIn: currentlyActiveworkers.contains(teamMember),
+                    isAssignedToPractice: isWorkerAssignedToPractice(teamMember)
                 )
             }
         }
@@ -367,6 +368,16 @@ struct FarmDashboardView: View {
     /// Provides guided onboarding experience when no farms exist
     private func initiateFirstFarmCreation() {
         isPresentingFarmCreation = true
+    }
+    
+    /// Determines if a worker is currently assigned to an active practice
+    /// - Parameter worker: Worker to check for practice assignment
+    /// - Returns: True if worker is assigned to an incomplete practice
+    private func isWorkerAssignedToPractice(_ worker: Worker) -> Bool {
+        // For now, return false as we don't have worker assignment logic yet
+        // In a full implementation, this would check if the worker is assigned
+        // to any practice that is not yet completed
+        return false
     }
 
     // MARK: - Computed Properties for Business Logic
@@ -545,13 +556,20 @@ struct TeamMemberTile: View {
 
     let worker: Worker
     let isClockedIn: Bool
+    let isAssignedToPractice: Bool
+    
+    init(worker: Worker, isClockedIn: Bool, isAssignedToPractice: Bool = false) {
+        self.worker = worker
+        self.isClockedIn = isClockedIn
+        self.isAssignedToPractice = isAssignedToPractice
+    }
 
     // MARK: - Body
 
     var body: some View {
         NavigationLink(destination: WorkerDetailView(worker: worker)) {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                // Header with worker photo and clock status
+                // Header with worker photo and status tags
                 workerStatusHeader
 
                 // Worker identification and role information
@@ -562,14 +580,14 @@ struct TeamMemberTile: View {
             }
             .padding(AppTheme.Spacing.medium)
             .frame(height: 120)
-            .background(clockStatusBackgroundColor)
+            .background(workerBackgroundColor)
             .cornerRadius(AppTheme.CornerRadius.medium)
-            .overlay(clockStatusBorderOverlay)
+            .overlay(workerBorderOverlay)
         }
         .buttonStyle(PlainButtonStyle())
     }
 
-    /// Header section with worker photo/placeholder and clock status indicator
+    /// Header section with worker photo/placeholder and status indicators
     private var workerStatusHeader: some View {
         HStack {
             // Worker profile photo or default placeholder
@@ -577,11 +595,35 @@ struct TeamMemberTile: View {
 
             Spacer()
 
-            // Clock status indicator
-            Circle()
-                .fill(clockStatusColor)
-                .frame(width: 8, height: 8)
+            // Status tags and indicators
+            VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                // Working status tag
+                if isAssignedToPractice {
+                    statusTag(text: "Working", color: AppTheme.Colors.error)
+                }
+                
+                // Idle status tag for unassigned workers
+                if !isAssignedToPractice && !isClockedIn {
+                    statusTag(text: "Idle", color: Color.yellow)
+                }
+                
+                // Clock status indicator
+                Circle()
+                    .fill(clockStatusColor)
+                    .frame(width: 8, height: 8)
+            }
         }
+    }
+    
+    /// Status tag component for worker state display
+    private func statusTag(text: String, color: Color) -> some View {
+        Text(text)
+            .font(AppTheme.Typography.labelSmall)
+            .foregroundColor(.white)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(color)
+            .cornerRadius(4)
     }
 
     /// Worker profile photo or default placeholder with consistent sizing
@@ -633,20 +675,35 @@ struct TeamMemberTile: View {
 
     // MARK: - Computed Properties for Styling
 
-    /// Background color based on clock status for visual distinction
-    private var clockStatusBackgroundColor: Color {
-        isClockedIn ? AppTheme.Colors.success.opacity(0.1) : AppTheme.Colors.backgroundSecondary
+    /// Background color based on worker status
+    private var workerBackgroundColor: Color {
+        if !isAssignedToPractice && !isClockedIn {
+            // Grey for idle workers
+            return Color.gray.opacity(0.2)
+        } else if isClockedIn {
+            // Green for clocked in workers
+            return AppTheme.Colors.success.opacity(0.1)
+        } else {
+            // Blue for clocked out workers
+            return AppTheme.Colors.info.opacity(0.1)
+        }
     }
 
-    /// Border color for clock status indication
+    /// Border color for status indication
     private var clockStatusColor: Color {
-        isClockedIn ? AppTheme.Colors.success : AppTheme.Colors.textSecondary
+        if !isAssignedToPractice && !isClockedIn {
+            return Color.gray
+        } else if isClockedIn {
+            return AppTheme.Colors.success
+        } else {
+            return AppTheme.Colors.info
+        }
     }
 
-    /// Border overlay for clocked-in workers
-    private var clockStatusBorderOverlay: some View {
+    /// Border overlay for status indication
+    private var workerBorderOverlay: some View {
         RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
-            .stroke(isClockedIn ? AppTheme.Colors.success : Color.clear, lineWidth: 2)
+            .stroke(clockStatusColor, lineWidth: 2)
     }
 }
 
