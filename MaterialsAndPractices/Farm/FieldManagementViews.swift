@@ -16,6 +16,7 @@ import CoreData
 /// Row component for displaying field information in lists
 struct FieldRow: View {
     let field: Field
+    @State private var latestSoilTest: SoilTest?
     
     var body: some View {
         NavigationLink(destination: FieldDetailView(field: field)) {
@@ -36,6 +37,29 @@ struct FieldRow: View {
                                 backgroundColor: AppTheme.Colors.info
                             )
                         }
+                        
+                        // Soil test status tag
+                        if let soilTest = latestSoilTest {
+                            // Show pH with appropriate color if recent test exists
+                            if isRecentTest(soilTest) {
+                                MetadataTag(
+                                    text: "pH \(soilTest.ph, specifier: "%.1f")",
+                                    backgroundColor: colorForPH(soilTest.ph)
+                                )
+                            } else {
+                                // Old test - show warning
+                                MetadataTag(
+                                    text: "Old Test",
+                                    backgroundColor: AppTheme.Colors.warning
+                                )
+                            }
+                        } else {
+                            // No test - show yellow warning
+                            MetadataTag(
+                                text: "No pH Test",
+                                backgroundColor: AppTheme.Colors.warning
+                            )
+                        }
                     }
                 }
                 
@@ -48,6 +72,31 @@ struct FieldRow: View {
                 }
             }
             .padding(.vertical, AppTheme.Spacing.tiny)
+        }
+        .onAppear {
+            loadLatestSoilTest()
+        }
+    }
+    
+    private func loadLatestSoilTest() {
+        if let soilTests = field.soilTests?.allObjects as? [SoilTest] {
+            latestSoilTest = soilTests
+                .sorted { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) }
+                .first
+        }
+    }
+    
+    private func isRecentTest(_ soilTest: SoilTest) -> Bool {
+        guard let testDate = soilTest.date else { return false }
+        let daysSinceTest = Calendar.current.dateComponents([.day], from: testDate, to: Date()).day ?? 0
+        return daysSinceTest <= 1095 // 3 years
+    }
+    
+    private func colorForPH(_ ph: Double) -> Color {
+        switch ph {
+        case 0..<5.5, 8.0...: return AppTheme.Colors.error
+        case 5.5..<6.0, 7.5..<8.0: return AppTheme.Colors.warning
+        default: return AppTheme.Colors.success
         }
     }
 }
@@ -179,6 +228,20 @@ struct FieldDetailView: View {
             
             if let soilTests = field.soilTests?.allObjects as? [SoilTest],
                !soilTests.isEmpty {
+                
+                // Show latest soil test pH spectrum
+                if let latestTest = soilTests.sorted(by: { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) }).first {
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        Text("Current pH Level")
+                            .font(AppTheme.Typography.labelMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        PHSpectrumView(currentPH: latestTest.ph, showLabels: false)
+                            .frame(height: 40)
+                    }
+                    .padding(.bottom, AppTheme.Spacing.small)
+                }
+                
                 ForEach(soilTests.sorted(by: { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) }), id: \.id) { soilTest in
                     SoilTestRow(soilTest: soilTest)
                 }
@@ -312,33 +375,45 @@ struct SoilTestRow: View {
     let soilTest: SoilTest
     
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                if let date = soilTest.date {
-                    Text(date, style: .date)
-                        .font(AppTheme.Typography.bodyMedium)
-                        .foregroundColor(AppTheme.Colors.textPrimary)
+        NavigationLink(destination: SoilTestDetailView(soilTest: soilTest)) {
+            HStack {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    if let date = soilTest.date {
+                        Text(date, style: .date)
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                    }
+                    
+                    if let labName = soilTest.lab?.name ?? soilTest.labName {
+                        Text(labName)
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
                 }
                 
-                if let labName = soilTest.labName {
-                    Text(labName)
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                    Text("pH: \(soilTest.ph, specifier: "%.1f")")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(colorForPH(soilTest.ph))
+                        .fontWeight(.semibold)
+                    
+                    Text("OM: \(soilTest.omPct, specifier: "%.1f")%")
                         .font(AppTheme.Typography.bodySmall)
                         .foregroundColor(AppTheme.Colors.textSecondary)
                 }
             }
-            
-            Spacer()
-            
-            VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
-                Text("pH: \(soilTest.ph, specifier: "%.1f")")
-                    .font(AppTheme.Typography.bodySmall)
-                
-                Text("OM: \(soilTest.omPct, specifier: "%.1f")%")
-                    .font(AppTheme.Typography.bodySmall)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-            }
+            .padding(.vertical, AppTheme.Spacing.tiny)
         }
-        .padding(.vertical, AppTheme.Spacing.tiny)
+    }
+    
+    private func colorForPH(_ ph: Double) -> Color {
+        switch ph {
+        case 0..<5.5, 8.0...: return AppTheme.Colors.error
+        case 5.5..<6.0, 7.5..<8.0: return AppTheme.Colors.warning
+        default: return AppTheme.Colors.success
+        }
     }
 }
 
@@ -444,15 +519,49 @@ struct FieldPhotoCaptureView: View {
     }
 }
 
-// MARK: - Placeholder Views
+// MARK: - Soil Test Flow Views
 
-/// Placeholder for soil test creation view
+/// Main soil test creation flow with education and field selection
+struct SoilTestFlowView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var showingEducation = false
+    @State private var selectedField: Field?
+    @State private var hasSeenEducation = false
+    
+    var body: some View {
+        Group {
+            if shouldShowEducation {
+                SoilTestEducationView(isPresented: .constant(true)) {
+                    hasSeenEducation = true
+                }
+            } else if selectedField == nil {
+                FieldSelectionTileView { field in
+                    selectedField = field
+                }
+            } else if let field = selectedField {
+                CreateSoilTestView(field: field)
+            }
+        }
+    }
+    
+    private var shouldShowEducation: Bool {
+        // Check if user has ever created a soil test
+        return !hasSeenEducation && !hasExistingSoilTests
+    }
+    
+    private var hasExistingSoilTests: Bool {
+        // This would typically check UserDefaults or Core Data for existing tests
+        // For now, we'll assume first time users need education
+        return false
+    }
+}
+
+/// Placeholder for soil test creation view - now redirects to full flow
 struct CreateSoilTestView: View {
     let field: Field
     
     var body: some View {
-        Text("Create Soil Test - Coming Soon")
-            .navigationTitle("New Soil Test")
+        CreateSoilTestView(field: field)
     }
 }
 

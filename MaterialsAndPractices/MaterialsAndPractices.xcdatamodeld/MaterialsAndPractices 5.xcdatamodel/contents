@@ -311,6 +311,22 @@
             <fetchIndexElement property="status" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
+    <entity name="Lab" representedClassName="Lab" syncable="YES" codeGenerationType="class">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="website" optional="YES" attributeType="String"/>
+        <relationship name="soilTests" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SoilTest" inverseName="lab" inverseEntity="SoilTest"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
     <entity name="Owner" representedClassName="Owner" syncable="YES" codeGenerationType="class">
         <attribute name="email" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -398,6 +414,7 @@
         <attribute name="recNotes" optional="YES" attributeType="String"/>
         <relationship name="document" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="soilTest" inverseEntity="Document"/>
         <relationship name="field" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Field" inverseName="soilTests" inverseEntity="Field"/>
+        <relationship name="lab" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Lab" inverseName="soilTests" inverseEntity="Lab"/>
         <fetchIndex name="byDateIndex">
             <fetchIndexElement property="date" type="Binary" order="ascending"/>
         </fetchIndex>
