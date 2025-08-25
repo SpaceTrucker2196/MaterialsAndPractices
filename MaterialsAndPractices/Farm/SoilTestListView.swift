@@ -20,7 +20,9 @@ struct SoilTestListView: View {
             if let soilTests = field.soilTests?.allObjects as? [SoilTest],
                !soilTests.isEmpty {
                 ForEach(soilTests.sorted(by: { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) }), id: \.id) { soilTest in
-                    SoilTestDetailRow(soilTest: soilTest)
+                    NavigationLink(destination: SoilTestDetailView(soilTest: soilTest)) {
+                        SoilTestDetailRow(soilTest: soilTest)
+                    }
                 }
             } else {
                 EmptyStateView(

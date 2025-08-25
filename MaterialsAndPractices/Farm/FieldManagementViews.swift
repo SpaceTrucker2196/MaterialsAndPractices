@@ -524,15 +524,20 @@ struct FieldPhotoCaptureView: View {
 /// Main soil test creation flow with education and field selection
 struct SoilTestFlowView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.managedObjectContext) private var viewContext
     @State private var showingEducation = false
     @State private var selectedField: Field?
     @State private var hasSeenEducation = false
+    
+    // Check if user has seen education before
+    @AppStorage("hasSeenSoilTestEducation") private var hasSeenEducationBefore = false
     
     var body: some View {
         Group {
             if shouldShowEducation {
                 SoilTestEducationView(isPresented: .constant(true)) {
                     hasSeenEducation = true
+                    hasSeenEducationBefore = true
                 }
             } else if selectedField == nil {
                 FieldSelectionTileView { field in
@@ -545,14 +550,20 @@ struct SoilTestFlowView: View {
     }
     
     private var shouldShowEducation: Bool {
-        // Check if user has ever created a soil test
-        return !hasSeenEducation && !hasExistingSoilTests
+        // Show education if user hasn't seen it before and hasn't seen it in this session
+        return !hasSeenEducationBefore && !hasSeenEducation && !hasExistingSoilTests
     }
     
     private var hasExistingSoilTests: Bool {
-        // This would typically check UserDefaults or Core Data for existing tests
-        // For now, we'll assume first time users need education
-        return false
+        let request: NSFetchRequest<SoilTest> = SoilTest.fetchRequest()
+        request.fetchLimit = 1
+        
+        do {
+            let count = try viewContext.count(for: request)
+            return count > 0
+        } catch {
+            return false
+        }
     }
 }
 
