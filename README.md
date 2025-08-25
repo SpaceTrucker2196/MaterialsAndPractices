@@ -8,6 +8,7 @@ MaterialsAndPractices is a comprehensive iOS application designed to support sma
 - **Plant Cultivar Database**: Utilizes USDA open source data to provide detailed information on plant cultivars including growing seasons, hardy zones, and planting schedules
 - **Organic Certification Tracking**: Maintains comprehensive records of all activities, amendments, and safety practices required for organic certification compliance
 - **Grow Management**: Track active and completed growing operations with detailed timelines and outcomes
+- **Soil Health Monitoring**: Comprehensive soil testing tools with visual pH spectrum, nutrient analysis, and laboratory management
 - **Safety Compliance**: Built-in harvest safety checklists based on FDA Food Safety Modernization Act (FSMA) requirements
 - **Amendment Tracking**: Record and track all soil amendments and organic inputs with full traceability
 
@@ -41,11 +42,16 @@ MaterialsAndPracticesApp (Root)
 - **Grow**: Individual growing operation tracking
 - **Work**: Work activities and practices performed
 - **Amendment**: Soil amendments and organic inputs applied
+- **SoilTest**: Soil chemistry analysis results with pH, nutrients, and organic matter
+- **Lab**: Laboratory contact information and testing history
+- **Field**: Field management with soil test integration
 
 ### Key Components
 - **CultivarSeeder**: Populates database with USDA vegetable cultivar data
 - **Theme System**: Centralized color and typography management
 - **Safety Compliance**: FDA FSMA harvest safety checklist implementation
+- **Soil Testing Suite**: pH spectrum visualization, nutrient analysis, and lab management
+- **Graphics Engine**: Core Graphics components for soil health visualization
 
 ## Development Guidelines
 

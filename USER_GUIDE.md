@@ -5,15 +5,16 @@
 2. [Getting Started](#getting-started)
 3. [Dashboard Overview](#dashboard-overview)
 4. [Farm Management](#farm-management)
-5. [Materials Management](#materials-management)
-6. [Worker Tracking](#worker-tracking)
-7. [Health and Safety Training](#health-and-safety-training)
-8. [Organic Certification Compliance](#organic-certification-compliance)
-9. [Lot Tracking & Traceability](#lot-tracking--traceability)
-10. [Reports and Documentation](#reports-and-documentation)
-11. [Troubleshooting](#troubleshooting)
-12. [FAQ](#faq)
-13. [Contact Support](#contact-support)
+5. [Soil Health & Testing](#soil-health--testing)
+6. [Materials Management](#materials-management)
+7. [Worker Tracking](#worker-tracking)
+8. [Health and Safety Training](#health-and-safety-training)
+9. [Organic Certification Compliance](#organic-certification-compliance)
+10. [Lot Tracking & Traceability](#lot-tracking--traceability)
+11. [Reports and Documentation](#reports-and-documentation)
+12. [Troubleshooting](#troubleshooting)
+13. [FAQ](#faq)
+14. [Contact Support](#contact-support)
 
 ## Introduction
 
@@ -80,6 +81,239 @@ Use the navigation menu on the left side to access specific modules.
 2. Create seasonal planting schedules
 3. Assign crops to specific fields
 4. Generate material requirement forecasts based on planned crops
+
+## Soil Health & Testing
+
+Soil health monitoring is fundamental to sustainable agriculture and organic certification. Materials and Practices provides comprehensive soil testing tools to help you understand, track, and improve your soil conditions over time.
+
+### Understanding Soil Health
+
+Healthy soil is the foundation of successful organic farming. It's a living ecosystem containing billions of beneficial microorganisms that:
+
+- **Convert organic matter** into plant-available nutrients through natural decomposition processes
+- **Form symbiotic relationships** with plant roots (mycorrhizae) to improve nutrient uptake
+- **Improve soil structure** by creating aggregates that enhance water infiltration and root penetration
+- **Suppress plant diseases** naturally by maintaining beneficial microbial diversity
+- **Cycle nutrients** efficiently, reducing the need for external inputs
+
+### Taking Soil Samples
+
+Following USDA guidelines for accurate soil testing:
+
+#### When to Sample
+- **Every 2-3 years** for established fields under consistent management
+- **Before planting** new crops or changing field management
+- **When problems occur** such as poor growth, yellowing, or disease issues
+- **After major amendments** to monitor changes in soil chemistry
+
+#### Sampling Procedure
+1. **Timing**: Sample when soil is at field moisture capacity (not too wet or dry)
+2. **Distribution**: Take 15-20 random samples across each field or management zone
+3. **Depth**: Sample to 6-8 inches for most crops (3-4 inches for pasture)
+4. **Equipment**: Use clean, stainless steel tools; avoid brass or galvanized equipment
+5. **Mixing**: Thoroughly combine samples in a clean plastic bucket
+6. **Submission**: Submit 1-2 cups of mixed soil to a certified laboratory
+
+#### Avoiding Contamination
+- Don't sample near roads, fence lines, or areas where animals congregate
+- Avoid recently fertilized or limed areas
+- Keep samples separate for different fields or soil types
+- Label samples clearly with field identification and date
+
+### Understanding Soil Test Results
+
+#### pH Level (Soil Acidity/Alkalinity)
+- **Range**: 0-14 scale, with 7.0 being neutral
+- **Optimal for most crops**: 6.0-7.0
+- **Below 6.0**: Acidic conditions; nutrients like phosphorus become less available
+- **Above 7.5**: Alkaline conditions; iron and manganese may become unavailable
+- **Impact on microbes**: Most beneficial soil organisms prefer near-neutral pH
+
+#### Organic Matter Content
+- **Target range**: 3-5% for healthy agricultural soils
+- **Below 2%**: Low biological activity, poor nutrient cycling
+- **Above 3%**: Good soil biology, improved water retention and structure
+- **Benefits**: Higher organic matter supports more diverse microbial communities
+
+#### Phosphorus (P)
+- **Role**: Essential for root development, flowering, and seed formation
+- **Measurement**: Parts per million (ppm) in soil
+- **Low**: <15 ppm - may need supplementation
+- **Adequate**: 15-30 ppm - sufficient for most crops
+- **High**: >30 ppm - adequate reserves
+
+#### Potassium (K)
+- **Role**: Water regulation, disease resistance, winter hardiness
+- **Measurement**: Parts per million (ppm) in soil
+- **Low**: <100 ppm - deficiency likely
+- **Adequate**: 100-200 ppm - sufficient for most crops
+- **High**: >200 ppm - good reserves
+
+#### Cation Exchange Capacity (CEC)
+- **Definition**: Soil's ability to hold and exchange nutrients
+- **Sandy soils**: CEC 5-15 (lower nutrient holding capacity)
+- **Clay soils**: CEC 15-40 (higher nutrient holding capacity)
+- **Improving CEC**: Add organic matter and clay amendments
+
+### Managing Soil Tests in the App
+
+#### Adding a Soil Test
+1. Navigate to **Settings** → **Soil Testing** → **Add Soil Test**
+2. **Select Field**: Choose the field from the tile view
+3. **Choose Laboratory**: Select existing lab or create new one
+4. **Enter Results**: Input pH, organic matter, nutrients, and CEC values
+5. **Add Notes**: Include any lab recommendations or observations
+6. **Save**: Test results are immediately available for analysis
+
+#### Laboratory Management
+- **Add Labs**: Store contact information for testing laboratories
+- **Track History**: View all tests performed by each laboratory
+- **Compare Services**: Maintain notes about lab quality and turnaround times
+
+#### Visual Analysis Tools
+- **pH Spectrum**: Color-coded visualization showing optimal pH ranges
+- **Nutrient Indicators**: Bar charts displaying nutrient levels with interpretations
+- **Trend Analysis**: Track changes in soil health over time
+- **Field Comparison**: Compare soil conditions across different fields
+
+### Interpreting Results for Plant Health
+
+#### Signs Your Plants Need Soil Changes
+
+**Nitrogen Deficiency**:
+- Yellowing of lower leaves first
+- Stunted growth and pale green coloration
+- Solution: Increase organic matter, add compost or blood meal
+
+**Phosphorus Deficiency**:
+- Purple or reddish coloration on leaves
+- Delayed flowering and poor root development
+- Solution: Add bone meal or rock phosphate; check pH
+
+**Potassium Deficiency**:
+- Brown or scorched leaf edges
+- Weak stems susceptible to lodging
+- Increased disease problems
+- Solution: Add wood ash, granite meal, or greensand
+
+**Iron Deficiency** (often pH-related):
+- Yellow leaves with green veins (interveinal chlorosis)
+- Most visible on new growth
+- Solution: Lower pH if above 7.5; improve drainage
+
+#### Soil pH Adjustments
+
+**Raising pH** (reducing acidity):
+- Apply agricultural limestone (calcium carbonate)
+- Use dolomitic lime if magnesium is also low
+- Wood ash provides quick but temporary pH increase
+- Apply lime in fall for spring crops
+
+**Lowering pH** (reducing alkalinity):
+- Add sulfur (slow acting, long-lasting)
+- Use acidic organic matter like pine needles or peat
+- Apply iron sulfate for quick but temporary reduction
+- Improve drainage to reduce sodium accumulation
+
+### Soil Microbes and Chemical Fertilizers
+
+#### The Importance of Soil Microorganisms
+
+Healthy soil contains **billions of microorganisms per gram**, including:
+- **Bacteria**: Break down organic matter, fix nitrogen, cycle nutrients
+- **Fungi**: Form mycorrhizal networks, improve nutrient uptake
+- **Protozoa**: Release nutrients by consuming bacteria and fungi
+- **Beneficial insects**: Aerate soil and transport beneficial microbes
+
+#### Impact of Chemical Fertilizers on Soil Biology
+
+**Negative Effects**:
+- **Kill beneficial microorganisms** through salt concentration and pH changes
+- **Reduce microbial diversity** by favoring only certain species
+- **Disrupt nutrient cycling** by bypassing natural biological processes
+- **Increase soil compaction** over time due to reduced organic matter
+- **Create dependency** on external inputs as natural systems break down
+
+**Soil Health Decline Indicators**:
+- Reduced organic matter content over time
+- Increased need for fertilizer applications
+- Greater susceptibility to drought and disease
+- Poor soil structure and water infiltration
+- Loss of earthworms and beneficial insects
+
+#### Organic Alternatives for Soil Health
+
+**Building Soil Biology**:
+- **Compost applications**: Introduce diverse microbial communities
+- **Cover crops**: Feed soil organisms year-round with living roots
+- **Minimal tillage**: Preserve fungal networks and soil structure
+- **Diverse rotations**: Support different microbial populations
+- **Organic amendments**: Use materials that feed rather than bypass soil biology
+
+**Beneficial Practices**:
+- Apply mycorrhizal inoculants when transplanting
+- Use compost tea to introduce beneficial microorganisms
+- Maintain permanent soil cover to protect microbial communities
+- Integrate livestock for natural fertilization when possible
+
+### Organic Certification and Soil Testing
+
+#### Documentation Requirements
+- **Maintain records** of all soil test results for certification inspections
+- **Track amendments** applied based on soil test recommendations
+- **Document improvements** in soil health over time
+- **Show compliance** with organic standards for soil building
+
+#### USDA Organic Standards
+- Soil tests support evidence of soil health improvement
+- Results guide organic amendment programs
+- Help demonstrate sustainable farming practices
+- Required for transitioning conventional fields to organic
+
+### Troubleshooting Common Soil Issues
+
+#### Problem: Low Organic Matter
+**Symptoms**: Poor water retention, quick nutrient loss, compaction
+**Solutions**: 
+- Increase compost applications to 2-4 inches annually
+- Plant cover crops on all unused fields
+- Reduce tillage intensity and frequency
+- Add aged manure or other organic amendments
+
+#### Problem: pH Too High (Alkaline)
+**Symptoms**: Iron deficiency, poor phosphorus availability
+**Solutions**:
+- Apply elemental sulfur at 10-20 lbs per 1000 sq ft
+- Use acidic organic matter like pine needles
+- Improve drainage to reduce sodium buildup
+- Consider acid-tolerant crop varieties
+
+#### Problem: pH Too Low (Acidic)
+**Symptoms**: Aluminum toxicity, poor bacterial activity
+**Solutions**:
+- Apply agricultural lime based on soil test recommendations
+- Use dolomitic lime if magnesium is also low
+- Add wood ash for quick pH adjustment
+- Ensure adequate calcium and magnesium levels
+
+#### Problem: Nutrient Imbalances
+**Symptoms**: Deficiency signs despite adequate soil levels
+**Solutions**:
+- Check pH - most nutrients unavailable outside 6.0-7.0 range
+- Improve soil biology with compost and cover crops
+- Reduce tillage to preserve nutrient cycling
+- Consider foliar feeding for immediate correction
+
+### Best Practices for Soil Health
+
+1. **Test Regularly**: Every 2-3 years or when problems occur
+2. **Build Organic Matter**: Target 3-5% through compost and cover crops
+3. **Maintain pH**: Keep in optimal range for your crops (usually 6.0-7.0)
+4. **Feed the Soil Biology**: Use organic amendments that support microbial life
+5. **Minimize Disturbance**: Reduce tillage to preserve soil structure
+6. **Diversify**: Use crop rotations and polycultures to support soil health
+7. **Monitor Changes**: Track trends in soil health over time
+8. **Integrate Practices**: Combine soil testing with other sustainable practices
 
 ## Materials Management
 

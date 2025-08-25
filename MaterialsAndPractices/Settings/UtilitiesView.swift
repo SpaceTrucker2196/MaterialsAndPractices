@@ -58,6 +58,9 @@ struct UtilitiesView: View {
                 // Farm Management Utilities Section
                 farmManagementUtilitiesSection
                 
+                // Soil Testing Section
+                soilTestingSection
+                
                 // Profile Management Section
                 profileManagementSection
                 
@@ -128,6 +131,36 @@ struct UtilitiesView: View {
                 iconColor: AppTheme.Colors.compliance
             ) {
                 showingInfrastructureCreation = true
+            }
+        }
+    }
+    
+    /// Soil testing utilities section for managing soil health monitoring
+    /// Provides access to comprehensive soil testing functionality
+    private var soilTestingSection: some View {
+        Section("Soil Health Monitoring") {
+            NavigationLink(destination: SoilTestSettingsView()) {
+                HStack {
+                    Image(systemName: "flask.fill")
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Soil Testing")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Manage soil tests, labs, and health monitoring")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
             }
         }
     }

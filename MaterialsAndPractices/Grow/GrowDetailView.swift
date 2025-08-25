@@ -192,6 +192,24 @@ struct GrowDetailView: View {
                                 .font(.caption)
                         }
                         
+                        // Latest soil test pH spectrum
+                        if let latestSoilTest = latestSoilTest(for: field) {
+                            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                                Text("Current Soil pH")
+                                    .font(AppTheme.Typography.labelSmall)
+                                    .foregroundColor(AppTheme.Colors.textSecondary)
+                                
+                                PHSpectrumView(currentPH: latestSoilTest.ph, showLabels: false)
+                                    .frame(height: 30)
+                                
+                                if let testDate = latestSoilTest.date {
+                                    Text("Tested: \(testDate, style: .date)")
+                                        .font(AppTheme.Typography.labelSmall)
+                                        .foregroundColor(AppTheme.Colors.textSecondary)
+                                }
+                            }
+                        }
+                        
                         // Farm/Property information
                         if let property = field.property {
                             Divider()
@@ -376,6 +394,14 @@ struct GrowDetailView: View {
     private func addAmendment() {
         let newAmendment = Amendment(context: viewContext)
         growViewModel.grow.addToAmendments(newAmendment)
+    }
+    
+    // MARK: - Helper Methods
+    
+    /// Gets the latest soil test for a field
+    private func latestSoilTest(for field: Field) -> SoilTest? {
+        guard let soilTests = field.soilTests?.allObjects as? [SoilTest] else { return nil }
+        return soilTests.sorted { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) }.first
     }
 }
 

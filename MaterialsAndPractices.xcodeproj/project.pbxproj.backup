@@ -28,6 +28,7 @@
 		1FB247B52E5ACC3000F7BAF7 /* FarmListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247AE2E5ACC3000F7BAF7 /* FarmListView.swift */; };
 		1FB247B62E5ACC3000F7BAF7 /* EditPropertyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247AD2E5ACC3000F7BAF7 /* EditPropertyView.swift */; };
 		1FB247B72E5ACC3000F7BAF7 /* PhotoGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247B02E5ACC3000F7BAF7 /* PhotoGalleryView.swift */; };
+		1FB247B82E5ACC3000F7BAF7 /* PropertyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247B32E5ACC3000F7BAF7 /* PropertyDetailView.swift */; };
 		1FB247B92E5ACC3000F7BAF7 /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247B12E5ACC3000F7BAF7 /* PhotoManager.swift */; };
 		1FB247BA2E5ACC3000F7BAF7 /* PhotoCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247AF2E5ACC3000F7BAF7 /* PhotoCaptureView.swift */; };
 		1FB247BB2E5ACC3000F7BAF7 /* PhotoOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */; };
@@ -61,13 +62,6 @@
 		1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */; };
 		1FEA2B6E257F440900A6D9DD /* AmendmentViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B6D257F440900A6D9DD /* AmendmentViews.swift */; };
 		1FEA2B79257FCE1D00A6D9DD /* Amendments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B78257FCE1D00A6D9DD /* Amendments.swift */; };
-		RQ9WW034NVSSWPO9M9LYZW7Q /* CreateSoilTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = YW3W8K7WVJRTP7E5YI29WIKI /* CreateSoilTestView.swift */; };
-		D7U2HNQLDO5CUE50OC42PT2E /* FieldSelectionTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8GFUYTO4QAHEWPUN0F9IOJHU /* FieldSelectionTileView.swift */; };
-		M5XFKSWL7ZKDKRWSSYA01VI9 /* LabManagementViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = PDUH5NOMGZ3C1JVZCC3MNF5Y /* LabManagementViews.swift */; };
-		BULGI508SCW0VCS6XNM4Y2ZV /* SoilTestDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = NKCZL87A0C3JQ1IZLFUD8ZDS /* SoilTestDetailView.swift */; };
-		O9DN9B5X410H3S6Q97QF7MLY /* SoilTestEducationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EGZMTBQX29E4S5J5EFAHU359 /* SoilTestEducationView.swift */; };
-		FV3VC1I7GJ337VBU8UY2D9G2 /* SoilTestGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E83I4ZLSTFFFKKCKEG26K34 /* SoilTestGraphics.swift */; };
-		TYR4BXWTI4B9S1BKLCYVZW02 /* SoilTestSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = VXZIH3HFRPDYTE6E6EBAXWTV /* SoilTestSettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,6 +116,7 @@
 		1FB247B02E5ACC3000F7BAF7 /* PhotoGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGalleryView.swift; sourceTree = "<group>"; };
 		1FB247B12E5ACC3000F7BAF7 /* PhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
 		1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoOverlay.swift; sourceTree = "<group>"; };
+		1FB247B32E5ACC3000F7BAF7 /* PropertyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyDetailView.swift; sourceTree = "<group>"; };
 		1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUIComponents.swift; sourceTree = "<group>"; };
 		1FCCE7212E5BFEB6004FC07C /* FiraCode-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Bold.ttf"; sourceTree = "<group>"; };
 		1FCCE7222E5BFEB6004FC07C /* FiraCode-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Light.ttf"; sourceTree = "<group>"; };
@@ -153,13 +148,6 @@
 		1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGrowView.swift; sourceTree = "<group>"; };
 		1FEA2B6D257F440900A6D9DD /* AmendmentViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmendmentViews.swift; sourceTree = "<group>"; };
 		1FEA2B78257FCE1D00A6D9DD /* Amendments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Amendments.swift; sourceTree = "<group>"; };
-		YW3W8K7WVJRTP7E5YI29WIKI /* CreateSoilTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSoilTestView.swift; sourceTree = "<group>"; };
-		8GFUYTO4QAHEWPUN0F9IOJHU /* FieldSelectionTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldSelectionTileView.swift; sourceTree = "<group>"; };
-		PDUH5NOMGZ3C1JVZCC3MNF5Y /* LabManagementViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabManagementViews.swift; sourceTree = "<group>"; };
-		NKCZL87A0C3JQ1IZLFUD8ZDS /* SoilTestDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestDetailView.swift; sourceTree = "<group>"; };
-		EGZMTBQX29E4S5J5EFAHU359 /* SoilTestEducationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestEducationView.swift; sourceTree = "<group>"; };
-		6E83I4ZLSTFFFKKCKEG26K34 /* SoilTestGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestGraphics.swift; sourceTree = "<group>"; };
-		VXZIH3HFRPDYTE6E6EBAXWTV /* SoilTestSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestSettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -292,12 +280,7 @@
 				1FB247AD2E5ACC3000F7BAF7 /* EditPropertyView.swift */,
 				1FB247AE2E5ACC3000F7BAF7 /* FarmListView.swift */,
 				1FB247B12E5ACC3000F7BAF7 /* PhotoManager.swift */,
-				YW3W8K7WVJRTP7E5YI29WIKI /* CreateSoilTestView.swift */,
-				8GFUYTO4QAHEWPUN0F9IOJHU /* FieldSelectionTileView.swift */,
-				PDUH5NOMGZ3C1JVZCC3MNF5Y /* LabManagementViews.swift */,
-				NKCZL87A0C3JQ1IZLFUD8ZDS /* SoilTestDetailView.swift */,
-				EGZMTBQX29E4S5J5EFAHU359 /* SoilTestEducationView.swift */,
-				6E83I4ZLSTFFFKKCKEG26K34 /* SoilTestGraphics.swift */,
+				1FB247B32E5ACC3000F7BAF7 /* PropertyDetailView.swift */,
 			);
 			path = Farm;
 			sourceTree = "<group>";
@@ -306,7 +289,6 @@
 			isa = PBXGroup;
 			children = (
 				1FCEB4642E5B940300021D62 /* UtilitiesView.swift */,
-				VXZIH3HFRPDYTE6E6EBAXWTV /* SoilTestSettingsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -519,6 +501,7 @@
 				1FB247B52E5ACC3000F7BAF7 /* FarmListView.swift in Sources */,
 				1FB247B62E5ACC3000F7BAF7 /* EditPropertyView.swift in Sources */,
 				1FB247B72E5ACC3000F7BAF7 /* PhotoGalleryView.swift in Sources */,
+				1FB247B82E5ACC3000F7BAF7 /* PropertyDetailView.swift in Sources */,
 				1FB247B92E5ACC3000F7BAF7 /* PhotoManager.swift in Sources */,
 				1FB247BA2E5ACC3000F7BAF7 /* PhotoCaptureView.swift in Sources */,
 				1FB247BB2E5ACC3000F7BAF7 /* PhotoOverlay.swift in Sources */,
@@ -543,13 +526,6 @@
 				1FCEB4572E5B790100021D62 /* CreateInfrastructureView.swift in Sources */,
 				1FCEB4582E5B790100021D62 /* FieldManagementViews.swift in Sources */,
 				1FCEB4592E5B790100021D62 /* WorkerManagementViews.swift in Sources */,
-				RQ9WW034NVSSWPO9M9LYZW7Q /* CreateSoilTestView.swift in Sources */,
-				D7U2HNQLDO5CUE50OC42PT2E /* FieldSelectionTileView.swift in Sources */,
-				M5XFKSWL7ZKDKRWSSYA01VI9 /* LabManagementViews.swift in Sources */,
-				BULGI508SCW0VCS6XNM4Y2ZV /* SoilTestDetailView.swift in Sources */,
-				O9DN9B5X410H3S6Q97QF7MLY /* SoilTestEducationView.swift in Sources */,
-				FV3VC1I7GJ337VBU8UY2D9G2 /* SoilTestGraphics.swift in Sources */,
-				TYR4BXWTI4B9S1BKLCYVZW02 /* SoilTestSettingsView.swift in Sources */,
 				1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
