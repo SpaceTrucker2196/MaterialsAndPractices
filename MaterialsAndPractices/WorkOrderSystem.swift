@@ -12,6 +12,51 @@
 import Foundation
 import CoreData
 
+// MARK: - Work Shift Management
+
+/// Enumeration for work shifts in 4-hour blocks
+enum WorkShift: String, CaseIterable {
+    case morning = "morning"
+    case afternoon = "afternoon"
+    case evening = "evening"
+    
+    var displayText: String {
+        switch self {
+        case .morning: return "Morning"
+        case .afternoon: return "Afternoon"
+        case .evening: return "Evening"
+        }
+    }
+    
+    var timeRange: String {
+        switch self {
+        case .morning: return "6:00 AM - 10:00 AM"
+        case .afternoon: return "10:00 AM - 2:00 PM"
+        case .evening: return "2:00 PM - 6:00 PM"
+        }
+    }
+    
+    var emoji: String {
+        switch self {
+        case .morning: return "🌅"
+        case .afternoon: return "☀️"
+        case .evening: return "🌇"
+        }
+    }
+    
+    var displayWithEmoji: String {
+        return "\(emoji) \(displayText)"
+    }
+    
+    var startHour: Int {
+        switch self {
+        case .morning: return 6
+        case .afternoon: return 10
+        case .evening: return 14
+        }
+    }
+}
+
 // MARK: - Agriculture Work Status
 
 /// Enumeration for common agriculture work statuses with appropriate text and emoji
@@ -141,6 +186,18 @@ extension WorkOrder {
         }
     }
     
+    /// Computed property for work shifts
+    var workShifts: [WorkShift] {
+        get {
+            guard let shiftsString = self.shifts else { return [] }
+            let shiftRawValues = shiftsString.components(separatedBy: ",")
+            return shiftRawValues.compactMap { WorkShift(rawValue: $0.trimmingCharacters(in: .whitespaces)) }
+        }
+        set {
+            self.shifts = newValue.map { $0.rawValue }.joined(separator: ",")
+        }
+    }
+    
     /// Calculate total hours worked on this work order
     func totalHoursWorked() -> Double {
         guard let timeEntries = self.timeClockEntries?.allObjects as? [TimeClock] else {
@@ -207,6 +264,43 @@ extension WorkTeam {
     /// Count of clocked-in members
     func clockedInCount() -> Int {
         return clockedInMembers().count
+    }
+}
+
+// MARK: - Time Tracking Extensions
+
+extension TimeClock {
+    /// Calculate elapsed time in a friendly format (hh:mm)
+    var elapsedTimeFormatted: String {
+        guard let clockIn = clockInTime else { return "00:00" }
+        
+        let endTime = clockOutTime ?? Date()
+        let elapsed = endTime.timeIntervalSince(clockIn)
+        
+        let hours = Int(elapsed) / 3600
+        let minutes = Int(elapsed) % 3600 / 60
+        
+        return String(format: "%02d:%02d", hours, minutes)
+    }
+    
+    /// Calculate elapsed time rounded to 15-minute blocks
+    var elapsedTimeIn15MinuteBlocks: Double {
+        guard let clockIn = clockInTime else { return 0.0 }
+        
+        let endTime = clockOutTime ?? Date()
+        let elapsed = endTime.timeIntervalSince(clockIn) / 3600.0 // Convert to hours
+        
+        // Round to nearest 0.25 hours (15 minutes)
+        return round(elapsed * 4.0) / 4.0
+    }
+    
+    /// Get elapsed time as a formatted string in 15-minute blocks
+    var elapsedTimeIn15MinuteBlocksFormatted: String {
+        let hoursIn15MinBlocks = elapsedTimeIn15MinuteBlocks
+        let hours = Int(hoursIn15MinBlocks)
+        let minutes = Int((hoursIn15MinBlocks - Double(hours)) * 60)
+        
+        return String(format: "%d:%02d", hours, minutes)
     }
 }
 

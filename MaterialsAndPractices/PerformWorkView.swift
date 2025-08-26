@@ -33,6 +33,9 @@ struct PerformWorkView: View {
     @State private var practiceName = ""
     @State private var practiceNotes = ""
     
+    // Work shift state
+    @State private var selectedShifts: Set<WorkShift> = []
+    
     // Team assignment
     @State private var selectedTeam: WorkTeam?
     @State private var showingTeamPicker = false
@@ -54,6 +57,9 @@ struct PerformWorkView: View {
                 
                 // Work Practice Section
                 workPracticeSection
+                
+                // Work Shift Section
+                workShiftSection
                 
                 // Team Assignment Section
                 teamAssignmentSection
@@ -150,6 +156,37 @@ struct PerformWorkView: View {
         }
     }
     
+    /// Work shift selection section
+    private var workShiftSection: some View {
+        Section("Work Shifts") {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                Text("Select which 4-hour shifts this work order will occupy for the day:")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                ForEach(WorkShift.allCases, id: \.self) { shift in
+                    WorkShiftToggleRow(
+                        shift: shift,
+                        isSelected: selectedShifts.contains(shift),
+                        onToggle: { isSelected in
+                            if isSelected {
+                                selectedShifts.insert(shift)
+                            } else {
+                                selectedShifts.remove(shift)
+                            }
+                        }
+                    )
+                }
+                
+                if selectedShifts.isEmpty {
+                    Text("At least one shift must be selected")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.error)
+                }
+            }
+        }
+    }
+    
     /// Team assignment section
     private var teamAssignmentSection: some View {
         Section("Team Assignment") {
@@ -180,7 +217,7 @@ struct PerformWorkView: View {
                 }
             }
             .sheet(isPresented: $showingTeamPicker) {
-                TeamPickerView(selectedTeam: $selectedTeam, isPresented: $showingTeamPicker)
+                TeamPickerView(selectedTeam: $selectedTeam, isPresented: $showingTeamPicker, workOrderDate: dueDate)
             }
             
             if let selectedTeam = selectedTeam {
@@ -261,6 +298,7 @@ struct PerformWorkView: View {
     private var isFormValid: Bool {
         return !workOrderTitle.isEmpty && 
                !practiceName.isEmpty && 
+               !selectedShifts.isEmpty &&
                selectedTeam != nil
     }
     
@@ -282,6 +320,7 @@ struct PerformWorkView: View {
         workOrder.totalEstimatedHours = estimatedHours
         workOrder.isCompleted = false
         workOrder.assignedTeam = selectedTeam
+        workOrder.workShifts = Array(selectedShifts)
         workOrder.grow = grow
         
         // Create work practice
@@ -305,11 +344,16 @@ struct PerformWorkView: View {
 
 // MARK: - Team Picker View
 
-/// Picker view for selecting work teams
+/// Picker view for selecting work teams with team creation capability
 struct TeamPickerView: View {
     @Binding var selectedTeam: WorkTeam?
     @Binding var isPresented: Bool
+    let workOrderDate: Date
     @Environment(\.managedObjectContext) private var viewContext
+    
+    // Team creation state
+    @State private var showingTeamCreation = false
+    @State private var createdTeam: WorkTeam?
     
     @FetchRequest(
         entity: WorkTeam.entity(),
@@ -320,37 +364,67 @@ struct TeamPickerView: View {
     var body: some View {
         NavigationView {
             List {
-                Section("Available Teams") {
-                    ForEach(availableTeams, id: \.self) { team in
-                        Button(action: {
-                            selectedTeam = team
-                            isPresented = false
-                        }) {
-                            HStack {
-                                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                                    Text(team.name ?? "Unnamed Team")
-                                        .font(AppTheme.Typography.bodyMedium)
-                                        .foregroundColor(AppTheme.Colors.textPrimary)
-                                    
-                                    Text("\(team.activeMembers().count) members (\(team.clockedInCount()) clocked in)")
-                                        .font(AppTheme.Typography.bodySmall)
-                                        .foregroundColor(AppTheme.Colors.textSecondary)
-                                }
+                // Create new team section
+                Section {
+                    Button(action: {
+                        showingTeamCreation = true
+                    }) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundColor(AppTheme.Colors.primary)
+                                .font(.title3)
+                            
+                            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                                Text("Create New Team")
+                                    .font(AppTheme.Typography.bodyMedium)
+                                    .foregroundColor(AppTheme.Colors.primary)
                                 
-                                Spacer()
-                                
-                                if selectedTeam?.id == team.id {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(AppTheme.Colors.primary)
-                                }
+                                Text("Select workers and create a team for this work order")
+                                    .font(AppTheme.Typography.bodySmall)
+                                    .foregroundColor(AppTheme.Colors.textSecondary)
                             }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(AppTheme.Colors.textTertiary)
+                                .font(.caption)
                         }
                     }
                 }
                 
-                if availableTeams.isEmpty {
+                // Available teams section
+                if !availableTeams.isEmpty {
+                    Section("Available Teams") {
+                        ForEach(availableTeams, id: \.self) { team in
+                            Button(action: {
+                                selectedTeam = team
+                                isPresented = false
+                            }) {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                                        Text(team.name ?? "Unnamed Team")
+                                            .font(AppTheme.Typography.bodyMedium)
+                                            .foregroundColor(AppTheme.Colors.textPrimary)
+                                        
+                                        Text("\(team.activeMembers().count) members (\(team.clockedInCount()) clocked in)")
+                                            .font(AppTheme.Typography.bodySmall)
+                                            .foregroundColor(AppTheme.Colors.textSecondary)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    if selectedTeam?.id == team.id {
+                                        Image(systemName: "checkmark")
+                                            .foregroundColor(AppTheme.Colors.primary)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
                     Section {
-                        Text("No teams available. Create a team first to assign work.")
+                        Text("No existing teams. Create your first team above.")
                             .foregroundColor(AppTheme.Colors.textSecondary)
                             .font(AppTheme.Typography.bodyMedium)
                     }
@@ -365,7 +439,62 @@ struct TeamPickerView: View {
                     }
                 }
             }
+            .sheet(isPresented: $showingTeamCreation) {
+                TeamCreationView(
+                    isPresented: $showingTeamCreation,
+                    createdTeam: $createdTeam,
+                    workOrderDate: workOrderDate
+                )
+            }
+            .onChange(of: createdTeam) { newTeam in
+                if let newTeam = newTeam {
+                    selectedTeam = newTeam
+                    isPresented = false
+                }
+            }
         }
+    }
+}
+
+// MARK: - Work Shift Toggle Row
+
+/// Individual work shift toggle row for shift selection
+struct WorkShiftToggleRow: View {
+    let shift: WorkShift
+    let isSelected: Bool
+    let onToggle: (Bool) -> Void
+    
+    var body: some View {
+        Button(action: {
+            onToggle(!isSelected)
+        }) {
+            HStack {
+                // Shift emoji and name
+                HStack(spacing: AppTheme.Spacing.small) {
+                    Text(shift.emoji)
+                        .font(.title3)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text(shift.displayText)
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text(shift.timeRange)
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
+                
+                Spacer()
+                
+                // Selection indicator
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.textTertiary)
+                    .font(.title3)
+            }
+            .padding(.vertical, AppTheme.Spacing.small)
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
