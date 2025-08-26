@@ -4,7 +4,7 @@ import CoreData
 
 // MARK: - Quick Action Button
 
-struct QuickActionButton: View {
+struct InfastructureQuickActionButton: View {
     let title: String
     let subtitle: String
     let icon: String

@@ -159,7 +159,9 @@
         <attribute name="acres" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="hasDrainTile" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionStatus" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="nextInspectionDue" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="photoData" optional="YES" attributeType="Binary"/>
         <attribute name="polygonWKB" optional="YES" attributeType="Binary"/>
@@ -185,9 +187,12 @@
         <attribute name="expectedHavestDate" optional="YES" attributeType="String"/>
         <attribute name="growType" optional="YES" attributeType="String"/>
         <attribute name="harvestDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="inspectionStatus" optional="YES" attributeType="String"/>
         <attribute name="locationName" optional="YES" attributeType="String"/>
+        <attribute name="lotId" optional="YES" attributeType="String"/>
         <attribute name="manager" optional="YES" attributeType="String"/>
         <attribute name="managerPhone" optional="YES" attributeType="String"/>
+        <attribute name="nextInspectionDue" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="plantedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="propertyOwner" optional="YES" attributeType="String"/>
@@ -243,10 +248,12 @@
     <entity name="Infrastructure" representedClassName="Infrastructure" syncable="YES" codeGenerationType="class">
         <attribute name="category" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionStatus" optional="YES" attributeType="String"/>
         <attribute name="installDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastServiceDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="maintenanceProcedures" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="nextInspectionDue" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="rodentInspectionProcedure" optional="YES" attributeType="String"/>
         <attribute name="safetyTraining" optional="YES" attributeType="String"/>
@@ -430,10 +437,14 @@
     <entity name="Property" representedClassName="Property" syncable="YES" codeGenerationType="class">
         <attribute name="centerLat" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
         <attribute name="centerLon" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="certificationStatus" optional="YES" attributeType="String"/>
+        <attribute name="certificationValidUntil" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="county" optional="YES" attributeType="String"/>
         <attribute name="displayName" optional="YES" attributeType="String"/>
         <attribute name="hasIrrigation" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionStatus" optional="YES" attributeType="String"/>
+        <attribute name="nextInspectionDue" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="parcelNumbers" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <attribute name="pastureAcres" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -585,7 +596,56 @@
             <fetchIndexElement property="name" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
+    <entity name="AuditTrail" representedClassName="AuditTrail" syncable="YES" codeGenerationType="class">
+        <attribute name="auditHash" optional="YES" attributeType="String"/>
+        <attribute name="completedInspectionId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionFileHash" optional="YES" attributeType="String"/>
+        <attribute name="inspectionFilePath" optional="YES" attributeType="String"/>
+        <attribute name="inspectionType" optional="YES" attributeType="String"/>
+        <attribute name="inspectorName" optional="YES" attributeType="String"/>
+        <attribute name="longHash" optional="YES" attributeType="String"/>
+        <attribute name="shortHash" optional="YES" attributeType="String"/>
+        <relationship name="completedInspection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CompletedInspection" inverseName="auditTrail" inverseEntity="CompletedInspection"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byCompletedInspectionIdIndex">
+            <fetchIndexElement property="completedInspectionId" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="CompletedInspection" representedClassName="CompletedInspection" syncable="YES" codeGenerationType="class">
+        <attribute name="completedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="entityId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="entityType" optional="YES" attributeType="String"/>
+        <attribute name="farmId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="fieldId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="fileName" optional="YES" attributeType="String"/>
+        <attribute name="growId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="infrastructureId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionCategory" optional="YES" attributeType="String"/>
+        <attribute name="inspectionName" optional="YES" attributeType="String"/>
+        <attribute name="inspectionType" optional="YES" attributeType="String"/>
+        <attribute name="inspectorNames" optional="YES" attributeType="String"/>
+        <attribute name="lotId" optional="YES" attributeType="String"/>
+        <attribute name="recurrenceFrequency" optional="YES" attributeType="String"/>
+        <attribute name="scheduledTime" optional="YES" attributeType="String"/>
+        <attribute name="teamName" optional="YES" attributeType="String"/>
+        <relationship name="auditTrail" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AuditTrail" inverseName="completedInspection" inverseEntity="AuditTrail"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byCompletedAtIndex">
+            <fetchIndexElement property="completedAt" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byInspectionTypeIndex">
+            <fetchIndexElement property="inspectionType" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
     <entity name="Worker" representedClassName="Worker" syncable="YES" codeGenerationType="class">
+        <attribute name="canInspect" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="email" optional="YES" attributeType="String"/>
         <attribute name="emergencyContact" optional="YES" attributeType="String"/>
         <attribute name="emergencyPhone" optional="YES" attributeType="String"/>

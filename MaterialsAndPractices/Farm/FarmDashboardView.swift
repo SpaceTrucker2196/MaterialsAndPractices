@@ -6,6 +6,25 @@
 //  Provides centralized access to farm management with intuitive tile-based interface.
 //  Follows Clean Code principles with clear separation of concerns and single responsibility.
 //
+//  CLEAN ARCHITECTURE IMPROVEMENTS NEEDED:
+//  While this file follows some clean code principles, it still has architectural issues:
+//
+//  1. DIRECT CORE DATA COUPLING: @FetchRequest creates tight coupling to Core Data
+//     → Should use FarmDataRepository interface instead
+//
+//  2. MIXED PRESENTATION AND DATA ACCESS: Dashboard combines UI logic with data fetching  
+//     → Should separate into FarmDashboardViewModel and FarmDashboardPresenter
+//
+//  3. BUSINESS LOGIC IN VIEW: Property and worker status calculations in UI layer
+//     → Should extract to FarmStatusService and WorkerStatusService
+//
+//  RECOMMENDED REFACTORING:
+//  - Create FarmDashboardInteractor for business logic
+//  - Implement FarmDataRepository for data access abstraction
+//  - Extract DashboardViewModel for state management
+//  - Move status calculations to dedicated service classes
+//  - Use dependency injection for testability
+//
 //  Features:
 //  - Farm property overview with visual status indicators
 //  - Worker management with real-time clock status
@@ -35,8 +54,11 @@ struct FarmDashboardView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     // MARK: - Data Access Layer
+    // ARCHITECTURAL NOTE: Direct @FetchRequest usage violates Dependency Inversion Principle
+    // RECOMMENDATION: Replace with FarmDataRepository interface for better testability and abstraction
 
     /// Farm properties fetch request with alphabetical sorting for consistent presentation
+    /// TODO: Replace with FarmDataRepository.getFarmProperties() call
     @FetchRequest(
         entity: Property.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \Property.displayName, ascending: true)]

@@ -5,6 +5,21 @@
 //  Comprehensive worker management system with time clock functionality.
 //  Tracks work hours and calculates weekly totals Monday through Sunday.
 //
+//  CLEAN ARCHITECTURE IMPROVEMENTS NEEDED:
+//  This file violates the Single Responsibility Principle by mixing UI presentation
+//  with business logic and data access. Should be refactored into:
+//
+//  1. WorkerManagementViewModel (presentation layer) - handles UI state
+//  2. TimeClockInteractor (application layer) - handles clock in/out use cases  
+//  3. WorkerTimeTrackingService (application layer) - weekly calculations
+//  4. WorkerRepository (interface adapter) - data access abstraction
+//
+//  Specific methods that need architectural improvements:
+//  - clockIn()/clockOut() → move to TimeClockInteractor
+//  - calculateCurrentWeekHours() → move to WeeklyHoursCalculator
+//  - WorkerTimeClockView → rename to TimeClockPresenter
+//  - Direct Core Data access → abstract behind repository interface
+//
 //  Created by AI Assistant on current date.
 //
 
@@ -402,6 +417,8 @@ struct WorkerDetailView: View {
         }
     }
     
+    /// Clock in worker - SHOULD BE MOVED to TimeClockInteractor use case
+    /// Business logic for time tracking should not be in the view layer
     private func clockIn() {
         if todayEntry == nil {
             todayEntry = TimeClock(context: viewContext)
@@ -427,6 +444,10 @@ struct WorkerDetailView: View {
         }
     }
     
+    /// Clock out worker - SHOULD BE MOVED to TimeClockInteractor use case  
+    /// Hours calculation and data persistence should be in application layer
+    /// Clock out worker - SHOULD BE MOVED to TimeClockInteractor use case  
+    /// Hours calculation and data persistence should be in application layer
     private func clockOut() {
         guard let entry = todayEntry else { return }
         

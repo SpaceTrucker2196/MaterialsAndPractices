@@ -6,6 +6,20 @@
 //  team management, and agricultural work coordination for farm operations.
 //  Supports comprehensive time tracking and worker assignment.
 //
+//  CLEAN ARCHITECTURE IMPROVEMENT NEEDED:
+//  This file contains mixed concerns that should be separated according to Clean Architecture principles.
+//  Consider refactoring into:
+//  1. WorkOrderEntity (domain layer) - business rules and entities
+//  2. WorkOrderManagementUseCase (application layer) - work order operations
+//  3. WorkOrderRepository (interface adapter) - data access abstraction
+//  4. WorkOrderController (interface adapter) - UI interaction handling
+//
+//  Specific improvements needed:
+//  - Move TimeClock extensions to TimeClockEntityAdapter
+//  - Extract business logic from extensions into use cases
+//  - Create WorkOrderService for business rules
+//  - Implement dependency injection for testability
+//
 //  Created by GitHub Copilot on 12/18/24.
 //
 
@@ -250,6 +264,8 @@ extension WorkTeam {
     }
     
     /// Get currently clocked-in members
+    /// TODO: Rename to getClockedInWorkers() and move to WorkerStatusService for better clarity
+    /// This method contains business logic that should be in the application layer
     func clockedInMembers() -> [Worker] {
         return activeMembers().filter { worker in
             // Check if worker has an active time clock entry
@@ -268,9 +284,13 @@ extension WorkTeam {
 }
 
 // MARK: - Time Tracking Extensions
+// ARCHITECTURAL NOTE: These extensions mix presentation logic with domain logic.
+// RECOMMENDATION: Move to TimeClockPresenter class and create TimeClockEntityAdapter
+// The formatting logic belongs in the presentation layer, not the domain entity.
 
 extension TimeClock {
     /// Calculate elapsed time in a friendly format (hh:mm)
+    /// TODO: Move this to TimeClockPresenter.formatElapsedTime() for better separation of concerns
     var elapsedTimeFormatted: String {
         guard let clockIn = clockInTime else { return "00:00" }
         
@@ -306,8 +326,14 @@ extension TimeClock {
 
 // MARK: - Worker Extensions for Work Orders
 
+// MARK: - Worker Extensions for Work Orders
+// ARCHITECTURAL NOTE: These Worker extensions contain business logic that should be extracted.
+// RECOMMENDATION: Create WorkerService or WorkerRepository for these operations.
+// Extensions should only add convenience methods, not business logic.
+
 extension Worker {
     /// Get current active time clock entry
+    /// TODO: Move to WorkerTimeTrackingService.getCurrentActiveEntry(for worker: Worker)
     func currentTimeClockEntry() -> TimeClock? {
         guard let timeEntries = self.timeClockEntries?.allObjects as? [TimeClock] else {
             return nil
