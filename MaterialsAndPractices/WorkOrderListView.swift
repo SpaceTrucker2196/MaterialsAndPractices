@@ -21,7 +21,7 @@ struct WorkOrderListView: View {
     let maxDisplayedOrders: Int
     let showViewAllButton: Bool
     
-    // Fetch today's work orders
+    // Fetch today's work orders (including overdue)
     @FetchRequest private var todayWorkOrders: FetchedResults<WorkOrder>
     
     // MARK: - Initialization
@@ -30,13 +30,12 @@ struct WorkOrderListView: View {
         self.maxDisplayedOrders = maxDisplayedOrders
         self.showViewAllButton = showViewAllButton
         
-        // Set up fetch request for today's work orders
+        // Set up fetch request for today's work orders (including overdue)
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
-        let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
         
-        let predicate = NSPredicate(format: "dueDate >= %@ AND dueDate < %@ AND isCompleted == NO", 
-                                  today as NSDate, tomorrow as NSDate)
+        let predicate = NSPredicate(format: "dueDate <= %@ AND isCompleted == NO", 
+                                  today as NSDate)
         
         self._todayWorkOrders = FetchRequest(
             entity: WorkOrder.entity(),
@@ -80,7 +79,7 @@ struct WorkOrderListView: View {
     
     // MARK: - UI Components
     
-    /// Empty state when no work orders exist for today
+    /// Empty state when no work orders exist for today (including overdue)
     private var workOrdersEmptyState: some View {
         VStack(spacing: AppTheme.Spacing.small) {
             Image(systemName: "checkmark.circle.fill")
