@@ -30,6 +30,7 @@ struct UtilitiesView: View {
     /// State management for configuration options
     @State private var debugLoggingEnabled: Bool
     @State private var farmManagementAdvancedMode: Bool
+    @State private var helpSystemEnabled: Bool
     @State private var showingResetAlert = false
     
     /// Navigation state for various utility flows
@@ -48,6 +49,7 @@ struct UtilitiesView: View {
         let config = SecureConfiguration.shared
         _debugLoggingEnabled = State(initialValue: config.debugLoggingEnabled)
         _farmManagementAdvancedMode = State(initialValue: config.farmManagementAdvancedMode)
+        _helpSystemEnabled = State(initialValue: config.helpSystemEnabled)
     }
     
     // MARK: - Body
@@ -193,14 +195,26 @@ struct UtilitiesView: View {
     /// Application configuration settings for farm management features
     /// Controls advanced functionality and operational modes
     private var appConfigurationSection: some View {
-        Section("Configuration") {
+        Section(NSLocalizedString("Configuration", comment: "Configuration section title")) {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                Toggle("Advanced Mode", isOn: $farmManagementAdvancedMode)
+                Toggle(NSLocalizedString("Advanced Mode", comment: "Advanced mode setting"), isOn: $farmManagementAdvancedMode)
                     .onChange(of: farmManagementAdvancedMode) { value in
                         saveFarmManagementSetting(value)
                     }
                 
-                Text("Advanced mode provides access to detailed farm management features including fields, leases, payments, and compliance tracking.")
+                Text(NSLocalizedString("Advanced mode provides access to detailed farm management features including fields, leases, payments, and compliance tracking.", comment: "Advanced mode description"))
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            .padding(.vertical, AppTheme.Spacing.tiny)
+            
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                Toggle(NSLocalizedString("Help System", comment: "Help system setting"), isOn: $helpSystemEnabled)
+                    .onChange(of: helpSystemEnabled) { value in
+                        saveHelpSystemSetting(value)
+                    }
+                
+                Text(NSLocalizedString("Enable or disable the in-app help system and documentation features.", comment: "Help system description"))
                     .font(AppTheme.Typography.bodySmall)
                     .foregroundColor(AppTheme.Colors.textSecondary)
             }
@@ -292,12 +306,19 @@ struct UtilitiesView: View {
         config.setValue(value ? "true" : "false", for: .debugLoggingEnabled)
     }
     
+    /// Saves help system setting to persistent storage
+    /// - Parameter value: New help system state to persist
+    private func saveHelpSystemSetting(_ value: Bool) {
+        config.setValue(value ? "true" : "false", for: .helpSystemEnabled)
+    }
+    
     /// Resets all application settings to their default values
     /// Clears stored configuration and re-establishes defaults
     private func resetToDefaults() {
         // Reset state variables to defaults
         debugLoggingEnabled = true
         farmManagementAdvancedMode = false
+        helpSystemEnabled = true
         
         // Clear all stored configuration values
         for key in SecureConfiguration.ConfigKey.allCases {

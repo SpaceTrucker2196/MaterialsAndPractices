@@ -35,6 +35,7 @@ class SecureConfiguration {
         case networkTimeoutSeconds = "network_timeout_seconds"
         case maxRetryAttempts = "max_retry_attempts"
         case farmManagementAdvancedMode = "farm_management_advanced_mode"
+        case helpSystemEnabled = "help_system_enabled"
         
         var defaultValue: String? {
             switch self {
@@ -46,6 +47,8 @@ class SecureConfiguration {
                 return "3"
             case .farmManagementAdvancedMode:
                 return "false"
+            case .helpSystemEnabled:
+                return "true"
             }
         }
     }
@@ -127,6 +130,11 @@ class SecureConfiguration {
     /// Farm management advanced mode enabled status
     var farmManagementAdvancedMode: Bool {
         return getValue(for: .farmManagementAdvancedMode)?.lowercased() == "true"
+    }
+    
+    /// Help system enabled status
+    var helpSystemEnabled: Bool {
+        return getValue(for: .helpSystemEnabled)?.lowercased() == "true"
     }
     
     // MARK: - Private Methods

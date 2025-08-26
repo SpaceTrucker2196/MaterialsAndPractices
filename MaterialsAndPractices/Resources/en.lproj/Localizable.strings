@@ -1,0 +1,113 @@
+/* MaterialsAndPractices Localization - English */
+
+/* Common UI Elements */
+"Done" = "Done";
+"Cancel" = "Cancel";
+"Save" = "Save";
+"Delete" = "Delete";
+"Edit" = "Edit";
+"Add" = "Add";
+"Close" = "Close";
+
+/* Help System */
+"Help" = "Help";
+"Overview" = "Overview";
+"Work Orders" = "Work Orders";
+"Time Tracking" = "Time Tracking";
+"Team Management" = "Team Management";
+"Weekly Reports" = "Weekly Reports";
+"Troubleshooting" = "Troubleshooting";
+
+/* Help Content */
+"Welcome to Farm Management" = "Welcome to Farm Management";
+"This app helps you manage your farm operations including work orders, time tracking, and team coordination." = "This app helps you manage your farm operations including work orders, time tracking, and team coordination.";
+"Key Features:" = "Key Features:";
+"Create and manage work orders" = "Create and manage work orders";
+"Track worker time and productivity" = "Track worker time and productivity";
+"Monitor harvest schedules" = "Monitor harvest schedules";
+"Generate weekly reports" = "Generate weekly reports";
+
+"Managing Work Orders" = "Managing Work Orders";
+"Creating Work Orders:" = "Creating Work Orders:";
+"Tap 'Perform Work' on any grow tile" = "Tap 'Perform Work' on any grow tile";
+"Fill in work details and assign team" = "Fill in work details and assign team";
+"Set priority and due date" = "Set priority and due date";
+"Save to create the work order" = "Save to create the work order";
+
+"Status Management:" = "Status Management:";
+"🌧️ Weather Delay - For weather-related postponements" = "🌧️ Weather Delay - For weather-related postponements";
+"💧 Too Wet - When soil conditions aren't suitable" = "💧 Too Wet - When soil conditions aren't suitable";
+"🔧 Equipment Issue - For mechanical problems" = "🔧 Equipment Issue - For mechanical problems";
+
+"Time Tracking" = "Time Tracking";
+"Track work hours for accurate payroll and productivity analysis." = "Track work hours for accurate payroll and productivity analysis.";
+"Clock Operations:" = "Clock Operations:";
+"Clock In - Start your work shift" = "Clock In - Start your work shift";
+"Clock Out - End your work shift" = "Clock Out - End your work shift";
+"Break - Take a temporary break" = "Break - Take a temporary break";
+"Lunch - Take a lunch break" = "Lunch - Take a lunch break";
+
+"Team Management" = "Team Management";
+"Organize workers into teams and assign work orders efficiently." = "Organize workers into teams and assign work orders efficiently.";
+"Team Organization:" = "Team Organization:";
+"Create work teams for different operations" = "Create work teams for different operations";
+"Assign workers with relevant skills" = "Assign workers with relevant skills";
+"Monitor team productivity" = "Monitor team productivity";
+"Balance workload across teams" = "Balance workload across teams";
+
+"Weekly Reports" = "Weekly Reports";
+"Generate comprehensive reports on worker productivity and work order completion." = "Generate comprehensive reports on worker productivity and work order completion.";
+"Report Features:" = "Report Features:";
+"Total hours worked per worker" = "Total hours worked per worker";
+"Overtime detection (>40 hours)" = "Overtime detection (>40 hours)";
+"Work order completion rates" = "Work order completion rates";
+"Team productivity metrics" = "Team productivity metrics";
+
+"Troubleshooting" = "Troubleshooting";
+"Common Issues:" = "Common Issues:";
+"Can't create work order:" = "Can't create work order:";
+"• Ensure you have workers assigned\n• Check that grow has active status\n• Verify team permissions" = "• Ensure you have workers assigned\n• Check that grow has active status\n• Verify team permissions";
+"Time tracking issues:" = "Time tracking issues:";
+"• Make sure you're clocked in\n• Check work order assignment\n• Verify correct date/time" = "• Make sure you're clocked in\n• Check work order assignment\n• Verify correct date/time";
+
+/* Settings */
+"Configuration" = "Configuration";
+"Advanced Mode" = "Advanced Mode";
+"Advanced mode provides access to detailed farm management features including fields, leases, payments, and compliance tracking." = "Advanced mode provides access to detailed farm management features including fields, leases, payments, and compliance tracking.";
+"Help System" = "Help System";
+"Enable or disable the in-app help system and documentation features." = "Enable or disable the in-app help system and documentation features.";
+
+/* Generic Comments */
+"Help section title" = "Help section title";
+"Help view title" = "Help view title";
+"Done button" = "Done button";
+"Overview help title" = "Overview help title";
+"Overview help description" = "Overview help description";
+"Key features label" = "Key features label";
+"Feature description" = "Feature description";
+"Work order help title" = "Work order help title";
+"Creating work orders section" = "Creating work orders section";
+"Step instruction" = "Step instruction";
+"Status management section" = "Status management section";
+"Status description" = "Status description";
+"Time tracking help title" = "Time tracking help title";
+"Time tracking description" = "Time tracking description";
+"Clock operations section" = "Clock operations section";
+"Clock operation" = "Clock operation";
+"Team management help title" = "Team management help title";
+"Team management description" = "Team management description";
+"Team organization section" = "Team organization section";
+"Team feature" = "Team feature";
+"Weekly reports help title" = "Weekly reports help title";
+"Weekly reports description" = "Weekly reports description";
+"Report features section" = "Report features section";
+"Report feature" = "Report feature";
+"Troubleshooting help title" = "Troubleshooting help title";
+"Common issues section" = "Common issues section";
+"Issue title" = "Issue title";
+"Issue solution" = "Issue solution";
+"Configuration section title" = "Configuration section title";
+"Advanced mode setting" = "Advanced mode setting";
+"Advanced mode description" = "Advanced mode description";
+"Help system setting" = "Help system setting";
+"Help system description" = "Help system description";
