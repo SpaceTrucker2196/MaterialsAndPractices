@@ -20,6 +20,7 @@ struct PropertyDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @State private var showingPhotoCapture = false
     @State private var showingEditView = false
+    @State private var showingInspectionScheduling = false
     
     // MARK: - Body
     
@@ -37,6 +38,7 @@ struct PropertyDetailView: View {
                     fieldsSection
                     infrastructureSection
                     leasesSection
+                    inspectionSection
                 }
             }
             .padding()
@@ -52,6 +54,9 @@ struct PropertyDetailView: View {
         }
         .sheet(isPresented: $showingEditView) {
             EditPropertyView(property: property, isPresented: $showingEditView)
+        }
+        .sheet(isPresented: $showingInspectionScheduling) {
+            FarmInspectionSchedulingView(property: property, isPresented: $showingInspectionScheduling)
         }
     }
     
@@ -206,6 +211,96 @@ struct PropertyDetailView: View {
                     .foregroundColor(AppTheme.Colors.textSecondary)
             }
         }
+    }
+    
+    /// Section for inspection management and assignment
+    private var inspectionSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Farm Inspections")
+            
+            // Recent inspections for this farm
+            if let recentInspections = getRecentFarmInspections(), !recentInspections.isEmpty {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text("Recent Inspections")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    ForEach(recentInspections.prefix(3), id: \.id) { inspection in
+                        FarmInspectionRow(inspection: inspection)
+                    }
+                    
+                    if recentInspections.count > 3 {
+                        Button("View All Inspections") {
+                            // Navigate to full inspection list for this farm
+                        }
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.primary)
+                    }
+                }
+            }
+            
+            // Inspection actions
+            VStack(spacing: AppTheme.Spacing.small) {
+                CommonActionButton(
+                    title: "Schedule Farm Inspection",
+                    style: .outline,
+                    action: scheduleFarmInspection
+                )
+                
+                NavigationLink(destination: InspectionManagementView()) {
+                    HStack {
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundColor(AppTheme.Colors.compliance)
+                        
+                        Text("Manage All Inspections")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.primary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(AppTheme.Colors.textTertiary)
+                            .font(.caption)
+                    }
+                    .padding()
+                    .background(AppTheme.Colors.backgroundSecondary)
+                    .cornerRadius(AppTheme.CornerRadius.medium)
+                }
+            }
+        }
+    }
+    
+    /// Gets recent inspections for this farm
+    private func getRecentFarmInspections() -> [FarmInspectionDisplayData]? {
+        // This would fetch actual inspection data from Core Data
+        // For now, return sample data if farm has some activity
+        guard let fields = property.fields?.allObjects as? [Field], !fields.isEmpty else {
+            return nil
+        }
+        
+        return [
+            FarmInspectionDisplayData(
+                id: UUID(),
+                name: "Organic Certification Inspection",
+                category: .organicManagement,
+                completedAt: Date().addingTimeInterval(-10 * 24 * 60 * 60),
+                inspector: "Certification Board",
+                status: .completed
+            ),
+            FarmInspectionDisplayData(
+                id: UUID(),
+                name: "General Farm Inspection",
+                category: .healthSafety,
+                completedAt: Date().addingTimeInterval(-30 * 24 * 60 * 60),
+                inspector: "Safety Inspector",
+                status: .completed
+            )
+        ]
+    }
+    
+    /// Opens the inspection scheduling view for this farm
+    private func scheduleFarmInspection() {
+        showingInspectionScheduling = true
     }
 }
 
@@ -365,5 +460,174 @@ struct PropertyDetailView_Previews: PreviewProvider {
             PropertyDetailView(property: Property(), isAdvancedMode: true)
                 .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         }
+    }
+}
+
+// MARK: - Supporting View Components for Farm Inspections
+
+/// Display data for farm inspections
+struct FarmInspectionDisplayData {
+    let id: UUID
+    let name: String
+    let category: InspectionCategory
+    let completedAt: Date
+    let inspector: String
+    let status: InspectionStatus
+}
+
+/// Row view for displaying farm inspection information
+struct FarmInspectionRow: View {
+    let inspection: FarmInspectionDisplayData
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                Text(inspection.name)
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                Text("By \(inspection.inspector)")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                MetadataTag(
+                    text: inspection.status.displayName,
+                    backgroundColor: inspection.status.color.opacity(0.2),
+                    textColor: inspection.status.color
+                )
+                
+                Text(inspection.completedAt, style: .date)
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.textTertiary)
+            }
+        }
+        .padding()
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+}
+
+/// Inspection scheduling view for farms
+struct FarmInspectionSchedulingView: View {
+    let property: Property
+    @Binding var isPresented: Bool
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @State private var selectedTemplate: InspectionCategory = .organicManagement
+    @State private var inspectionName: String = ""
+    @State private var scheduledTime: InspectionTime = .morning
+    @State private var frequency: InspectionFrequency = .oneTime
+    @State private var selectedInspectors: [UUID] = []
+    @State private var notes: String = ""
+    
+    var body: some View {
+        NavigationView {
+            Form {
+                Section("Inspection Details") {
+                    TextField("Inspection Name", text: $inspectionName)
+                    
+                    Picker("Template Category", selection: $selectedTemplate) {
+                        ForEach(InspectionCategory.allCases, id: \.self) { category in
+                            HStack {
+                                Image(systemName: category.icon)
+                                Text(category.displayName)
+                            }.tag(category)
+                        }
+                    }
+                    
+                    Picker("Scheduled Time", selection: $scheduledTime) {
+                        ForEach(InspectionTime.allCases, id: \.self) { time in
+                            VStack(alignment: .leading) {
+                                Text(time.rawValue)
+                                Text(time.timeRange)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }.tag(time)
+                        }
+                    }
+                    
+                    Picker("Frequency", selection: $frequency) {
+                        ForEach(InspectionFrequency.allCases, id: \.self) { freq in
+                            HStack {
+                                Image(systemName: freq.icon)
+                                Text(freq.rawValue)
+                            }.tag(freq)
+                        }
+                    }
+                }
+                
+                Section("Farm Information") {
+                    HStack {
+                        Text("Farm Name:")
+                        Spacer()
+                        Text(property.displayName ?? "Unknown")
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    HStack {
+                        Text("Total Acres:")
+                        Spacer()
+                        Text("\(property.totalAcres, specifier: "%.1f")")
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    if let county = property.county, let state = property.state {
+                        HStack {
+                            Text("Location:")
+                            Spacer()
+                            Text("\(county), \(state)")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
+                    if let fields = property.fields?.allObjects as? [Field] {
+                        HStack {
+                            Text("Fields:")
+                            Spacer()
+                            Text("\(fields.count)")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                
+                Section("Additional Notes") {
+                    TextField("Inspection notes or requirements", text: $notes, axis: .vertical)
+                        .lineLimit(3...6)
+                }
+            }
+            .navigationTitle("Schedule Farm Inspection")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Schedule") {
+                        scheduleInspection()
+                    }
+                    .disabled(inspectionName.isEmpty)
+                }
+            }
+        }
+    }
+    
+    private func scheduleInspection() {
+        // Here we would create the inspection using the inspection system
+        // For now, we'll just dismiss the view
+        // TODO: Integrate with InspectionCreationWorkflowView or create inspection directly
+        
+        print("Scheduling inspection: \(inspectionName) for farm: \(property.displayName ?? "Unknown")")
+        print("Category: \(selectedTemplate.displayName)")
+        print("Time: \(scheduledTime.rawValue)")
+        print("Frequency: \(frequency.rawValue)")
+        
+        isPresented = false
     }
 }

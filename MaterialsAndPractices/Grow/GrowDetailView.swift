@@ -67,6 +67,7 @@ struct GrowDetailView: View {
     @State var growViewModel: GrowDetailViewModel
     @State private var showingHarvestChecklist = false
     @State private var showingPerformWorkView = false
+    @State private var showingInspectionScheduling = false
     
     // MARK: - Body
     
@@ -99,12 +100,18 @@ struct GrowDetailView: View {
                 
                 // MARK: - Harvest Safety Section
                 harvestSafetySection
+                
+                // MARK: - Inspection Section
+                inspectionSection
             }
             .padding()
         }
         .navigationTitle(growViewModel.name)
         .sheet(isPresented: $showingPerformWorkView) {
             PerformWorkView(grow: growViewModel.grow, isPresented: $showingPerformWorkView)
+        }
+        .sheet(isPresented: $showingInspectionScheduling) {
+            GrowInspectionSchedulingView(grow: growViewModel.grow, isPresented: $showingInspectionScheduling)
         }
     }
     
@@ -541,6 +548,63 @@ struct GrowDetailView: View {
         }
     }
     
+    /// Section for inspection management and assignment
+    private var inspectionSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Inspections")
+            
+            // Recent inspections for this grow
+            if let recentInspections = getRecentInspections(), !recentInspections.isEmpty {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text("Recent Inspections")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    ForEach(recentInspections.prefix(3), id: \.id) { inspection in
+                        GrowInspectionRow(inspection: inspection)
+                    }
+                    
+                    if recentInspections.count > 3 {
+                        Button("View All Inspections") {
+                            // Navigate to full inspection list for this grow
+                        }
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.primary)
+                    }
+                }
+            }
+            
+            // Inspection actions
+            VStack(spacing: AppTheme.Spacing.small) {
+                CommonActionButton(
+                    title: "Schedule Inspection",
+                    style: .outline,
+                    action: scheduleGrowInspection
+                )
+                
+                NavigationLink(destination: InspectionManagementView()) {
+                    HStack {
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundColor(AppTheme.Colors.compliance)
+                        
+                        Text("Manage All Inspections")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.primary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(AppTheme.Colors.textTertiary)
+                            .font(.caption)
+                    }
+                    .padding()
+                    .background(AppTheme.Colors.backgroundSecondary)
+                    .cornerRadius(AppTheme.CornerRadius.medium)
+                }
+            }
+        }
+    }
+    
     // MARK: - Action Methods
     
     /// Opens the perform work view to create new work order
@@ -558,6 +622,11 @@ struct GrowDetailView: View {
     private func addAmendment() {
         let newAmendment = Amendment(context: viewContext)
         growViewModel.grow.addToAmendments(newAmendment)
+    }
+    
+    /// Opens the inspection scheduling view for this grow
+    private func scheduleGrowInspection() {
+        showingInspectionScheduling = true
     }
     
     // MARK: - Helper Methods
@@ -611,6 +680,27 @@ struct GrowDetailView: View {
     private func latestSoilTest(for field: Field) -> SoilTest? {
         guard let soilTests = field.soilTests?.allObjects as? [SoilTest] else { return nil }
         return soilTests.sorted { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) }.first
+    }
+    
+    /// Gets recent inspections for this grow
+    private func getRecentInspections() -> [GrowInspectionDisplayData]? {
+        // This would fetch actual inspection data from Core Data
+        // For now, return sample data if grow has been inspected
+        guard let plantedDate = growViewModel.grow.plantedDate,
+              plantedDate < Date().addingTimeInterval(-7 * 24 * 60 * 60) else { // Planted more than a week ago
+            return nil
+        }
+        
+        return [
+            GrowInspectionDisplayData(
+                id: UUID(),
+                name: "Pre-Harvest Inspection",
+                category: .grow,
+                completedAt: Date().addingTimeInterval(-2 * 24 * 60 * 60),
+                inspector: "John Smith",
+                status: .completed
+            )
+        ]
     }
 }
 
@@ -779,5 +869,192 @@ struct GrowDetailView_Previews: PreviewProvider {
         Group {
             GrowDetailView(growViewModel: GrowDetailViewModel(grow: Grow(context:PersistenceController.preview.container.viewContext)))
         }
+    }
+}
+
+// MARK: - Supporting View Components for Inspections
+
+/// Display data for grow inspections
+struct GrowInspectionDisplayData {
+    let id: UUID
+    let name: String
+    let category: InspectionCategory
+    let completedAt: Date
+    let inspector: String
+    let status: InspectionStatus
+}
+
+enum InspectionStatus {
+    case scheduled
+    case inProgress
+    case completed
+    case overdue
+    
+    var displayName: String {
+        switch self {
+        case .scheduled: return "Scheduled"
+        case .inProgress: return "In Progress"
+        case .completed: return "Completed"
+        case .overdue: return "Overdue"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .scheduled: return AppTheme.Colors.primary
+        case .inProgress: return AppTheme.Colors.warning
+        case .completed: return AppTheme.Colors.success
+        case .overdue: return AppTheme.Colors.error
+        }
+    }
+}
+
+/// Row view for displaying grow inspection information
+struct GrowInspectionRow: View {
+    let inspection: GrowInspectionDisplayData
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                Text(inspection.name)
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                Text("By \(inspection.inspector)")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                MetadataTag(
+                    text: inspection.status.displayName,
+                    backgroundColor: inspection.status.color.opacity(0.2),
+                    textColor: inspection.status.color
+                )
+                
+                Text(inspection.completedAt, style: .date)
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.textTertiary)
+            }
+        }
+        .padding()
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+}
+
+/// Inspection scheduling view for grows
+struct GrowInspectionSchedulingView: View {
+    let grow: Grow
+    @Binding var isPresented: Bool
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @State private var selectedTemplate: InspectionCategory = .grow
+    @State private var inspectionName: String = ""
+    @State private var scheduledTime: InspectionTime = .morning
+    @State private var frequency: InspectionFrequency = .oneTime
+    @State private var selectedInspectors: [UUID] = []
+    @State private var notes: String = ""
+    
+    var body: some View {
+        NavigationView {
+            Form {
+                Section("Inspection Details") {
+                    TextField("Inspection Name", text: $inspectionName)
+                    
+                    Picker("Template Category", selection: $selectedTemplate) {
+                        ForEach(InspectionCategory.allCases, id: \.self) { category in
+                            HStack {
+                                Image(systemName: category.icon)
+                                Text(category.displayName)
+                            }.tag(category)
+                        }
+                    }
+                    
+                    Picker("Scheduled Time", selection: $scheduledTime) {
+                        ForEach(InspectionTime.allCases, id: \.self) { time in
+                            VStack(alignment: .leading) {
+                                Text(time.rawValue)
+                                Text(time.timeRange)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }.tag(time)
+                        }
+                    }
+                    
+                    Picker("Frequency", selection: $frequency) {
+                        ForEach(InspectionFrequency.allCases, id: \.self) { freq in
+                            HStack {
+                                Image(systemName: freq.icon)
+                                Text(freq.rawValue)
+                            }.tag(freq)
+                        }
+                    }
+                }
+                
+                Section("Grow Information") {
+                    HStack {
+                        Text("Cultivar:")
+                        Spacer()
+                        Text(grow.cultivar?.name ?? "Unknown")
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    if let field = grow.field {
+                        HStack {
+                            Text("Field:")
+                            Spacer()
+                            Text(field.name ?? "Unknown")
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        if let property = field.property {
+                            HStack {
+                                Text("Farm:")
+                                Spacer()
+                                Text(property.displayName ?? "Unknown")
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                }
+                
+                Section("Additional Notes") {
+                    TextField("Inspection notes or requirements", text: $notes, axis: .vertical)
+                        .lineLimit(3...6)
+                }
+            }
+            .navigationTitle("Schedule Inspection")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Schedule") {
+                        scheduleInspection()
+                    }
+                    .disabled(inspectionName.isEmpty)
+                }
+            }
+        }
+    }
+    
+    private func scheduleInspection() {
+        // Here we would create the inspection using the inspection system
+        // For now, we'll just dismiss the view
+        // TODO: Integrate with InspectionCreationWorkflowView or create inspection directly
+        
+        print("Scheduling inspection: \(inspectionName) for grow: \(grow.title ?? "Unknown")")
+        print("Category: \(selectedTemplate.displayName)")
+        print("Time: \(scheduledTime.rawValue)")
+        print("Frequency: \(frequency.rawValue)")
+        
+        isPresented = false
     }
 }
