@@ -56,17 +56,23 @@
 		1FD918352E595AB900D18920 /* CultivarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD918342E595AB900D18920 /* CultivarViews.swift */; };
 		1FD918362E595AB900D18920 /* CultivarSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD918332E595AB900D18920 /* CultivarSeeder.swift */; };
 		1FDF44432E5C23860058E376 /* vegetable_cultivars_master.csv in Resources */ = {isa = PBXBuildFile; fileRef = 1FDF44422E5C23860058E376 /* vegetable_cultivars_master.csv */; };
+		1FDF44B02E5D2F640058E376 /* HarvestCalendarHeatMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDF44A92E5D2F640058E376 /* HarvestCalendarHeatMap.swift */; };
+		1FDF44B12E5D2F640058E376 /* WorkOrderHelpDocumentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDF44AD2E5D2F640058E376 /* WorkOrderHelpDocumentation.swift */; };
+		1FDF44B22E5D2F640058E376 /* WorkOrderSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDF44AE2E5D2F640058E376 /* WorkOrderSystem.swift */; };
+		1FDF44B32E5D2F640058E376 /* CultivarExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDF44A72E5D2F640058E376 /* CultivarExtensions.swift */; };
+		1FDF44B42E5D2F640058E376 /* WeeklyWorkerSummaryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDF44AC2E5D2F640058E376 /* WeeklyWorkerSummaryViews.swift */; };
+		1FDF44B52E5D2F640058E376 /* PerformWorkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDF44AB2E5D2F640058E376 /* PerformWorkView.swift */; };
 		1FE293EF257DDBAC00C93102 /* GrowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */; };
 		1FEA2B64257EAED600A6D9DD /* GrowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B63257EAED600A6D9DD /* GrowViews.swift */; };
 		1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */; };
 		1FEA2B6E257F440900A6D9DD /* AmendmentViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B6D257F440900A6D9DD /* AmendmentViews.swift */; };
 		1FEA2B79257FCE1D00A6D9DD /* Amendments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B78257FCE1D00A6D9DD /* Amendments.swift */; };
-		RQ9WW034NVSSWPO9M9LYZW7Q /* CreateSoilTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = YW3W8K7WVJRTP7E5YI29WIKI /* CreateSoilTestView.swift */; };
-		D7U2HNQLDO5CUE50OC42PT2E /* FieldSelectionTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8GFUYTO4QAHEWPUN0F9IOJHU /* FieldSelectionTileView.swift */; };
-		M5XFKSWL7ZKDKRWSSYA01VI9 /* LabManagementViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = PDUH5NOMGZ3C1JVZCC3MNF5Y /* LabManagementViews.swift */; };
 		BULGI508SCW0VCS6XNM4Y2ZV /* SoilTestDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = NKCZL87A0C3JQ1IZLFUD8ZDS /* SoilTestDetailView.swift */; };
-		O9DN9B5X410H3S6Q97QF7MLY /* SoilTestEducationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EGZMTBQX29E4S5J5EFAHU359 /* SoilTestEducationView.swift */; };
+		D7U2HNQLDO5CUE50OC42PT2E /* FieldSelectionTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8GFUYTO4QAHEWPUN0F9IOJHU /* FieldSelectionTileView.swift */; };
 		FV3VC1I7GJ337VBU8UY2D9G2 /* SoilTestGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E83I4ZLSTFFFKKCKEG26K34 /* SoilTestGraphics.swift */; };
+		M5XFKSWL7ZKDKRWSSYA01VI9 /* LabManagementViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = PDUH5NOMGZ3C1JVZCC3MNF5Y /* LabManagementViews.swift */; };
+		O9DN9B5X410H3S6Q97QF7MLY /* SoilTestEducationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EGZMTBQX29E4S5J5EFAHU359 /* SoilTestEducationView.swift */; };
+		RQ9WW034NVSSWPO9M9LYZW7Q /* CreateSoilTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = YW3W8K7WVJRTP7E5YI29WIKI /* CreateSoilTestView.swift */; };
 		TYR4BXWTI4B9S1BKLCYVZW02 /* SoilTestSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = VXZIH3HFRPDYTE6E6EBAXWTV /* SoilTestSettingsView.swift */; };
 /* End PBXBuildFile section */
 
@@ -148,18 +154,24 @@
 		1FD918332E595AB900D18920 /* CultivarSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarSeeder.swift; sourceTree = "<group>"; };
 		1FD918342E595AB900D18920 /* CultivarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarViews.swift; sourceTree = "<group>"; };
 		1FDF44422E5C23860058E376 /* vegetable_cultivars_master.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = vegetable_cultivars_master.csv; sourceTree = "<group>"; };
+		1FDF44A72E5D2F640058E376 /* CultivarExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarExtensions.swift; sourceTree = "<group>"; };
+		1FDF44A92E5D2F640058E376 /* HarvestCalendarHeatMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HarvestCalendarHeatMap.swift; sourceTree = "<group>"; };
+		1FDF44AB2E5D2F640058E376 /* PerformWorkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformWorkView.swift; sourceTree = "<group>"; };
+		1FDF44AC2E5D2F640058E376 /* WeeklyWorkerSummaryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyWorkerSummaryViews.swift; sourceTree = "<group>"; };
+		1FDF44AD2E5D2F640058E376 /* WorkOrderHelpDocumentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkOrderHelpDocumentation.swift; sourceTree = "<group>"; };
+		1FDF44AE2E5D2F640058E376 /* WorkOrderSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkOrderSystem.swift; sourceTree = "<group>"; };
 		1FE293EE257DDBAC00C93102 /* GrowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowDetailView.swift; sourceTree = "<group>"; };
 		1FEA2B63257EAED600A6D9DD /* GrowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowViews.swift; sourceTree = "<group>"; };
 		1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGrowView.swift; sourceTree = "<group>"; };
 		1FEA2B6D257F440900A6D9DD /* AmendmentViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmendmentViews.swift; sourceTree = "<group>"; };
 		1FEA2B78257FCE1D00A6D9DD /* Amendments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Amendments.swift; sourceTree = "<group>"; };
-		YW3W8K7WVJRTP7E5YI29WIKI /* CreateSoilTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSoilTestView.swift; sourceTree = "<group>"; };
-		8GFUYTO4QAHEWPUN0F9IOJHU /* FieldSelectionTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldSelectionTileView.swift; sourceTree = "<group>"; };
-		PDUH5NOMGZ3C1JVZCC3MNF5Y /* LabManagementViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabManagementViews.swift; sourceTree = "<group>"; };
-		NKCZL87A0C3JQ1IZLFUD8ZDS /* SoilTestDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestDetailView.swift; sourceTree = "<group>"; };
-		EGZMTBQX29E4S5J5EFAHU359 /* SoilTestEducationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestEducationView.swift; sourceTree = "<group>"; };
 		6E83I4ZLSTFFFKKCKEG26K34 /* SoilTestGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestGraphics.swift; sourceTree = "<group>"; };
+		8GFUYTO4QAHEWPUN0F9IOJHU /* FieldSelectionTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldSelectionTileView.swift; sourceTree = "<group>"; };
+		EGZMTBQX29E4S5J5EFAHU359 /* SoilTestEducationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestEducationView.swift; sourceTree = "<group>"; };
+		NKCZL87A0C3JQ1IZLFUD8ZDS /* SoilTestDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestDetailView.swift; sourceTree = "<group>"; };
+		PDUH5NOMGZ3C1JVZCC3MNF5Y /* LabManagementViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabManagementViews.swift; sourceTree = "<group>"; };
 		VXZIH3HFRPDYTE6E6EBAXWTV /* SoilTestSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestSettingsView.swift; sourceTree = "<group>"; };
+		YW3W8K7WVJRTP7E5YI29WIKI /* CreateSoilTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSoilTestView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,6 +232,12 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
+				1FDF44A72E5D2F640058E376 /* CultivarExtensions.swift */,
+				1FDF44A92E5D2F640058E376 /* HarvestCalendarHeatMap.swift */,
+				1FDF44AB2E5D2F640058E376 /* PerformWorkView.swift */,
+				1FDF44AC2E5D2F640058E376 /* WeeklyWorkerSummaryViews.swift */,
+				1FDF44AD2E5D2F640058E376 /* WorkOrderHelpDocumentation.swift */,
+				1FDF44AE2E5D2F640058E376 /* WorkOrderSystem.swift */,
 				1FCCE7202E5BFE5E004FC07C /* resources */,
 				1FB247C02E5ACD7C00F7BAF7 /* Common */,
 				1FB247BD2E5ACC4B00F7BAF7 /* Settings */,
@@ -543,6 +561,12 @@
 				1FCEB4572E5B790100021D62 /* CreateInfrastructureView.swift in Sources */,
 				1FCEB4582E5B790100021D62 /* FieldManagementViews.swift in Sources */,
 				1FCEB4592E5B790100021D62 /* WorkerManagementViews.swift in Sources */,
+				1FDF44B02E5D2F640058E376 /* HarvestCalendarHeatMap.swift in Sources */,
+				1FDF44B12E5D2F640058E376 /* WorkOrderHelpDocumentation.swift in Sources */,
+				1FDF44B22E5D2F640058E376 /* WorkOrderSystem.swift in Sources */,
+				1FDF44B32E5D2F640058E376 /* CultivarExtensions.swift in Sources */,
+				1FDF44B42E5D2F640058E376 /* WeeklyWorkerSummaryViews.swift in Sources */,
+				1FDF44B52E5D2F640058E376 /* PerformWorkView.swift in Sources */,
 				RQ9WW034NVSSWPO9M9LYZW7Q /* CreateSoilTestView.swift in Sources */,
 				D7U2HNQLDO5CUE50OC42PT2E /* FieldSelectionTileView.swift in Sources */,
 				M5XFKSWL7ZKDKRWSSYA01VI9 /* LabManagementViews.swift in Sources */,
