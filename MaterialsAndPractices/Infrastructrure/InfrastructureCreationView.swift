@@ -406,7 +406,7 @@ struct FarmPickerView: View {
 // MARK: - Infrastructure Detail View
 
 /// Detailed view for existing infrastructure items
-struct InfrastructureDetailView: View {
+struct InfrastructureCreationDetailView: View {
     let infrastructure: Infrastructure
     @Binding var isPresented: Bool
     
