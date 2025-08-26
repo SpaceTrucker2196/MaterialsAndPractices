@@ -406,6 +406,14 @@ struct DailyHoursReportView: View {
         }
         .navigationTitle("Daily Hours Report")
         .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Fix Clock Issues") {
+                    WorkOrderManager.resolveClockOutIssues(context: viewContext)
+                }
+                .foregroundColor(AppTheme.Colors.warning)
+            }
+        }
     }
     
     private var dailyReportHeader: some View {

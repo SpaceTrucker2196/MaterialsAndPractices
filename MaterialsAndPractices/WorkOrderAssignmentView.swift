@@ -27,6 +27,10 @@ struct WorkOrderAssignmentView: View {
     @State private var notifyPropertyOwner = false
     @State private var selectedInfrastructure: Set<String> = []
     @State private var additionalInstructions = ""
+    @State private var selectedWorkers: Set<Worker> = []
+    @State private var showingWorkerSelection = false
+    @State private var showingInfrastructureSelection = false
+    @State private var showingInspectionAssignment = false
     
     // Infrastructure options
     private let commonInfrastructure = [
@@ -46,11 +50,21 @@ struct WorkOrderAssignmentView: View {
                     // Team assignment information
                     teamAssignmentSection
                     
+                    // Individual worker assignment (edit mode only)
+                    if isEditMode {
+                        workerSelectionSection
+                    }
+                    
                     // Work shifts information
                     workShiftsSection
                     
                     // Infrastructure requirements
                     infrastructureSection
+                    
+                    // Inspection assignment (edit mode only)
+                    if isEditMode {
+                        inspectionAssignmentSection
+                    }
                     
                     // Property owner notification
                     propertyOwnerSection
@@ -134,6 +148,61 @@ struct WorkOrderAssignmentView: View {
                     .font(AppTheme.Typography.bodyMedium)
                     .foregroundColor(AppTheme.Colors.textSecondary)
             }
+        }
+    }
+    
+    /// Worker selection section (edit mode only)
+    private var workerSelectionSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            HStack {
+                SectionHeader(title: "Individual Workers")
+                
+                Spacer()
+                
+                Button("Add Workers") {
+                    showingWorkerSelection = true
+                }
+                .foregroundColor(AppTheme.Colors.primary)
+            }
+            
+            if !selectedWorkers.isEmpty {
+                LazyVGrid(columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: AppTheme.Spacing.small) {
+                    ForEach(Array(selectedWorkers), id: \.id) { worker in
+                        HStack {
+                            Text(worker.name ?? "Unknown")
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textPrimary)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                selectedWorkers.remove(worker)
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(AppTheme.Colors.error)
+                            }
+                        }
+                        .padding(.horizontal, AppTheme.Spacing.small)
+                        .padding(.vertical, AppTheme.Spacing.tiny)
+                        .background(AppTheme.Colors.backgroundSecondary)
+                        .cornerRadius(AppTheme.CornerRadius.small)
+                    }
+                }
+            } else {
+                Text("No individual workers selected")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+        }
+        .sheet(isPresented: $showingWorkerSelection) {
+            WorkerSelectionView(
+                selectedWorkers: $selectedWorkers,
+                workOrder: workOrder,
+                isPresented: $showingWorkerSelection
+            )
         }
     }
     
@@ -270,23 +339,67 @@ struct WorkOrderAssignmentView: View {
         VStack(spacing: AppTheme.Spacing.medium) {
             if !isEditMode {
                 HStack(spacing: AppTheme.Spacing.medium) {
-                    CommonActionButton(
-                        title: "Start Work",
-                        style: .primary
-                    ) {
-                        startWorkOrder()
+                    // Start Work button (only if not started)
+                    if workOrder.agricultureStatus == .notStarted {
+                        CommonActionButton(
+                            title: "Start Work",
+                            style: .primary
+                        ) {
+                            startWorkOrder()
+                        }
+                        .disabled(workOrder.assignedTeam == nil && selectedWorkers.isEmpty)
                     }
-                    .disabled(workOrder.assignedTeam == nil)
                     
-                    CommonActionButton(
-                        title: "Mark Complete",
-                        style: .secondary
-                    ) {
-                        completeWorkOrder()
+                    // End Work button (only if in progress)
+                    if workOrder.agricultureStatus == .inProgress {
+                        CommonActionButton(
+                            title: "End Work",
+                            style: .secondary
+                        ) {
+                            endWorkOrder()
+                        }
                     }
-                    .disabled(workOrder.agricultureStatus != .inProgress)
+                    
+                    // Complete button (available if in progress)
+                    if workOrder.agricultureStatus == .inProgress {
+                        CommonActionButton(
+                            title: "Mark Complete",
+                            style: .tertiary
+                        ) {
+                            completeWorkOrder()
+                        }
+                    }
+                }
+                
+                // Inspection assignment section
+                if isEditMode {
+                    inspectionAssignmentSection
                 }
             }
+        }
+    }
+    
+    /// Inspection assignment section
+    private var inspectionAssignmentSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Inspection Assignment")
+            
+            Button("Assign Inspection") {
+                showingInspectionAssignment = true
+            }
+            .foregroundColor(AppTheme.Colors.primary)
+            .disabled(true) // Disabled as per requirements
+            
+            Text("Note: No workers are currently able to perform inspections")
+                .font(AppTheme.Typography.bodySmall)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+                .italic()
+        }
+        .sheet(isPresented: $showingInspectionAssignment) {
+            InspectionAssignmentView(
+                workOrder: workOrder,
+                isPresented: $showingInspectionAssignment
+            )
         }
     }
     
@@ -506,8 +619,31 @@ struct WorkOrderAssignmentView: View {
                 type: .updated,
                 workOrder: workOrder
             )
+            
+            // Dismiss the view as requested
+            isPresented = false
         } catch {
             print("Error starting work order: \(error)")
+        }
+    }
+    
+    /// End the work order (pause/stop work)
+    private func endWorkOrder() {
+        workOrder.agricultureStatus = .onHold
+        
+        do {
+            try viewContext.save()
+            
+            // Post notification for work order update
+            CoreDataNotificationCenter.postWorkOrderNotification(
+                type: .updated,
+                workOrder: workOrder
+            )
+            
+            // Dismiss the view as requested
+            isPresented = false
+        } catch {
+            print("Error ending work order: \(error)")
         }
     }
     
@@ -525,8 +661,132 @@ struct WorkOrderAssignmentView: View {
                 type: .updated,
                 workOrder: workOrder
             )
+            
+            // Dismiss the view as requested
+            isPresented = false
         } catch {
             print("Error completing work order: \(error)")
+        }
+    }
+}
+
+// MARK: - Worker Selection View
+
+/// View for selecting workers to assign to work order
+struct WorkerSelectionView: View {
+    @Binding var selectedWorkers: Set<Worker>
+    let workOrder: WorkOrder
+    @Binding var isPresented: Bool
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(availableWorkers, id: \.id) { worker in
+                    HStack {
+                        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                            Text(worker.name ?? "Unknown Worker")
+                                .font(AppTheme.Typography.bodyMedium)
+                                .foregroundColor(AppTheme.Colors.textPrimary)
+                            
+                            Text(worker.position ?? "Team Member")
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textSecondary)
+                        }
+                        
+                        Spacer()
+                        
+                        if selectedWorkers.contains(worker) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(AppTheme.Colors.primary)
+                        } else {
+                            Image(systemName: "circle")
+                                .foregroundColor(AppTheme.Colors.textTertiary)
+                        }
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if selectedWorkers.contains(worker) {
+                            selectedWorkers.remove(worker)
+                        } else {
+                            selectedWorkers.insert(worker)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Select Workers")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        isPresented = false
+                    }
+                }
+            }
+        }
+    }
+    
+    private var availableWorkers: [Worker] {
+        let request: NSFetchRequest<Worker> = Worker.fetchRequest()
+        request.predicate = NSPredicate(format: "isActive == YES")
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \Worker.name, ascending: true)]
+        
+        do {
+            let allWorkers = try viewContext.fetch(request)
+            // Filter out workers who are already in teams to avoid conflicts
+            return allWorkers.filter { worker in
+                guard let teams = worker.teams?.allObjects as? [WorkTeam] else { return true }
+                return teams.filter { $0.isActive }.isEmpty
+            }
+        } catch {
+            print("Error fetching workers: \(error)")
+            return []
+        }
+    }
+}
+
+// MARK: - Inspection Assignment View
+
+/// View for assigning inspections to work orders
+struct InspectionAssignmentView: View {
+    let workOrder: WorkOrder
+    @Binding var isPresented: Bool
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    var body: some View {
+        NavigationView {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                Text("Inspection Assignment")
+                    .font(AppTheme.Typography.headlineLarge)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                Text("This feature will use WorkingInspectionTemplates to create inspection workflows.")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                Text("Note: This functionality is currently disabled as no workers are able to perform inspections.")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.warning)
+                    .italic()
+                
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Assign Inspection")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        isPresented = false
+                    }
+                }
+            }
         }
     }
 }
