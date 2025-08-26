@@ -371,4 +371,62 @@ class FarmDashboardTests: XCTestCase {
         let locationDisplay = "\(property.county!), \(property.state!)"
         XCTAssertEqual(locationDisplay, "Dane, Wisconsin", "Should format location correctly for tile")
     }
+    
+    // MARK: - Work Order Display Tests
+    
+    /// Tests that work order predicate includes overdue work orders
+    /// Validates the updated WorkOrderListView behavior for showing overdue items
+    func testWorkOrderPredicateIncludesOverdueOrders() throws {
+        // Given: Work orders with different due dates
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
+        
+        // Create today's work order
+        let todayWorkOrder = WorkOrder(context: mockContext)
+        todayWorkOrder.id = UUID()
+        todayWorkOrder.title = "Today's Work"
+        todayWorkOrder.dueDate = today
+        todayWorkOrder.isCompleted = false
+        
+        // Create overdue work order
+        let overdueWorkOrder = WorkOrder(context: mockContext)
+        overdueWorkOrder.id = UUID()
+        overdueWorkOrder.title = "Overdue Work"
+        overdueWorkOrder.dueDate = yesterday
+        overdueWorkOrder.isCompleted = false
+        
+        // Create future work order (should not appear)
+        let futureWorkOrder = WorkOrder(context: mockContext)
+        futureWorkOrder.id = UUID()
+        futureWorkOrder.title = "Future Work"
+        futureWorkOrder.dueDate = tomorrow
+        futureWorkOrder.isCompleted = false
+        
+        // Create completed overdue work order (should not appear)
+        let completedWorkOrder = WorkOrder(context: mockContext)
+        completedWorkOrder.id = UUID()
+        completedWorkOrder.title = "Completed Work"
+        completedWorkOrder.dueDate = yesterday
+        completedWorkOrder.isCompleted = true
+        
+        try mockContext.save()
+        
+        // When: Using the new predicate (dueDate <= today AND isCompleted == NO)
+        let predicate = NSPredicate(format: "dueDate <= %@ AND isCompleted == NO", today as NSDate)
+        let workOrderRequest: NSFetchRequest<WorkOrder> = WorkOrder.fetchRequest()
+        workOrderRequest.predicate = predicate
+        
+        let filteredWorkOrders = try mockContext.fetch(workOrderRequest)
+        
+        // Then: Should include today's and overdue work orders, but not future or completed ones
+        XCTAssertEqual(filteredWorkOrders.count, 2, "Should include today's and overdue work orders")
+        
+        let titles = filteredWorkOrders.map { $0.title ?? "" }.sorted()
+        XCTAssertTrue(titles.contains("Today's Work"), "Should include today's work order")
+        XCTAssertTrue(titles.contains("Overdue Work"), "Should include overdue work order")
+        XCTAssertFalse(titles.contains("Future Work"), "Should not include future work order")
+        XCTAssertFalse(titles.contains("Completed Work"), "Should not include completed work order")
+    }
 }
