@@ -279,7 +279,7 @@ struct InfrastructureRow: View {
         }
         .buttonStyle(PlainButtonStyle())
         .sheet(isPresented: $showingDetail) {
-            InfrastructureDetailView(infrastructure: infrastructure, isPresented: $showingDetail)
+            InfrastructureDetailView(infrastructure: infrastructure)
         }
     }
     
