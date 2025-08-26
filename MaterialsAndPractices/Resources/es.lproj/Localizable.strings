@@ -1,0 +1,113 @@
+/* MaterialsAndPractices Localization - Spanish */
+
+/* Common UI Elements */
+"Done" = "Hecho";
+"Cancel" = "Cancelar";
+"Save" = "Guardar";
+"Delete" = "Eliminar";
+"Edit" = "Editar";
+"Add" = "Agregar";
+"Close" = "Cerrar";
+
+/* Help System */
+"Help" = "Ayuda";
+"Overview" = "Descripción general";
+"Work Orders" = "Órdenes de trabajo";
+"Time Tracking" = "Control de tiempo";
+"Team Management" = "Gestión de equipos";
+"Weekly Reports" = "Reportes semanales";
+"Troubleshooting" = "Solución de problemas";
+
+/* Help Content */
+"Welcome to Farm Management" = "Bienvenido a la gestión agrícola";
+"This app helps you manage your farm operations including work orders, time tracking, and team coordination." = "Esta aplicación te ayuda a gestionar las operaciones de tu granja incluyendo órdenes de trabajo, control de tiempo y coordinación de equipos.";
+"Key Features:" = "Características principales:";
+"Create and manage work orders" = "Crear y gestionar órdenes de trabajo";
+"Track worker time and productivity" = "Rastrear el tiempo y la productividad de los trabajadores";
+"Monitor harvest schedules" = "Monitorear horarios de cosecha";
+"Generate weekly reports" = "Generar reportes semanales";
+
+"Managing Work Orders" = "Gestión de órdenes de trabajo";
+"Creating Work Orders:" = "Creando órdenes de trabajo:";
+"Tap 'Perform Work' on any grow tile" = "Toca 'Realizar trabajo' en cualquier baldosa de cultivo";
+"Fill in work details and assign team" = "Completa los detalles del trabajo y asigna equipo";
+"Set priority and due date" = "Establece prioridad y fecha límite";
+"Save to create the work order" = "Guarda para crear la orden de trabajo";
+
+"Status Management:" = "Gestión de estado:";
+"🌧️ Weather Delay - For weather-related postponements" = "🌧️ Retraso climático - Para aplazamientos relacionados con el clima";
+"💧 Too Wet - When soil conditions aren't suitable" = "💧 Muy húmedo - Cuando las condiciones del suelo no son adecuadas";
+"🔧 Equipment Issue - For mechanical problems" = "🔧 Problema de equipo - Para problemas mecánicos";
+
+"Time Tracking" = "Control de tiempo";
+"Track work hours for accurate payroll and productivity analysis." = "Rastrea las horas de trabajo para análisis precisos de nómina y productividad.";
+"Clock Operations:" = "Operaciones de reloj:";
+"Clock In - Start your work shift" = "Marcar entrada - Iniciar tu turno de trabajo";
+"Clock Out - End your work shift" = "Marcar salida - Terminar tu turno de trabajo";
+"Break - Take a temporary break" = "Descanso - Tomar un descanso temporal";
+"Lunch - Take a lunch break" = "Almuerzo - Tomar un descanso para almorzar";
+
+"Team Management" = "Gestión de equipos";
+"Organize workers into teams and assign work orders efficiently." = "Organiza trabajadores en equipos y asigna órdenes de trabajo eficientemente.";
+"Team Organization:" = "Organización de equipos:";
+"Create work teams for different operations" = "Crear equipos de trabajo para diferentes operaciones";
+"Assign workers with relevant skills" = "Asignar trabajadores con habilidades relevantes";
+"Monitor team productivity" = "Monitorear la productividad del equipo";
+"Balance workload across teams" = "Equilibrar la carga de trabajo entre equipos";
+
+"Weekly Reports" = "Reportes semanales";
+"Generate comprehensive reports on worker productivity and work order completion." = "Genera reportes comprensivos sobre la productividad de trabajadores y finalización de órdenes de trabajo.";
+"Report Features:" = "Características del reporte:";
+"Total hours worked per worker" = "Total de horas trabajadas por trabajador";
+"Overtime detection (>40 hours)" = "Detección de horas extras (>40 horas)";
+"Work order completion rates" = "Tasas de finalización de órdenes de trabajo";
+"Team productivity metrics" = "Métricas de productividad del equipo";
+
+"Troubleshooting" = "Solución de problemas";
+"Common Issues:" = "Problemas comunes:";
+"Can't create work order:" = "No se puede crear orden de trabajo:";
+"• Ensure you have workers assigned\n• Check that grow has active status\n• Verify team permissions" = "• Asegúrate de tener trabajadores asignados\n• Verifica que el cultivo tenga estado activo\n• Verifica los permisos del equipo";
+"Time tracking issues:" = "Problemas de control de tiempo:";
+"• Make sure you're clocked in\n• Check work order assignment\n• Verify correct date/time" = "• Asegúrate de haber marcado entrada\n• Verifica la asignación de orden de trabajo\n• Verifica la fecha/hora correcta";
+
+/* Settings */
+"Configuration" = "Configuración";
+"Advanced Mode" = "Modo avanzado";
+"Advanced mode provides access to detailed farm management features including fields, leases, payments, and compliance tracking." = "El modo avanzado proporciona acceso a características detalladas de gestión agrícola incluyendo campos, arrendamientos, pagos y seguimiento de cumplimiento.";
+"Help System" = "Sistema de ayuda";
+"Enable or disable the in-app help system and documentation features." = "Habilita o deshabilita el sistema de ayuda en la aplicación y las características de documentación.";
+
+/* Generic Comments */
+"Help section title" = "Título de sección de ayuda";
+"Help view title" = "Título de vista de ayuda";
+"Done button" = "Botón hecho";
+"Overview help title" = "Título de ayuda general";
+"Overview help description" = "Descripción de ayuda general";
+"Key features label" = "Etiqueta de características principales";
+"Feature description" = "Descripción de característica";
+"Work order help title" = "Título de ayuda de orden de trabajo";
+"Creating work orders section" = "Sección de creación de órdenes de trabajo";
+"Step instruction" = "Instrucción de paso";
+"Status management section" = "Sección de gestión de estado";
+"Status description" = "Descripción de estado";
+"Time tracking help title" = "Título de ayuda de control de tiempo";
+"Time tracking description" = "Descripción de control de tiempo";
+"Clock operations section" = "Sección de operaciones de reloj";
+"Clock operation" = "Operación de reloj";
+"Team management help title" = "Título de ayuda de gestión de equipos";
+"Team management description" = "Descripción de gestión de equipos";
+"Team organization section" = "Sección de organización de equipos";
+"Team feature" = "Característica de equipo";
+"Weekly reports help title" = "Título de ayuda de reportes semanales";
+"Weekly reports description" = "Descripción de reportes semanales";
+"Report features section" = "Sección de características del reporte";
+"Report feature" = "Característica del reporte";
+"Troubleshooting help title" = "Título de ayuda de solución de problemas";
+"Common issues section" = "Sección de problemas comunes";
+"Issue title" = "Título del problema";
+"Issue solution" = "Solución del problema";
+"Configuration section title" = "Título de sección de configuración";
+"Advanced mode setting" = "Configuración de modo avanzado";
+"Advanced mode description" = "Descripción de modo avanzado";
+"Help system setting" = "Configuración del sistema de ayuda";
+"Help system description" = "Descripción del sistema de ayuda";

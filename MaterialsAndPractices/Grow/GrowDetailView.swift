@@ -66,6 +66,7 @@ struct GrowDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @State var growViewModel: GrowDetailViewModel
     @State private var showingHarvestChecklist = false
+    @State private var showingPerformWorkView = false
     
     // MARK: - Body
     
@@ -75,11 +76,17 @@ struct GrowDetailView: View {
                 // MARK: - Cultivar Information Section
                 cultivarInformationSection
                 
+                // MARK: - Cultivar Growing Details Section
+                cultivarGrowingDetailsSection
+                
                 // MARK: - Field and Farm Information Section
                 fieldAndFarmInformationSection
                 
                 // MARK: - Timeline Information Section  
                 timelineInformationSection
+                
+                // MARK: - Harvest Calendar Section
+                harvestCalendarSection
                 
                 // MARK: - Location Information Section
                 locationInformationSection
@@ -96,6 +103,9 @@ struct GrowDetailView: View {
             .padding()
         }
         .navigationTitle(growViewModel.name)
+        .sheet(isPresented: $showingPerformWorkView) {
+            PerformWorkView(grow: growViewModel.grow, isPresented: $showingPerformWorkView)
+        }
     }
     
     // MARK: - Section Components
@@ -149,6 +159,118 @@ struct GrowDetailView: View {
                 }
                 
                 Spacer()
+            }
+        }
+    }
+    
+    /// Section displaying detailed cultivar growing information
+    private var cultivarGrowingDetailsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Growing Information")
+            
+            if let cultivar = growViewModel.grow.cultivar {
+                LazyVGrid(columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: AppTheme.Spacing.medium) {
+                    // Growing days information
+                    if let growingDays = cultivar.growingDays, !growingDays.isEmpty {
+                        DetailCard(
+                            title: "Growing Days",
+                            value: growingDays,
+                            subtitle: "Days to maturity",
+                            backgroundColor: AppTheme.ColorCoding.colorForGrowingDays(growingDays).opacity(0.1),
+                            titleColor: AppTheme.ColorCoding.colorForGrowingDays(growingDays)
+                        )
+                    }
+                    
+                    // Transplant age information
+                    if let transplantAge = cultivar.transplantAge, !transplantAge.isEmpty {
+                        DetailCard(
+                            title: "Transplant Age",
+                            value: transplantAge,
+                            subtitle: "Weeks for transplant",
+                            backgroundColor: AppTheme.Colors.info.opacity(0.1),
+                            titleColor: AppTheme.Colors.info
+                        )
+                    }
+                    
+                    // Weather tolerance
+                    if let weatherTolerance = cultivar.weatherTolerance, !weatherTolerance.isEmpty {
+                        DetailCard(
+                            title: "Weather Tolerance",
+                            value: weatherTolerance,
+                            subtitle: "Climate conditions",
+                            backgroundColor: AppTheme.Colors.secondary.opacity(0.1),
+                            titleColor: AppTheme.Colors.secondary
+                        )
+                    }
+                    
+                    // Soil conditions
+                    if let soilConditions = cultivar.soilConditions, !soilConditions.isEmpty {
+                        DetailCard(
+                            title: "Soil Conditions",
+                            value: soilConditions,
+                            subtitle: "Preferred soil type",
+                            backgroundColor: AppTheme.Colors.organicMaterial.opacity(0.1),
+                            titleColor: AppTheme.Colors.organicMaterial
+                        )
+                    }
+                }
+                
+                // Expandable sections for detailed information
+                if hasExtendedCultivarInfo(cultivar) {
+                    extendedCultivarInfoSection(cultivar)
+                }
+            } else {
+                Text("No cultivar information available")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+        }
+    }
+    
+    /// Extended cultivar information section with expandable details
+    private func extendedCultivarInfoSection(_ cultivar: Cultivar) -> some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            // Growing advice
+            if let growingAdvice = cultivar.growingAdvice, !growingAdvice.isEmpty {
+                ExpandableDetailCard(
+                    title: "Growing Advice",
+                    value: growingAdvice,
+                    backgroundColor: AppTheme.Colors.primary.opacity(0.1),
+                    titleColor: AppTheme.Colors.primary
+                )
+            }
+            
+            // Harvest instructions
+            if let harvestInstructions = cultivar.harvestInstructions, !harvestInstructions.isEmpty {
+                ExpandableDetailCard(
+                    title: "Harvest Instructions",
+                    value: harvestInstructions,
+                    backgroundColor: AppTheme.Colors.organicPractice.opacity(0.1),
+                    titleColor: AppTheme.Colors.organicPractice
+                )
+            }
+            
+            // Ripeness indicators
+            if let ripenessIndicators = cultivar.ripenessIndicators, !ripenessIndicators.isEmpty {
+                ExpandableDetailCard(
+                    title: "Ripeness Indicators",
+                    value: ripenessIndicators,
+                    backgroundColor: AppTheme.Colors.success.opacity(0.1),
+                    titleColor: AppTheme.Colors.success
+                )
+            }
+            
+            // Greenhouse instructions
+            if let greenhouseInstructions = cultivar.greenhouseInstructions, !greenhouseInstructions.isEmpty {
+                ExpandableDetailCard(
+                    title: "Greenhouse Instructions",
+                    value: greenhouseInstructions,
+                    backgroundColor: AppTheme.Colors.info.opacity(0.1),
+                    titleColor: AppTheme.Colors.info
+                )
             }
         }
     }
@@ -320,8 +442,44 @@ struct GrowDetailView: View {
                 
                 GrowInfoRow(
                     label: "Remaining:",
-                    value: "90 Days" // TODO: Calculate actual remaining days
+                    value: daysToHarvestText
                 )
+                
+                if let harvestEstimate = currentHarvestEstimate {
+                    GrowInfoRow(
+                        label: "Harvest Timing:",
+                        value: harvestEstimate.estimatedRange
+                    )
+                }
+            }
+        }
+    }
+    
+    /// Section displaying harvest calendar heat map
+    private var harvestCalendarSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Harvest Calendar")
+            
+            if let cultivar = growViewModel.grow.cultivar,
+               let plantedDate = growViewModel.grow.plantedDate {
+                let harvestData = HarvestCalculator.calculateHarvestCalendarData(
+                    cultivar: cultivar,
+                    plantDate: plantedDate,
+                    usdaZone: cultivar.hardyZone
+                )
+                
+                HarvestCalendarHeatMap(
+                    harvestData: harvestData,
+                    showLabels: true,
+                    showLegend: true
+                )
+            } else {
+                Text("Harvest calendar requires cultivar and planted date information")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .padding()
+                    .background(AppTheme.Colors.warning.opacity(0.1))
+                    .cornerRadius(AppTheme.CornerRadius.medium)
             }
         }
     }
@@ -346,8 +504,9 @@ struct GrowDetailView: View {
                 .frame(maxWidth: .infinity)
             
             CommonActionButton(
-                title: "Perform",
-                action: addWorkPractice
+                title: "Perform Work",
+                style: .outline,
+                action: performWork
             )
         }
     }
@@ -384,6 +543,11 @@ struct GrowDetailView: View {
     
     // MARK: - Action Methods
     
+    /// Opens the perform work view to create new work order
+    private func performWork() {
+        showingPerformWorkView = true
+    }
+    
     /// Adds a new work practice entry to the current grow
     private func addWorkPractice() {
         let newWork = Work(context: viewContext)
@@ -397,6 +561,51 @@ struct GrowDetailView: View {
     }
     
     // MARK: - Helper Methods
+    
+    /// Current harvest estimate for the grow
+    private var currentHarvestEstimate: HarvestEstimate? {
+        guard let cultivar = growViewModel.grow.cultivar,
+              let plantedDate = growViewModel.grow.plantedDate else {
+            return nil
+        }
+        
+        return HarvestCalculator.calculateHarvestEstimate(
+            cultivar: cultivar,
+            plantDate: plantedDate,
+            usdaZone: cultivar.hardyZone
+        )
+    }
+    
+    /// Formatted days to harvest text
+    private var daysToHarvestText: String {
+        guard let cultivar = growViewModel.grow.cultivar,
+              let plantedDate = growViewModel.grow.plantedDate else {
+            return "Unknown"
+        }
+        
+        let daysUntilHarvest = HarvestCalculator.daysUntilHarvest(
+            cultivar: cultivar,
+            plantDate: plantedDate
+        )
+        
+        if daysUntilHarvest == 0 {
+            return "Ready to harvest!"
+        } else if daysUntilHarvest < 0 {
+            return "Overdue for harvest"
+        } else {
+            return "\(daysUntilHarvest) days remaining"
+        }
+    }
+    
+    /// Check if cultivar has extended information to display
+    private func hasExtendedCultivarInfo(_ cultivar: Cultivar) -> Bool {
+        return [
+            cultivar.growingAdvice,
+            cultivar.harvestInstructions,
+            cultivar.ripenessIndicators,
+            cultivar.greenhouseInstructions
+        ].contains { $0 != nil && !($0?.isEmpty ?? true) }
+    }
     
     /// Gets the latest soil test for a field
     private func latestSoilTest(for field: Field) -> SoilTest? {
@@ -484,6 +693,86 @@ private struct GrowMetadataTag: View {
 //        )
 //    }
 //}
+
+/// Compact detail card for displaying cultivar information
+private struct DetailCard: View {
+    let title: String
+    let value: String
+    let subtitle: String
+    let backgroundColor: Color
+    let titleColor: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            Text(title)
+                .font(AppTheme.Typography.labelMedium)
+                .foregroundColor(titleColor)
+            
+            Text(value)
+                .font(AppTheme.Typography.headlineSmall)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+                .lineLimit(2)
+            
+            Text(subtitle)
+                .font(AppTheme.Typography.bodySmall)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+        }
+        .padding(AppTheme.Spacing.medium)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(backgroundColor)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+}
+
+/// Expandable detail card for longer cultivar information
+private struct ExpandableDetailCard: View {
+    let title: String
+    let value: String
+    let backgroundColor: Color
+    let titleColor: Color
+    @State private var isExpanded = false
+    
+    private var displayValue: String {
+        if isExpanded || value.count <= 100 {
+            return value
+        }
+        return String(value.prefix(100)) + "..."
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            HStack {
+                Text(title)
+                    .font(AppTheme.Typography.labelMedium)
+                    .foregroundColor(titleColor)
+                
+                Spacer()
+                
+                if value.count > 100 {
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isExpanded.toggle()
+                        }
+                    }) {
+                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                            .foregroundColor(titleColor)
+                            .font(.caption)
+                    }
+                }
+            }
+            
+            Text(displayValue)
+                .font(AppTheme.Typography.bodyMedium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+                .lineLimit(isExpanded ? nil : 3)
+                .animation(.easeInOut(duration: 0.2), value: isExpanded)
+        }
+        .padding(AppTheme.Spacing.medium)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(backgroundColor)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+}
 
 struct GrowDetailView_Previews: PreviewProvider {
     static var previews: some View {

@@ -237,40 +237,84 @@ struct PropertyDetailView: View {
 //    }
 //}
 //
-///// Helper view for infrastructure information rows
-//struct InfrastructureRow: View {
-//    let infrastructure: Infrastructure
-//    
-//    var body: some View {
-//        HStack {
-//            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-//                Text(infrastructure.type?.capitalized ?? "Unknown Type")
-//                    .font(AppTheme.Typography.bodyMedium)
-//                    .foregroundColor(AppTheme.Colors.textPrimary)
-//                
-//                Text(infrastructure.status?.capitalized ?? "Unknown Status")
-//                    .font(AppTheme.Typography.bodySmall)
-//                    .foregroundColor(statusColor(for: infrastructure.status))
-//            }
-//            
-//            Spacer()
-//        }
-//        .padding(.vertical, AppTheme.Spacing.extraSmall)
-//    }
-//    
-//    private func statusColor(for status: String?) -> Color {
-//        switch status?.lowercased() {
-//        case "good":
-//            return AppTheme.Colors.success
-//        case "needsrepair":
-//            return AppTheme.Colors.warning
-//        case "outofservice":
-//            return AppTheme.Colors.error
-//        default:
-//            return AppTheme.Colors.textSecondary
-//        }
-//    }
-//}
+/// Helper view for infrastructure information rows
+struct InfrastructureRow: View {
+    let infrastructure: Infrastructure
+    @State private var showingDetail = false
+    
+    var body: some View {
+        Button(action: {
+            showingDetail = true
+        }) {
+            HStack {
+                // Infrastructure icon
+                Text(iconForInfrastructure)
+                    .font(.title3)
+                
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    Text(infrastructure.name ?? "Unnamed Infrastructure")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    HStack {
+                        Text(infrastructure.type?.capitalized ?? "Unknown Type")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                        
+                        Spacer()
+                        
+                        Text(infrastructure.status?.capitalized ?? "Unknown Status")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(statusColor)
+                    }
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .foregroundColor(AppTheme.Colors.textTertiary)
+                    .font(.caption)
+            }
+            .padding(.vertical, AppTheme.Spacing.small)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .sheet(isPresented: $showingDetail) {
+            InfrastructureDetailView(infrastructure: infrastructure, isPresented: $showingDetail)
+        }
+    }
+    
+    /// Icon selection based on infrastructure type
+    private var iconForInfrastructure: String {
+        guard let type = infrastructure.type?.lowercased() else { return "🏗️" }
+        
+        switch type {
+        case "tractor": return "🚜"
+        case "truck": return "🚛"
+        case "barn": return "🏠"
+        case "greenhouse": return "🪴"
+        case "pump": return "💧"
+        case "tools": return "🔧"
+        case "silo": return "🏗️"
+        case "fence": return "🚧"
+        case "irrigation": return "💦"
+        case "storage": return "📦"
+        default: return "🏗️"
+        }
+    }
+    
+    private var statusColor: Color {
+        switch infrastructure.status?.lowercased() {
+        case "excellent", "good":
+            return AppTheme.Colors.success
+        case "fair":
+            return AppTheme.Colors.warning
+        case "poor", "needs repair":
+            return AppTheme.Colors.error
+        default:
+            return AppTheme.Colors.textSecondary
+        }
+    }
+}
 
 /// Helper view for lease information rows
 struct LeaseRow: View {
