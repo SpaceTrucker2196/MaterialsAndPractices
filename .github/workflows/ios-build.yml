@@ -32,13 +32,16 @@ jobs:
 
       - name: Install dependencies
         run: echo "No dependencies to install"
+        
+      - name:Install iOS Simulator 18.0
+        run: sudo xcodebuild -downloadPlatform iOS
 
       - name: Build project
         run: |
           xcodebuild build \
             -project MaterialsAndPractices.xcodeproj \
             -scheme MaterialsAndPractices \
-            -destination "platform=iOS Simulator,name=iPhone 15,OS=latest" \
+            -destination "platform=iOS Simulator,name=iPhone 15,OS=18.0" \
             -configuration Debug \
             ONLY_ACTIVE_ARCH=NO \
             CODE_SIGN_IDENTITY="" \
@@ -49,7 +52,7 @@ jobs:
           xcodebuild test \
             -project MaterialsAndPractices.xcodeproj \
             -scheme MaterialsAndPractices \
-            -destination "platform=iOS Simulator,name=iPhone 15,OS=latest"\
+            -destination "platform=iOS Simulator,name=iPhone 15,OS=18.0" \
             -configuration Debug \
             ONLY_ACTIVE_ARCH=NO \
             CODE_SIGN_IDENTITY="" \
