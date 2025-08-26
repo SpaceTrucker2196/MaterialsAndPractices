@@ -232,7 +232,7 @@ struct FarmDashboardView: View {
     private var workOrdersManagementSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             // Work orders list component
-            WorkOrderListView(maxDisplayedOrders: 4, showViewAllButton: true)
+            WorkOrderListView(maxUpcomingDisplayed: 4, showViewAllButton: true)
         }
         .padding(AppTheme.Spacing.medium)
         .background(

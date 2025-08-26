@@ -18,39 +18,72 @@ struct WorkOrderListView: View {
     // MARK: - Properties
     
     @Environment(\.managedObjectContext) private var viewContext
-    let maxDisplayedOrders: Int
+    let maxUpcomingDisplayed: Int
     let showViewAllButton: Bool
     
-    // Fetch today's work orders
-    @FetchRequest private var todayWorkOrders: FetchedResults<WorkOrder>
+    // Fetch today's and overdue work orders (all incomplete with due date today or earlier)
+    @FetchRequest private var todayAndOverdueWorkOrders: FetchedResults<WorkOrder>
+    
+    // Fetch upcoming work orders (next work orders after today)
+    @FetchRequest private var upcomingWorkOrders: FetchedResults<WorkOrder>
     
     // MARK: - Initialization
     
-    init(maxDisplayedOrders: Int = 5, showViewAllButton: Bool = true) {
-        self.maxDisplayedOrders = maxDisplayedOrders
+    init(maxUpcomingDisplayed: Int = 4, showViewAllButton: Bool = true) {
+        self.maxUpcomingDisplayed = maxUpcomingDisplayed
         self.showViewAllButton = showViewAllButton
         
-        // Set up fetch request for today's work orders
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
         
-        let predicate = NSPredicate(format: "dueDate >= %@ AND dueDate < %@ AND isCompleted == NO", 
-                                  today as NSDate, tomorrow as NSDate)
+        // Fetch incomplete work orders due today or earlier (including overdue)
+        let todayAndOverduePredicate = NSPredicate(format: "dueDate <= %@ AND isCompleted == NO", 
+                                                 today.addingTimeInterval(24*60*60-1) as NSDate)
         
-        self._todayWorkOrders = FetchRequest(
+        self._todayAndOverdueWorkOrders = FetchRequest(
             entity: WorkOrder.entity(),
             sortDescriptors: [
+                NSSortDescriptor(keyPath: \WorkOrder.dueDate, ascending: true),
                 NSSortDescriptor(keyPath: \WorkOrder.priority, ascending: false),
                 NSSortDescriptor(keyPath: \WorkOrder.createdDate, ascending: true)
             ],
-            predicate: predicate
+            predicate: todayAndOverduePredicate
+        )
+        
+        // Fetch upcoming work orders (after today)
+        let upcomingPredicate = NSPredicate(format: "dueDate >= %@ AND isCompleted == NO", 
+                                          tomorrow as NSDate)
+        
+        self._upcomingWorkOrders = FetchRequest(
+            entity: WorkOrder.entity(),
+            sortDescriptors: [
+                NSSortDescriptor(keyPath: \WorkOrder.dueDate, ascending: true),
+                NSSortDescriptor(keyPath: \WorkOrder.priority, ascending: false),
+                NSSortDescriptor(keyPath: \WorkOrder.createdDate, ascending: true)
+            ],
+            predicate: upcomingPredicate
         )
     }
     
     // MARK: - Body
     
     var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+            // Today's Work Orders Section (including overdue)
+            todaysWorkOrdersSection
+            
+            // Upcoming Work Orders Section (next work orders)
+            if !upcomingWorkOrders.isEmpty {
+                upcomingWorkOrdersSection
+            }
+        }
+    }
+    
+    // MARK: - UI Components
+    
+    /// Today's work orders section showing all incomplete work orders due today or earlier
+    private var todaysWorkOrdersSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             // Section header
             HStack {
@@ -60,28 +93,58 @@ struct WorkOrderListView: View {
                 
                 Spacer()
                 
-                if showViewAllButton && todayWorkOrders.count > maxDisplayedOrders {
+                // Show count of overdue items if any
+                if hasOverdueWorkOrders {
+                    HStack(spacing: AppTheme.Spacing.tiny) {
+                        Circle()
+                            .fill(AppTheme.Colors.warning)
+                            .frame(width: 8, height: 8)
+                        
+                        Text("\(overdueCount) overdue")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.warning)
+                    }
+                }
+            }
+            
+            // Work orders list
+            if todayAndOverdueWorkOrders.isEmpty {
+                todaysWorkOrdersEmptyState
+            } else {
+                todaysWorkOrdersList
+            }
+        }
+    }
+    
+    /// Upcoming work orders section showing next 4 work orders
+    private var upcomingWorkOrdersSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            // Section header with navigation
+            HStack {
+                Text("Next Work Orders")
+                    .font(AppTheme.Typography.headlineMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                Spacer()
+                
+                if showViewAllButton {
                     NavigationLink(destination: AllWorkOrdersView()) {
-                        Text("View All (\(todayWorkOrders.count))")
+                        Text("View All (\(totalOpenWorkOrdersCount))")
                             .font(AppTheme.Typography.bodySmall)
                             .foregroundColor(AppTheme.Colors.primary)
                     }
                 }
             }
             
-            // Work orders list
-            if todayWorkOrders.isEmpty {
-                workOrdersEmptyState
-            } else {
-                workOrdersList
-            }
+            // Upcoming work orders list (limited to maxUpcomingDisplayed)
+            upcomingWorkOrdersList
         }
     }
     
     // MARK: - UI Components
     
     /// Empty state when no work orders exist for today
-    private var workOrdersEmptyState: some View {
+    private var todaysWorkOrdersEmptyState: some View {
         VStack(spacing: AppTheme.Spacing.small) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.title2)
@@ -101,13 +164,44 @@ struct WorkOrderListView: View {
         .cornerRadius(AppTheme.CornerRadius.medium)
     }
     
-    /// List of work orders
-    private var workOrdersList: some View {
+    /// List of today's and overdue work orders
+    private var todaysWorkOrdersList: some View {
         VStack(spacing: AppTheme.Spacing.small) {
-            ForEach(Array(todayWorkOrders.prefix(maxDisplayedOrders)), id: \.id) { workOrder in
-                WorkOrderRow(workOrder: workOrder)
+            ForEach(Array(todayAndOverdueWorkOrders), id: \.id) { workOrder in
+                WorkOrderRow(workOrder: workOrder, isOverdue: workOrder.isOverdue())
             }
         }
+    }
+    
+    /// List of upcoming work orders (limited to maxUpcomingDisplayed)
+    private var upcomingWorkOrdersList: some View {
+        VStack(spacing: AppTheme.Spacing.small) {
+            ForEach(Array(upcomingWorkOrders.prefix(maxUpcomingDisplayed)), id: \.id) { workOrder in
+                WorkOrderRow(workOrder: workOrder, isOverdue: false)
+            }
+        }
+    }
+    
+    // MARK: - Computed Properties
+    
+    /// Total count of all open work orders (today + upcoming)
+    private var totalOpenWorkOrdersCount: Int {
+        return todayAndOverdueWorkOrders.count + upcomingWorkOrders.count
+    }
+    
+    /// Whether there are any overdue work orders
+    private var hasOverdueWorkOrders: Bool {
+        return todayAndOverdueWorkOrders.contains { $0.isOverdue() }
+    }
+    
+    /// Count of overdue work orders
+    private var overdueCount: Int {
+        return todayAndOverdueWorkOrders.filter { $0.isOverdue() }.count
+    }
+    
+    /// Helper to determine if a work order is overdue
+    private func isWorkOrderOverdue(_ workOrder: WorkOrder) -> Bool {
+        return workOrder.isOverdue()
     }
 }
 
@@ -118,6 +212,7 @@ struct WorkOrderRow: View {
     // MARK: - Properties
     
     let workOrder: WorkOrder
+    let isOverdue: Bool
     @State private var showingWorkOrderDetail = false
     
     // MARK: - Body
@@ -140,6 +235,7 @@ struct WorkOrderRow: View {
             .background(backgroundColorForPriority)
             .cornerRadius(AppTheme.CornerRadius.medium)
             .overlay(borderOverlayForPriority)
+            .overlay(overdueOverlayIfNeeded)
         }
         .buttonStyle(PlainButtonStyle())
         .sheet(isPresented: $showingWorkOrderDetail) {
@@ -186,11 +282,23 @@ struct WorkOrderRow: View {
             
             // Due date and elapsed time
             HStack {
-                // Due date
+                // Due date with overdue indication
                 if let dueDate = workOrder.dueDate {
-                    Text("Due: \(dueDate, style: .time)")
-                        .font(AppTheme.Typography.labelSmall)
-                        .foregroundColor(AppTheme.Colors.textTertiary)
+                    if isOverdue {
+                        HStack(spacing: AppTheme.Spacing.tiny) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.caption)
+                                .foregroundColor(AppTheme.Colors.warning)
+                            
+                            Text("Overdue: \(dueDate, style: .date)")
+                                .font(AppTheme.Typography.labelSmall)
+                                .foregroundColor(AppTheme.Colors.warning)
+                        }
+                    } else {
+                        Text("Due: \(dueDate, style: .time)")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.textTertiary)
+                    }
                 }
                 
                 Spacer()
@@ -262,6 +370,18 @@ struct WorkOrderRow: View {
                 Text("Not started")
                     .font(AppTheme.Typography.labelSmall)
                     .foregroundColor(AppTheme.Colors.textTertiary)
+            }
+        }
+    }
+    
+    /// Overdue overlay for work orders that are past due
+    private var overdueOverlayIfNeeded: some View {
+        Group {
+            if isOverdue {
+                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                    .stroke(AppTheme.Colors.warning, lineWidth: 2)
+            } else {
+                EmptyView()
             }
         }
     }
@@ -353,16 +473,24 @@ struct AllWorkOrdersView: View {
         NavigationView {
             List {
                 ForEach(allWorkOrders, id: \.id) { workOrder in
-                    WorkOrderRow(workOrder: workOrder)
-                        .listRowInsets(EdgeInsets())
-                        .listRowSeparator(.hidden)
-                        .padding(.vertical, AppTheme.Spacing.tiny)
+                    WorkOrderRow(
+                        workOrder: workOrder,
+                        isOverdue: workOrder.isOverdue()
+                    )
+                    .listRowInsets(EdgeInsets())
+                    .listRowSeparator(.hidden)
+                    .padding(.vertical, AppTheme.Spacing.tiny)
                 }
             }
             .listStyle(PlainListStyle())
             .navigationTitle("All Work Orders")
             .navigationBarTitleDisplayMode(.large)
         }
+    }
+    
+    /// Helper to determine if a work order is overdue
+    private func isWorkOrderOverdue(_ workOrder: WorkOrder) -> Bool {
+        return workOrder.isOverdue()
     }
 }
 
