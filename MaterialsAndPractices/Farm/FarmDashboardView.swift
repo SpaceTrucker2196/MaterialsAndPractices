@@ -591,9 +591,19 @@ struct FarmDashboardView: View {
     }
 
     /// Active team members filtered from all workers
-    /// Focuses interface on currently relevant workforce
+    /// Shows only workers who are NOT in any team (individual workers only)
     private var activeTeamMembers: [Worker] {
-        teamMembers.filter { $0.isActive }
+        teamMembers.filter { worker in
+            guard worker.isActive else { return false }
+            
+            // Only show workers who are NOT in any team
+            if let teams = worker.teams?.allObjects as? [WorkTeam] {
+                let activeTeams = teams.filter { $0.isActive }
+                return activeTeams.isEmpty // Only return true if worker is not in any active team
+            }
+            
+            return true // Worker has no team associations, so they are individual
+        }
     }
 
     /// Active teams for display
@@ -725,10 +735,69 @@ struct FarmPropertyTile: View {
                 .foregroundColor(AppTheme.Colors.textPrimary)
                 .lineLimit(2)
 
-            Text("\(property.totalAcres, specifier: "%.1f") acres")
-                .font(AppTheme.Typography.bodySmall)
-                .foregroundColor(AppTheme.Colors.textSecondary)
+            HStack {
+                // Acreage information
+                Text("\(property.totalAcres, specifier: "%.1f") acres")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                Spacer()
+                
+                // Work orders and employees indicators
+                farmMetricsIndicators
+            }
         }
+    }
+    
+    /// Farm metrics indicators showing work orders and employees
+    private var farmMetricsIndicators: some View {
+        HStack(spacing: AppTheme.Spacing.small) {
+            // Work orders indicator
+            if activeWorkOrdersCount > 0 {
+                HStack(spacing: AppTheme.Spacing.tiny) {
+                    Image(systemName: "list.clipboard.fill")
+                        .font(.caption)
+                        .foregroundColor(AppTheme.Colors.primary)
+                    
+                    Text("\(activeWorkOrdersCount)")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+                .padding(.horizontal, AppTheme.Spacing.tiny)
+                .padding(.vertical, 2)
+                .background(AppTheme.Colors.primary.opacity(0.1))
+                .cornerRadius(AppTheme.CornerRadius.small)
+            }
+            
+            // Employees indicator
+            if activeEmployeesCount > 0 {
+                HStack(spacing: AppTheme.Spacing.tiny) {
+                    Image(systemName: "person.2.fill")
+                        .font(.caption)
+                        .foregroundColor(AppTheme.Colors.success)
+                    
+                    Text("\(activeEmployeesCount)")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.success)
+                }
+                .padding(.horizontal, AppTheme.Spacing.tiny)
+                .padding(.vertical, 2)
+                .background(AppTheme.Colors.success.opacity(0.1))
+                .cornerRadius(AppTheme.CornerRadius.small)
+            }
+        }
+    }
+    
+    // MARK: - Computed Properties
+    
+    /// Count of active work orders for this property
+    private var activeWorkOrdersCount: Int {
+        return property.activeWorkOrders().count
+    }
+    
+    /// Count of active employees working on this property
+    private var activeEmployeesCount: Int {
+        return property.activeEmployees().count
     }
 
     /// Location display when county and state information is available
@@ -1054,9 +1123,31 @@ struct WorkTeamTile: View {
                 .foregroundColor(AppTheme.Colors.textPrimary)
                 .lineLimit(2)
             
-            Text("\(totalMembers) members")
-                .font(AppTheme.Typography.bodySmall)
-                .foregroundColor(AppTheme.Colors.textSecondary)
+            HStack {
+                Text("\(totalMembers) members")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                Spacer()
+                
+                // Location tag from current work field
+                teamLocationTag
+            }
+        }
+    }
+    
+    /// Location tag showing current work field if available
+    private var teamLocationTag: some View {
+        Group {
+            if let locationText = currentWorkLocation {
+                Text(locationText)
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .padding(.horizontal, AppTheme.Spacing.tiny)
+                    .padding(.vertical, 2)
+                    .background(AppTheme.Colors.primary.opacity(0.1))
+                    .cornerRadius(AppTheme.CornerRadius.small)
+            }
         }
     }
     
@@ -1095,6 +1186,32 @@ struct WorkTeamTile: View {
                 clockedInCount > 0 ? AppTheme.Colors.success : Color.clear,
                 lineWidth: 2
             )
+    }
+    
+    /// Current work location based on active work orders and field relationships
+    private var currentWorkLocation: String? {
+        // Get current active work orders for this team
+        guard let workOrders = team.workOrders?.allObjects as? [WorkOrder] else { return nil }
+        
+        let activeWorkOrders = workOrders.filter { !$0.isCompleted && $0.agricultureStatus != .completed }
+        
+        for workOrder in activeWorkOrders {
+            // Check if team has active time entries for this work order
+            let teamMembers = team.activeMembers()
+            let hasActiveTimeEntry = teamMembers.contains { worker in
+                guard let timeEntries = worker.timeClockEntries?.allObjects as? [TimeClock] else { return false }
+                
+                return timeEntries.contains { timeEntry in
+                    timeEntry.workOrder == workOrder && timeEntry.isActive
+                }
+            }
+            
+            if hasActiveTimeEntry, let grow = workOrder.grow, let field = grow.field {
+                return field.name ?? "Field"
+            }
+        }
+        
+        return nil
     }
 }
 
@@ -1236,10 +1353,17 @@ struct DashboardInfrastructureTile: View {
                         .foregroundColor(AppTheme.Colors.textPrimary)
                         .lineLimit(2)
                     
-                    if let type = infrastructure.type {
-                        Text(type.capitalized)
-                            .font(AppTheme.Typography.bodySmall)
-                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    HStack {
+                        if let type = infrastructure.type {
+                            Text(type.capitalized)
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textSecondary)
+                        }
+                        
+                        Spacer()
+                        
+                        // Location tag
+                        locationTag
                     }
                 }
                 
@@ -1261,6 +1385,21 @@ struct DashboardInfrastructureTile: View {
         Circle()
             .fill(statusColor)
             .frame(width: 12, height: 12)
+    }
+    
+    /// Location tag showing farm and field association
+    private var locationTag: some View {
+        Group {
+            if let locationText = infrastructureLocation {
+                Text(locationText)
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.info)
+                    .padding(.horizontal, AppTheme.Spacing.tiny)
+                    .padding(.vertical, 2)
+                    .background(AppTheme.Colors.info.opacity(0.1))
+                    .cornerRadius(AppTheme.CornerRadius.small)
+            }
+        }
     }
     
     /// Icon selection based on infrastructure type
@@ -1292,6 +1431,63 @@ struct DashboardInfrastructureTile: View {
         case "poor", "needs repair": return AppTheme.Colors.error
         default: return Color.gray
         }
+    }
+    
+    /// Infrastructure location text based on farm and field relationships
+    private var infrastructureLocation: String? {
+        // First try to get location from associated property (farm)
+        if let property = infrastructure.property {
+            if let displayName = property.displayName {
+                return displayName
+            }
+            
+            // Fall back to county, state if display name not available
+            if let county = property.county, let state = property.state {
+                return "\(county), \(state)"
+            }
+        }
+        
+        // TODO: Add field association support when field relationships are added to Infrastructure entity
+        // This would require adding a field relationship to Infrastructure in Core Data model
+        
+        return nil
+    }
+}
+
+// MARK: - Property Extensions for Dashboard Metrics
+
+extension Property {
+    /// Get active work orders for this property through field -> grow relationships
+    func activeWorkOrders() -> [WorkOrder] {
+        guard let fields = self.fields?.allObjects as? [Field] else { return [] }
+        
+        var workOrders: [WorkOrder] = []
+        for field in fields {
+            guard let grows = field.grows?.allObjects as? [Grow] else { continue }
+            
+            for grow in grows {
+                guard let growWorkOrders = grow.workOrders?.allObjects as? [WorkOrder] else { continue }
+                
+                // Filter for incomplete work orders
+                let activeWorkOrders = growWorkOrders.filter { !$0.isCompleted }
+                workOrders.append(contentsOf: activeWorkOrders)
+            }
+        }
+        
+        return workOrders
+    }
+    
+    /// Get active employees working on this property through work orders
+    func activeEmployees() -> [Worker] {
+        let workOrders = activeWorkOrders()
+        var employees = Set<Worker>()
+        
+        for workOrder in workOrders {
+            let assignedWorkers = workOrder.assignedWorkers()
+            employees.formUnion(assignedWorkers)
+        }
+        
+        return Array(employees)
     }
 }
 
