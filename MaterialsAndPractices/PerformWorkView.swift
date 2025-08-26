@@ -334,6 +334,13 @@ struct PerformWorkView: View {
         // Save context
         do {
             try viewContext.save()
+            
+            // Post notification for work order creation
+            CoreDataNotificationCenter.postWorkOrderNotification(
+                type: .created,
+                workOrder: workOrder
+            )
+            
             isPresented = false
         } catch {
             print("Error creating work order: \(error)")

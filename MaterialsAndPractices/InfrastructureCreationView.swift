@@ -317,6 +317,13 @@ struct InfrastructureCreationView: View {
         
         do {
             try viewContext.save()
+            
+            // Post notification for infrastructure creation
+            CoreDataNotificationCenter.postInfrastructureNotification(
+                type: .created, 
+                infrastructure: infrastructure
+            )
+            
             isPresented = false
         } catch {
             print("Error creating infrastructure: \(error)")
@@ -504,13 +511,46 @@ struct InfrastructureDetailView: View {
             .navigationTitle("Infrastructure Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .navigationBarLeading) {
                     Button("Done") {
                         isPresented = false
                     }
                 }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button(action: {
+                            editInfrastructure()
+                        }) {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                        
+                        Button(action: {
+                            copyInfrastructure()
+                        }) {
+                            Label("Copy", systemImage: "doc.on.doc")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                    }
+                }
             }
         }
+    }
+    
+    // MARK: - Actions
+    
+    /// Edit infrastructure - opens edit view
+    private func editInfrastructure() {
+        // Implementation would open edit view
+        // For now, print action
+        print("Edit infrastructure: \(infrastructure.name ?? "Unknown")")
+    }
+    
+    /// Copy infrastructure - creates a new infrastructure based on this one
+    private func copyInfrastructure() {
+        // Implementation would create a copy
+        print("Copy infrastructure: \(infrastructure.name ?? "Unknown")")
     }
 }
 

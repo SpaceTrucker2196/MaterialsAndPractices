@@ -57,6 +57,15 @@ struct FarmDashboardView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Lease.startDate, ascending: false)]
     ) var leaseAgreements: FetchedResults<Lease>
 
+    /// Infrastructure fetch request for dashboard overview
+    @FetchRequest(
+        entity: Infrastructure.entity(),
+        sortDescriptors: [
+            NSSortDescriptor(keyPath: \Infrastructure.category, ascending: true),
+            NSSortDescriptor(keyPath: \Infrastructure.name, ascending: true)
+        ]
+    ) var infrastructureItems: FetchedResults<Infrastructure>
+
     // MARK: - Navigation State Management
 
     /// Currently selected farm property for detailed view presentation
@@ -87,6 +96,7 @@ struct FarmDashboardView: View {
 
                     // Secondary sections: Only visible when farms exist
                     if hasFarmProperties {
+                        infrastructureOverviewSection
                         teamMembersOverviewSection
                         weeklyWorkerSummarySection
                         leaseAgreementsOverviewSection
@@ -267,6 +277,45 @@ struct FarmDashboardView: View {
     }
 
     // MARK: - Secondary Sections: Available When Farms Exist
+
+    /// Infrastructure overview section showing farm equipment and facilities
+    /// Displays infrastructure tiles with status indicators and navigation to management
+    private var infrastructureOverviewSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            sectionHeaderWithNavigation(
+                title: "Infrastructure",
+                destination: AnyView(InfrastructureManagementView()),
+                showNavigation: true
+            )
+
+            if !infrastructureItems.isEmpty {
+                infrastructureGrid
+            } else {
+                infrastructureEmptyState
+            }
+        }
+    }
+
+    /// Grid layout for infrastructure tiles
+    private var infrastructureGrid: some View {
+        LazyVGrid(columns: responsiveGridColumns, spacing: AppTheme.Spacing.medium) {
+            ForEach(Array(infrastructureItems.prefix(6)), id: \.id) { infrastructure in
+                DashboardInfrastructureTile(infrastructure: infrastructure)
+            }
+        }
+    }
+
+    /// Empty state for infrastructure when none are registered
+    private var infrastructureEmptyState: some View {
+        EmptyStateView(
+            title: "No Infrastructure Registered",
+            message: "Add equipment, buildings, and facilities to track your farm infrastructure",
+            systemImage: "wrench.and.screwdriver",
+            actionTitle: nil,
+            action: nil
+        )
+        .frame(height: 120)
+    }
 
     /// Team members overview section showing team tiles and individual worker status
     /// Only displayed when farm properties exist to maintain logical flow
@@ -1133,6 +1182,94 @@ struct TeamDetailView: View {
         // Implementation would clock out all team members
         // For now, just a placeholder
         print("Clock out all members of team: \(team.name ?? "Unknown")")
+    }
+}
+
+// MARK: - Dashboard Infrastructure Tile Component
+
+/// Compact infrastructure tile for dashboard display
+struct DashboardInfrastructureTile: View {
+    let infrastructure: Infrastructure
+    @State private var showingDetail = false
+    
+    var body: some View {
+        Button(action: {
+            showingDetail = true
+        }) {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                // Icon and status indicator
+                HStack {
+                    Text(iconForInfrastructure)
+                        .font(.title2)
+                    
+                    Spacer()
+                    
+                    statusIndicator
+                }
+                
+                // Infrastructure information
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    Text(infrastructure.name ?? "Unnamed")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                        .lineLimit(2)
+                    
+                    if let type = infrastructure.type {
+                        Text(type.capitalized)
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
+                
+                Spacer()
+            }
+            .padding(AppTheme.Spacing.medium)
+            .frame(height: 100)
+            .background(AppTheme.Colors.backgroundSecondary)
+            .cornerRadius(AppTheme.CornerRadius.medium)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .sheet(isPresented: $showingDetail) {
+            InfrastructureDetailView(infrastructure: infrastructure, isPresented: $showingDetail)
+        }
+    }
+    
+    /// Status indicator based on infrastructure condition
+    private var statusIndicator: some View {
+        Circle()
+            .fill(statusColor)
+            .frame(width: 12, height: 12)
+    }
+    
+    /// Icon selection based on infrastructure type
+    private var iconForInfrastructure: String {
+        guard let type = infrastructure.type?.lowercased() else { return "🏗️" }
+        
+        switch type {
+        case "tractor": return "🚜"
+        case "truck": return "🚛"
+        case "barn": return "🏠"
+        case "greenhouse": return "🪴"
+        case "pump": return "💧"
+        case "tools": return "🔧"
+        case "silo": return "🏗️"
+        case "fence": return "🚧"
+        case "irrigation": return "💦"
+        case "storage": return "📦"
+        default: return "🏗️"
+        }
+    }
+    
+    /// Status color based on infrastructure condition
+    private var statusColor: Color {
+        guard let status = infrastructure.status?.lowercased() else { return Color.gray }
+        
+        switch status {
+        case "excellent", "good": return AppTheme.Colors.success
+        case "fair": return AppTheme.Colors.warning
+        case "poor", "needs repair": return AppTheme.Colors.error
+        default: return Color.gray
+        }
     }
 }
 

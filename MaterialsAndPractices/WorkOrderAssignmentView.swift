@@ -481,6 +481,13 @@ struct WorkOrderAssignmentView: View {
         
         do {
             try viewContext.save()
+            
+            // Post notification for work order update
+            CoreDataNotificationCenter.postWorkOrderNotification(
+                type: .updated,
+                workOrder: workOrder
+            )
+            
             isEditMode = false
         } catch {
             print("Error saving work order changes: \(error)")
@@ -493,6 +500,12 @@ struct WorkOrderAssignmentView: View {
         
         do {
             try viewContext.save()
+            
+            // Post notification for work order update
+            CoreDataNotificationCenter.postWorkOrderNotification(
+                type: .updated,
+                workOrder: workOrder
+            )
         } catch {
             print("Error starting work order: \(error)")
         }
@@ -506,6 +519,12 @@ struct WorkOrderAssignmentView: View {
         
         do {
             try viewContext.save()
+            
+            // Post notification for work order update
+            CoreDataNotificationCenter.postWorkOrderNotification(
+                type: .updated,
+                workOrder: workOrder
+            )
         } catch {
             print("Error completing work order: \(error)")
         }

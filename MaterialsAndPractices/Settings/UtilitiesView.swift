@@ -95,7 +95,7 @@ struct UtilitiesView: View {
             CreateWorkerView(isPresented: $showingWorkerCreation)
         }
         .sheet(isPresented: $showingInfrastructureCreation) {
-           //CreateInfrastructureView(property:  $showingWorkerCreation)
+            InfrastructureManagementView()
         }
     }
     
@@ -125,14 +125,29 @@ struct UtilitiesView: View {
                 showingWorkerCreation = true
             }
             
-            // Add New Infrastructure Utility
-            UtilityActionRow(
-                title: "Add Infrastructure",
-                description: "Register new equipment, buildings, or facilities",
-                icon: "wrench.and.screwdriver.fill",
-                iconColor: AppTheme.Colors.compliance
-            ) {
-                showingInfrastructureCreation = true
+            // Manage Infrastructure Utility
+            NavigationLink(destination: InfrastructureManagementView()) {
+                HStack {
+                    Image(systemName: "wrench.and.screwdriver.fill")
+                        .foregroundColor(AppTheme.Colors.compliance)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Manage Infrastructure")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("View and manage all farm infrastructure, equipment, and facilities")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
             }
         }
     }

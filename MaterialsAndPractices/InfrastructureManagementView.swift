@@ -57,6 +57,31 @@ struct InfrastructureManagementView: View {
                             infrastructureEmptyState
                         }
                     }
+                    
+                    // All Infrastructure List View option
+                    if !existingInfrastructure.isEmpty {
+                        NavigationLink(destination: AllInfrastructureListView()) {
+                            HStack {
+                                Text("View All Infrastructure")
+                                    .font(AppTheme.Typography.bodyMedium)
+                                    .foregroundColor(AppTheme.Colors.primary)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "list.bullet")
+                                    .foregroundColor(AppTheme.Colors.primary)
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(AppTheme.Colors.textTertiary)
+                                    .font(.caption)
+                            }
+                            .padding()
+                            .background(AppTheme.Colors.primary.opacity(0.1))
+                            .cornerRadius(AppTheme.CornerRadius.medium)
+                        }
+                        .padding(.horizontal)
+                    }
+                    }
                     .padding()
                 }
             }
@@ -416,6 +441,181 @@ struct QuickActionButton: View {
             )
         }
         .buttonStyle(PlainButtonStyle())
+    }
+}
+
+// MARK: - All Infrastructure List View
+
+/// Comprehensive list view of all infrastructure items
+struct AllInfrastructureListView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @FetchRequest(
+        entity: Infrastructure.entity(),
+        sortDescriptors: [
+            NSSortDescriptor(keyPath: \Infrastructure.category, ascending: true),
+            NSSortDescriptor(keyPath: \Infrastructure.name, ascending: true)
+        ]
+    ) private var allInfrastructure: FetchedResults<Infrastructure>
+    
+    var body: some View {
+        List {
+            ForEach(infrastructureCategories, id: \.self) { category in
+                Section(category) {
+                    ForEach(infrastructureForCategory(category), id: \.id) { infrastructure in
+                        AllInfrastructureRow(infrastructure: infrastructure)
+                    }
+                }
+            }
+        }
+        .navigationTitle("All Infrastructure")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(destination: InfrastructureCreationView(isPresented: .constant(true))) {
+                    Image(systemName: "plus")
+                }
+            }
+        }
+    }
+    
+    /// Categories available in the infrastructure
+    private var infrastructureCategories: [String] {
+        let categories = Set(allInfrastructure.compactMap { $0.category })
+        return Array(categories).sorted()
+    }
+    
+    /// Infrastructure items for a specific category
+    private func infrastructureForCategory(_ category: String) -> [Infrastructure] {
+        return allInfrastructure.filter { $0.category == category }
+    }
+}
+
+// MARK: - All Infrastructure Row Component
+
+/// Row component for infrastructure list with edit and copy options
+struct AllInfrastructureRow: View {
+    let infrastructure: Infrastructure
+    @State private var showingDetail = false
+    @State private var showingActionSheet = false
+    
+    var body: some View {
+        HStack {
+            // Infrastructure icon
+            Text(iconForInfrastructure)
+                .font(.title2)
+                .frame(width: 40)
+            
+            // Infrastructure information
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                Text(infrastructure.name ?? "Unnamed Infrastructure")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                HStack {
+                    Text(infrastructure.type?.capitalized ?? "Unknown Type")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    // Status indicator
+                    HStack(spacing: AppTheme.Spacing.tiny) {
+                        Circle()
+                            .fill(statusColor)
+                            .frame(width: 8, height: 8)
+                        
+                        Text(infrastructure.status?.capitalized ?? "Unknown")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(statusColor)
+                    }
+                }
+                
+                if let property = infrastructure.property {
+                    Text("📍 \(property.displayName ?? "Unknown Farm")")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                }
+            }
+            
+            Spacer()
+            
+            // Action button
+            Button(action: {
+                showingActionSheet = true
+            }) {
+                Image(systemName: "ellipsis.circle")
+                    .foregroundColor(AppTheme.Colors.primary)
+            }
+        }
+        .padding(.vertical, AppTheme.Spacing.small)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            showingDetail = true
+        }
+        .sheet(isPresented: $showingDetail) {
+            InfrastructureDetailView(infrastructure: infrastructure, isPresented: $showingDetail)
+        }
+        .actionSheet(isPresented: $showingActionSheet) {
+            ActionSheet(
+                title: Text("Infrastructure Actions"),
+                buttons: [
+                    .default(Text("View Details")) {
+                        showingDetail = true
+                    },
+                    .default(Text("Edit")) {
+                        editInfrastructure()
+                    },
+                    .default(Text("Copy")) {
+                        copyInfrastructure()
+                    },
+                    .cancel()
+                ]
+            )
+        }
+    }
+    
+    /// Icon selection based on infrastructure type
+    private var iconForInfrastructure: String {
+        guard let type = infrastructure.type?.lowercased() else { return "🏗️" }
+        
+        switch type {
+        case "tractor": return "🚜"
+        case "truck": return "🚛"
+        case "barn": return "🏠"
+        case "greenhouse": return "🪴"
+        case "pump": return "💧"
+        case "tools": return "🔧"
+        case "silo": return "🏗️"
+        case "fence": return "🚧"
+        case "irrigation": return "💦"
+        case "storage": return "📦"
+        default: return "🏗️"
+        }
+    }
+    
+    /// Status color based on infrastructure condition
+    private var statusColor: Color {
+        guard let status = infrastructure.status?.lowercased() else { return Color.gray }
+        
+        switch status {
+        case "excellent", "good": return AppTheme.Colors.success
+        case "fair": return AppTheme.Colors.warning
+        case "poor", "needs repair": return AppTheme.Colors.error
+        default: return Color.gray
+        }
+    }
+    
+    // MARK: - Actions
+    
+    private func editInfrastructure() {
+        // Implementation would open edit view
+        print("Edit infrastructure: \(infrastructure.name ?? "Unknown")")
+    }
+    
+    private func copyInfrastructure() {
+        // Implementation would create a copy
+        print("Copy infrastructure: \(infrastructure.name ?? "Unknown")")
     }
 }
 
