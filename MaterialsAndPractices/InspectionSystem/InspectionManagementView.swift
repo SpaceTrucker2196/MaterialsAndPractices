@@ -548,46 +548,6 @@ extension DateFormatter {
 
 // MARK: - Placeholder Views
 
-/// Placeholder for inspection catalog browser
-struct InspectionCatalogBrowserView: View {
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        NavigationView {
-            Text("Inspection Catalog Browser\n(Implementation in progress)")
-                .multilineTextAlignment(.center)
-                .navigationTitle("Inspection Catalog")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Close") {
-                            isPresented = false
-                        }
-                    }
-                }
-        }
-    }
-}
-
-/// Placeholder for inspection creation workflow
-struct InspectionCreationWorkflowView: View {
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        NavigationView {
-            Text("Inspection Creation Workflow\n(Implementation in progress)")
-                .multilineTextAlignment(.center)
-                .navigationTitle("New Inspection")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel") {
-                            isPresented = false
-                        }
-                    }
-                }
-        }
-    }
-}
-
 /// Placeholder for working inspections list
 struct WorkingInspectionsListView: View {
     var body: some View {
