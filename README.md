@@ -12,13 +12,28 @@ MaterialsAndPractices is a comprehensive iOS application designed to support sma
 - **Safety Compliance**: Built-in harvest safety checklists based on FDA Food Safety Modernization Act (FSMA) requirements
 - **Amendment Tracking**: Record and track all soil amendments and organic inputs with full traceability
 
+### NEW: iPad Pro Features (2024)
+- **Dashboard Metaphor**: Tile-based dashboard with customizable layout optimized for horizontal orientation
+- **Sidebar Navigation**: iPad-native navigation with category organization and quick actions
+- **Multi-Column Layouts**: Optimized for both iPad Pro 11" and 12.9" displays
+- **Real-Time Monitoring**: Live status tiles for weather, equipment, work orders, and alerts
+- **Hybrid Experience**: Automatic adaptation between iPhone tab-based and iPad sidebar-based navigation
+- **Enhanced Multitasking**: Split-view support and external display compatibility
+
 ## Application Architecture
 
 ### Technology Stack
-- **Platform**: iOS (SwiftUI)
-- **Data Persistence**: Core Data
-- **Architecture Pattern**: MVVM with Clean Architecture principles
+- **Platform**: iOS (SwiftUI) with iPad Pro optimizations
+- **Data Persistence**: Core Data with CloudKit sync
+- **Architecture Pattern**: Clean Architecture with MVVM presentation layer
 - **Design System**: Custom theming with light/dark mode support
+- **Device Support**: Universal app with adaptive layouts for iPhone and iPad
+
+### NEW: Enhanced Architecture (2024)
+- **Clean Architecture Implementation**: Separation of concerns with Domain, Use Cases, Interface Adapters, and Frameworks layers
+- **Device-Aware Design**: Automatic detection and optimization for iPad Pro (11" and 12.9")
+- **Hybrid Experience**: Adaptive interface that switches between iPhone and iPad paradigms
+- **Time Tracking System**: Complete clean architecture implementation with dependency injection
 
 ### View Hierarchy
 ```
@@ -57,11 +72,23 @@ MaterialsAndPracticesApp (Root)
 
 This codebase follows Apple's recommended architectural patterns and Clean Code principles as outlined by Robert C. Martin. The application is designed to be maintainable by AI agents through:
 
-- Clear separation of concerns with MVVM architecture
-- Comprehensive inline documentation
+- Clear separation of concerns with Clean Architecture implementation
+- Comprehensive inline documentation with architectural improvement comments
 - Consistent naming conventions following Swift API design guidelines
-- Modular component structure
-- Declarative SwiftUI view composition
+- Modular component structure with device-aware responsive design
+- Declarative SwiftUI view composition with adaptive layouts
+
+### NEW: Clean Architecture Implementation
+The app implements Uncle Bob's Clean Architecture with:
+- **Domain Layer**: Business entities and rules (`TimeTrackingEntity`, validation logic)
+- **Use Cases**: Application business rules (`TimeClockManagementUseCase`, `TimeReportingAnalyticsUseCase`)
+- **Interface Adapters**: Controllers, presenters, gateways (`TimeClockController`, `TimeTrackingDataGateway`)
+- **Frameworks**: SwiftUI, Core Data, and device-specific implementations
+
+### Device Optimization Strategy
+- **iPhone**: Tab-based navigation with single-column layouts optimized for one-handed use
+- **iPad**: Sidebar navigation with multi-column dashboard layouts leveraging screen real estate
+- **iPad Pro**: Enhanced tile system with 11" and 12.9" specific optimizations and Apple Pencil support
 
 ## Data Sources
 
