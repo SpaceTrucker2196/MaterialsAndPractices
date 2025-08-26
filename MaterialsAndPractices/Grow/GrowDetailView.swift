@@ -962,7 +962,13 @@ struct GrowInspectionSchedulingView: View {
         NavigationView {
             Form {
                 Section("Inspection Details") {
-                    TextField("Inspection Name", text: $inspectionName)
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        TextField("Inspection Name", text: $inspectionName)
+                        
+                        Text("Suggested names: Pre-Harvest Inspection, Organic Compliance Check, Field Safety Review")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.textTertiary)
+                    }
                     
                     Picker("Template Category", selection: $selectedTemplate) {
                         ForEach(InspectionCategory.allCases, id: \.self) { category in
@@ -971,6 +977,9 @@ struct GrowInspectionSchedulingView: View {
                                 Text(category.displayName)
                             }.tag(category)
                         }
+                    }
+                    .onChange(of: selectedTemplate) { newCategory in
+                        updateSuggestedName(for: newCategory)
                     }
                     
                     Picker("Scheduled Time", selection: $scheduledTime) {
@@ -991,6 +1000,34 @@ struct GrowInspectionSchedulingView: View {
                                 Text(freq.rawValue)
                             }.tag(freq)
                         }
+                    }
+                }
+                
+                Section(header: Text("Organic Certification Requirements")) {
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        HStack {
+                            Image(systemName: "checkmark.seal.fill")
+                                .foregroundColor(AppTheme.Colors.compliance)
+                            Text("Pre-Harvest Interval Compliance")
+                                .font(AppTheme.Typography.bodyMedium)
+                        }
+                        
+                        Text("Ensure proper timing between last treatment and harvest for organic certification")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        HStack {
+                            Image(systemName: "leaf.fill")
+                                .foregroundColor(AppTheme.Colors.organicPractice)
+                            Text("Organic Materials Verification")
+                                .font(AppTheme.Typography.bodyMedium)
+                        }
+                        
+                        Text("Verify all inputs and practices meet organic standards")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
                     }
                 }
                 
@@ -1056,5 +1093,24 @@ struct GrowInspectionSchedulingView: View {
         print("Frequency: \(frequency.rawValue)")
         
         isPresented = false
+    }
+    
+    /// Updates suggested inspection name based on category and grow context
+    private func updateSuggestedName(for category: InspectionCategory) {
+        if inspectionName.isEmpty {
+            let cultivarName = grow.cultivar?.name ?? "Crop"
+            switch category {
+            case .grow:
+                inspectionName = "Pre-Harvest Inspection - \(cultivarName)"
+            case .organicManagement:
+                inspectionName = "Organic Compliance Check - \(cultivarName)"
+            case .healthSafety:
+                inspectionName = "Safety Review - \(cultivarName)"
+            case .infrastructure:
+                inspectionName = "Equipment Check - \(cultivarName)"
+            case .equipment:
+                inspectionName = "Tool Inspection - \(cultivarName)"
+            }
+        }
     }
 }

@@ -528,7 +528,13 @@ struct FarmInspectionSchedulingView: View {
         NavigationView {
             Form {
                 Section("Inspection Details") {
-                    TextField("Inspection Name", text: $inspectionName)
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        TextField("Inspection Name", text: $inspectionName)
+                        
+                        Text("Suggested: Organic Certification, Farm Safety Audit, General Compliance")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.textTertiary)
+                    }
                     
                     Picker("Template Category", selection: $selectedTemplate) {
                         ForEach(InspectionCategory.allCases, id: \.self) { category in
@@ -537,6 +543,9 @@ struct FarmInspectionSchedulingView: View {
                                 Text(category.displayName)
                             }.tag(category)
                         }
+                    }
+                    .onChange(of: selectedTemplate) { newCategory in
+                        updateSuggestedName(for: newCategory)
                     }
                     
                     Picker("Scheduled Time", selection: $scheduledTime) {
@@ -557,6 +566,47 @@ struct FarmInspectionSchedulingView: View {
                                 Text(freq.rawValue)
                             }.tag(freq)
                         }
+                    }
+                }
+                
+                Section("Organic Certification & Compliance") {
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        HStack {
+                            Image(systemName: "checkmark.seal.fill")
+                                .foregroundColor(AppTheme.Colors.compliance)
+                            Text("Organic System Plan Review")
+                                .font(AppTheme.Typography.bodyMedium)
+                        }
+                        
+                        Text("Comprehensive review of farm's organic system plan and practices")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        HStack {
+                            Image(systemName: "leaf.arrow.circlepath")
+                                .foregroundColor(AppTheme.Colors.organicPractice)
+                            Text("Transition Period Monitoring")
+                                .font(AppTheme.Typography.bodyMedium)
+                        }
+                        
+                        Text("Track transition from conventional to organic farming practices")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        HStack {
+                            Image(systemName: "doc.text.magnifyingglass")
+                                .foregroundColor(AppTheme.Colors.primary)
+                            Text("Record Keeping Audit")
+                                .font(AppTheme.Typography.bodyMedium)
+                        }
+                        
+                        Text("Verify comprehensive record keeping for organic certification")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
                     }
                 }
                 
@@ -629,5 +679,24 @@ struct FarmInspectionSchedulingView: View {
         print("Frequency: \(frequency.rawValue)")
         
         isPresented = false
+    }
+    
+    /// Updates suggested inspection name based on category and farm context
+    private func updateSuggestedName(for category: InspectionCategory) {
+        if inspectionName.isEmpty {
+            let farmName = property.displayName ?? "Farm"
+            switch category {
+            case .organicManagement:
+                inspectionName = "Organic Certification - \(farmName)"
+            case .healthSafety:
+                inspectionName = "Farm Safety Audit - \(farmName)"
+            case .infrastructure:
+                inspectionName = "Farm Infrastructure Review - \(farmName)"
+            case .equipment:
+                inspectionName = "Equipment Inspection - \(farmName)"
+            case .grow:
+                inspectionName = "General Farm Inspection - \(farmName)"
+            }
+        }
     }
 }

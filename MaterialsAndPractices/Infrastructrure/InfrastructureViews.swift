@@ -698,7 +698,13 @@ struct InfrastructureInspectionSchedulingView: View {
         NavigationView {
             Form {
                 Section("Inspection Details") {
-                    TextField("Inspection Name", text: $inspectionName)
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        TextField("Inspection Name", text: $inspectionName)
+                        
+                        Text("Suggested: Safety Inspection, Maintenance Check, Compliance Review")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.textTertiary)
+                    }
                     
                     Picker("Template Category", selection: $selectedTemplate) {
                         ForEach([InspectionCategory.infrastructure, .equipment, .healthSafety], id: \.self) { category in
@@ -707,6 +713,9 @@ struct InfrastructureInspectionSchedulingView: View {
                                 Text(category.displayName)
                             }.tag(category)
                         }
+                    }
+                    .onChange(of: selectedTemplate) { newCategory in
+                        updateSuggestedName(for: newCategory)
                     }
                     
                     Picker("Scheduled Time", selection: $scheduledTime) {
@@ -727,6 +736,34 @@ struct InfrastructureInspectionSchedulingView: View {
                                 Text(freq.rawValue)
                             }.tag(freq)
                         }
+                    }
+                }
+                
+                Section("Safety & Compliance Requirements") {
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(AppTheme.Colors.warning)
+                            Text("Safety Protocol Verification")
+                                .font(AppTheme.Typography.bodyMedium)
+                        }
+                        
+                        Text("Ensure all safety protocols and equipment are properly maintained")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        HStack {
+                            Image(systemName: "checkmark.shield.fill")
+                                .foregroundColor(AppTheme.Colors.compliance)
+                            Text("Regulatory Compliance")
+                                .font(AppTheme.Typography.bodyMedium)
+                        }
+                        
+                        Text("Verify compliance with local and federal regulations")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
                     }
                 }
                 
@@ -799,5 +836,24 @@ struct InfrastructureInspectionSchedulingView: View {
         print("Frequency: \(frequency.rawValue)")
         
         isPresented = false
+    }
+    
+    /// Updates suggested inspection name based on category and infrastructure context
+    private func updateSuggestedName(for category: InspectionCategory) {
+        if inspectionName.isEmpty {
+            let infraType = infrastructure.type?.capitalized ?? "Infrastructure"
+            switch category {
+            case .infrastructure:
+                inspectionName = "Safety Inspection - \(infraType)"
+            case .equipment:
+                inspectionName = "Maintenance Check - \(infraType)"
+            case .healthSafety:
+                inspectionName = "Safety Review - \(infraType)"
+            case .grow:
+                inspectionName = "General Inspection - \(infraType)"
+            case .organicManagement:
+                inspectionName = "Compliance Check - \(infraType)"
+            }
+        }
     }
 }
