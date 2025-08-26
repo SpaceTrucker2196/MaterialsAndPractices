@@ -349,7 +349,7 @@ private func addSampleFarmData(context: NSManagedObjectContext) {
     lease.notes = "Standard cash lease agreement"
     lease.owner = owner
     lease.farmer = farmer
-    lease.properties = NSSet(array: [property1])
+    lease.property = property1
     
     // Create sample infrastructure
     let infrastructure = Infrastructure(context: context)

@@ -364,7 +364,7 @@ struct WorkOrderAssignmentView: View {
                     if workOrder.agricultureStatus == .inProgress {
                         CommonActionButton(
                             title: "Mark Complete",
-                            style: .tertiary
+                            style: .secondary
                         ) {
                             completeWorkOrder()
                         }

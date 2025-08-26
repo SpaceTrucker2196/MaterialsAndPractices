@@ -32,13 +32,8 @@
 		1FB247BA2E5ACC3000F7BAF7 /* PhotoCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247AF2E5ACC3000F7BAF7 /* PhotoCaptureView.swift */; };
 		1FB247BB2E5ACC3000F7BAF7 /* PhotoOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */; };
 		1FB247C12E5ACD7C00F7BAF7 /* CommonUIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */; };
-		1FBCAA242E5E2EDA00E3C619 /* InspectionCatalogBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA1D2E5E2EDA00E3C619 /* InspectionCatalogBrowserView.swift */; };
-		1FBCAA252E5E2EDA00E3C619 /* InspectionArchitecture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA1C2E5E2EDA00E3C619 /* InspectionArchitecture.swift */; };
-		1FBCAA262E5E2EDA00E3C619 /* InspectionManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA212E5E2EDA00E3C619 /* InspectionManagementView.swift */; };
-		1FBCAA272E5E2EDA00E3C619 /* InspectionCreationWorkflowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA1F2E5E2EDA00E3C619 /* InspectionCreationWorkflowView.swift */; };
-		1FBCAA282E5E2EDA00E3C619 /* InspectionCreationSupportingViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA1E2E5E2EDA00E3C619 /* InspectionCreationSupportingViews.swift */; };
-		1FBCAA292E5E2EDA00E3C619 /* InspectionTemplateSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA222E5E2EDA00E3C619 /* InspectionTemplateSeeder.swift */; };
-		1FBCAA2A2E5E2EDA00E3C619 /* InspectionDirectoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA202E5E2EDA00E3C619 /* InspectionDirectoryManager.swift */; };
+		1FBCAA902E5E769600E3C619 /* LeaseManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA8E2E5E769600E3C619 /* LeaseManagementView.swift */; };
+		1FBCAA9B2E5E773800E3C619 /* MaterialsAndPractices.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA922E5E773800E3C619 /* MaterialsAndPractices.xcdatamodeld */; };
 		1FCCE7272E5BFEB6004FC07C /* FiraCode-Retina.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCE7252E5BFEB6004FC07C /* FiraCode-Retina.ttf */; };
 		1FCCE7282E5BFEB6004FC07C /* FiraCode-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCE7262E5BFEB6004FC07C /* FiraCode-SemiBold.ttf */; };
 		1FCCE7292E5BFEB6004FC07C /* FiraCode-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCE7222E5BFEB6004FC07C /* FiraCode-Light.ttf */; };
@@ -72,7 +67,6 @@
 		1FEA2B69257F0E0900A6D9DD /* EditGrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */; };
 		1FEA2B6E257F440900A6D9DD /* AmendmentViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B6D257F440900A6D9DD /* AmendmentViews.swift */; };
 		1FEA2B79257FCE1D00A6D9DD /* Amendments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEA2B78257FCE1D00A6D9DD /* Amendments.swift */; };
-		1FEE449A2E5DFFED00A1887B /* MaterialsAndPractices.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE44912E5DFFED00A1887B /* MaterialsAndPractices.xcdatamodeld */; };
 		1FEE44A62E5E014C00A1887B /* InspectionSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE44A32E5E014C00A1887B /* InspectionSeeder.swift */; };
 		1FEE44AA2E5E02F400A1887B /* CoreDataNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE44A92E5E02F400A1887B /* CoreDataNotificationCenter.swift */; };
 		1FEE44AD2E5E053A00A1887B /* WorkOrderAssignmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE44AB2E5E053A00A1887B /* WorkOrderAssignmentView.swift */; };
@@ -130,7 +124,7 @@
 		1F812224258281EC007394D0 /* WorkPractices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkPractices.swift; sourceTree = "<group>"; };
 		1F812229258295D0007394D0 /* WorkPracticeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkPracticeDetailView.swift; sourceTree = "<group>"; };
 		1F812234258298EC007394D0 /* WorkViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkViews.swift; sourceTree = "<group>"; };
-		1F85D6922E5D520700CABF8D /* LocalizationUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationUtility.swift; sourceTree = "<group>"; };
+		1F85D6922E5D520700CABF8D /* LocalizationUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalizationUtility.swift; path = ../LocalizationUtility.swift; sourceTree = "<group>"; };
 		1FB247AB2E5AC71800F7BAF7 /* DefaultIDGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultIDGenerator.swift; sourceTree = "<group>"; };
 		1FB247AD2E5ACC3000F7BAF7 /* EditPropertyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPropertyView.swift; sourceTree = "<group>"; };
 		1FB247AE2E5ACC3000F7BAF7 /* FarmListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FarmListView.swift; sourceTree = "<group>"; };
@@ -139,13 +133,15 @@
 		1FB247B12E5ACC3000F7BAF7 /* PhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
 		1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoOverlay.swift; sourceTree = "<group>"; };
 		1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUIComponents.swift; sourceTree = "<group>"; };
-		1FBCAA1C2E5E2EDA00E3C619 /* InspectionArchitecture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionArchitecture.swift; sourceTree = "<group>"; };
-		1FBCAA1D2E5E2EDA00E3C619 /* InspectionCatalogBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionCatalogBrowserView.swift; sourceTree = "<group>"; };
-		1FBCAA1E2E5E2EDA00E3C619 /* InspectionCreationSupportingViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionCreationSupportingViews.swift; sourceTree = "<group>"; };
-		1FBCAA1F2E5E2EDA00E3C619 /* InspectionCreationWorkflowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionCreationWorkflowView.swift; sourceTree = "<group>"; };
-		1FBCAA202E5E2EDA00E3C619 /* InspectionDirectoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionDirectoryManager.swift; sourceTree = "<group>"; };
-		1FBCAA212E5E2EDA00E3C619 /* InspectionManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionManagementView.swift; sourceTree = "<group>"; };
-		1FBCAA222E5E2EDA00E3C619 /* InspectionTemplateSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionTemplateSeeder.swift; sourceTree = "<group>"; };
+		1FBCAA8E2E5E769600E3C619 /* LeaseManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LeaseManagementView.swift; path = Farm/LeaseManagementView.swift; sourceTree = "<group>"; };
+		1FBCAA932E5E773800E3C619 /* MaterialsAndPractices.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MaterialsAndPractices.xcdatamodel; sourceTree = "<group>"; };
+		1FBCAA942E5E773800E3C619 /* MaterialsAndPractices 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 2.xcdatamodel"; sourceTree = "<group>"; };
+		1FBCAA952E5E773800E3C619 /* MaterialsAndPractices 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 3.xcdatamodel"; sourceTree = "<group>"; };
+		1FBCAA962E5E773800E3C619 /* MaterialsAndPractices 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 4.xcdatamodel"; sourceTree = "<group>"; };
+		1FBCAA972E5E773800E3C619 /* MaterialsAndPractices 4_CSVSync.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 4_CSVSync.xcdatamodel"; sourceTree = "<group>"; };
+		1FBCAA982E5E773800E3C619 /* MaterialsAndPractices 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 5.xcdatamodel"; sourceTree = "<group>"; };
+		1FBCAA992E5E773800E3C619 /* MaterialsAndPractices 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 6.xcdatamodel"; sourceTree = "<group>"; };
+		1FBCAA9A2E5E773800E3C619 /* MaterialsAndPractices 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 7.xcdatamodel"; sourceTree = "<group>"; };
 		1FCCE7212E5BFEB6004FC07C /* FiraCode-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Bold.ttf"; sourceTree = "<group>"; };
 		1FCCE7222E5BFEB6004FC07C /* FiraCode-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Light.ttf"; sourceTree = "<group>"; };
 		1FCCE7232E5BFEB6004FC07C /* FiraCode-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Medium.ttf"; sourceTree = "<group>"; };
@@ -179,14 +175,6 @@
 		1FEA2B68257F0E0900A6D9DD /* EditGrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGrowView.swift; sourceTree = "<group>"; };
 		1FEA2B6D257F440900A6D9DD /* AmendmentViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmendmentViews.swift; sourceTree = "<group>"; };
 		1FEA2B78257FCE1D00A6D9DD /* Amendments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Amendments.swift; sourceTree = "<group>"; };
-		1FEE44922E5DFFED00A1887B /* MaterialsAndPractices.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MaterialsAndPractices.xcdatamodel; sourceTree = "<group>"; };
-		1FEE44932E5DFFED00A1887B /* MaterialsAndPractices 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 2.xcdatamodel"; sourceTree = "<group>"; };
-		1FEE44942E5DFFED00A1887B /* MaterialsAndPractices 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 3.xcdatamodel"; sourceTree = "<group>"; };
-		1FEE44952E5DFFED00A1887B /* MaterialsAndPractices 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 4.xcdatamodel"; sourceTree = "<group>"; };
-		1FEE44962E5DFFED00A1887B /* MaterialsAndPractices 4_CSVSync.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 4_CSVSync.xcdatamodel"; sourceTree = "<group>"; };
-		1FEE44972E5DFFED00A1887B /* MaterialsAndPractices 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 5.xcdatamodel"; sourceTree = "<group>"; };
-		1FEE44982E5DFFED00A1887B /* MaterialsAndPractices 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 6.xcdatamodel"; sourceTree = "<group>"; };
-		1FEE44992E5DFFED00A1887B /* MaterialsAndPractices 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 7.xcdatamodel"; sourceTree = "<group>"; };
 		1FEE44A32E5E014C00A1887B /* InspectionSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionSeeder.swift; sourceTree = "<group>"; };
 		1FEE44A92E5E02F400A1887B /* CoreDataNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataNotificationCenter.swift; sourceTree = "<group>"; };
 		1FEE44AB2E5E053A00A1887B /* WorkOrderAssignmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkOrderAssignmentView.swift; sourceTree = "<group>"; };
@@ -204,6 +192,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		1FBCAA562E5E596200E3C619 /* InspectionSystem */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = InspectionSystem; sourceTree = "<group>"; };
 		1FEE44B12E5E094C00A1887B /* Infrastructrure */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Infrastructrure; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -244,7 +233,6 @@
 		1F4F48A9257DB4C2005E559D = {
 			isa = PBXGroup;
 			children = (
-				1F85D6922E5D520700CABF8D /* LocalizationUtility.swift */,
 				1FDF44422E5C23860058E376 /* vegetable_cultivars_master.csv */,
 				1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */,
 				1F4F48CB257DB4C4005E559D /* MaterialsAndPracticesTests */,
@@ -266,7 +254,10 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
-				1FBCAA232E5E2EDA00E3C619 /* InspectionSystem */,
+				1FBCAA922E5E773800E3C619 /* MaterialsAndPractices.xcdatamodeld */,
+				1FBCAA8E2E5E769600E3C619 /* LeaseManagementView.swift */,
+				1F85D6922E5D520700CABF8D /* LocalizationUtility.swift */,
+				1FBCAA562E5E596200E3C619 /* InspectionSystem */,
 				1FEE44BE2E5E168400A1887B /* AdaptiveDashboardView.swift */,
 				1FEE44BF2E5E168400A1887B /* DeviceDetection.swift */,
 				1FEE44B12E5E094C00A1887B /* Infrastructrure */,
@@ -275,7 +266,6 @@
 				1FEE44AC2E5E053A00A1887B /* WorkOrderListView.swift */,
 				1FEE44A92E5E02F400A1887B /* CoreDataNotificationCenter.swift */,
 				1FEE44A32E5E014C00A1887B /* InspectionSeeder.swift */,
-				1FEE44912E5DFFED00A1887B /* MaterialsAndPractices.xcdatamodeld */,
 				1FDF44A72E5D2F640058E376 /* CultivarExtensions.swift */,
 				1FDF44A92E5D2F640058E376 /* HarvestCalendarHeatMap.swift */,
 				1FDF44AB2E5D2F640058E376 /* PerformWorkView.swift */,
@@ -384,20 +374,6 @@
 			path = Common;
 			sourceTree = "<group>";
 		};
-		1FBCAA232E5E2EDA00E3C619 /* InspectionSystem */ = {
-			isa = PBXGroup;
-			children = (
-				1FBCAA1C2E5E2EDA00E3C619 /* InspectionArchitecture.swift */,
-				1FBCAA1D2E5E2EDA00E3C619 /* InspectionCatalogBrowserView.swift */,
-				1FBCAA1E2E5E2EDA00E3C619 /* InspectionCreationSupportingViews.swift */,
-				1FBCAA1F2E5E2EDA00E3C619 /* InspectionCreationWorkflowView.swift */,
-				1FBCAA202E5E2EDA00E3C619 /* InspectionDirectoryManager.swift */,
-				1FBCAA212E5E2EDA00E3C619 /* InspectionManagementView.swift */,
-				1FBCAA222E5E2EDA00E3C619 /* InspectionTemplateSeeder.swift */,
-			);
-			path = InspectionSystem;
-			sourceTree = "<group>";
-		};
 		1FCCE7202E5BFE5E004FC07C /* resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -454,6 +430,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				1FBCAA562E5E596200E3C619 /* InspectionSystem */,
 				1FEE44B12E5E094C00A1887B /* Infrastructrure */,
 			);
 			name = MaterialsAndPractices;
@@ -591,17 +568,12 @@
 				1FEA2B79257FCE1D00A6D9DD /* Amendments.swift in Sources */,
 				1FEA2B6E257F440900A6D9DD /* AmendmentViews.swift in Sources */,
 				1F812235258298EC007394D0 /* WorkViews.swift in Sources */,
-				1FBCAA242E5E2EDA00E3C619 /* InspectionCatalogBrowserView.swift in Sources */,
-				1FBCAA252E5E2EDA00E3C619 /* InspectionArchitecture.swift in Sources */,
-				1FBCAA262E5E2EDA00E3C619 /* InspectionManagementView.swift in Sources */,
-				1FBCAA272E5E2EDA00E3C619 /* InspectionCreationWorkflowView.swift in Sources */,
-				1FBCAA282E5E2EDA00E3C619 /* InspectionCreationSupportingViews.swift in Sources */,
-				1FBCAA292E5E2EDA00E3C619 /* InspectionTemplateSeeder.swift in Sources */,
-				1FBCAA2A2E5E2EDA00E3C619 /* InspectionDirectoryManager.swift in Sources */,
 				1FB247B52E5ACC3000F7BAF7 /* FarmListView.swift in Sources */,
 				1FB247B62E5ACC3000F7BAF7 /* EditPropertyView.swift in Sources */,
 				1FB247B72E5ACC3000F7BAF7 /* PhotoGalleryView.swift in Sources */,
+				1FBCAA902E5E769600E3C619 /* LeaseManagementView.swift in Sources */,
 				1FEE44AD2E5E053A00A1887B /* WorkOrderAssignmentView.swift in Sources */,
+				1FBCAA9B2E5E773800E3C619 /* MaterialsAndPractices.xcdatamodeld in Sources */,
 				1FEE44AE2E5E053A00A1887B /* WorkOrderListView.swift in Sources */,
 				1FB247B92E5ACC3000F7BAF7 /* PhotoManager.swift in Sources */,
 				1FB247BA2E5ACC3000F7BAF7 /* PhotoCaptureView.swift in Sources */,
@@ -623,7 +595,6 @@
 				1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */,
 				1FCEB4532E5B790100021D62 /* CreateFieldView.swift in Sources */,
 				1FCEB4542E5B790100021D62 /* SoilTestListView.swift in Sources */,
-				1FEE449A2E5DFFED00A1887B /* MaterialsAndPractices.xcdatamodeld in Sources */,
 				1FCEB4622E5B7C0E00021D62 /* HarvestSafetyChecklist.swift in Sources */,
 				1FCEB4632E5B7C0E00021D62 /* EnhancedEditGrowView.swift in Sources */,
 				1FCEB4562E5B790100021D62 /* FarmDashboardView.swift in Sources */,
@@ -973,19 +944,19 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		1FEE44912E5DFFED00A1887B /* MaterialsAndPractices.xcdatamodeld */ = {
+		1FBCAA922E5E773800E3C619 /* MaterialsAndPractices.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				1FEE44922E5DFFED00A1887B /* MaterialsAndPractices.xcdatamodel */,
-				1FEE44932E5DFFED00A1887B /* MaterialsAndPractices 2.xcdatamodel */,
-				1FEE44942E5DFFED00A1887B /* MaterialsAndPractices 3.xcdatamodel */,
-				1FEE44952E5DFFED00A1887B /* MaterialsAndPractices 4.xcdatamodel */,
-				1FEE44962E5DFFED00A1887B /* MaterialsAndPractices 4_CSVSync.xcdatamodel */,
-				1FEE44972E5DFFED00A1887B /* MaterialsAndPractices 5.xcdatamodel */,
-				1FEE44982E5DFFED00A1887B /* MaterialsAndPractices 6.xcdatamodel */,
-				1FEE44992E5DFFED00A1887B /* MaterialsAndPractices 7.xcdatamodel */,
+				1FBCAA932E5E773800E3C619 /* MaterialsAndPractices.xcdatamodel */,
+				1FBCAA942E5E773800E3C619 /* MaterialsAndPractices 2.xcdatamodel */,
+				1FBCAA952E5E773800E3C619 /* MaterialsAndPractices 3.xcdatamodel */,
+				1FBCAA962E5E773800E3C619 /* MaterialsAndPractices 4.xcdatamodel */,
+				1FBCAA972E5E773800E3C619 /* MaterialsAndPractices 4_CSVSync.xcdatamodel */,
+				1FBCAA982E5E773800E3C619 /* MaterialsAndPractices 5.xcdatamodel */,
+				1FBCAA992E5E773800E3C619 /* MaterialsAndPractices 6.xcdatamodel */,
+				1FBCAA9A2E5E773800E3C619 /* MaterialsAndPractices 7.xcdatamodel */,
 			);
-			currentVersion = 1FEE44992E5DFFED00A1887B /* MaterialsAndPractices 7.xcdatamodel */;
+			currentVersion = 1FBCAA9A2E5E773800E3C619 /* MaterialsAndPractices 7.xcdatamodel */;
 			path = MaterialsAndPractices.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
