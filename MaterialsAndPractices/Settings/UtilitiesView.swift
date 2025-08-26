@@ -149,6 +149,31 @@ struct UtilitiesView: View {
                         .font(.caption)
                 }
             }
+            
+            // Manage Inspections Utility
+            NavigationLink(destination: InspectionManagementView()) {
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(AppTheme.Colors.compliance)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Manage Inspections")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Create, schedule, and track organic compliance inspections")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
+            }
         }
     }
     
