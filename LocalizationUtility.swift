@@ -185,23 +185,21 @@ extension Text {
     }
 }
 
-extension Button {
-    /// Creates a button with localized title
-    /// - Parameters:
-    ///   - titleKey: Localization key for button title
-    ///   - comment: Developer comment
-    ///   - action: Button action
-    /// - Returns: Button with localized title
-    static func localized(
-        _ titleKey: String,
-        comment: String,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            Text.localized(titleKey, comment: comment)
-        }
-    }
-}
+//extension Button {
+//    static func localizedLabel(
+//        _ titleKey: String,
+//        comment: String,
+//        systemImage: String,
+//        action: @escaping () -> Void
+//    ) -> some View {
+//        Button(action: action) {
+//            SwiftUI.Label<Text, Image>(
+//                title: { Text(LocalizedStringKey(titleKey)) },
+//                icon: { Image(systemName: systemImage) }
+//            )
+//        }
+//    }
+//}
 
 // MARK: - Development Helper Views
 

@@ -27,7 +27,7 @@ struct CurrentGrowsView: View {
             NSSortDescriptor(keyPath: \Grow.field?.property?.displayName, ascending: true),
             NSSortDescriptor(keyPath: \Grow.title, ascending: true)
         ],
-        predicate: NSPredicate(format: "harvestDate == nil"),
+        predicate: nil,
         animation: .default
     )
     private var activeGrows: FetchedResults<Grow>

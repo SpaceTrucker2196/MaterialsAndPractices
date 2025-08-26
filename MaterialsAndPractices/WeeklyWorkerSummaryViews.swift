@@ -135,7 +135,7 @@ struct WeeklyWorkerSummaryDetailView: View {
         return HStack {
             StatCard(
                 title: "Total Hours",
-                value: "\(totalHours, specifier: "%.1f")",
+                value:String(format: "%.1f", totalHours),
                 subtitle: "All Workers"
             )
             
