@@ -241,10 +241,15 @@
         </fetchIndex>
     </entity>
     <entity name="Infrastructure" representedClassName="Infrastructure" syncable="YES" codeGenerationType="class">
+        <attribute name="category" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="installDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastServiceDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="maintenanceProcedures" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="rodentInspectionProcedure" optional="YES" attributeType="String"/>
+        <attribute name="safetyTraining" optional="YES" attributeType="String"/>
         <attribute name="status" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Document" inverseName="infrastructure" inverseEntity="Document"/>
@@ -254,6 +259,54 @@
         </fetchIndex>
         <fetchIndex name="byTypeIndex">
             <fetchIndexElement property="type" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="InfrastructureCatalog" representedClassName="InfrastructureCatalog" syncable="YES" codeGenerationType="class">
+        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="maintenanceProcedures" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="rodentInspectionProcedure" optional="YES" attributeType="String"/>
+        <attribute name="safetyTraining" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <fetchIndex name="byCategoryIndex">
+            <fetchIndexElement property="category" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byTypeIndex">
+            <fetchIndexElement property="type" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Inspection" representedClassName="Inspection" syncable="YES" codeGenerationType="class">
+        <attribute name="completedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionType" optional="YES" attributeType="String"/>
+        <attribute name="inspectorName" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="scheduledDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <relationship name="checklistItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="InspectionChecklistItem" inverseName="inspection" inverseEntity="InspectionChecklistItem"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byScheduledDateIndex">
+            <fetchIndexElement property="scheduledDate" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byTypeIndex">
+            <fetchIndexElement property="inspectionType" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="InspectionChecklistItem" representedClassName="InspectionChecklistItem" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isCompleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="itemDescription" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="requirementLevel" optional="YES" attributeType="String"/>
+        <relationship name="inspection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Inspection" inverseName="checklistItems" inverseEntity="Inspection"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
     <entity name="InputApplication" representedClassName="InputApplication" syncable="YES" codeGenerationType="class">
