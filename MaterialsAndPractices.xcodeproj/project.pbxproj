@@ -32,6 +32,13 @@
 		1FB247BA2E5ACC3000F7BAF7 /* PhotoCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247AF2E5ACC3000F7BAF7 /* PhotoCaptureView.swift */; };
 		1FB247BB2E5ACC3000F7BAF7 /* PhotoOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */; };
 		1FB247C12E5ACD7C00F7BAF7 /* CommonUIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */; };
+		1FBCAA242E5E2EDA00E3C619 /* InspectionCatalogBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA1D2E5E2EDA00E3C619 /* InspectionCatalogBrowserView.swift */; };
+		1FBCAA252E5E2EDA00E3C619 /* InspectionArchitecture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA1C2E5E2EDA00E3C619 /* InspectionArchitecture.swift */; };
+		1FBCAA262E5E2EDA00E3C619 /* InspectionManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA212E5E2EDA00E3C619 /* InspectionManagementView.swift */; };
+		1FBCAA272E5E2EDA00E3C619 /* InspectionCreationWorkflowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA1F2E5E2EDA00E3C619 /* InspectionCreationWorkflowView.swift */; };
+		1FBCAA282E5E2EDA00E3C619 /* InspectionCreationSupportingViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA1E2E5E2EDA00E3C619 /* InspectionCreationSupportingViews.swift */; };
+		1FBCAA292E5E2EDA00E3C619 /* InspectionTemplateSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA222E5E2EDA00E3C619 /* InspectionTemplateSeeder.swift */; };
+		1FBCAA2A2E5E2EDA00E3C619 /* InspectionDirectoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA202E5E2EDA00E3C619 /* InspectionDirectoryManager.swift */; };
 		1FCCE7272E5BFEB6004FC07C /* FiraCode-Retina.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCE7252E5BFEB6004FC07C /* FiraCode-Retina.ttf */; };
 		1FCCE7282E5BFEB6004FC07C /* FiraCode-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCE7262E5BFEB6004FC07C /* FiraCode-SemiBold.ttf */; };
 		1FCCE7292E5BFEB6004FC07C /* FiraCode-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCE7222E5BFEB6004FC07C /* FiraCode-Light.ttf */; };
@@ -132,6 +139,13 @@
 		1FB247B12E5ACC3000F7BAF7 /* PhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
 		1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoOverlay.swift; sourceTree = "<group>"; };
 		1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUIComponents.swift; sourceTree = "<group>"; };
+		1FBCAA1C2E5E2EDA00E3C619 /* InspectionArchitecture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionArchitecture.swift; sourceTree = "<group>"; };
+		1FBCAA1D2E5E2EDA00E3C619 /* InspectionCatalogBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionCatalogBrowserView.swift; sourceTree = "<group>"; };
+		1FBCAA1E2E5E2EDA00E3C619 /* InspectionCreationSupportingViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionCreationSupportingViews.swift; sourceTree = "<group>"; };
+		1FBCAA1F2E5E2EDA00E3C619 /* InspectionCreationWorkflowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionCreationWorkflowView.swift; sourceTree = "<group>"; };
+		1FBCAA202E5E2EDA00E3C619 /* InspectionDirectoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionDirectoryManager.swift; sourceTree = "<group>"; };
+		1FBCAA212E5E2EDA00E3C619 /* InspectionManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionManagementView.swift; sourceTree = "<group>"; };
+		1FBCAA222E5E2EDA00E3C619 /* InspectionTemplateSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionTemplateSeeder.swift; sourceTree = "<group>"; };
 		1FCCE7212E5BFEB6004FC07C /* FiraCode-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Bold.ttf"; sourceTree = "<group>"; };
 		1FCCE7222E5BFEB6004FC07C /* FiraCode-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Light.ttf"; sourceTree = "<group>"; };
 		1FCCE7232E5BFEB6004FC07C /* FiraCode-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Medium.ttf"; sourceTree = "<group>"; };
@@ -252,6 +266,7 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
+				1FBCAA232E5E2EDA00E3C619 /* InspectionSystem */,
 				1FEE44BE2E5E168400A1887B /* AdaptiveDashboardView.swift */,
 				1FEE44BF2E5E168400A1887B /* DeviceDetection.swift */,
 				1FEE44B12E5E094C00A1887B /* Infrastructrure */,
@@ -367,6 +382,20 @@
 				1F4F48BE257DB4C4005E559D /* Persistence.swift */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		1FBCAA232E5E2EDA00E3C619 /* InspectionSystem */ = {
+			isa = PBXGroup;
+			children = (
+				1FBCAA1C2E5E2EDA00E3C619 /* InspectionArchitecture.swift */,
+				1FBCAA1D2E5E2EDA00E3C619 /* InspectionCatalogBrowserView.swift */,
+				1FBCAA1E2E5E2EDA00E3C619 /* InspectionCreationSupportingViews.swift */,
+				1FBCAA1F2E5E2EDA00E3C619 /* InspectionCreationWorkflowView.swift */,
+				1FBCAA202E5E2EDA00E3C619 /* InspectionDirectoryManager.swift */,
+				1FBCAA212E5E2EDA00E3C619 /* InspectionManagementView.swift */,
+				1FBCAA222E5E2EDA00E3C619 /* InspectionTemplateSeeder.swift */,
+			);
+			path = InspectionSystem;
 			sourceTree = "<group>";
 		};
 		1FCCE7202E5BFE5E004FC07C /* resources */ = {
@@ -562,6 +591,13 @@
 				1FEA2B79257FCE1D00A6D9DD /* Amendments.swift in Sources */,
 				1FEA2B6E257F440900A6D9DD /* AmendmentViews.swift in Sources */,
 				1F812235258298EC007394D0 /* WorkViews.swift in Sources */,
+				1FBCAA242E5E2EDA00E3C619 /* InspectionCatalogBrowserView.swift in Sources */,
+				1FBCAA252E5E2EDA00E3C619 /* InspectionArchitecture.swift in Sources */,
+				1FBCAA262E5E2EDA00E3C619 /* InspectionManagementView.swift in Sources */,
+				1FBCAA272E5E2EDA00E3C619 /* InspectionCreationWorkflowView.swift in Sources */,
+				1FBCAA282E5E2EDA00E3C619 /* InspectionCreationSupportingViews.swift in Sources */,
+				1FBCAA292E5E2EDA00E3C619 /* InspectionTemplateSeeder.swift in Sources */,
+				1FBCAA2A2E5E2EDA00E3C619 /* InspectionDirectoryManager.swift in Sources */,
 				1FB247B52E5ACC3000F7BAF7 /* FarmListView.swift in Sources */,
 				1FB247B62E5ACC3000F7BAF7 /* EditPropertyView.swift in Sources */,
 				1FB247B72E5ACC3000F7BAF7 /* PhotoGalleryView.swift in Sources */,

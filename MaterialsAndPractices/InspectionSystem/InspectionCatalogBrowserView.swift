@@ -328,12 +328,12 @@ struct InspectionTemplateRowView: View {
                     Spacer()
                     
                     Text(template.category)
-                        .font(AppTheme.Typography.labelTiny)
+                        .font(AppTheme.Typography.labelSmall)
                         .foregroundColor(categoryColor(for: template.category))
                         .padding(.horizontal, AppTheme.Spacing.small)
                         .padding(.vertical, 2)
                         .background(categoryColor(for: template.category).opacity(0.1))
-                        .cornerRadius(AppTheme.CornerRadius.tiny)
+                        .cornerRadius(AppTheme.CornerRadius.small)
                 }
             }
             

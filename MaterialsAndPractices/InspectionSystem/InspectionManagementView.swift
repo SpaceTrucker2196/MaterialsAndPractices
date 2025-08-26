@@ -202,7 +202,7 @@ struct InspectionManagementView: View {
             }
             
             if getWorkingInspectionsCount() == 0 {
-                EmptyStateView(
+                CompletedEmptyStateView(
                     icon: "clipboard",
                     title: "No Working Inspections",
                     description: "Create an inspection to get started",
@@ -329,7 +329,7 @@ struct InspectionStatCard: View {
                 .foregroundColor(color)
             
             Text(subtitle)
-                .font(AppTheme.Typography.labelTiny)
+                .font(AppTheme.Typography.labelSmall)
                 .foregroundColor(AppTheme.Colors.textTertiary)
         }
         .frame(maxWidth: .infinity)
@@ -399,7 +399,7 @@ struct InspectionCategoryCard: View {
                     .foregroundColor(isSelected ? .white : AppTheme.Colors.textPrimary)
                 
                 Text("\(templateCount) templates")
-                    .font(AppTheme.Typography.labelTiny)
+                    .font(AppTheme.Typography.labelSmall)
                     .foregroundColor(isSelected ? .white.opacity(0.8) : AppTheme.Colors.textSecondary)
             }
             .padding()
@@ -435,7 +435,7 @@ struct WorkingInspectionRowView: View {
                     .frame(width: 60)
                 
                 Text("Due \(DateFormatter.shortDate.string(from: inspection.dueDate))")
-                    .font(AppTheme.Typography.labelTiny)
+                    .font(AppTheme.Typography.labelSmall)
                     .foregroundColor(AppTheme.Colors.textTertiary)
             }
         }
@@ -473,7 +473,7 @@ struct CompletedInspectionRowView: View {
                     .foregroundColor(AppTheme.Colors.textSecondary)
                 
                 Text(inspection.inspectionCategory ?? "General")
-                    .font(AppTheme.Typography.labelTiny)
+                    .font(AppTheme.Typography.labelSmall)
                     .foregroundColor(AppTheme.Colors.textTertiary)
             }
         }
@@ -484,7 +484,7 @@ struct CompletedInspectionRowView: View {
 }
 
 /// Empty state view
-struct EmptyStateView: View {
+struct CompletedEmptyStateView: View {
     let icon: String
     let title: String
     let description: String

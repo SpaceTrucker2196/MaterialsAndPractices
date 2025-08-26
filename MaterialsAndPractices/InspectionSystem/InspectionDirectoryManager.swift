@@ -292,7 +292,7 @@ struct InspectionCreationData {
 }
 
 /// Inspection system errors
-enum InspectionError: LocalizedError {
+enum DMInspectionError: LocalizedError {
     case templateNotFound(String)
     case workingTemplateNotFound(String)
     case directoryCreationFailed(String)

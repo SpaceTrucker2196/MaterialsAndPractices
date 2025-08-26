@@ -75,12 +75,12 @@ struct WorkingTemplateSelectionCard: View {
                         Spacer()
                         
                         Text(template.category.displayName)
-                            .font(AppTheme.Typography.labelTiny)
+                            .font(AppTheme.Typography.labelSmall)
                             .foregroundColor(AppTheme.Colors.primary)
                             .padding(.horizontal, AppTheme.Spacing.small)
                             .padding(.vertical, 2)
                             .background(AppTheme.Colors.primary.opacity(0.1))
-                            .cornerRadius(AppTheme.CornerRadius.tiny)
+                            .cornerRadius(AppTheme.CornerRadius.small)
                     }
                 }
             }
@@ -394,6 +394,7 @@ struct InspectorSelectionRow: View {
 }
 
 /// Row for selecting work teams
+/// Optimized row for selecting work teams
 struct TeamSelectionRow: View {
     let team: WorkTeamData
     let isSelected: Bool
@@ -402,50 +403,10 @@ struct TeamSelectionRow: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: AppTheme.Spacing.medium) {
-                // Selection indicator
-                Circle()
-                    .fill(isSelected ? AppTheme.Colors.primary : Color.clear)
-                    .stroke(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.textTertiary, lineWidth: 2)
-                    .frame(width: 20, height: 20)
-                    .overlay(
-                        Circle()
-                            .fill(AppTheme.Colors.primary)
-                            .frame(width: 10, height: 10)
-                            .opacity(isSelected ? 1 : 0)
-                    )
-                
-                // Team icon
-                Image(systemName: "person.3.fill")
-                    .font(.title3)
-                    .foregroundColor(AppTheme.Colors.secondary)
-                
-                // Team info
-                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                    Text(team.name)
-                        .font(AppTheme.Typography.bodyMedium)
-                        .fontWeight(.medium)
-                        .foregroundColor(AppTheme.Colors.textPrimary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    Text("\(team.qualifiedMembers.count) qualified inspectors")
-                        .font(AppTheme.Typography.bodySmall)
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                
-                // Team inspector indicators
-                HStack(spacing: 2) {
-                    ForEach(0..<min(team.qualifiedMembers.count, 3), id: \.self) { _ in
-                        Image(systemName: "eye.fill")
-                            .font(.caption2)
-                            .foregroundColor(AppTheme.Colors.compliance)
-                    }
-                    if team.qualifiedMembers.count > 3 {
-                        Text("+\(team.qualifiedMembers.count - 3)")
-                            .font(AppTheme.Typography.labelTiny)
-                            .foregroundColor(AppTheme.Colors.textTertiary)
-                    }
-                }
+                selectionIndicator
+                teamIcon
+                teamInfo
+                inspectorBadges
             }
             .padding()
             .background(isSelected ? AppTheme.Colors.primary.opacity(0.1) : AppTheme.Colors.backgroundPrimary)
@@ -457,8 +418,68 @@ struct TeamSelectionRow: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
+    
+    // MARK: - Subviews
+    
+    private var selectionIndicator: some View {
+        Circle()
+            .fill(isSelected ? AppTheme.Colors.primary : Color.clear)
+            .stroke(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.textTertiary, lineWidth: 2)
+            .frame(width: 20, height: 20)
+            .overlay(
+                Circle()
+                    .fill(AppTheme.Colors.primary)
+                    .frame(width: 10, height: 10)
+                    .opacity(isSelected ? 1 : 0)
+            )
+    }
+    
+    private var teamIcon: some View {
+        Image(systemName: "person.3.fill")
+            .font(.title3)
+            .foregroundColor(AppTheme.Colors.secondary)
+    }
+    
+    private var teamInfo: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+            Text(team.name)
+                .font(AppTheme.Typography.bodyMedium)
+                .fontWeight(.medium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            Text("\(team.qualifiedMembers.count) qualified inspectors")
+                .font(AppTheme.Typography.bodySmall)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+    
+    private var inspectorBadges: some View {
+        HStack(spacing: 2) {
+            ForEach(displayedBadgeCount, id: \.self) { _ in
+                Image(systemName: "eye.fill")
+                    .font(.caption2)
+                    .foregroundColor(AppTheme.Colors.compliance)
+            }
+            if remainingBadgeCount > 0 {
+                Text("+\(remainingBadgeCount)")
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.textTertiary)
+            }
+        }
+    }
+    
+    // MARK: - Computed Properties
+    
+    private var displayedBadgeCount: [Int] {
+        Array(0..<min(team.qualifiedMembers.count, 3))
+    }
+    
+    private var remainingBadgeCount: Int {
+        max(0, team.qualifiedMembers.count - 3)
+    }
 }
-
 // MARK: - Review Section
 
 /// Section component for the review step
