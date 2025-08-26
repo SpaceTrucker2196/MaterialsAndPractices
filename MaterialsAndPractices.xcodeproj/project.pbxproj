@@ -736,7 +736,7 @@
 				DEVELOPMENT_TEAM = QYJ6FSH533;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = MaterialsAndPractices/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -761,7 +761,7 @@
 				DEVELOPMENT_TEAM = QYJ6FSH533;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = MaterialsAndPractices/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
