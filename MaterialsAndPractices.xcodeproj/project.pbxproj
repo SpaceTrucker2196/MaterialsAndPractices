@@ -71,6 +71,8 @@
 		1FEE44AD2E5E053A00A1887B /* WorkOrderAssignmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE44AB2E5E053A00A1887B /* WorkOrderAssignmentView.swift */; };
 		1FEE44AE2E5E053A00A1887B /* WorkOrderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE44AC2E5E053A00A1887B /* WorkOrderListView.swift */; };
 		1FEE44B02E5E06FD00A1887B /* TeamCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE44AF2E5E06FD00A1887B /* TeamCreationView.swift */; };
+		1FEE44C22E5E168400A1887B /* DeviceDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE44BF2E5E168400A1887B /* DeviceDetection.swift */; };
+		1FEE44C42E5E168400A1887B /* AdaptiveDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE44BE2E5E168400A1887B /* AdaptiveDashboardView.swift */; };
 		BULGI508SCW0VCS6XNM4Y2ZV /* SoilTestDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = NKCZL87A0C3JQ1IZLFUD8ZDS /* SoilTestDetailView.swift */; };
 		D7U2HNQLDO5CUE50OC42PT2E /* FieldSelectionTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8GFUYTO4QAHEWPUN0F9IOJHU /* FieldSelectionTileView.swift */; };
 		FV3VC1I7GJ337VBU8UY2D9G2 /* SoilTestGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E83I4ZLSTFFFKKCKEG26K34 /* SoilTestGraphics.swift */; };
@@ -176,6 +178,8 @@
 		1FEE44AB2E5E053A00A1887B /* WorkOrderAssignmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkOrderAssignmentView.swift; sourceTree = "<group>"; };
 		1FEE44AC2E5E053A00A1887B /* WorkOrderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkOrderListView.swift; sourceTree = "<group>"; };
 		1FEE44AF2E5E06FD00A1887B /* TeamCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamCreationView.swift; sourceTree = "<group>"; };
+		1FEE44BE2E5E168400A1887B /* AdaptiveDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveDashboardView.swift; sourceTree = "<group>"; };
+		1FEE44BF2E5E168400A1887B /* DeviceDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetection.swift; sourceTree = "<group>"; };
 		6E83I4ZLSTFFFKKCKEG26K34 /* SoilTestGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestGraphics.swift; sourceTree = "<group>"; };
 		8GFUYTO4QAHEWPUN0F9IOJHU /* FieldSelectionTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldSelectionTileView.swift; sourceTree = "<group>"; };
 		EGZMTBQX29E4S5J5EFAHU359 /* SoilTestEducationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestEducationView.swift; sourceTree = "<group>"; };
@@ -248,6 +252,8 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
+				1FEE44BE2E5E168400A1887B /* AdaptiveDashboardView.swift */,
+				1FEE44BF2E5E168400A1887B /* DeviceDetection.swift */,
 				1FEE44B12E5E094C00A1887B /* Infrastructrure */,
 				1FEE44AF2E5E06FD00A1887B /* TeamCreationView.swift */,
 				1FEE44AB2E5E053A00A1887B /* WorkOrderAssignmentView.swift */,
@@ -564,6 +570,8 @@
 				1FB247B92E5ACC3000F7BAF7 /* PhotoManager.swift in Sources */,
 				1FB247BA2E5ACC3000F7BAF7 /* PhotoCaptureView.swift in Sources */,
 				1FB247BB2E5ACC3000F7BAF7 /* PhotoOverlay.swift in Sources */,
+				1FEE44C22E5E168400A1887B /* DeviceDetection.swift in Sources */,
+				1FEE44C42E5E168400A1887B /* AdaptiveDashboardView.swift in Sources */,
 				1FD918352E595AB900D18920 /* CultivarViews.swift in Sources */,
 				1FD918362E595AB900D18920 /* CultivarSeeder.swift in Sources */,
 				1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */,

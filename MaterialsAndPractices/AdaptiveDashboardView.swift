@@ -63,10 +63,10 @@ struct AdaptiveDashboardView: View {
     // MARK: - iPad Layout
     
     private var iPadLayout: some View {
-        iPadDashboardView()
-            .environment(\.managedObjectContext, viewContext)
+        Text("iPad layout not implemented yet")
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(.systemGroupedBackground))
     }
-    
     // MARK: - iPhone Layout
     
     private var iPhoneLayout: some View {

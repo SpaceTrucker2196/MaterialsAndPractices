@@ -117,14 +117,14 @@ struct InfrastructureManagementView: View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             SectionHeader(title: "Quick Actions")
             HStack(spacing: AppTheme.Spacing.medium) {
-                QuickActionButton(
+                InfastructureQuickActionButton(
                     title: "Browse Catalog",
                     subtitle: "Common farm equipment",
                     icon: "books.vertical.fill",
                     color: AppTheme.Colors.primary
                 ) { showingCatalogBrowser = true }
 
-                QuickActionButton(
+                InfastructureQuickActionButton(
                     title: "Add Custom",
                     subtitle: "Create new infrastructure",
                     icon: "plus.circle.fill",
