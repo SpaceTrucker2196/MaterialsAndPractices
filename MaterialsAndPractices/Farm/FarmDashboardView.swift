@@ -77,6 +77,11 @@ struct FarmDashboardView: View {
                     // Header with operational status overview
                     operationalStatusHeader
 
+                    // Work Orders section: Only visible when farms exist
+                    if hasFarmProperties {
+                        workOrdersManagementSection
+                    }
+
                     // Primary section: Active farm properties (required for all other features)
                     activeFarmPropertiesSection
 
@@ -188,6 +193,29 @@ struct FarmDashboardView: View {
         }
     }
 
+    // MARK: - Work Orders Management Section
+
+    /// Work orders management section for daily task coordination
+    /// Displays compact list of today's work orders with priority indicators
+    private var workOrdersManagementSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            // Work orders list component
+            WorkOrderListView(maxDisplayedOrders: 4, showViewAllButton: true)
+        }
+        .padding(AppTheme.Spacing.medium)
+        .background(
+            LinearGradient(
+                colors: [
+                    AppTheme.Colors.primary.opacity(0.05),
+                    AppTheme.Colors.secondary.opacity(0.02)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .cornerRadius(AppTheme.CornerRadius.large)
+    }
+
     // MARK: - Primary Section: Farm Properties
 
     /// Active farm properties section - the foundational requirement for all operations
@@ -240,20 +268,51 @@ struct FarmDashboardView: View {
 
     // MARK: - Secondary Sections: Available When Farms Exist
 
-    /// Team members overview section showing worker status and availability
+    /// Team members overview section showing team tiles and individual worker status
     /// Only displayed when farm properties exist to maintain logical flow
     private var teamMembersOverviewSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             sectionHeaderWithNavigation(
-                title: "Team Members",
+                title: "Teams & Workers",
                 destination: AnyView(WorkerListView()),
                 showNavigation: true
             )
 
+            // Active teams section
+            if !activeTeams.isEmpty {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text("Active Teams")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    teamsGrid
+                }
+            }
+
+            // Individual workers section
             if !activeTeamMembers.isEmpty {
-                teamMembersGrid
-            } else {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text("Individual Workers")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    teamMembersGrid
+                }
+            } else if activeTeams.isEmpty {
                 teamMembersEmptyState
+            }
+        }
+    }
+
+    /// Grid layout for team tiles with status indicators
+    private var teamsGrid: some View {
+        LazyVGrid(columns: responsiveGridColumns, spacing: AppTheme.Spacing.medium) {
+            ForEach(activeTeams, id: \.id) { team in
+                WorkTeamTile(
+                    team: team,
+                    clockedInCount: team.clockedInCount(),
+                    totalMembers: team.activeMembers().count
+                )
             }
         }
     }
@@ -464,6 +523,22 @@ struct FarmDashboardView: View {
     /// Focuses interface on currently relevant workforce
     private var activeTeamMembers: [Worker] {
         teamMembers.filter { $0.isActive }
+    }
+
+    /// Active teams for display
+    /// Shows teams that have active members
+    private var activeTeams: [WorkTeam] {
+        let request: NSFetchRequest<WorkTeam> = WorkTeam.fetchRequest()
+        request.predicate = NSPredicate(format: "isActive == YES")
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \WorkTeam.name, ascending: true)]
+        
+        do {
+            let teams = try viewContext.fetch(request)
+            return teams.filter { !$0.activeMembers().isEmpty }
+        } catch {
+            print("Error fetching active teams: \(error)")
+            return []
+        }
     }
 
     /// Workers currently clocked in for today's operations
@@ -834,6 +909,230 @@ struct LeaseAgreementRow: View {
     private var urgencyBorderOverlay: some View {
         RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
             .stroke(requiresUrgentAttention ? AppTheme.Colors.warning : Color.clear, lineWidth: 1)
+    }
+}
+
+/// Work team tile component for displaying team information and status
+/// Provides quick access to team clock-in/out functionality and member overview
+struct WorkTeamTile: View {
+    // MARK: - Properties
+    
+    let team: WorkTeam
+    let clockedInCount: Int
+    let totalMembers: Int
+    @State private var showingTeamDetail = false
+    
+    // MARK: - Body
+    
+    var body: some View {
+        Button(action: {
+            showingTeamDetail = true
+        }) {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                // Header with team icon and status
+                teamTileHeader
+                
+                // Team identification and member count
+                teamTileContent
+                
+                // Status and action row
+                teamTileStatus
+            }
+            .padding(AppTheme.Spacing.medium)
+            .frame(height: 120)
+            .background(teamBackgroundColor)
+            .cornerRadius(AppTheme.CornerRadius.medium)
+            .overlay(teamBorderOverlay)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .sheet(isPresented: $showingTeamDetail) {
+            TeamDetailView(team: team, isPresented: $showingTeamDetail)
+        }
+    }
+    
+    /// Header section with team icon and status indicators
+    private var teamTileHeader: some View {
+        HStack {
+            Image(systemName: "person.3.fill")
+                .foregroundColor(AppTheme.Colors.primary)
+                .font(.title2)
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                // Active status indicator
+                Circle()
+                    .fill(clockedInCount > 0 ? AppTheme.Colors.success : AppTheme.Colors.textTertiary)
+                    .frame(width: 8, height: 8)
+                
+                // Clock status text
+                if clockedInCount > 0 {
+                    Text("Active")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.success)
+                }
+            }
+        }
+    }
+    
+    /// Team identification content with name and member count
+    private var teamTileContent: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+            Text(team.name ?? "Unnamed Team")
+                .font(AppTheme.Typography.bodyMedium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+                .lineLimit(2)
+            
+            Text("\(totalMembers) members")
+                .font(AppTheme.Typography.bodySmall)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+        }
+    }
+    
+    /// Status row with clocked in count
+    private var teamTileStatus: some View {
+        HStack {
+            HStack(spacing: AppTheme.Spacing.tiny) {
+                Image(systemName: "clock.fill")
+                    .font(.caption)
+                    .foregroundColor(clockedInCount > 0 ? AppTheme.Colors.success : AppTheme.Colors.textTertiary)
+                
+                Text("\(clockedInCount) clocked in")
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(clockedInCount > 0 ? AppTheme.Colors.success : AppTheme.Colors.textTertiary)
+            }
+            
+            Spacer()
+        }
+    }
+    
+    // MARK: - Computed Properties for Styling
+    
+    /// Background color based on team activity
+    private var teamBackgroundColor: Color {
+        if clockedInCount > 0 {
+            return AppTheme.Colors.success.opacity(0.1)
+        } else {
+            return AppTheme.Colors.backgroundSecondary
+        }
+    }
+    
+    /// Border overlay for active indication
+    private var teamBorderOverlay: some View {
+        RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+            .stroke(
+                clockedInCount > 0 ? AppTheme.Colors.success : Color.clear,
+                lineWidth: 2
+            )
+    }
+}
+
+/// Team detail view for managing team clock-in/out and viewing member details
+struct TeamDetailView: View {
+    let team: WorkTeam
+    @Binding var isPresented: Bool
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    var body: some View {
+        NavigationView {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                // Team header
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+                    HStack {
+                        Text(team.name ?? "Unnamed Team")
+                            .font(AppTheme.Typography.headlineLarge)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Spacer()
+                        
+                        Text("\(team.activeMembers().count) members")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
+                
+                // Team actions
+                HStack(spacing: AppTheme.Spacing.medium) {
+                    CommonActionButton(
+                        title: "Clock In All",
+                        style: .primary
+                    ) {
+                        clockInAllMembers()
+                    }
+                    .disabled(team.clockedInCount() == team.activeMembers().count)
+                    
+                    CommonActionButton(
+                        title: "Clock Out All",
+                        style: .secondary
+                    ) {
+                        clockOutAllMembers()
+                    }
+                    .disabled(team.clockedInCount() == 0)
+                }
+                
+                // Team members list
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+                    Text("Team Members")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    ForEach(team.activeMembers(), id: \.id) { worker in
+                        HStack {
+                            Circle()
+                                .fill(worker.isClockedIn() ? AppTheme.Colors.success : AppTheme.Colors.textTertiary)
+                                .frame(width: 12, height: 12)
+                            
+                            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                                Text(worker.name ?? "Unknown Worker")
+                                    .font(AppTheme.Typography.bodyMedium)
+                                    .foregroundColor(AppTheme.Colors.textPrimary)
+                                
+                                if let position = worker.position {
+                                    Text(position)
+                                        .font(AppTheme.Typography.bodySmall)
+                                        .foregroundColor(AppTheme.Colors.textSecondary)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            if worker.isClockedIn() {
+                                Text("Clocked In")
+                                    .font(AppTheme.Typography.labelSmall)
+                                    .foregroundColor(AppTheme.Colors.success)
+                            }
+                        }
+                        .padding(.vertical, AppTheme.Spacing.small)
+                    }
+                }
+                
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Team Details")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        isPresented = false
+                    }
+                }
+            }
+        }
+    }
+    
+    /// Clock in all team members
+    private func clockInAllMembers() {
+        // Implementation would clock in all team members
+        // For now, just a placeholder
+        print("Clock in all members of team: \(team.name ?? "Unknown")")
+    }
+    
+    /// Clock out all team members
+    private func clockOutAllMembers() {
+        // Implementation would clock out all team members
+        // For now, just a placeholder
+        print("Clock out all members of team: \(team.name ?? "Unknown")")
     }
 }
 
