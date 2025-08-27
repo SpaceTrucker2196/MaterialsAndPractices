@@ -447,9 +447,9 @@
         <attribute name="creditAmount" optional="YES" attributeType="Decimal"/>
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="debitAmount" optional="YES" attributeType="Decimal"/>
-        <attribute name="description" optional="YES" attributeType="String"/>
         <attribute name="entryType" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="ledgerDescription" optional="YES" attributeType="String"/>
         <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="reconciled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="referenceNumber" optional="YES" attributeType="String"/>
@@ -494,8 +494,8 @@
         <attribute name="isPaid" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="memo" optional="YES" attributeType="String"/>
         <attribute name="method" optional="YES" attributeType="String"/>
-        <attribute name="paymentStatus" optional="YES" attributeType="String"/>
         <attribute name="paidDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="paymentStatus" optional="YES" attributeType="String"/>
         <attribute name="referenceNumber" optional="YES" attributeType="String"/>
         <attribute name="sequence" optional="YES" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES"/>
         <relationship name="lease" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Lease" inverseName="payments" inverseEntity="Lease"/>
@@ -606,24 +606,6 @@
             <fetchIndexElement property="weekNumber" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
-    <entity name="WaterTest" representedClassName="WaterTest" syncable="YES" codeGenerationType="class">
-        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="ec_dSPerM" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="nitrate_ppm" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="notes" optional="YES" attributeType="String"/>
-        <attribute name="sodiumPct" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="source" optional="YES" attributeType="String"/>
-        <relationship name="document" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="waterTest" inverseEntity="Document"/>
-        <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="waterTests" inverseEntity="Property"/>
-        <relationship name="well" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Well" inverseName="waterTests" inverseEntity="Well"/>
-        <fetchIndex name="byDateIndex">
-            <fetchIndexElement property="date" type="Binary" order="ascending"/>
-        </fetchIndex>
-        <fetchIndex name="byIdIndex">
-            <fetchIndexElement property="id" type="Binary" order="ascending"/>
-        </fetchIndex>
-    </entity>
     <entity name="VendorContact" representedClassName="VendorContact" syncable="YES" codeGenerationType="class">
         <attribute name="address" optional="YES" attributeType="String"/>
         <attribute name="contactPerson" optional="YES" attributeType="String"/>
@@ -644,6 +626,24 @@
         </fetchIndex>
         <fetchIndex name="byVendorCodeIndex">
             <fetchIndexElement property="vendorCode" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="WaterTest" representedClassName="WaterTest" syncable="YES" codeGenerationType="class">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="ec_dSPerM" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="nitrate_ppm" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="sodiumPct" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="source" optional="YES" attributeType="String"/>
+        <relationship name="document" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="waterTest" inverseEntity="Document"/>
+        <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="waterTests" inverseEntity="Property"/>
+        <relationship name="well" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Well" inverseName="waterTests" inverseEntity="Well"/>
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
     <entity name="Well" representedClassName="Well" syncable="YES" codeGenerationType="class">

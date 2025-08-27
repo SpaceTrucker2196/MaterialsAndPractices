@@ -231,7 +231,7 @@ struct LeaseDetailView: View {
             }
             
             if payments.isEmpty {
-                EmptyStateView(
+                LeaseDetailEmptyStateView(
                     icon: "creditcard",
                     title: "No Payments Scheduled",
                     description: "Payment schedule will appear here once created"
@@ -287,13 +287,15 @@ struct LeaseDetailView: View {
     // MARK: - Computed Properties
     
     private var totalDueAmount: Decimal {
-        payments.filter { !$0.isPaid }.reduce(0) { $0 + $1.amount }
+        payments
+            .filter { !$0.isPaid }
+            .reduce(Decimal(0)) { $0 + ($1.amount?.decimalValue ?? 0) }
     }
     
     private var overdueAmount: Decimal {
         payments.filter { 
             !$0.isPaid && ($0.dueDate ?? Date()) < Date() 
-        }.reduce(0) { $0 + $1.amount }
+        }.reduce(0) { $0 +  ($1.amount?.decimalValue ?? 0)  }
     }
     
     private var paidYTDAmount: Decimal {
@@ -301,7 +303,7 @@ struct LeaseDetailView: View {
         return payments.filter { 
             $0.isPaid && 
             Calendar.current.component(.year, from: $0.paidDate ?? Date()) == currentYear 
-        }.reduce(0) { $0 + $1.amount }
+        }.reduce(0) { $0 + ($1.amount?.decimalValue ?? 0)  }
     }
     
     // MARK: - Actions
@@ -353,7 +355,7 @@ struct LeaseDetailView: View {
         - **End Date:** \(lease.endDate.map(formatter.string) ?? "Not specified")
         
         ## Financial Terms
-        - **Rent Amount:** \(formatCurrency(lease.rentAmount ?? 0))
+        - **Rent Amount:** \(formatCurrency((lease.rentAmount ?? 0) as Decimal))
         - **Payment Frequency:** \(lease.rentFrequency?.capitalized ?? "Not specified")
         
         ## Status
@@ -391,7 +393,7 @@ struct LeaseDetailView: View {
         ledgerEntry.creditAmount = 0
         ledgerEntry.accountCode = "4000" // Revenue account
         ledgerEntry.accountName = "Lease Revenue"
-        ledgerEntry.description = "Lease payment for \(lease.property?.displayName ?? "property")"
+        ledgerEntry.ledgerDescription = "Lease payment for \(lease.property?.displayName ?? "property")"
         ledgerEntry.entryType = "revenue"
         ledgerEntry.referenceNumber = payment.referenceNumber
         ledgerEntry.lease = lease
@@ -528,7 +530,7 @@ struct PaymentRowView: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
-                Text(formatCurrency(payment.amount))
+                Text(formatCurrency(payment.amount?.decimalValue ?? 0))
                     .font(AppTheme.Typography.bodyMedium)
                     .fontWeight(.medium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
@@ -604,7 +606,7 @@ struct LeaseActionButton: View {
 }
 
 /// Loading view
-struct LoadingView: View {
+struct LeaseLoadingView: View {
     var body: some View {
         VStack(spacing: AppTheme.Spacing.medium) {
             ProgressView()
@@ -619,7 +621,7 @@ struct LoadingView: View {
 }
 
 /// Empty state view
-struct EmptyStateView: View {
+struct LeaseDetailEmptyStateView: View {
     let icon: String
     let title: String
     let description: String

@@ -479,7 +479,7 @@ struct LeaseCreationWorkflowView: View {
         for (index, dueDate) in paymentDates.enumerated() {
             let payment = Payment(context: viewContext)
             payment.id = UUID()
-            payment.amount = paymentAmount.decimalValue
+            payment.amount = paymentAmount.decimalValue as NSDecimalNumber
             payment.dueDate = dueDate
             payment.isPaid = false
             payment.paymentStatus = "pending"

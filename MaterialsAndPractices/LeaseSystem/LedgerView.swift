@@ -150,7 +150,7 @@ struct LedgerView: View {
         // Filter by search text
         if !searchText.isEmpty {
             entries = entries.filter { entry in
-                (entry.description?.localizedCaseInsensitiveContains(searchText) ?? false) ||
+                (entry.ledgerDescription?.localizedCaseInsensitiveContains(searchText) ?? false) ||
                 (entry.accountName?.localizedCaseInsensitiveContains(searchText) ?? false) ||
                 (entry.vendorName?.localizedCaseInsensitiveContains(searchText) ?? false)
             }
@@ -185,9 +185,9 @@ struct LedgerView: View {
         
         return entries.reduce(0) { result, entry in
             if type == .expense || type == .asset {
-                return result + (entry.debitAmount ?? 0) - (entry.creditAmount ?? 0)
+                return result + (entry.debitAmount?.decimalValue ?? 0) - (entry.creditAmount?.decimalValue ?? 0)
             } else {
-                return result + (entry.creditAmount ?? 0) - (entry.debitAmount ?? 0)
+                return result + (entry.creditAmount?.decimalValue ?? 0) - (entry.debitAmount?.decimalValue ?? 0)
             }
         }
     }
@@ -351,14 +351,14 @@ struct LedgerEntryRowView: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
-                    if let debit = entry.debitAmount, debit > 0 {
-                        Text(formatCurrency(debit))
+                    if let debit = entry.debitAmount, debit.decimalValue > 0{
+                        Text(formatCurrency(debit.decimalValue))
                             .font(AppTheme.Typography.bodyMedium)
                             .fontWeight(.medium)
                             .foregroundColor(AppTheme.Colors.error)
                     }
                     
-                    if let credit = entry.creditAmount, credit > 0 {
+                    if let credit = entry.creditAmount?.decimalValue, credit > 0 {
                         Text(formatCurrency(credit))
                             .font(AppTheme.Typography.bodyMedium)
                             .fontWeight(.medium)
@@ -422,14 +422,14 @@ struct LedgerEntryDetailView: View {
                     
                     // Financial information
                     LedgerDetailSection(title: "Financial Details") {
-                        LedgerDetailRow(label: "Debit Amount", value: formatCurrency(entry.debitAmount ?? 0))
-                        LedgerDetailRow(label: "Credit Amount", value: formatCurrency(entry.creditAmount ?? 0))
-                        LedgerDetailRow(label: "Net Amount", value: formatCurrency(entry.amount))
+                        LedgerDetailRow(label: "Debit Amount", value: formatCurrency(entry.debitAmount?.decimalValue ?? 0))
+                        LedgerDetailRow(label: "Credit Amount", value: formatCurrency(entry.creditAmount?.decimalValue ?? 0))
+                        LedgerDetailRow(label: "Net Amount", value: formatCurrency(entry.amount?.decimalValue ?? 0))
                     }
                     
                     // Reference information
                     LedgerDetailSection(title: "Reference Information") {
-                        LedgerDetailRow(label: "Description", value: entry.description ?? "N/A")
+                        LedgerDetailRow(label: "Description", value: entry.ledgerDescription ?? "N/A")
                         LedgerDetailRow(label: "Reference Number", value: entry.referenceNumber ?? "N/A")
                         LedgerDetailRow(label: "Check Number", value: entry.checkNumber ?? "N/A")
                         LedgerDetailRow(label: "Vendor", value: entry.vendorName ?? "N/A")

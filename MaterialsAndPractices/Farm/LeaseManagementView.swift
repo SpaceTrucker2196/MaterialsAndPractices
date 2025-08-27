@@ -531,8 +531,8 @@ struct LeaseRowView: View {
         .cornerRadius(AppTheme.CornerRadius.medium)
     }
 }
-    }
-}
+
+
 
 /// Empty state view for leases
 struct LeaseEmptyStateView: View {
@@ -678,7 +678,7 @@ struct PaymentTileView: View {
                 .foregroundColor(AppTheme.Colors.textPrimary)
                 .lineLimit(1)
             
-            Text(formatCurrency(payment.amount))
+            Text(formatCurrency(payment.amount! as Decimal))
                 .font(AppTheme.Typography.headlineSmall)
                 .fontWeight(.bold)
                 .foregroundColor(AppTheme.Colors.textPrimary)
@@ -731,7 +731,14 @@ struct MorePaymentsTileView: View {
         .cornerRadius(AppTheme.CornerRadius.medium)
         .overlay(
             RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
-                .stroke(AppTheme.Colors.primary, lineWidth: 1, lineCap: .round, dash: [5])
+                .stroke(
+                    AppTheme.Colors.primary,
+                    style: StrokeStyle(
+                        lineWidth: 1,
+                        lineCap: .round,
+                        dash: [5]
+                    )
+                )
         )
     }
 }

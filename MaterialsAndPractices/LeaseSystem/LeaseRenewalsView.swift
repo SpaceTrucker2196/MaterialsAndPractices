@@ -332,7 +332,7 @@ struct RenewalLeaseCardView: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: AppTheme.Spacing.small) {
-                    Text(formatCurrency(lease.rentAmount ?? 0))
+                    Text(formatCurrency(lease.rentAmount?.decimalValue ?? 0))
                         .font(AppTheme.Typography.headlineSmall)
                         .fontWeight(.bold)
                         .foregroundColor(AppTheme.Colors.textPrimary)
@@ -437,7 +437,7 @@ struct LeaseRenewalFormView: View {
                             RenewalFormRow(label: "Property", value: originalLease.property?.displayName ?? "Unknown")
                             RenewalFormRow(label: "Farmer", value: originalLease.farmer?.name ?? "Unknown")
                             RenewalFormRow(label: "Type", value: originalLease.leaseType?.capitalized ?? "Unknown")
-                            RenewalFormRow(label: "Original Rent", value: formatCurrency(originalLease.rentAmount ?? 0))
+                            RenewalFormRow(label: "Original Rent", value: formatCurrency(originalLease.rentAmount?.decimalValue ?? 0))
                         }
                         .padding()
                         .background(AppTheme.Colors.backgroundSecondary)
@@ -542,7 +542,7 @@ struct LeaseRenewalFormView: View {
     // MARK: - Helper Methods
     
     private func setupFormDefaults() {
-        rentAmount = formatDecimalForInput(originalLease.rentAmount ?? 0)
+        rentAmount = formatDecimalForInput(originalLease.rentAmount?.decimalValue ?? 0)
         rentFrequency = originalLease.rentFrequency ?? "annual"
         notes = "Renewed from \(Calendar.current.component(.year, from: originalLease.startDate ?? Date())) lease"
     }
@@ -627,7 +627,7 @@ struct LeaseRenewalFormView: View {
         for (index, dueDate) in paymentDates.enumerated() {
             let payment = Payment(context: viewContext)
             payment.id = UUID()
-            payment.amount = paymentAmount.decimalValue
+            payment.amount = paymentAmount
             payment.dueDate = dueDate
             payment.isPaid = false
             payment.paymentStatus = "pending"

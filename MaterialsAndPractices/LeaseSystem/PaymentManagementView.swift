@@ -184,7 +184,7 @@ struct PaymentManagementView: View {
     }
     
     private func totalAmount(for payments: [Payment]) -> Decimal {
-        payments.reduce(0) { $0 + $1.amount }
+        payments.reduce(0) { $0 + ($1.amount?.decimalValue ?? 0) }
     }
     
     private func handlePaymentAction(_ payment: Payment) {
@@ -217,7 +217,7 @@ struct PaymentManagementView: View {
         ledgerEntry.creditAmount = 0
         ledgerEntry.accountCode = "4000" // Revenue account
         ledgerEntry.accountName = "Lease Revenue"
-        ledgerEntry.description = "Lease payment for \(payment.lease?.property?.displayName ?? "property")"
+        ledgerEntry.ledgerDescription = "Lease payment for \(payment.lease?.property?.displayName ?? "property")"
         ledgerEntry.entryType = "revenue"
         ledgerEntry.referenceNumber = payment.referenceNumber
         ledgerEntry.lease = payment.lease
@@ -377,12 +377,12 @@ struct PaymentCardView: View {
                     Spacer()
                     
                     VStack(alignment: .trailing, spacing: AppTheme.Spacing.small) {
-                        Text(formatCurrency(payment.amount))
+                        Text(formatCurrency(payment.amount?.decimalValue ?? 0))
                             .font(AppTheme.Typography.headlineSmall)
                             .fontWeight(.bold)
                             .foregroundColor(AppTheme.Colors.textPrimary)
                         
-                        StatusBadge(text: statusText, color: statusColor)
+                        PaymentStatusBadge(text: statusText, color: statusColor)
                     }
                 }
                 
@@ -427,7 +427,7 @@ struct PaymentCardView: View {
 }
 
 /// Status badge component
-struct StatusBadge: View {
+struct PaymentStatusBadge: View {
     let text: String
     let color: Color
     
