@@ -291,7 +291,7 @@ struct LeaseCreationWorkflowView: View {
                 ReviewRow(label: "Growing Year", value: "\(growingYear)")
                 ReviewRow(label: "Property", value: selectedProperty?.displayName ?? "None")
                 ReviewRow(label: "Farmer", value: selectedFarmer?.name ?? "None")
-                ReviewRow(label: "Lease Period", value: "\(startDate, style: .date) - \(endDate, style: .date)")
+                ReviewRow(label: "Lease Period", value: "\(startDate) - \(endDate)")
                 ReviewRow(label: "Rent Amount", value: "$\(rentAmount)")
                 ReviewRow(label: "Payment Frequency", value: rentFrequency.replacingOccurrences(of: "_", with: " ").capitalized)
             }
@@ -390,7 +390,7 @@ struct LeaseCreationWorkflowView: View {
                 leaseType: leaseType,
                 startDate: startDate,
                 endDate: endDate,
-                rentAmount: NSDecimalNumber(string: rentAmount)?.decimalValue,
+                rentAmount: NSDecimalNumber(string: rentAmount).decimalValue,
                 rentFrequency: rentFrequency
             )
             

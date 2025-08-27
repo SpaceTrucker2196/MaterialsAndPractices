@@ -101,8 +101,8 @@ class LeaseDocumentExporter {
 - **Property Name:** \(lease.property?.displayName ?? "N/A")
 - **County:** \(lease.property?.county ?? "N/A")
 - **State:** \(lease.property?.state ?? "N/A")
-- **Total Acres:** \(lease.property?.totalAcres ?? 0, specifier: "%.1f") acres
-- **Tillable Acres:** \(lease.property?.tillableAcres ?? 0, specifier: "%.1f") acres
+- **Total Acres:** \(String(format: "%.1f", lease.property?.totalAcres ?? 0)) acres
+- **Tillable Acres:** \(String(format: "%.1f", lease.property?.tillableAcres ?? 0)) acres
 
 ### Tenant Information
 - **Farmer/Tenant:** \(lease.farmer?.name ?? "N/A")
@@ -117,9 +117,9 @@ class LeaseDocumentExporter {
 - **Status:** \(lease.status?.capitalized ?? "N/A")
 
 ### Financial Terms
-- **Rent Amount:** $\(lease.rentAmount?.doubleValue ?? 0, specifier: "%.2f")
+- **Rent Amount:** $\(String(format: "%.2f", lease.rentAmount?.doubleValue ?? 0))
 - **Payment Frequency:** \(lease.rentFrequency?.replacingOccurrences(of: "_", with: " ").capitalized ?? "N/A")
-- **Crop Share Percentage:** \(lease.cropSharePct, specifier: "%.1f")%
+- **Crop Share Percentage:** \(String(format: "%.1f", lease.cropSharePct))%
 
 ### Responsibilities
 - **Property Tax:** \(lease.propertyTaxResponsibility ?? "Not specified")
@@ -133,7 +133,7 @@ class LeaseDocumentExporter {
 
 \(lease.notes ?? "No additional notes")
 
-\(lease.restrictions.map { "**Restrictions:** \\($0)" } ?? "")
+\(lease.restrictions.map { _ in "**Restrictions:** \\($0)" } ?? "")
 
 ---
 
@@ -190,7 +190,7 @@ This document serves as a summary of the lease agreement for the above-mentioned
 |--------------|------------|-------------|--------|-------|
 | No payments scheduled for this period | | | | |
 
-**Total Annual Rent:** $\(lease.rentAmount?.doubleValue ?? 0, specifier: "%.2f")
+**Total Annual Rent:** $\(String(format: "%.2f", lease.rentAmount?.doubleValue ?? 0))
 """
         }
         
@@ -208,7 +208,7 @@ This document serves as a summary of the lease agreement for the above-mentioned
         paymentTable += """
 
 **Payment Frequency:** \(frequency.replacingOccurrences(of: "_", with: " ").capitalized)
-**Total Annual Rent:** $\(lease.rentAmount?.doubleValue ?? 0, specifier: "%.2f")
+**Total Annual Rent:** $\(String(format: "%.2f", lease.rentAmount?.doubleValue ?? 0))
 **Payments Received to Date:** $______
 **Balance Due:** $______
 """
@@ -276,9 +276,9 @@ This document serves as a summary of the lease agreement for the above-mentioned
         
         reportContent += """
 - **Active Leases:** \(activeLeaseCount)
-- **Total Leased Acres:** \(totalAcres, specifier: "%.1f") acres
-- **Total Annual Rent:** $\(totalRentAmount, specifier: "%.2f")
-- **Average Rent per Acre:** $\(totalAcres > 0 ? totalRentAmount / totalAcres : 0, specifier: "%.2f")
+- **Total Leased Acres:** \(String(format: "%.1f", totalAcres)) acres
+- **Total Annual Rent:** $\(String(format: "%.2f", totalRentAmount))
+- **Average Rent per Acre:** $\(String(format: "%.2f", totalAcres > 0 ? totalRentAmount / totalAcres : 0))
 
 ## Property Details
 
@@ -292,7 +292,7 @@ This document serves as a summary of the lease agreement for the above-mentioned
 ### \(property.displayName ?? "Unknown Property")
 
 - **Location:** \(property.county ?? "N/A"), \(property.state ?? "N/A")
-- **Total Acres:** \(property.totalAcres, specifier: "%.1f") acres
+- **Total Acres:** \(String(format: "%.1f", property.totalAcres)) acres
 - **Active Leases:** \(activeLeases.count)
 
 """
@@ -301,7 +301,7 @@ This document serves as a summary of the lease agreement for the above-mentioned
                 reportContent += """
 #### Lease with \(lease.farmer?.name ?? "Unknown Farmer")
 - **Type:** \(lease.leaseType?.capitalized ?? "N/A")
-- **Rent:** $\(lease.rentAmount?.doubleValue ?? 0, specifier: "%.2f") (\(lease.rentFrequency ?? "N/A"))
+- **Rent:** $\(String(format: "%.2f", lease.rentAmount?.doubleValue ?? 0)) (\(lease.rentFrequency ?? "N/A"))
 - **Period:** \(lease.startDate.map { DateFormatter.localizedString(from: $0, dateStyle: .short, timeStyle: .none) } ?? "N/A") - \(lease.endDate.map { DateFormatter.localizedString(from: $0, dateStyle: .short, timeStyle: .none) } ?? "N/A")
 
 """

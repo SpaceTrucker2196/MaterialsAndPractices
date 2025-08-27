@@ -33,7 +33,6 @@
 		1FB247BB2E5ACC3000F7BAF7 /* PhotoOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */; };
 		1FB247C12E5ACD7C00F7BAF7 /* CommonUIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */; };
 		1FBCAA902E5E769600E3C619 /* LeaseManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA8E2E5E769600E3C619 /* LeaseManagementView.swift */; };
-		1FBCAA9B2E5E773800E3C619 /* MaterialsAndPractices.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA922E5E773800E3C619 /* MaterialsAndPractices.xcdatamodeld */; };
 		1FCCE7272E5BFEB6004FC07C /* FiraCode-Retina.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCE7252E5BFEB6004FC07C /* FiraCode-Retina.ttf */; };
 		1FCCE7282E5BFEB6004FC07C /* FiraCode-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCE7262E5BFEB6004FC07C /* FiraCode-SemiBold.ttf */; };
 		1FCCE7292E5BFEB6004FC07C /* FiraCode-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCE7222E5BFEB6004FC07C /* FiraCode-Light.ttf */; };
@@ -74,6 +73,12 @@
 		1FEE44B02E5E06FD00A1887B /* TeamCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE44AF2E5E06FD00A1887B /* TeamCreationView.swift */; };
 		1FEE44C22E5E168400A1887B /* DeviceDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE44BF2E5E168400A1887B /* DeviceDetection.swift */; };
 		1FEE44C42E5E168400A1887B /* AdaptiveDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEE44BE2E5E168400A1887B /* AdaptiveDashboardView.swift */; };
+		AB0FC3DF2E5EC02A00FD8006 /* MaterialsAndPractices.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = AB0FC3D62E5EC02A00FD8006 /* MaterialsAndPractices.xcdatamodeld */; };
+		AB0FC3E12E5EC47B00FD8006 /* LeaseTemplateSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0FC3E02E5EC47B00FD8006 /* LeaseTemplateSeeder.swift */; };
+		AB0FC3E32E5EC4D400FD8006 /* LeaseDirectoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0FC3E22E5EC4D400FD8006 /* LeaseDirectoryManager.swift */; };
+		AB0FC3E92E5EC8C300FD8006 /* LeaseCreationWorkflowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0FC3E62E5EC8C300FD8006 /* LeaseCreationWorkflowView.swift */; };
+		AB0FC3EA2E5EC8C300FD8006 /* LeaseStatusIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0FC3E82E5EC8C300FD8006 /* LeaseStatusIndicator.swift */; };
+		AB0FC3EB2E5EC8C300FD8006 /* LeaseDocumentExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0FC3E72E5EC8C300FD8006 /* LeaseDocumentExporter.swift */; };
 		BULGI508SCW0VCS6XNM4Y2ZV /* SoilTestDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = NKCZL87A0C3JQ1IZLFUD8ZDS /* SoilTestDetailView.swift */; };
 		D7U2HNQLDO5CUE50OC42PT2E /* FieldSelectionTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8GFUYTO4QAHEWPUN0F9IOJHU /* FieldSelectionTileView.swift */; };
 		FV3VC1I7GJ337VBU8UY2D9G2 /* SoilTestGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E83I4ZLSTFFFKKCKEG26K34 /* SoilTestGraphics.swift */; };
@@ -134,14 +139,6 @@
 		1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoOverlay.swift; sourceTree = "<group>"; };
 		1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUIComponents.swift; sourceTree = "<group>"; };
 		1FBCAA8E2E5E769600E3C619 /* LeaseManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LeaseManagementView.swift; path = Farm/LeaseManagementView.swift; sourceTree = "<group>"; };
-		1FBCAA932E5E773800E3C619 /* MaterialsAndPractices.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MaterialsAndPractices.xcdatamodel; sourceTree = "<group>"; };
-		1FBCAA942E5E773800E3C619 /* MaterialsAndPractices 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 2.xcdatamodel"; sourceTree = "<group>"; };
-		1FBCAA952E5E773800E3C619 /* MaterialsAndPractices 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 3.xcdatamodel"; sourceTree = "<group>"; };
-		1FBCAA962E5E773800E3C619 /* MaterialsAndPractices 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 4.xcdatamodel"; sourceTree = "<group>"; };
-		1FBCAA972E5E773800E3C619 /* MaterialsAndPractices 4_CSVSync.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 4_CSVSync.xcdatamodel"; sourceTree = "<group>"; };
-		1FBCAA982E5E773800E3C619 /* MaterialsAndPractices 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 5.xcdatamodel"; sourceTree = "<group>"; };
-		1FBCAA992E5E773800E3C619 /* MaterialsAndPractices 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 6.xcdatamodel"; sourceTree = "<group>"; };
-		1FBCAA9A2E5E773800E3C619 /* MaterialsAndPractices 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 7.xcdatamodel"; sourceTree = "<group>"; };
 		1FCCE7212E5BFEB6004FC07C /* FiraCode-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Bold.ttf"; sourceTree = "<group>"; };
 		1FCCE7222E5BFEB6004FC07C /* FiraCode-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Light.ttf"; sourceTree = "<group>"; };
 		1FCCE7232E5BFEB6004FC07C /* FiraCode-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Medium.ttf"; sourceTree = "<group>"; };
@@ -184,6 +181,19 @@
 		1FEE44BF2E5E168400A1887B /* DeviceDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetection.swift; sourceTree = "<group>"; };
 		6E83I4ZLSTFFFKKCKEG26K34 /* SoilTestGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestGraphics.swift; sourceTree = "<group>"; };
 		8GFUYTO4QAHEWPUN0F9IOJHU /* FieldSelectionTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldSelectionTileView.swift; sourceTree = "<group>"; };
+		AB0FC3D72E5EC02A00FD8006 /* MaterialsAndPractices.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MaterialsAndPractices.xcdatamodel; sourceTree = "<group>"; };
+		AB0FC3D82E5EC02A00FD8006 /* MaterialsAndPractices 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 2.xcdatamodel"; sourceTree = "<group>"; };
+		AB0FC3D92E5EC02A00FD8006 /* MaterialsAndPractices 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 3.xcdatamodel"; sourceTree = "<group>"; };
+		AB0FC3DA2E5EC02A00FD8006 /* MaterialsAndPractices 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 4.xcdatamodel"; sourceTree = "<group>"; };
+		AB0FC3DB2E5EC02A00FD8006 /* MaterialsAndPractices 4_CSVSync.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 4_CSVSync.xcdatamodel"; sourceTree = "<group>"; };
+		AB0FC3DC2E5EC02A00FD8006 /* MaterialsAndPractices 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 5.xcdatamodel"; sourceTree = "<group>"; };
+		AB0FC3DD2E5EC02A00FD8006 /* MaterialsAndPractices 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 6.xcdatamodel"; sourceTree = "<group>"; };
+		AB0FC3DE2E5EC02A00FD8006 /* MaterialsAndPractices 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 7.xcdatamodel"; sourceTree = "<group>"; };
+		AB0FC3E02E5EC47B00FD8006 /* LeaseTemplateSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaseTemplateSeeder.swift; sourceTree = "<group>"; };
+		AB0FC3E22E5EC4D400FD8006 /* LeaseDirectoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LeaseDirectoryManager.swift; path = LeaseSystem/LeaseDirectoryManager.swift; sourceTree = "<group>"; };
+		AB0FC3E62E5EC8C300FD8006 /* LeaseCreationWorkflowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LeaseCreationWorkflowView.swift; path = LeaseSystem/LeaseCreationWorkflowView.swift; sourceTree = "<group>"; };
+		AB0FC3E72E5EC8C300FD8006 /* LeaseDocumentExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LeaseDocumentExporter.swift; path = LeaseSystem/LeaseDocumentExporter.swift; sourceTree = "<group>"; };
+		AB0FC3E82E5EC8C300FD8006 /* LeaseStatusIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LeaseStatusIndicator.swift; path = LeaseSystem/LeaseStatusIndicator.swift; sourceTree = "<group>"; };
 		EGZMTBQX29E4S5J5EFAHU359 /* SoilTestEducationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestEducationView.swift; sourceTree = "<group>"; };
 		NKCZL87A0C3JQ1IZLFUD8ZDS /* SoilTestDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilTestDetailView.swift; sourceTree = "<group>"; };
 		PDUH5NOMGZ3C1JVZCC3MNF5Y /* LabManagementViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabManagementViews.swift; sourceTree = "<group>"; };
@@ -254,7 +264,12 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
-				1FBCAA922E5E773800E3C619 /* MaterialsAndPractices.xcdatamodeld */,
+				AB0FC3E62E5EC8C300FD8006 /* LeaseCreationWorkflowView.swift */,
+				AB0FC3E72E5EC8C300FD8006 /* LeaseDocumentExporter.swift */,
+				AB0FC3E82E5EC8C300FD8006 /* LeaseStatusIndicator.swift */,
+				AB0FC3E22E5EC4D400FD8006 /* LeaseDirectoryManager.swift */,
+				AB0FC3E02E5EC47B00FD8006 /* LeaseTemplateSeeder.swift */,
+				AB0FC3D62E5EC02A00FD8006 /* MaterialsAndPractices.xcdatamodeld */,
 				1FBCAA8E2E5E769600E3C619 /* LeaseManagementView.swift */,
 				1F85D6922E5D520700CABF8D /* LocalizationUtility.swift */,
 				1FBCAA562E5E596200E3C619 /* InspectionSystem */,
@@ -573,10 +588,11 @@
 				1FB247B72E5ACC3000F7BAF7 /* PhotoGalleryView.swift in Sources */,
 				1FBCAA902E5E769600E3C619 /* LeaseManagementView.swift in Sources */,
 				1FEE44AD2E5E053A00A1887B /* WorkOrderAssignmentView.swift in Sources */,
-				1FBCAA9B2E5E773800E3C619 /* MaterialsAndPractices.xcdatamodeld in Sources */,
 				1FEE44AE2E5E053A00A1887B /* WorkOrderListView.swift in Sources */,
 				1FB247B92E5ACC3000F7BAF7 /* PhotoManager.swift in Sources */,
 				1FB247BA2E5ACC3000F7BAF7 /* PhotoCaptureView.swift in Sources */,
+				AB0FC3DF2E5EC02A00FD8006 /* MaterialsAndPractices.xcdatamodeld in Sources */,
+				AB0FC3E32E5EC4D400FD8006 /* LeaseDirectoryManager.swift in Sources */,
 				1FB247BB2E5ACC3000F7BAF7 /* PhotoOverlay.swift in Sources */,
 				1FEE44C22E5E168400A1887B /* DeviceDetection.swift in Sources */,
 				1FEE44C42E5E168400A1887B /* AdaptiveDashboardView.swift in Sources */,
@@ -594,9 +610,13 @@
 				1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */,
 				1F06C22325807A5A006F8C83 /* OptionalBinding.swift in Sources */,
 				1FCEB4532E5B790100021D62 /* CreateFieldView.swift in Sources */,
+				AB0FC3E12E5EC47B00FD8006 /* LeaseTemplateSeeder.swift in Sources */,
 				1FCEB4542E5B790100021D62 /* SoilTestListView.swift in Sources */,
 				1FCEB4622E5B7C0E00021D62 /* HarvestSafetyChecklist.swift in Sources */,
 				1FCEB4632E5B7C0E00021D62 /* EnhancedEditGrowView.swift in Sources */,
+				AB0FC3E92E5EC8C300FD8006 /* LeaseCreationWorkflowView.swift in Sources */,
+				AB0FC3EA2E5EC8C300FD8006 /* LeaseStatusIndicator.swift in Sources */,
+				AB0FC3EB2E5EC8C300FD8006 /* LeaseDocumentExporter.swift in Sources */,
 				1FCEB4562E5B790100021D62 /* FarmDashboardView.swift in Sources */,
 				1FEE44B02E5E06FD00A1887B /* TeamCreationView.swift in Sources */,
 				1FCEB4582E5B790100021D62 /* FieldManagementViews.swift in Sources */,
@@ -944,19 +964,19 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		1FBCAA922E5E773800E3C619 /* MaterialsAndPractices.xcdatamodeld */ = {
+		AB0FC3D62E5EC02A00FD8006 /* MaterialsAndPractices.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				1FBCAA932E5E773800E3C619 /* MaterialsAndPractices.xcdatamodel */,
-				1FBCAA942E5E773800E3C619 /* MaterialsAndPractices 2.xcdatamodel */,
-				1FBCAA952E5E773800E3C619 /* MaterialsAndPractices 3.xcdatamodel */,
-				1FBCAA962E5E773800E3C619 /* MaterialsAndPractices 4.xcdatamodel */,
-				1FBCAA972E5E773800E3C619 /* MaterialsAndPractices 4_CSVSync.xcdatamodel */,
-				1FBCAA982E5E773800E3C619 /* MaterialsAndPractices 5.xcdatamodel */,
-				1FBCAA992E5E773800E3C619 /* MaterialsAndPractices 6.xcdatamodel */,
-				1FBCAA9A2E5E773800E3C619 /* MaterialsAndPractices 7.xcdatamodel */,
+				AB0FC3D72E5EC02A00FD8006 /* MaterialsAndPractices.xcdatamodel */,
+				AB0FC3D82E5EC02A00FD8006 /* MaterialsAndPractices 2.xcdatamodel */,
+				AB0FC3D92E5EC02A00FD8006 /* MaterialsAndPractices 3.xcdatamodel */,
+				AB0FC3DA2E5EC02A00FD8006 /* MaterialsAndPractices 4.xcdatamodel */,
+				AB0FC3DB2E5EC02A00FD8006 /* MaterialsAndPractices 4_CSVSync.xcdatamodel */,
+				AB0FC3DC2E5EC02A00FD8006 /* MaterialsAndPractices 5.xcdatamodel */,
+				AB0FC3DD2E5EC02A00FD8006 /* MaterialsAndPractices 6.xcdatamodel */,
+				AB0FC3DE2E5EC02A00FD8006 /* MaterialsAndPractices 7.xcdatamodel */,
 			);
-			currentVersion = 1FBCAA9A2E5E773800E3C619 /* MaterialsAndPractices 7.xcdatamodel */;
+			currentVersion = AB0FC3DE2E5EC02A00FD8006 /* MaterialsAndPractices 7.xcdatamodel */;
 			path = MaterialsAndPractices.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

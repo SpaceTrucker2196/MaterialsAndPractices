@@ -205,7 +205,7 @@ class LeaseDirectoryManager {
         """
         
         // Insert header after first # header
-        if let range = content.range(of: "\n", options: [], range: content.range(of: "#")?.upperBound..<content.endIndex) {
+        if let range = content.range(of: "\n", options: [], range: content.range(of: "#")!.upperBound..<content.endIndex) {
             content.insert(contentsOf: headerSection, at: range.upperBound)
         }
         
