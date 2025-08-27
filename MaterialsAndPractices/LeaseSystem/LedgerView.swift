@@ -14,10 +14,12 @@ import CoreData
 /// GAAP-compliant ledger view for agricultural business accounting
 struct LedgerView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var selectedAccount: String = "All"
     @State private var selectedDateRange: DateRange = .thisMonth
     @State private var showingNewEntry = false
     @State private var searchText = ""
+    @State private var selectedEntry: LedgerEntry?
     
     // Fetch ledger entries
     @FetchRequest(
@@ -29,35 +31,79 @@ struct LedgerView: View {
     ) private var allLedgerEntries: FetchedResults<LedgerEntry>
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                ledgerSummarySection
-                
-                filterSection
-                
-                ScrollView {
-                    LazyVStack(spacing: AppTheme.Spacing.small) {
-                        ForEach(filteredEntries, id: \.objectID) { entry in
-                            LedgerEntryRowView(entry: entry)
+        GeometryReader { geometry in
+            if horizontalSizeClass == .regular && geometry.size.width > 600 {
+                // iPad layout with expanded view
+                HSplitView {
+                    // Master list view
+                    VStack(spacing: 0) {
+                        ledgerSummarySection
+                        filterSection
+                        
+                        List(filteredEntries, id: \.objectID, selection: $selectedEntry) { entry in
+                            LedgerEntryRowView(entry: entry, showDetailSheet: false) {
+                                selectedEntry = entry
+                            }
+                        }
+                        .searchable(text: $searchText, prompt: "Search entries...")
+                    }
+                    .frame(minWidth: 300, maxWidth: 400)
+                    
+                    // Detail view
+                    if let selectedEntry = selectedEntry {
+                        LedgerEntryDetailView(entry: selectedEntry, isSheet: false)
+                    } else {
+                        VStack {
+                            Image(systemName: "book.closed")
+                                .font(.system(size: 64))
+                                .foregroundColor(AppTheme.Colors.textTertiary)
+                            
+                            Text("Select a ledger entry to view details")
+                                .font(AppTheme.Typography.bodyLarge)
+                                .foregroundColor(AppTheme.Colors.textSecondary)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(AppTheme.Colors.backgroundSecondary)
+                    }
+                }
+                .navigationTitle("General Ledger")
+                .navigationBarTitleDisplayMode(.large)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("New Entry") {
+                            showingNewEntry = true
+                        }
+                        .foregroundColor(AppTheme.Colors.primary)
+                    }
+                }
+            } else {
+                // iPhone layout with navigation
+                NavigationView {
+                    VStack(spacing: 0) {
+                        ledgerSummarySection
+                        
+                        filterSection
+                        
+                        List(filteredEntries, id: \.objectID) { entry in
+                            LedgerEntryRowView(entry: entry, showDetailSheet: true) { }
+                        }
+                        .searchable(text: $searchText, prompt: "Search entries...")
+                    }
+                    .navigationTitle("General Ledger")
+                    .navigationBarTitleDisplayMode(.large)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("New Entry") {
+                                showingNewEntry = true
+                            }
+                            .foregroundColor(AppTheme.Colors.primary)
                         }
                     }
-                    .padding()
                 }
             }
-            .navigationTitle("General Ledger")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("New Entry") {
-                        showingNewEntry = true
-                    }
-                    .foregroundColor(AppTheme.Colors.primary)
-                }
-            }
-            .searchable(text: $searchText, prompt: "Search entries...")
-            .sheet(isPresented: $showingNewEntry) {
-                NewLedgerEntryView()
-            }
+        }
+        .sheet(isPresented: $showingNewEntry) {
+            NewLedgerEntryView()
         }
     }
     
@@ -152,7 +198,9 @@ struct LedgerView: View {
             entries = entries.filter { entry in
                 (entry.ledgerDescription?.localizedCaseInsensitiveContains(searchText) ?? false) ||
                 (entry.accountName?.localizedCaseInsensitiveContains(searchText) ?? false) ||
-                (entry.vendorName?.localizedCaseInsensitiveContains(searchText) ?? false)
+                (entry.vendorName?.localizedCaseInsensitiveContains(searchText) ?? false) ||
+                (entry.referenceNumber?.localizedCaseInsensitiveContains(searchText) ?? false) ||
+                (entry.notes?.localizedCaseInsensitiveContains(searchText) ?? false)
             }
         }
         
@@ -315,31 +363,74 @@ struct DateRangeChip: View {
 /// Individual ledger entry row
 struct LedgerEntryRowView: View {
     let entry: LedgerEntry
+    let showDetailSheet: Bool
+    let onTap: () -> Void
     @State private var showingDetail = false
+    
+    init(entry: LedgerEntry, showDetailSheet: Bool = true, onTap: @escaping () -> Void = {}) {
+        self.entry = entry
+        self.showDetailSheet = showDetailSheet
+        self.onTap = onTap
+    }
     
     var body: some View {
         Button(action: {
-            showingDetail = true
+            if showDetailSheet {
+                showingDetail = true
+            } else {
+                onTap()
+            }
         }) {
-            HStack {
+            HStack(spacing: AppTheme.Spacing.medium) {
+                // Icon and emoji/symbol
+                VStack {
+                    if let emoji = entry.emoji, !emoji.isEmpty {
+                        Text(emoji)
+                            .font(.title2)
+                    } else if let symbol = entry.iosSymbol, !symbol.isEmpty {
+                        Image(systemName: symbol)
+                            .font(.title2)
+                            .foregroundColor(AppTheme.Colors.primary)
+                    } else {
+                        Image(systemName: "doc.text")
+                            .font(.title2)
+                            .foregroundColor(AppTheme.Colors.textTertiary)
+                    }
+                }
+                .frame(width: 40)
+                
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
                     HStack {
-                        Text(entry.accountCode ?? "")
-                            .font(AppTheme.Typography.bodySmall)
-                            .fontWeight(.medium)
-                            .foregroundColor(AppTheme.Colors.primary)
-                        
-                        Text(entry.accountName ?? "Unknown Account")
-                            .font(AppTheme.Typography.bodyMedium)
-                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        // Account code with organic certification indicator
+                        HStack(spacing: AppTheme.Spacing.tiny) {
+                            Text(entry.accountCode ?? "")
+                                .font(AppTheme.Typography.bodySmall)
+                                .fontWeight(.medium)
+                                .foregroundColor(AppTheme.Colors.primary)
+                            
+                            // Organic certification indicator
+                            if isOrganicRelated {
+                                RoundedRectangle(cornerRadius: 3)
+                                    .fill(AppTheme.Colors.compliance)
+                                    .frame(width: 8, height: 8)
+                            }
+                        }
                         
                         Spacer()
+                        
+                        // Transaction type indicator
+                        transactionTypeIndicator
                     }
                     
-                    Text(entry.description ?? "No description")
+                    Text(entry.accountName ?? "Unknown Account")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                        .lineLimit(1)
+                    
+                    Text(entry.ledgerDescription ?? "No description")
                         .font(AppTheme.Typography.bodySmall)
                         .foregroundColor(AppTheme.Colors.textSecondary)
-                        .lineLimit(1)
+                        .lineLimit(2)
                     
                     if let date = entry.date {
                         Text(date, style: .date)
@@ -351,7 +442,7 @@ struct LedgerEntryRowView: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
-                    if let debit = entry.debitAmount, debit.decimalValue > 0{
+                    if let debit = entry.debitAmount, debit.decimalValue > 0 {
                         Text(formatCurrency(debit.decimalValue))
                             .font(AppTheme.Typography.bodyMedium)
                             .fontWeight(.medium)
@@ -378,7 +469,34 @@ struct LedgerEntryRowView: View {
         }
         .buttonStyle(PlainButtonStyle())
         .sheet(isPresented: $showingDetail) {
-            LedgerEntryDetailView(entry: entry)
+            LedgerEntryDetailView(entry: entry, isSheet: true)
+        }
+    }
+    
+    private var transactionTypeIndicator: some View {
+        HStack(spacing: 4) {
+            if let debit = entry.debitAmount, debit.decimalValue > 0 {
+                Circle()
+                    .fill(AppTheme.Colors.error)
+                    .frame(width: 8, height: 8)
+            }
+            
+            if let credit = entry.creditAmount?.decimalValue, credit > 0 {
+                Circle()
+                    .fill(AppTheme.Colors.success)
+                    .frame(width: 8, height: 8)
+            }
+        }
+    }
+    
+    private var isOrganicRelated: Bool {
+        let organicKeywords = ["organic", "compost", "certification", "inspect"]
+        let description = (entry.ledgerDescription ?? "").lowercased()
+        let notes = (entry.notes ?? "").lowercased()
+        let vendor = (entry.vendorName ?? "").lowercased()
+        
+        return organicKeywords.contains { keyword in
+            description.contains(keyword) || notes.contains(keyword) || vendor.contains(keyword)
         }
     }
     
@@ -392,108 +510,203 @@ struct LedgerEntryRowView: View {
 /// Detailed view for a single ledger entry
 struct LedgerEntryDetailView: View {
     let entry: LedgerEntry
+    let isSheet: Bool
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.managedObjectContext) private var viewContext
     @State private var notes: String = ""
     @State private var isEditing = false
+    @State private var reconciled: Bool = false
+    
+    init(entry: LedgerEntry, isSheet: Bool = true) {
+        self.entry = entry
+        self.isSheet = isSheet
+    }
     
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
-                    // Entry header
-                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                        Text("Ledger Entry Detail")
-                            .font(AppTheme.Typography.displaySmall)
-                            .foregroundColor(AppTheme.Colors.textPrimary)
-                        
-                        if let date = entry.date {
-                            Text(date, style: .date)
-                                .font(AppTheme.Typography.bodyMedium)
-                                .foregroundColor(AppTheme.Colors.textSecondary)
+        Group {
+            if isSheet {
+                NavigationView {
+                    detailContent
+                        .navigationTitle("Entry Details")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button("Close") {
+                                    presentationMode.wrappedValue.dismiss()
+                                }
+                            }
+                            
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button(isEditing ? "Save" : "Edit") {
+                                    if isEditing {
+                                        saveChanges()
+                                    }
+                                    isEditing.toggle()
+                                }
+                                .foregroundColor(AppTheme.Colors.primary)
+                            }
                         }
-                    }
-                    
-                    // Account information
-                    LedgerDetailSection(title: "Account Information") {
-                        LedgerDetailRow(label: "Account Code", value: entry.accountCode ?? "N/A")
-                        LedgerDetailRow(label: "Account Name", value: entry.accountName ?? "N/A")
-                        LedgerDetailRow(label: "Entry Type", value: entry.entryType?.capitalized ?? "N/A")
-                    }
-                    
-                    // Financial information
-                    LedgerDetailSection(title: "Financial Details") {
-                        LedgerDetailRow(label: "Debit Amount", value: formatCurrency(entry.debitAmount?.decimalValue ?? 0))
-                        LedgerDetailRow(label: "Credit Amount", value: formatCurrency(entry.creditAmount?.decimalValue ?? 0))
-                        LedgerDetailRow(label: "Net Amount", value: formatCurrency(entry.amount?.decimalValue ?? 0))
-                    }
-                    
-                    // Reference information
-                    LedgerDetailSection(title: "Reference Information") {
-                        LedgerDetailRow(label: "Description", value: entry.ledgerDescription ?? "N/A")
-                        LedgerDetailRow(label: "Reference Number", value: entry.referenceNumber ?? "N/A")
-                        LedgerDetailRow(label: "Check Number", value: entry.checkNumber ?? "N/A")
-                        LedgerDetailRow(label: "Vendor", value: entry.vendorName ?? "N/A")
-                    }
-                    
-                    // Notes section
-                    VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+                }
+            } else {
+                VStack(alignment: .leading, spacing: 0) {
+                    // Header
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
                         HStack {
-                            Text("Notes")
-                                .font(AppTheme.Typography.headlineSmall)
+                            Text("Entry Details")
+                                .font(AppTheme.Typography.headlineLarge)
                                 .foregroundColor(AppTheme.Colors.textPrimary)
                             
                             Spacer()
                             
                             Button(isEditing ? "Save" : "Edit") {
                                 if isEditing {
-                                    saveNotes()
+                                    saveChanges()
                                 }
                                 isEditing.toggle()
                             }
                             .foregroundColor(AppTheme.Colors.primary)
                         }
                         
-                        if isEditing {
-                            TextEditor(text: $notes)
-                                .frame(minHeight: 100)
-                                .padding()
-                                .background(AppTheme.Colors.backgroundSecondary)
-                                .cornerRadius(AppTheme.CornerRadius.medium)
-                        } else {
-                            Text(notes.isEmpty ? "No notes" : notes)
-                                .font(AppTheme.Typography.bodyMedium)
-                                .foregroundColor(AppTheme.Colors.textSecondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding()
-                                .background(AppTheme.Colors.backgroundSecondary)
-                                .cornerRadius(AppTheme.CornerRadius.medium)
-                        }
+                        Divider()
                     }
+                    .padding()
+                    .background(AppTheme.Colors.backgroundPrimary)
+                    
+                    // Content
+                    detailContent
                 }
-                .padding()
+                .background(AppTheme.Colors.backgroundSecondary)
             }
-            .navigationTitle("Entry Details")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") {
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                }
-            }
-            .onAppear {
-                notes = entry.notes ?? ""
-            }
+        }
+        .onAppear {
+            notes = entry.notes ?? ""
+            reconciled = entry.reconciled
         }
     }
     
-    private func saveNotes() {
+    private var detailContent: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                // Entry header with emoji/icon
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    HStack {
+                        if let emoji = entry.emoji, !emoji.isEmpty {
+                            Text(emoji)
+                                .font(.system(size: 40))
+                        } else if let symbol = entry.iosSymbol, !symbol.isEmpty {
+                            Image(systemName: symbol)
+                                .font(.system(size: 32))
+                                .foregroundColor(AppTheme.Colors.primary)
+                        }
+                        
+                        VStack(alignment: .leading) {
+                            Text("Ledger Entry")
+                                .font(AppTheme.Typography.displaySmall)
+                                .foregroundColor(AppTheme.Colors.textPrimary)
+                            
+                            if let date = entry.date {
+                                Text(date, style: .date)
+                                    .font(AppTheme.Typography.bodyMedium)
+                                    .foregroundColor(AppTheme.Colors.textSecondary)
+                            }
+                        }
+                        
+                        Spacer()
+                    }
+                }
+                
+                // Account information
+                LedgerDetailSection(title: "Account Information") {
+                    LedgerDetailRow(label: "Account Code", value: entry.accountCode ?? "N/A")
+                    LedgerDetailRow(label: "Account Name", value: entry.accountName ?? "N/A")
+                    LedgerDetailRow(label: "Entry Type", value: entry.entryType?.capitalized ?? "N/A")
+                }
+                
+                // Financial information
+                LedgerDetailSection(title: "Financial Details") {
+                    LedgerDetailRow(label: "Debit Amount", value: formatCurrency(entry.debitAmount?.decimalValue ?? 0))
+                    LedgerDetailRow(label: "Credit Amount", value: formatCurrency(entry.creditAmount?.decimalValue ?? 0))
+                    LedgerDetailRow(label: "Net Amount", value: formatCurrency(entry.amount?.decimalValue ?? 0))
+                    LedgerDetailRow(label: "Balance", value: formatCurrency(entry.balance?.decimalValue ?? 0))
+                }
+                
+                // Reference information
+                LedgerDetailSection(title: "Reference Information") {
+                    LedgerDetailRow(label: "Description", value: entry.ledgerDescription ?? "N/A")
+                    LedgerDetailRow(label: "Reference Number", value: entry.referenceNumber ?? "N/A")
+                    LedgerDetailRow(label: "Check Number", value: entry.checkNumber ?? "N/A")
+                    LedgerDetailRow(label: "Vendor", value: entry.vendorName ?? "N/A")
+                    LedgerDetailRow(label: "Tax Category", value: entry.taxCategory ?? "N/A")
+                }
+                
+                // Reconciliation section
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+                    HStack {
+                        Text("Reconciliation")
+                            .font(AppTheme.Typography.headlineSmall)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        if isEditing {
+                            Toggle("Reconciled", isOn: $reconciled)
+                        } else {
+                            Text("Status:")
+                                .font(AppTheme.Typography.bodyMedium)
+                                .foregroundColor(AppTheme.Colors.textSecondary)
+                            
+                            HStack {
+                                Image(systemName: reconciled ? "checkmark.circle.fill" : "circle")
+                                    .foregroundColor(reconciled ? AppTheme.Colors.success : AppTheme.Colors.textTertiary)
+                                
+                                Text(reconciled ? "Reconciled" : "Unreconciled")
+                                    .font(AppTheme.Typography.bodyMedium)
+                                    .foregroundColor(AppTheme.Colors.textPrimary)
+                            }
+                        }
+                    }
+                    .padding()
+                    .background(AppTheme.Colors.backgroundSecondary)
+                    .cornerRadius(AppTheme.CornerRadius.medium)
+                }
+                
+                // Notes section
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+                    Text("Notes")
+                        .font(AppTheme.Typography.headlineSmall)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    if isEditing {
+                        TextEditor(text: $notes)
+                            .frame(minHeight: 100)
+                            .padding()
+                            .background(AppTheme.Colors.backgroundSecondary)
+                            .cornerRadius(AppTheme.CornerRadius.medium)
+                    } else {
+                        Text(notes.isEmpty ? "No notes" : notes)
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                            .background(AppTheme.Colors.backgroundSecondary)
+                            .cornerRadius(AppTheme.CornerRadius.medium)
+                    }
+                }
+            }
+            .padding()
+        }
+    }
+    
+    private func saveChanges() {
         entry.notes = notes
+        entry.reconciled = reconciled
         
         do {
-            try entry.managedObjectContext?.save()
+            try viewContext.save()
         } catch {
-            print("❌ Failed to save notes: \(error)")
+            print("❌ Failed to save changes: \(error)")
         }
     }
     

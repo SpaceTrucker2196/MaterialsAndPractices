@@ -358,6 +358,8 @@ struct UtilitiesView: View {
             // Load Test Workers - Test version only
             #if DEBUG
             LoadTestWorkersRow()
+            
+            LoadTestLedgerRow()
             #endif
         }
     }
@@ -656,6 +658,105 @@ struct LoadTestWorkersRow: View {
         Task {
             do {
                 try loader.loadWorkerTestData()
+                
+                await MainActor.run {
+                    isLoading = false
+                    // Show success feedback
+                }
+            } catch {
+                await MainActor.run {
+                    isLoading = false
+                    errorMessage = error.localizedDescription
+                    showingErrorAlert = true
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Load Test Ledger Component
+
+/// Load Test Ledger row for debug builds only
+struct LoadTestLedgerRow: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @State private var showingResetAlert = false
+    @State private var isLoading = false
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
+    
+    var body: some View {
+        Button(action: {
+            showingResetAlert = true
+        }) {
+            HStack(spacing: AppTheme.Spacing.medium) {
+                // Icon container with test feature styling
+                Image(systemName: "book.closed.fill")
+                    .font(.title2)
+                    .foregroundColor(.white)
+                    .frame(width: 30, height: 30)
+                
+                // Content container
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    Text("Load Test Ledger")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(.white)
+                    
+                    Text("Load test ledger data from CSV file")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(.white.opacity(0.8))
+                        .multilineTextAlignment(.leading)
+                }
+                
+                Spacer()
+                
+                // Test Feature badge
+                Text("Test Feature")
+                    .font(AppTheme.Typography.labelSmall)
+                    .fontWeight(.medium)
+                    .foregroundColor(.blue)
+                    .padding(.horizontal, AppTheme.Spacing.small)
+                    .padding(.vertical, AppTheme.Spacing.tiny)
+                    .background(.white)
+                    .cornerRadius(AppTheme.CornerRadius.small)
+                
+                // Navigation indicator
+                Image(systemName: "chevron.right")
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding(.vertical, AppTheme.Spacing.small)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(PlainButtonStyle())
+        .listRowBackground(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .fill(.blue)
+                .padding(.vertical, 2)
+        )
+        .disabled(isLoading)
+        .alert("Reset Ledger Data", isPresented: $showingResetAlert) {
+            Button("Load Test Data", role: .destructive) {
+                loadTestLedger()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This will reset all ledger data and load test entries from the CSV file. This action cannot be undone.")
+        }
+        .alert("Error", isPresented: $showingErrorAlert) {
+            Button("OK") { }
+        } message: {
+            Text(errorMessage)
+        }
+    }
+    
+    private func loadTestLedger() {
+        isLoading = true
+        
+        let loader = LedgerTestDataLoader(viewContext: viewContext)
+        
+        Task {
+            do {
+                try loader.loadLedgerTestData()
                 
                 await MainActor.run {
                     isLoading = false
