@@ -75,7 +75,7 @@ struct PaymentDetailView: View {
             
             VStack(spacing: AppTheme.Spacing.medium) {
                 // Payment status card
-                PaymentStatusCard(payment: payment)
+                PaymentDetailStatusCard(payment: payment)
                 
                 // Payment details
                 VStack(spacing: AppTheme.Spacing.small) {
@@ -302,7 +302,7 @@ struct PaymentDetailView: View {
 // MARK: - Supporting Views
 
 /// Payment status card
-struct PaymentStatusCard: View {
+struct PaymentDetailStatusCard: View {
     let payment: Payment
     
     private var statusColor: Color {
