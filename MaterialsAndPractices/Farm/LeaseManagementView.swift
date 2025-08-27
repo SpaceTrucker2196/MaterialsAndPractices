@@ -58,7 +58,7 @@ struct LeaseManagementView: View {
                 }
             }
             .sheet(isPresented: $showingLeaseCreation) {
-                LeaseCreationView(isPresented: $showingLeaseCreation)
+                LeaseCreationWorkflowView(isPresented: $showingLeaseCreation)
             }
         }
     }
@@ -496,39 +496,6 @@ struct LeaseEmptyStateView: View {
         .frame(maxWidth: .infinity)
         .background(AppTheme.Colors.backgroundSecondary)
         .cornerRadius(AppTheme.CornerRadius.medium)
-    }
-}
-
-// MARK: - Placeholder Views
-
-/// Placeholder for lease creation
-struct LeaseCreationView: View {
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        NavigationView {
-            VStack {
-                Text("Lease Creation")
-                    .font(AppTheme.Typography.displayMedium)
-                
-                Text("Comprehensive lease creation interface will be implemented here")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-                    .multilineTextAlignment(.center)
-                
-                Spacer()
-            }
-            .padding()
-            .navigationTitle("New Lease")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        isPresented = false
-                    }
-                }
-            }
-        }
     }
 }
 

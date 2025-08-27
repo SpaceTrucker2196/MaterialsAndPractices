@@ -50,12 +50,13 @@ struct FieldTile: View {
     let field: Field
     let onTap: () -> Void
     
+    @Environment(\.managedObjectContext) private var viewContext
     @State private var latestSoilTest: SoilTest?
     
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-                // Header with field name and status
+                // Header with field name and status indicators
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
                     HStack {
                         Text(field.name ?? "Unnamed Field")
@@ -65,8 +66,13 @@ struct FieldTile: View {
                         
                         Spacer()
                         
-                        // pH status indicator
-                        soilTestStatusBadge
+                        HStack(spacing: AppTheme.Spacing.tiny) {
+                            // Lease status indicator
+                            leaseStatusIndicator
+                            
+                            // pH status indicator
+                            soilTestStatusBadge
+                        }
                     }
                     
                     Text("\(field.acres, specifier: "%.1f") acres")
@@ -98,7 +104,19 @@ struct FieldTile: View {
         }
     }
     
-    // MARK: - Status Badge
+    // MARK: - Status Indicators
+    
+    /// Lease status indicator for the field
+    @ViewBuilder
+    private var leaseStatusIndicator: some View {
+        let hasActiveLease = LeasePaymentTracker.hasActiveLeaseCoverage(field: field, context: viewContext)
+        
+        if !hasActiveLease {
+            Image(systemName: "dollarsign.circle")
+                .foregroundColor(.orange)
+                .font(.caption)
+        }
+    }
     
     @ViewBuilder
     private var soilTestStatusBadge: some View {
