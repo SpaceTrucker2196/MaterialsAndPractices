@@ -369,7 +369,7 @@ struct LeaseCreationWorkflowView: View {
     
     private func createLease() {
         do {
-            // Create lease in Core Data
+            // Create lease in Core Data first
             let lease = Lease(context: viewContext)
             lease.id = UUID()
             lease.leaseType = leaseType
@@ -394,27 +394,115 @@ struct LeaseCreationWorkflowView: View {
                 rentFrequency: rentFrequency
             )
             
-            // Copy template to working directory and create completed lease
+            // Create a unique working template name
+            let workingTemplateName = "Working_\(selectedTemplate)_\(UUID().uuidString.prefix(8))"
+            
+            // Copy template to working directory
             try leaseDirectoryManager.copyTemplateToWorking(
                 templateName: selectedTemplate,
-                workingName: "Working_\(selectedTemplate)_\(UUID().uuidString.prefix(8))"
+                workingName: workingTemplateName
             )
             
-            let workingTemplateName = "Working_\(selectedTemplate)_\(UUID().uuidString.prefix(8))"
+            // Create completed lease with improved error handling
             let createdLeaseInfo = try leaseDirectoryManager.createCompletedLease(
                 workingTemplateName: workingTemplateName,
                 leaseData: leaseData
             )
             
+            // Store the document path in the lease entity
+            lease.leaseDocumentPath = createdLeaseInfo.filePath
+            
+            // Create payment schedule based on rent frequency
+            createPaymentSchedule(for: lease)
+            
             // Save Core Data context
             try viewContext.save()
             
             print("✅ Successfully created lease agreement: \(createdLeaseInfo.fileName)")
+            print("📄 Document saved to: \(createdLeaseInfo.filePath)")
+            
+            // Clean up working template
+            cleanupWorkingTemplate(workingTemplateName)
+            
             isPresented = false
             
+        } catch let leaseError as LeaseError {
+            errorMessage = leaseError.localizedDescription
+            showingError = true
+            print("❌ Lease creation error: \(leaseError)")
         } catch {
             errorMessage = "Failed to create lease: \(error.localizedDescription)"
             showingError = true
+            print("❌ Unexpected error: \(error)")
+        }
+    }
+    
+    /// Creates payment schedule for the lease based on rent frequency
+    private func createPaymentSchedule(for lease: Lease) {
+        guard let rentAmount = lease.rentAmount,
+              let startDate = lease.startDate,
+              let endDate = lease.endDate,
+              let frequency = lease.rentFrequency else { return }
+        
+        let calendar = Calendar.current
+        var paymentDates: [Date] = []
+        
+        // Calculate payment dates based on frequency
+        switch frequency.lowercased() {
+        case "monthly":
+            var currentDate = startDate
+            while currentDate <= endDate {
+                paymentDates.append(currentDate)
+                currentDate = calendar.date(byAdding: .month, value: 1, to: currentDate) ?? endDate
+            }
+        case "quarterly":
+            var currentDate = startDate
+            while currentDate <= endDate {
+                paymentDates.append(currentDate)
+                currentDate = calendar.date(byAdding: .month, value: 3, to: currentDate) ?? endDate
+            }
+        case "semi-annual":
+            var currentDate = startDate
+            while currentDate <= endDate {
+                paymentDates.append(currentDate)
+                currentDate = calendar.date(byAdding: .month, value: 6, to: currentDate) ?? endDate
+            }
+        case "annual":
+            paymentDates.append(startDate)
+        default:
+            paymentDates.append(startDate)
+        }
+        
+        // Create payment entities
+        let paymentAmount = rentAmount.dividing(by: NSDecimalNumber(value: paymentDates.count))
+        
+        for (index, dueDate) in paymentDates.enumerated() {
+            let payment = Payment(context: viewContext)
+            payment.id = UUID()
+            payment.amount = paymentAmount.decimalValue
+            payment.dueDate = dueDate
+            payment.isPaid = false
+            payment.paymentStatus = "pending"
+            payment.sequence = Int16(index + 1)
+            payment.memo = "Lease payment \(index + 1) of \(paymentDates.count)"
+            payment.lease = lease
+        }
+        
+        print("✅ Created \(paymentDates.count) payment(s) for lease")
+    }
+    
+    /// Cleans up the working template file after use
+    private func cleanupWorkingTemplate(_ workingTemplateName: String) {
+        let workingURL = leaseDirectoryManager.directoryURL(for: .working)
+            .appendingPathComponent("\(workingTemplateName).md")
+        
+        do {
+            if FileManager.default.fileExists(atPath: workingURL.path) {
+                try FileManager.default.removeItem(at: workingURL)
+                print("🧹 Cleaned up working template: \(workingTemplateName)")
+            }
+        } catch {
+            print("⚠️ Failed to cleanup working template: \(error)")
         }
     }
 }

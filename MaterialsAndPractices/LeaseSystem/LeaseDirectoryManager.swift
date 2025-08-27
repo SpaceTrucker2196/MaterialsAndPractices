@@ -130,6 +130,64 @@ class LeaseDirectoryManager {
         }
     }
     
+    /// Lists lease files for a specific year
+    /// - Parameter year: The growing year
+    /// - Returns: Array of lease file names with metadata
+    func listLeaseFiles(for year: Int) -> [LeaseFileInfo] {
+        let yearDirectory = directoryURL(for: .completed).appendingPathComponent("\(year)")
+        
+        guard FileManager.default.fileExists(atPath: yearDirectory.path) else {
+            return []
+        }
+        
+        do {
+            let fileURLs = try FileManager.default.contentsOfDirectory(at: yearDirectory, includingPropertiesForKeys: [.creationDateKey, .fileSizeKey])
+            
+            return fileURLs
+                .filter { $0.pathExtension == "md" }
+                .compactMap { url in
+                    do {
+                        let resourceValues = try url.resourceValues(forKeys: [.creationDateKey, .fileSizeKey])
+                        return LeaseFileInfo(
+                            fileName: url.deletingPathExtension().lastPathComponent,
+                            filePath: url.path,
+                            creationDate: resourceValues.creationDate ?? Date(),
+                            fileSize: resourceValues.fileSize ?? 0,
+                            year: year
+                        )
+                    } catch {
+                        print("❌ Error reading file metadata for \(url.lastPathComponent): \(error)")
+                        return nil
+                    }
+                }
+                .sorted { $0.creationDate > $1.creationDate }
+        } catch {
+            print("❌ Error listing files in year \(year): \(error)")
+            return []
+        }
+    }
+    
+    /// Lists all available years with lease files
+    /// - Returns: Array of years with lease files, sorted descending
+    func listAvailableYears() -> [Int] {
+        let completedURL = directoryURL(for: .completed)
+        
+        do {
+            let directoryURLs = try FileManager.default.contentsOfDirectory(at: completedURL, includingPropertiesForKeys: [.isDirectoryKey])
+            
+            return directoryURLs
+                .filter { url in
+                    let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+                    return isDirectory && Int(url.lastPathComponent) != nil
+                }
+                .compactMap { Int($0.lastPathComponent) }
+                .sorted { $0 > $1 }
+        } catch {
+            print("❌ Error listing year directories: \(error)")
+            return []
+        }
+    }
+    
     /// Creates a completed lease agreement from working template
     /// - Parameters:
     ///   - workingTemplateName: Name of the working template
@@ -146,24 +204,40 @@ class LeaseDirectoryManager {
             throw LeaseError.workingTemplateNotFound(workingTemplateName)
         }
         
-        // Generate filename for completed lease
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        let dateString = dateFormatter.string(from: Date())
+        // Create year-based directory structure
+        let yearDirectory = createYearDirectory(for: leaseData.growingYear)
         
-        let guid = UUID().uuidString.prefix(8).lowercased()
-        let fileName = "\(dateString)_\(workingTemplateName)_\(guid).md"
+        // Generate filename using requested convention: Farm + Year + Version + ID
+        let farmPrefix = String((leaseData.propertyName ?? "FARM").prefix(4)).uppercased()
+        let yearSuffix = String(leaseData.growingYear)
+        let version = "V01" // Start with version 1, increment if file exists
+        let uniqueId = UUID().uuidString.prefix(4).uppercased()
         
-        let completedURL = directoryURL(for: .completed).appendingPathComponent(fileName)
+        let baseFileName = "\(farmPrefix)\(yearSuffix)\(version)\(uniqueId)"
+        let fileName = "\(baseFileName).md"
         
-        // Read working template
-        let templateContent = try String(contentsOf: workingTemplateURL)
+        let completedURL = yearDirectory.appendingPathComponent(fileName)
+        
+        // Handle file conflicts by incrementing version
+        let finalURL = try generateUniqueFileName(baseURL: completedURL, baseFileName: baseFileName)
+        
+        // Read working template with error handling
+        let templateContent: String
+        do {
+            templateContent = try String(contentsOf: workingTemplateURL)
+        } catch {
+            throw LeaseError.fileAccessError("Unable to read template: \(error.localizedDescription)")
+        }
         
         // Populate template with lease data
         let populatedContent = populateTemplate(templateContent, with: leaseData)
         
-        // Write completed lease
-        try populatedContent.write(to: completedURL, atomically: true, encoding: .utf8)
+        // Write completed lease with proper error handling
+        do {
+            try populatedContent.write(to: finalURL, atomically: true, encoding: .utf8)
+        } catch {
+            throw LeaseError.fileCreationFailed("Unable to save lease file: \(error.localizedDescription)")
+        }
         
         // Generate hash for audit trail
         let contentData = populatedContent.data(using: .utf8) ?? Data()
@@ -172,16 +246,74 @@ class LeaseDirectoryManager {
         
         let createdInfo = CreatedLeaseInfo(
             id: UUID(),
-            fileName: fileName,
-            filePath: completedURL.path,
+            fileName: finalURL.lastPathComponent,
+            filePath: finalURL.path,
             fileHash: hashString,
             shortHash: String(hashString.prefix(8)),
             longHash: hashString,
             leaseData: leaseData
         )
         
-        print("✅ Created lease agreement: \(fileName)")
+        print("✅ Created lease agreement: \(finalURL.lastPathComponent) in \(yearDirectory.lastPathComponent)")
         return createdInfo
+    }
+    
+    /// Creates year-based directory structure
+    /// - Parameter year: The growing year
+    /// - Returns: URL to the year directory
+    private func createYearDirectory(for year: Int) -> URL {
+        let yearDirectory = directoryURL(for: .completed).appendingPathComponent("\(year)")
+        
+        let fileManager = FileManager.default
+        if !fileManager.fileExists(atPath: yearDirectory.path) {
+            do {
+                try fileManager.createDirectory(at: yearDirectory, withIntermediateDirectories: true, attributes: nil)
+                print("✅ Created year directory: \(yearDirectory.path)")
+            } catch {
+                print("❌ Error creating year directory: \(error)")
+                // Fall back to base completed directory if year directory creation fails
+                return directoryURL(for: .completed)
+            }
+        }
+        
+        return yearDirectory
+    }
+    
+    /// Generates a unique filename by incrementing version if file exists
+    /// - Parameters:
+    ///   - baseURL: The base URL for the file
+    ///   - baseFileName: The base filename without extension
+    /// - Returns: A unique URL for the file
+    /// - Throws: LeaseError if unable to generate unique name
+    private func generateUniqueFileName(baseURL: URL, baseFileName: String) throws -> URL {
+        let fileManager = FileManager.default
+        var currentURL = baseURL
+        var version = 1
+        
+        // Try up to 99 versions
+        while fileManager.fileExists(atPath: currentURL.path) && version < 100 {
+            version += 1
+            let versionString = String(format: "V%02d", version)
+            
+            // Replace the version part in the filename
+            var components = baseFileName.components(separatedBy: "V")
+            if components.count >= 2 {
+                let beforeVersion = components[0]
+                let afterVersion = components[1].dropFirst(2) // Remove the "01" part
+                let newFileName = "\(beforeVersion)\(versionString)\(afterVersion).md"
+                currentURL = baseURL.deletingLastPathComponent().appendingPathComponent(newFileName)
+            } else {
+                // Fallback: append version to end
+                let newFileName = "\(baseFileName)\(versionString).md"
+                currentURL = baseURL.deletingLastPathComponent().appendingPathComponent(newFileName)
+            }
+        }
+        
+        if version >= 100 {
+            throw LeaseError.fileCreationFailed("Unable to generate unique filename after 99 attempts")
+        }
+        
+        return currentURL
     }
     
     /// Populates a template with lease data
@@ -247,6 +379,27 @@ struct CreatedLeaseInfo {
     let leaseData: LeaseCreationData
 }
 
+/// Information about a lease file on disk
+struct LeaseFileInfo {
+    let fileName: String
+    let filePath: String
+    let creationDate: Date
+    let fileSize: Int
+    let year: Int
+    
+    var displayName: String {
+        // Extract readable information from filename
+        // Format: FARM2024V01ABCD -> Farm (2024) V01
+        if fileName.count >= 8 {
+            let farmCode = String(fileName.prefix(4))
+            let yearCode = String(fileName.dropFirst(4).prefix(4))
+            let versionCode = String(fileName.dropFirst(8).prefix(3))
+            return "\(farmCode) (\(yearCode)) \(versionCode)"
+        }
+        return fileName
+    }
+}
+
 /// Data required to create a lease agreement
 struct LeaseCreationData {
     let leaseId: UUID?
@@ -265,7 +418,9 @@ enum LeaseError: LocalizedError {
     case templateNotFound(String)
     case workingTemplateNotFound(String)
     case fileCreationFailed(String)
+    case fileAccessError(String)
     case invalidTemplate(String)
+    case directoryCreationFailed(String)
     
     var errorDescription: String? {
         switch self {
@@ -275,8 +430,12 @@ enum LeaseError: LocalizedError {
             return "Working template '\(name)' not found"
         case .fileCreationFailed(let reason):
             return "Failed to create file: \(reason)"
+        case .fileAccessError(let reason):
+            return "File access error: \(reason)"
         case .invalidTemplate(let reason):
             return "Invalid template: \(reason)"
+        case .directoryCreationFailed(let reason):
+            return "Failed to create directory: \(reason)"
         }
     }
 }
