@@ -129,12 +129,33 @@ Farm/
 ├── FarmListView.swift (Property listings)
 ├── PropertyDetailView.swift (Property information)
 ├── FieldManagementViews.swift (Field operations)
+├── FieldSelectionTileView.swift (Field selection interface)
 ├── WorkerManagementViews.swift (Employee management)
 ├── SoilTestViews.swift (Soil analysis)
 ├── InfrastructureViews.swift (Farm infrastructure)
 ├── LabManagementViews.swift (Testing facilities)
+├── LeaseManagementView.swift (Lease oversight)
 └── WeeklyWorkerSummaryViews.swift (Analytics)
 ```
+
+### NEW: Lease System Module
+**Purpose**: Comprehensive lease agreement management and payment tracking
+```
+LeaseSystem/
+├── LeaseDirectoryManager.swift (File system management)
+├── LeaseTemplateSeeder.swift (Agricultural lease templates)
+├── LeaseCreationWorkflowView.swift (Lease creation interface)
+├── LeaseStatusIndicator.swift (Visual status indicators)
+└── LeaseDocumentExporter.swift (Document generation for owners)
+```
+
+**Features:**
+- Agricultural lease agreement templates (Cash Rent, Crop Share, Flexible, Pasture, Custom)
+- Payment tracking and reminders
+- Visual indicators for lease status on farm/field tiles
+- Markdown document generation for property owners
+- GAAP-compliant record keeping
+- Integration with existing farm management workflow
 
 ### 4. Grow Module
 **Purpose**: Crop cultivation and tracking
