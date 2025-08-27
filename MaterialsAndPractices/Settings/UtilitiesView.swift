@@ -199,6 +199,31 @@ struct UtilitiesView: View {
                         .font(.caption)
                 }
             }
+            
+            // General Ledger Utility
+            NavigationLink(destination: LedgerView()) {
+                HStack {
+                    Image(systemName: "book.closed.fill")
+                        .foregroundColor(AppTheme.Colors.compliance)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("General Ledger")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("GAAP-compliant accounting ledger for agricultural business")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
+            }
         }
     }
     
