@@ -24,9 +24,10 @@ struct PaymentManagementView: View {
             NSSortDescriptor(keyPath: \Payment.dueDate, ascending: true),
             NSSortDescriptor(keyPath: \Payment.sequence, ascending: true)
         ]
-    ) private var allPayments: FetchedResults<Payment>
+    )
     
-    var body: some View {
+    private var allPayments: FetchedResults<Payment>
+    
     var body: some View {
         VStack(spacing: 0) {
             paymentSummarySection
@@ -59,8 +60,7 @@ struct PaymentManagementView: View {
             NewPaymentEntryView()
         }
     }
-    }
-    
+
     // MARK: - UI Sections
     
     /// Summary section showing payment statistics

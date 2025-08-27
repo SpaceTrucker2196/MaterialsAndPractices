@@ -40,8 +40,6 @@
 		1FC121102E5F69DE008B4851 /* PaymentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC1210F2E5F69DE008B4851 /* PaymentDetailView.swift */; };
 		1FC1211C2E5F6A74008B4851 /* MaterialsAndPractices.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1FC121112E5F6A74008B4851 /* MaterialsAndPractices.xcdatamodeld */; };
 		1FC1211E2E5F6AD0008B4851 /* WorkerTestDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC1211D2E5F6AD0008B4851 /* WorkerTestDataLoader.swift */; };
-		1FC121222E5F6BBB008B4851 /* Zappa_Worker_Profiles_with_ProfilePhotoData.csv in Resources */ = {isa = PBXBuildFile; fileRef = 1FC121212E5F6BBB008B4851 /* Zappa_Worker_Profiles_with_ProfilePhotoData.csv */; };
-		1FC121232E5F6C2D008B4851 /* Zappa_Worker_Profiles_with_ProfilePhotoData.csv in Resources */ = {isa = PBXBuildFile; fileRef = 1FC121212E5F6BBB008B4851 /* Zappa_Worker_Profiles_with_ProfilePhotoData.csv */; };
 		1FCCE7272E5BFEB6004FC07C /* FiraCode-Retina.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCE7252E5BFEB6004FC07C /* FiraCode-Retina.ttf */; };
 		1FCCE7282E5BFEB6004FC07C /* FiraCode-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCE7262E5BFEB6004FC07C /* FiraCode-SemiBold.ttf */; };
 		1FCCE7292E5BFEB6004FC07C /* FiraCode-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FCCE7222E5BFEB6004FC07C /* FiraCode-Light.ttf */; };
@@ -163,7 +161,8 @@
 		1FC1211A2E5F6A74008B4851 /* MaterialsAndPractices 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 8.xcdatamodel"; sourceTree = "<group>"; };
 		1FC1211B2E5F6A74008B4851 /* MaterialsAndPractices 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 9.xcdatamodel"; sourceTree = "<group>"; };
 		1FC1211D2E5F6AD0008B4851 /* WorkerTestDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkerTestDataLoader.swift; path = Testing/WorkerTestDataLoader.swift; sourceTree = "<group>"; };
-		1FC121212E5F6BBB008B4851 /* Zappa_Worker_Profiles_with_ProfilePhotoData.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Zappa_Worker_Profiles_with_ProfilePhotoData.csv; sourceTree = "<group>"; };
+		1FC1212B2E5F8777008B4851 /* Zappa_Worker_Profiles_with_ProfilePhotoData.csv */ = {isa = PBXFileReference; lastKnownFileType = text; name = Zappa_Worker_Profiles_with_ProfilePhotoData.csv; path = MaterialsAndPractices/TestData/Zappa_Worker_Profiles_with_ProfilePhotoData.csv; sourceTree = "<group>"; };
+		1FC1212C2E5F8777008B4851 /* ZappaFarm_Ledger_With_Icons.csv */ = {isa = PBXFileReference; lastKnownFileType = text; name = ZappaFarm_Ledger_With_Icons.csv; path = MaterialsAndPractices/TestData/ZappaFarm_Ledger_With_Icons.csv; sourceTree = "<group>"; };
 		1FCCE7212E5BFEB6004FC07C /* FiraCode-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Bold.ttf"; sourceTree = "<group>"; };
 		1FCCE7222E5BFEB6004FC07C /* FiraCode-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Light.ttf"; sourceTree = "<group>"; };
 		1FCCE7232E5BFEB6004FC07C /* FiraCode-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FiraCode-Medium.ttf"; sourceTree = "<group>"; };
@@ -218,8 +217,27 @@
 		YW3W8K7WVJRTP7E5YI29WIKI /* CreateSoilTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSoilTestView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1FC121252E5F86BE008B4851 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Zappa_Worker_Profiles_with_ProfilePhotoData.csv,
+				ZappaFarm_Ledger_With_Icons.csv,
+			);
+			target = 1F4F48C7257DB4C4005E559D /* MaterialsAndPracticesTests */;
+		};
+		1FC1212A2E5F86E4008B4851 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ZappaFarm_Ledger_With_Icons.csv,
+			);
+			target = 1F4F48D2257DB4C4005E559D /* MaterialsAndPracticesUITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1FBCAA562E5E596200E3C619 /* InspectionSystem */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = InspectionSystem; sourceTree = "<group>"; };
+		1FC121242E5F86B2008B4851 /* TestData */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (1FC121252E5F86BE008B4851 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 1FC1212A2E5F86E4008B4851 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestData; sourceTree = "<group>"; };
 		1FEE44B12E5E094C00A1887B /* Infrastructrure */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Infrastructrure; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -260,6 +278,8 @@
 		1F4F48A9257DB4C2005E559D = {
 			isa = PBXGroup;
 			children = (
+				1FC1212B2E5F8777008B4851 /* Zappa_Worker_Profiles_with_ProfilePhotoData.csv */,
+				1FC1212C2E5F8777008B4851 /* ZappaFarm_Ledger_With_Icons.csv */,
 				1FDF44422E5C23860058E376 /* vegetable_cultivars_master.csv */,
 				1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */,
 				1F4F48CB257DB4C4005E559D /* MaterialsAndPracticesTests */,
@@ -281,7 +301,7 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
-				1FC121212E5F6BBB008B4851 /* Zappa_Worker_Profiles_with_ProfilePhotoData.csv */,
+				1FC121242E5F86B2008B4851 /* TestData */,
 				1FC1211D2E5F6AD0008B4851 /* WorkerTestDataLoader.swift */,
 				1FC121112E5F6A74008B4851 /* MaterialsAndPractices.xcdatamodeld */,
 				1FC1210F2E5F69DE008B4851 /* PaymentDetailView.swift */,
@@ -470,6 +490,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				1FBCAA562E5E596200E3C619 /* InspectionSystem */,
+				1FC121242E5F86B2008B4851 /* TestData */,
 				1FEE44B12E5E094C00A1887B /* Infrastructrure */,
 			);
 			name = MaterialsAndPractices;
@@ -560,7 +581,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FC121222E5F6BBB008B4851 /* Zappa_Worker_Profiles_with_ProfilePhotoData.csv in Resources */,
 				1FCCE7272E5BFEB6004FC07C /* FiraCode-Retina.ttf in Resources */,
 				1FCCE7282E5BFEB6004FC07C /* FiraCode-SemiBold.ttf in Resources */,
 				1FCCE7292E5BFEB6004FC07C /* FiraCode-Light.ttf in Resources */,
@@ -578,7 +598,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FC121232E5F6C2D008B4851 /* Zappa_Worker_Profiles_with_ProfilePhotoData.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
