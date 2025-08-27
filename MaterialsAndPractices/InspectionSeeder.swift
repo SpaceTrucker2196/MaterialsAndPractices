@@ -350,7 +350,7 @@ enum InspectionRequirementLevel: String, CaseIterable {
 }
 
 /// Enumeration for inspection status
-enum InspectionStatus: String, CaseIterable {
+enum InspectionSeederStatus: String, CaseIterable {
     case scheduled = "scheduled"
     case inProgress = "in_progress"
     case completed = "completed"

@@ -863,7 +863,7 @@ struct WorkerWeeklyTimeView: View {
             ScrollView {
                 LazyVStack(spacing: AppTheme.Spacing.medium) {
                     ForEach(daysInWeek, id: \.self) { day in
-                        DailyTimeEntryRow(
+                        WorkerDailyTimeEntryRow(
                             date: day,
                             timeEntry: timeEntryForDate(day),
                             worker: worker
@@ -1013,7 +1013,7 @@ struct WorkerWeeklyTimeView: View {
 }
 
 /// Daily time entry row showing punch in/out times for a specific date
-struct DailyTimeEntryRow: View {
+struct WorkerDailyTimeEntryRow: View {
     let date: Date
     let timeEntry: TimeClock?
     let worker: Worker

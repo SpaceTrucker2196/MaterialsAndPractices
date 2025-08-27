@@ -174,6 +174,31 @@ struct UtilitiesView: View {
                         .font(.caption)
                 }
             }
+            
+            // Manage Leases Utility
+            NavigationLink(destination: LeaseManagementView()) {
+                HStack {
+                    Image(systemName: "doc.text.fill")
+                        .foregroundColor(AppTheme.Colors.secondary)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Manage Leases")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Track property leases, contracts, and rental agreements")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
+            }
         }
     }
     

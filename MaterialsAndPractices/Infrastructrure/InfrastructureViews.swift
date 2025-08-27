@@ -283,6 +283,7 @@ struct InfrastructureDetailView: View {
     let infrastructure: Infrastructure
     @State private var isEditing = false
     @State private var showingPhotoCapture = false
+    @State private var showingInspectionScheduling = false
     @Environment(\.managedObjectContext) private var viewContext
     
     var body: some View {
@@ -296,6 +297,9 @@ struct InfrastructureDetailView: View {
                 
                 // Documents Section
                 documentsSection
+                
+                // Inspection Section
+                inspectionSection
             }
             .padding()
         }
@@ -313,6 +317,9 @@ struct InfrastructureDetailView: View {
         }
         .sheet(isPresented: $showingPhotoCapture) {
             InfrastructurePhotoCaptureView(infrastructure: infrastructure, isPresented: $showingPhotoCapture)
+        }
+        .sheet(isPresented: $showingInspectionScheduling) {
+            InfrastructureInspectionSchedulingView(infrastructure: infrastructure, isPresented: $showingInspectionScheduling)
         }
     }
     
@@ -394,6 +401,89 @@ struct InfrastructureDetailView: View {
                     .foregroundColor(AppTheme.Colors.textSecondary)
             }
         }
+    }
+    
+    /// Section for inspection management and assignment
+    private var inspectionSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Inspections")
+            
+            // Recent inspections for this infrastructure
+            if let recentInspections = getRecentInfrastructureInspections(), !recentInspections.isEmpty {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text("Recent Inspections")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    ForEach(recentInspections.prefix(3), id: \.id) { inspection in
+                        InfrastructureInspectionRow(inspection: inspection)
+                    }
+                    
+                    if recentInspections.count > 3 {
+                        Button("View All Inspections") {
+                            // Navigate to full inspection list for this infrastructure
+                        }
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.primary)
+                    }
+                }
+            }
+            
+            // Inspection actions
+            VStack(spacing: AppTheme.Spacing.small) {
+                CommonActionButton(
+                    title: "Schedule Inspection",
+                    style: .outline,
+                    action: scheduleInfrastructureInspection
+                )
+                
+                NavigationLink(destination: InspectionManagementView()) {
+                    HStack {
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundColor(AppTheme.Colors.compliance)
+                        
+                        Text("Manage All Inspections")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.primary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(AppTheme.Colors.textTertiary)
+                            .font(.caption)
+                    }
+                    .padding()
+                    .background(AppTheme.Colors.backgroundSecondary)
+                    .cornerRadius(AppTheme.CornerRadius.medium)
+                }
+            }
+        }
+    }
+    
+    /// Gets recent inspections for this infrastructure
+    private func getRecentInfrastructureInspections() -> [InfrastructureInspectionDisplayData]? {
+        // This would fetch actual inspection data from Core Data
+        // For now, return sample data if infrastructure has been in service
+        guard let installDate = infrastructure.installDate,
+              installDate < Date().addingTimeInterval(-30 * 24 * 60 * 60) else { // Installed more than a month ago
+            return nil
+        }
+        
+        return [
+            InfrastructureInspectionDisplayData(
+                id: UUID(),
+                name: "Safety Inspection",
+                category: .infrastructure,
+                completedAt: Date().addingTimeInterval(-5 * 24 * 60 * 60),
+                inspector: "Jane Doe",
+                status: .completed
+            )
+        ]
+    }
+    
+    /// Opens the inspection scheduling view for this infrastructure
+    private func scheduleInfrastructureInspection() {
+        showingInspectionScheduling = true
     }
 }
 
@@ -538,6 +628,231 @@ struct InfrastructurePhotoCaptureView: View {
                         isPresented = false
                     }
                 }
+            }
+        }
+    }
+}
+
+// MARK: - Supporting View Components for Infrastructure Inspections
+
+/// Display data for infrastructure inspections
+struct InfrastructureInspectionDisplayData {
+    let id: UUID
+    let name: String
+    let category: InspectionCategory
+    let completedAt: Date
+    let inspector: String
+    let status: InspectionStatus
+}
+
+/// Row view for displaying infrastructure inspection information
+struct InfrastructureInspectionRow: View {
+    let inspection: InfrastructureInspectionDisplayData
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                Text(inspection.name)
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                Text("By \(inspection.inspector)")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                MetadataTag(
+                    text: inspection.status.displayName,
+                    backgroundColor: inspection.status.color.opacity(0.2),
+                    textColor: inspection.status.color
+                )
+                
+                Text(inspection.completedAt, style: .date)
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.textTertiary)
+            }
+        }
+        .padding()
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+}
+
+/// Inspection scheduling view for infrastructure
+struct InfrastructureInspectionSchedulingView: View {
+    let infrastructure: Infrastructure
+    @Binding var isPresented: Bool
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @State private var selectedTemplate: InspectionCategory = .infrastructure
+    @State private var inspectionName: String = ""
+    @State private var scheduledTime: InspectionTime = .morning
+    @State private var frequency: InspectionFrequency = .oneTime
+    @State private var selectedInspectors: [UUID] = []
+    @State private var notes: String = ""
+    
+    var body: some View {
+        NavigationView {
+            Form {
+                Section("Inspection Details") {
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        TextField("Inspection Name", text: $inspectionName)
+                        
+                        Text("Suggested: Safety Inspection, Maintenance Check, Compliance Review")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.textTertiary)
+                    }
+                    
+                    Picker("Template Category", selection: $selectedTemplate) {
+                        ForEach([InspectionCategory.infrastructure, .equipment, .healthSafety], id: \.self) { category in
+                            HStack {
+                                Image(systemName: category.icon)
+                                Text(category.displayName)
+                            }.tag(category)
+                        }
+                    }
+                    .onChange(of: selectedTemplate) { newCategory in
+                        updateSuggestedName(for: newCategory)
+                    }
+                    
+                    Picker("Scheduled Time", selection: $scheduledTime) {
+                        ForEach(InspectionTime.allCases, id: \.self) { time in
+                            VStack(alignment: .leading) {
+                                Text(time.rawValue)
+                                Text(time.timeRange)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }.tag(time)
+                        }
+                    }
+                    
+                    Picker("Frequency", selection: $frequency) {
+                        ForEach(InspectionFrequency.allCases, id: \.self) { freq in
+                            HStack {
+                                Image(systemName: freq.icon)
+                                Text(freq.rawValue)
+                            }.tag(freq)
+                        }
+                    }
+                }
+                
+                Section("Safety & Compliance Requirements") {
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(AppTheme.Colors.warning)
+                            Text("Safety Protocol Verification")
+                                .font(AppTheme.Typography.bodyMedium)
+                        }
+                        
+                        Text("Ensure all safety protocols and equipment are properly maintained")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        HStack {
+                            Image(systemName: "checkmark.shield.fill")
+                                .foregroundColor(AppTheme.Colors.compliance)
+                            Text("Regulatory Compliance")
+                                .font(AppTheme.Typography.bodyMedium)
+                        }
+                        
+                        Text("Verify compliance with local and federal regulations")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
+                
+                Section("Infrastructure Information") {
+                    HStack {
+                        Text("Type:")
+                        Spacer()
+                        Text(infrastructure.type?.capitalized ?? "Unknown")
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    HStack {
+                        Text("Status:")
+                        Spacer()
+                        Text(infrastructure.status?.capitalized ?? "Unknown")
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    if let property = infrastructure.property {
+                        HStack {
+                            Text("Property:")
+                            Spacer()
+                            Text(property.displayName ?? "Unknown")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
+                    if let installDate = infrastructure.installDate {
+                        HStack {
+                            Text("Installed:")
+                            Spacer()
+                            Text(installDate, style: .date)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                
+                Section("Additional Notes") {
+                    TextField("Inspection notes or requirements", text: $notes, axis: .vertical)
+                        .lineLimit(3...6)
+                }
+            }
+            .navigationTitle("Schedule Inspection")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Schedule") {
+                        scheduleInspection()
+                    }
+                    .disabled(inspectionName.isEmpty)
+                }
+            }
+        }
+    }
+    
+    private func scheduleInspection() {
+        // Here we would create the inspection using the inspection system
+        // For now, we'll just dismiss the view
+        // TODO: Integrate with InspectionCreationWorkflowView or create inspection directly
+        
+        print("Scheduling inspection: \(inspectionName) for infrastructure: \(infrastructure.name ?? "Unknown")")
+        print("Category: \(selectedTemplate.displayName)")
+        print("Time: \(scheduledTime.rawValue)")
+        print("Frequency: \(frequency.rawValue)")
+        
+        isPresented = false
+    }
+    
+    /// Updates suggested inspection name based on category and infrastructure context
+    private func updateSuggestedName(for category: InspectionCategory) {
+        if inspectionName.isEmpty {
+            let infraType = infrastructure.type?.capitalized ?? "Infrastructure"
+            switch category {
+            case .infrastructure:
+                inspectionName = "Safety Inspection - \(infraType)"
+            case .equipment:
+                inspectionName = "Maintenance Check - \(infraType)"
+            case .healthSafety:
+                inspectionName = "Safety Review - \(infraType)"
+            case .grow:
+                inspectionName = "General Inspection - \(infraType)"
+            case .organicManagement:
+                inspectionName = "Compliance Check - \(infraType)"
             }
         }
     }

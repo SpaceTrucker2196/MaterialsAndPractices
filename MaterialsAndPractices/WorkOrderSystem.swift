@@ -488,4 +488,60 @@ class WorkOrderManager {
             return []
         }
     }
+    
+    /// Resolve clock-out issues for workers who didn't clock out
+    /// Automatically clocks out workers at midnight and clocks them back in at 00:01
+    static func resolveClockOutIssues(context: NSManagedObjectContext) {
+        let calendar = Calendar.current
+        let now = Date()
+        let startOfToday = calendar.startOfDay(for: now)
+        let startOfYesterday = calendar.date(byAdding: .day, value: -1, to: startOfToday)!
+        let midnightYesterday = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: startOfYesterday)!
+        let oneMinutePastMidnight = calendar.date(bySettingHour: 0, minute: 1, second: 0, of: startOfToday)!
+        
+        // Find all active time entries from yesterday that are still active
+        let request: NSFetchRequest<TimeClock> = TimeClock.fetchRequest()
+        request.predicate = NSPredicate(format: "isActive == YES AND clockInTime >= %@ AND clockInTime < %@", 
+                                      startOfYesterday as NSDate, startOfToday as NSDate)
+        
+        do {
+            let activeEntries = try context.fetch(request)
+            
+            for entry in activeEntries {
+                guard let worker = entry.worker,
+                      let workOrder = entry.workOrder else { continue }
+                
+                // Clock out the worker at midnight
+                entry.clockOutTime = midnightYesterday
+                entry.isActive = false
+                entry.hoursWorked = calculateHours(from: entry.clockInTime, to: midnightYesterday)
+                
+                // Create a new time entry for today starting at 00:01
+                let newEntry = TimeClock(context: context)
+                newEntry.id = UUID()
+                newEntry.worker = worker
+                newEntry.workOrder = workOrder
+                newEntry.clockInTime = oneMinutePastMidnight
+                newEntry.date = startOfToday
+                newEntry.isActive = true
+                newEntry.year = Int16(calendar.component(.year, from: startOfToday))
+                newEntry.weekNumber = Int16(calendar.component(.weekOfYear, from: startOfToday))
+                newEntry.hoursWorked = 0.0
+                
+                print("Resolved clock-out issue for worker: \(worker.name ?? "Unknown") - Work Order: \(workOrder.title ?? "Unknown")")
+            }
+            
+            try context.save()
+            
+        } catch {
+            print("Error resolving clock-out issues: \(error)")
+        }
+    }
+    
+    /// Calculate hours between two dates
+    private static func calculateHours(from startDate: Date?, to endDate: Date?) -> Double {
+        guard let start = startDate, let end = endDate else { return 0.0 }
+        let timeInterval = end.timeIntervalSince(start)
+        return timeInterval / 3600.0 // Convert seconds to hours
+    }
 }
