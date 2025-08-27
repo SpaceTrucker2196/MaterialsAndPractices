@@ -11,6 +11,21 @@
 import SwiftUI
 import CoreData
 
+// MARK: - Shared Currency Formatter
+
+private enum CurrencyFormatter {
+    static let shared: NumberFormatter = {
+        let f = NumberFormatter()
+        f.numberStyle = .currency
+        return f
+    }()
+}
+
+@inline(__always)
+private func formatCurrency(_ amount: Decimal) -> String {
+    CurrencyFormatter.shared.string(from: amount as NSDecimalNumber) ?? "$0.00"
+}
+
 /// GAAP-compliant ledger view for agricultural business accounting
 struct LedgerView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -19,7 +34,7 @@ struct LedgerView: View {
     @State private var selectedDateRange: DateRange = .thisMonth
     @State private var showingNewEntry = false
     @State private var searchText = ""
-    @State private var selectedEntry: LedgerEntry?
+    @State private var selectedEntryID: NSManagedObjectID? = nil
     
     // Fetch ledger entries
     @FetchRequest(
@@ -33,25 +48,36 @@ struct LedgerView: View {
     var body: some View {
         GeometryReader { geometry in
             if horizontalSizeClass == .regular && geometry.size.width > 600 {
-                // iPad layout with expanded view
-                HSplitView {
+                // iPad / wide layout with split view
+                NavigationSplitView {
                     // Master list view
                     VStack(spacing: 0) {
                         ledgerSummarySection
                         filterSection
                         
-                        List(filteredEntries, id: \.objectID, selection: $selectedEntry) { entry in
-                            LedgerEntryRowView(entry: entry, showDetailSheet: false) {
-                                selectedEntry = entry
+                        List(selection: $selectedEntryID) {
+                            ForEach(filteredEntries, id: \.objectID) { entry in
+                                LedgerEntryRowView(entry: entry, showDetailSheet: false) {
+                                    selectedEntryID = entry.objectID
+                                }
+                                .tag(entry.objectID as NSManagedObjectID?)
                             }
                         }
                         .searchable(text: $searchText, prompt: "Search entries...")
                     }
-                    .frame(minWidth: 300, maxWidth: 400)
-                    
-                    // Detail view
-                    if let selectedEntry = selectedEntry {
-                        LedgerEntryDetailView(entry: selectedEntry, isSheet: false)
+                    .navigationTitle("General Ledger")
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("New Entry") {
+                                showingNewEntry = true
+                            }
+                            .foregroundColor(AppTheme.Colors.primary)
+                        }
+                    }
+                } detail: {
+                    if let id = selectedEntryID,
+                       let selected = allLedgerEntries.first(where: { $0.objectID == id }) {
+                        LedgerEntryDetailView(entry: selected, isSheet: false)
                     } else {
                         VStack {
                             Image(systemName: "book.closed")
@@ -66,15 +92,8 @@ struct LedgerView: View {
                         .background(AppTheme.Colors.backgroundSecondary)
                     }
                 }
-                .navigationTitle("General Ledger")
-                .navigationBarTitleDisplayMode(.large)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("New Entry") {
-                            showingNewEntry = true
-                        }
-                        .foregroundColor(AppTheme.Colors.primary)
-                    }
+                .sheet(isPresented: $showingNewEntry) {
+                    NewLedgerEntryView()
                 }
             } else {
                 // iPhone layout with navigation
@@ -100,10 +119,10 @@ struct LedgerView: View {
                         }
                     }
                 }
+                .sheet(isPresented: $showingNewEntry) {
+                    NewLedgerEntryView()
+                }
             }
-        }
-        .sheet(isPresented: $showingNewEntry) {
-            NewLedgerEntryView()
         }
     }
     
@@ -216,22 +235,22 @@ struct LedgerView: View {
     
     private func calculateBalance(for type: AccountType) -> Decimal {
         let entries = allLedgerEntries.filter { entry in
-            guard let entryType = entry.entryType else { return false }
+            guard let entryType = entry.entryType?.lowercased() else { return false }
             switch type {
             case .asset:
-                return entryType.lowercased() == "asset"
+                return entryType == "asset"
             case .revenue:
-                return entryType.lowercased() == "revenue"
+                return entryType == "revenue"
             case .expense:
-                return entryType.lowercased() == "expense"
+                return entryType == "expense"
             case .liability:
-                return entryType.lowercased() == "liability"
+                return entryType == "liability"
             case .equity:
-                return entryType.lowercased() == "equity"
+                return entryType == "equity"
             }
         }
         
-        return entries.reduce(0) { result, entry in
+        return entries.reduce(Decimal.zero) { result, entry in
             if type == .expense || type == .asset {
                 return result + (entry.debitAmount?.decimalValue ?? 0) - (entry.creditAmount?.decimalValue ?? 0)
             } else {
@@ -267,11 +286,16 @@ enum DateRange: String, CaseIterable {
         case .thisMonth:
             return calendar.isDate(date, equalTo: now, toGranularity: .month)
         case .thisQuarter:
-            let nowQuarter = calendar.component(.quarter, from: now)
-            let dateQuarter = calendar.component(.quarter, from: date)
-            let nowYear = calendar.component(.year, from: now)
-            let dateYear = calendar.component(.year, from: date)
-            return nowQuarter == dateQuarter && nowYear == dateYear
+            // Safer quarter calculation by month
+            let nowComponents = calendar.dateComponents([.year, .month], from: now)
+            let dateComponents = calendar.dateComponents([.year, .month], from: date)
+            guard let nowYear = nowComponents.year,
+                  let nowMonth = nowComponents.month,
+                  let dateYear = dateComponents.year,
+                  let dateMonth = dateComponents.month else { return false }
+            
+            func quarter(for month: Int) -> Int { (month - 1) / 3 + 1 }
+            return nowYear == dateYear && quarter(for: nowMonth) == quarter(for: dateMonth)
         case .thisYear:
             return calendar.isDate(date, equalTo: now, toGranularity: .year)
         case .all:
@@ -309,12 +333,6 @@ struct AccountSummaryCard: View {
         .padding()
         .background(AppTheme.Colors.backgroundPrimary)
         .cornerRadius(AppTheme.CornerRadius.medium)
-    }
-    
-    private func formatCurrency(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        return formatter.string(from: amount as NSDecimalNumber) ?? "$0.00"
     }
 }
 
@@ -499,19 +517,13 @@ struct LedgerEntryRowView: View {
             description.contains(keyword) || notes.contains(keyword) || vendor.contains(keyword)
         }
     }
-    
-    private func formatCurrency(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        return formatter.string(from: amount as NSDecimalNumber) ?? "$0.00"
-    }
 }
 
 /// Detailed view for a single ledger entry
 struct LedgerEntryDetailView: View {
     let entry: LedgerEntry
     let isSheet: Bool
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.managedObjectContext) private var viewContext
     @State private var notes: String = ""
     @State private var isEditing = false
@@ -531,9 +543,7 @@ struct LedgerEntryDetailView: View {
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbar {
                             ToolbarItem(placement: .navigationBarLeading) {
-                                Button("Close") {
-                                    presentationMode.wrappedValue.dismiss()
-                                }
+                                Button("Close") { dismiss() }
                             }
                             
                             ToolbarItem(placement: .navigationBarTrailing) {
@@ -709,12 +719,6 @@ struct LedgerEntryDetailView: View {
             print("❌ Failed to save changes: \(error)")
         }
     }
-    
-    private func formatCurrency(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        return formatter.string(from: amount as NSDecimalNumber) ?? "$0.00"
-    }
 }
 
 /// Ledger detail section container
@@ -766,7 +770,7 @@ struct LedgerDetailRow: View {
 
 /// New ledger entry view (placeholder)
 struct NewLedgerEntryView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationView {
@@ -785,15 +789,11 @@ struct NewLedgerEntryView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        presentationMode.wrappedValue.dismiss()
-                    }
+                    Button("Cancel") { dismiss() }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
-                        presentationMode.wrappedValue.dismiss()
-                    }
+                    Button("Save") { dismiss() }
                 }
             }
         }

@@ -376,7 +376,8 @@ struct WorkOrderAssignmentView: View {
                 HStack {
                     CommonActionButton(
                         title: "Add Expense",
-                        style: .tertiary
+                        style: .secondary
+                        
                     ) {
                         showingExpenseCreation = true
                     }
