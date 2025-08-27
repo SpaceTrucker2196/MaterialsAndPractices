@@ -23,48 +23,46 @@ struct PaymentDetailView: View {
     @State private var errorMessage = ""
     
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
-                    // Payment Information Section
-                    paymentInformationSection
-                    
-                    // Farm Details Section
-                    farmDetailsSection
-                    
-                    // Fields in Lease Section
-                    fieldsInLeaseSection
-                    
-                    // Equipment Section
-                    equipmentSection
-                    
-                    // Actions Section
-                    actionsSection
-                }
-                .padding()
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                // Payment Information Section
+                paymentInformationSection
+                
+                // Farm Details Section
+                farmDetailsSection
+                
+                // Fields in Lease Section
+                fieldsInLeaseSection
+                
+                // Equipment Section
+                equipmentSection
+                
+                // Actions Section
+                actionsSection
             }
-            .navigationTitle("Payment Details")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Done") {
-                        presentationMode.wrappedValue.dismiss()
-                    }
+            .padding()
+        }
+        .navigationTitle("Payment Details")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button("Done") {
+                    presentationMode.wrappedValue.dismiss()
                 }
             }
-            .alert("Mark as Paid", isPresented: $showingMarkPaidAlert) {
-                Button("Mark Paid", role: .destructive) {
-                    markPaymentAsPaid()
-                }
-                Button("Cancel", role: .cancel) { }
-            } message: {
-                Text("Mark this payment as paid? This will update the payment status and create a ledger entry.")
+        }
+        .alert("Mark as Paid", isPresented: $showingMarkPaidAlert) {
+            Button("Mark Paid", role: .destructive) {
+                markPaymentAsPaid()
             }
-            .alert("Error", isPresented: $showingErrorAlert) {
-                Button("OK") { }
-            } message: {
-                Text(errorMessage)
-            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Mark this payment as paid? This will update the payment status and create a ledger entry.")
+        }
+        .alert("Error", isPresented: $showingErrorAlert) {
+            Button("OK") { }
+        } message: {
+            Text(errorMessage)
         }
     }
     

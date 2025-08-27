@@ -43,41 +43,40 @@ struct LeaseDetailView: View {
     }
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                if isLoading {
-                    LoadingView()
-                } else {
-                    ScrollView {
-                        VStack(spacing: AppTheme.Spacing.large) {
-                            leaseHeaderSection
-                            
-                            paymentStatusSection
-                            
-                            leaseContentSection
-                            
-                            paymentHistorySection
-                            
-                            leaseActionsSection
-                        }
-                        .padding()
+        ZStack {
+            if isLoading {
+                LoadingView()
+            } else {
+                ScrollView {
+                    VStack(spacing: AppTheme.Spacing.large) {
+                        leaseHeaderSection
+                        
+                        paymentStatusSection
+                        
+                        leaseContentSection
+                        
+                        paymentHistorySection
+                        
+                        leaseActionsSection
                     }
+                    .padding()
                 }
             }
-            .navigationTitle("Lease Details")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") {
-                        presentationMode.wrappedValue.dismiss()
-                    }
+        }
+        .navigationTitle("Lease Details")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button("Close") {
+                    presentationMode.wrappedValue.dismiss()
                 }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button("Make Payment") {
-                            showingPaymentSheet = true
-                        }
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button("Make Payment") {
+                        showingPaymentSheet = true
+                    }
                         
                         Button("Export Lease") {
                             exportLease()
@@ -93,26 +92,25 @@ struct LeaseDetailView: View {
                     }
                 }
             }
-            .onAppear {
-                loadLeaseContent()
-            }
-            .sheet(isPresented: $showingPaymentSheet) {
-                PaymentEntryView(lease: lease)
-            }
-            .alert("Void Lease", isPresented: $showingVoidConfirmation, actions: {
-                Button("Cancel", role: .cancel) { }
-                Button("Void", role: .destructive) {
-                    voidLease()
-                }
-            }, message: {
-                Text("Are you sure you want to void this lease? This action cannot be undone.")
-            })
-            .alert("Error", isPresented: $showingError, actions: {
-                Button("OK") { }
-            }, message: {
-                Text(errorMessage)
-            })
+        .onAppear {
+            loadLeaseContent()
         }
+        .sheet(isPresented: $showingPaymentSheet) {
+            PaymentEntryView(lease: lease)
+        }
+        .alert("Void Lease", isPresented: $showingVoidConfirmation, actions: {
+            Button("Cancel", role: .cancel) { }
+            Button("Void", role: .destructive) {
+                voidLease()
+            }
+        }, message: {
+            Text("Are you sure you want to void this lease? This action cannot be undone.")
+        })
+        .alert("Error", isPresented: $showingError, actions: {
+            Button("OK") { }
+        }, message: {
+            Text(errorMessage)
+        })
     }
     
     // MARK: - UI Sections

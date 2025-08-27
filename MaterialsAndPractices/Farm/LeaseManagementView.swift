@@ -28,38 +28,36 @@ struct LeaseManagementView: View {
     ) private var allLeases: FetchedResults<Lease>
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                leaseHeaderSection
-                
-                ScrollView {
-                    LazyVStack(spacing: AppTheme.Spacing.large) {
-                        quickActionsSection
-                        
-                        leaseFilterSection
-                        
-                        filteredLeasesSection
-                        
-                        upcomingLeasesSection
-                        
-                        expiredLeasesSection
-                    }
-                    .padding()
+        VStack(spacing: 0) {
+            leaseHeaderSection
+            
+            ScrollView {
+                LazyVStack(spacing: AppTheme.Spacing.large) {
+                    quickActionsSection
+                    
+                    leaseFilterSection
+                    
+                    filteredLeasesSection
+                    
+                    upcomingLeasesSection
+                    
+                    expiredLeasesSection
                 }
+                .padding()
             }
-            .navigationTitle("Lease Management")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("New Lease") {
-                        showingLeaseCreation = true
-                    }
-                    .foregroundColor(AppTheme.Colors.primary)
+        }
+        .navigationTitle("Lease Management")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("New Lease") {
+                    showingLeaseCreation = true
                 }
+                .foregroundColor(AppTheme.Colors.primary)
             }
-            .sheet(isPresented: $showingLeaseCreation) {
-                LeaseCreationWorkflowView(isPresented: $showingLeaseCreation)
-            }
+        }
+        .sheet(isPresented: $showingLeaseCreation) {
+            LeaseCreationWorkflowView(isPresented: $showingLeaseCreation)
         }
     }
     

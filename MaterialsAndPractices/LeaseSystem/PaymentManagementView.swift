@@ -27,38 +27,38 @@ struct PaymentManagementView: View {
     ) private var allPayments: FetchedResults<Payment>
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                paymentSummarySection
-                
-                filterSection
-                
-                ScrollView {
-                    LazyVStack(spacing: AppTheme.Spacing.medium) {
-                        ForEach(filteredPayments, id: \.objectID) { payment in
-                            PaymentCardView(payment: payment) {
-                                // Handle payment action
-                                handlePaymentAction(payment)
-                            }
+    var body: some View {
+        VStack(spacing: 0) {
+            paymentSummarySection
+            
+            filterSection
+            
+            ScrollView {
+                LazyVStack(spacing: AppTheme.Spacing.medium) {
+                    ForEach(filteredPayments, id: \.objectID) { payment in
+                        PaymentCardView(payment: payment) {
+                            // Handle payment action
+                            handlePaymentAction(payment)
                         }
                     }
-                    .padding()
                 }
-            }
-            .navigationTitle("Payment Management")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("New Payment") {
-                        showingPaymentEntry = true
-                    }
-                    .foregroundColor(AppTheme.Colors.primary)
-                }
-            }
-            .sheet(isPresented: $showingPaymentEntry) {
-                NewPaymentEntryView()
+                .padding()
             }
         }
+        .navigationTitle("Payment Management")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("New Payment") {
+                    showingPaymentEntry = true
+                }
+                .foregroundColor(AppTheme.Colors.primary)
+            }
+        }
+        .sheet(isPresented: $showingPaymentEntry) {
+            NewPaymentEntryView()
+        }
+    }
     }
     
     // MARK: - UI Sections

@@ -46,41 +46,39 @@ struct LeaseRenewalsView: View {
     }
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                renewalHeaderSection
-                
-                yearSelectionSection
-                
-                ScrollView {
-                    LazyVStack(spacing: AppTheme.Spacing.medium) {
-                        if leasesForYear.isEmpty {
-                            emptyStateSection
-                        } else {
-                            ForEach(Array(leasesForYear), id: \.objectID) { lease in
-                                RenewalLeaseCardView(
-                                    lease: lease,
-                                    targetYear: targetYear
-                                ) {
-                                    selectedLease = lease
-                                    showingRenewalForm = true
-                                }
+        VStack(spacing: 0) {
+            renewalHeaderSection
+            
+            yearSelectionSection
+            
+            ScrollView {
+                LazyVStack(spacing: AppTheme.Spacing.medium) {
+                    if leasesForYear.isEmpty {
+                        emptyStateSection
+                    } else {
+                        ForEach(Array(leasesForYear), id: \.objectID) { lease in
+                            RenewalLeaseCardView(
+                                lease: lease,
+                                targetYear: targetYear
+                            ) {
+                                selectedLease = lease
+                                showingRenewalForm = true
                             }
                         }
                     }
-                    .padding()
                 }
+                .padding()
             }
-            .navigationTitle("Lease Renewals")
-            .navigationBarTitleDisplayMode(.large)
-            .sheet(isPresented: $showingRenewalForm) {
-                if let lease = selectedLease {
-                    LeaseRenewalFormView(
-                        originalLease: lease,
-                        targetYear: targetYear,
-                        isPresented: $showingRenewalForm
-                    )
-                }
+        }
+        .navigationTitle("Lease Renewals")
+        .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $showingRenewalForm) {
+            if let lease = selectedLease {
+                LeaseRenewalFormView(
+                    originalLease: lease,
+                    targetYear: targetYear,
+                    isPresented: $showingRenewalForm
+                )
             }
         }
         .onChange(of: selectedYear) { _ in
