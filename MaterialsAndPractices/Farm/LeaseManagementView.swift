@@ -38,7 +38,7 @@ struct LeaseManagementView: View {
                         
                         leaseFilterSection
                         
-                        activeLeasesSection
+                        filteredLeasesSection
                         
                         upcomingLeasesSection
                         
@@ -156,7 +156,7 @@ struct LeaseManagementView: View {
         }
     }
     
-    /// Lease filter section
+    /// Lease filter section with functional filtering
     private var leaseFilterSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             SectionHeader(title: "Filter Leases")
@@ -177,33 +177,37 @@ struct LeaseManagementView: View {
         }
     }
     
-    /// Active leases section with navigation to detail view
-    private var activeLeasesSection: some View {
+    /// Combined active leases section with filtering and 5-item limit
+    private var filteredLeasesSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             HStack {
-                SectionHeader(title: "Active Leases")
+                SectionHeader(title: selectedFilter == .all ? "All Leases" : selectedFilter.displayName)
                 Spacer()
-                if activeLeases.count > 3 {
-                    NavigationLink("View All", destination: AllLeasesListView(leases: activeLeases))
+                if filteredLeases.count > 5 {
+                    NavigationLink("View All (\(filteredLeases.count))", destination: AllLeasesListView(leases: filteredLeases, title: selectedFilter.displayName))
                         .font(AppTheme.Typography.bodySmall)
                         .foregroundColor(AppTheme.Colors.primary)
                 }
             }
             
-            if activeLeases.isEmpty {
+            if filteredLeases.isEmpty {
                 LeaseEmptyStateView(
-                    icon: "doc.text",
-                    title: "No Active Leases",
-                    description: "Create a lease to get started",
-                    actionTitle: "Create Lease"
+                    icon: selectedFilter.icon,
+                    title: "No \(selectedFilter.displayName) Leases",
+                    description: selectedFilter == .all ? "Create a lease to get started" : "No leases match the current filter",
+                    actionTitle: selectedFilter == .all ? "Create Lease" : "View All Leases"
                 ) {
-                    showingLeaseCreation = true
+                    if selectedFilter == .all {
+                        showingLeaseCreation = true
+                    } else {
+                        selectedFilter = .all
+                    }
                 }
             } else {
                 VStack(spacing: AppTheme.Spacing.small) {
-                    ForEach(Array(activeLeases.prefix(3)), id: \.objectID) { lease in
+                    ForEach(Array(filteredLeases.prefix(5)), id: \.objectID) { lease in
                         NavigationLink(destination: LeaseDetailView(lease: lease)) {
-                            LeaseRowView(lease: lease)
+                            LeaseRowView(lease: lease, showExpirationWarning: isExpiringSoon(lease), isExpired: isExpired(lease))
                         }
                         .buttonStyle(PlainButtonStyle())
                     }
@@ -219,7 +223,7 @@ struct LeaseManagementView: View {
                 SectionHeader(title: "Expiring Soon")
                 Spacer()
                 if expiringSoonLeases.count > 3 {
-                    NavigationLink("View All", destination: AllLeasesListView(leases: expiringSoonLeases))
+                    NavigationLink("View All", destination: AllLeasesListView(leases: expiringSoonLeases, title: "Expiring Soon"))
                         .font(AppTheme.Typography.bodySmall)
                         .foregroundColor(AppTheme.Colors.primary)
                 }
@@ -250,7 +254,7 @@ struct LeaseManagementView: View {
                 SectionHeader(title: "Recently Expired")
                 Spacer()
                 if expiredLeases.count > 2 {
-                    NavigationLink("View All", destination: AllLeasesListView(leases: expiredLeases))
+                    NavigationLink("View All", destination: AllLeasesListView(leases: expiredLeases, title: "Recently Expired"))
                         .font(AppTheme.Typography.bodySmall)
                         .foregroundColor(AppTheme.Colors.primary)
                 }
@@ -297,6 +301,37 @@ struct LeaseManagementView: View {
         }
     }
     
+    /// Filtered leases based on selected filter
+    private var filteredLeases: [Lease] {
+        switch selectedFilter {
+        case .all:
+            return Array(allLeases)
+        case .active:
+            return activeLeases
+        case .expiring:
+            return expiringSoonLeases
+        case .expired:
+            return expiredLeases
+        case .cash:
+            return allLeases.filter { $0.leaseType?.lowercased().contains("cash") == true }
+        case .share:
+            return allLeases.filter { $0.leaseType?.lowercased().contains("share") == true }
+        }
+    }
+    
+    /// Check if lease is expiring soon
+    private func isExpiringSoon(_ lease: Lease) -> Bool {
+        guard let endDate = lease.endDate else { return false }
+        let thirtyDaysFromNow = Date().addingTimeInterval(30 * 24 * 60 * 60)
+        return endDate > Date() && endDate <= thirtyDaysFromNow
+    }
+    
+    /// Check if lease is expired
+    private func isExpired(_ lease: Lease) -> Bool {
+        guard let endDate = lease.endDate else { return false }
+        return endDate < Date()
+    }
+    
     /// Fetch payments that need attention (overdue or due soon)
     private var paymentsDue: [Payment] {
         let fetchRequest: NSFetchRequest<Payment> = Payment.fetchRequest()
@@ -328,7 +363,7 @@ struct LeaseManagementView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: AppTheme.Spacing.medium) {
                     ForEach(Array(paymentsDue.prefix(5)), id: \.objectID) { payment in
-                        NavigationLink(destination: LeaseDetailView(lease: payment.lease!)) {
+                        NavigationLink(destination: PaymentDetailView(payment: payment)) {
                             PaymentTileView(payment: payment)
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -746,13 +781,22 @@ struct MorePaymentsTileView: View {
 /// Placeholder for all leases list
 struct AllLeasesListView: View {
     let leases: [Lease]
+    let title: String
+    
+    init(leases: [Lease], title: String = "All Leases") {
+        self.leases = leases
+        self.title = title
+    }
     
     var body: some View {
         List {
             ForEach(leases, id: \.objectID) { lease in
-                LeaseRowView(lease: lease)
+                NavigationLink(destination: LeaseDetailView(lease: lease)) {
+                    LeaseRowView(lease: lease)
+                }
+                .buttonStyle(PlainButtonStyle())
             }
         }
-        .navigationTitle("All Leases")
+        .navigationTitle(title)
     }
 }

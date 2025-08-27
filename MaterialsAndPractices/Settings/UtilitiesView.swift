@@ -354,6 +354,11 @@ struct UtilitiesView: View {
                 Text("\(config.maxRetryAttempts)")
                     .foregroundColor(AppTheme.Colors.textSecondary)
             }
+            
+            // Load Test Workers - Test version only
+            #if DEBUG
+            LoadTestWorkersRow()
+            #endif
         }
     }
     
@@ -565,5 +570,104 @@ struct UtilityActionRow: View {
 struct UtilitiesView_Previews: PreviewProvider {
     static var previews: some View {
         UtilitiesView()
+    }
+}
+
+// MARK: - Load Test Workers Component
+
+/// Load Test Workers row for debug builds only
+struct LoadTestWorkersRow: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @State private var showingResetAlert = false
+    @State private var isLoading = false
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
+    
+    var body: some View {
+        Button(action: {
+            showingResetAlert = true
+        }) {
+            HStack(spacing: AppTheme.Spacing.medium) {
+                // Icon container with test feature styling
+                Image(systemName: "person.2.fill")
+                    .font(.title2)
+                    .foregroundColor(.white)
+                    .frame(width: 30, height: 30)
+                
+                // Content container
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    Text("Load Test Workers")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(.white)
+                    
+                    Text("Load test worker data from CSV file")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(.white.opacity(0.8))
+                        .multilineTextAlignment(.leading)
+                }
+                
+                Spacer()
+                
+                // Test Feature badge
+                Text("Test Feature")
+                    .font(AppTheme.Typography.labelSmall)
+                    .fontWeight(.medium)
+                    .foregroundColor(.blue)
+                    .padding(.horizontal, AppTheme.Spacing.small)
+                    .padding(.vertical, AppTheme.Spacing.tiny)
+                    .background(.white)
+                    .cornerRadius(AppTheme.CornerRadius.small)
+                
+                // Navigation indicator
+                Image(systemName: "chevron.right")
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding(.vertical, AppTheme.Spacing.small)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(PlainButtonStyle())
+        .listRowBackground(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .fill(.blue)
+                .padding(.vertical, 2)
+        )
+        .disabled(isLoading)
+        .alert("Reset Worker Data", isPresented: $showingResetAlert) {
+            Button("Load Test Data", role: .destructive) {
+                loadTestWorkers()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This will reset all worker data and load test workers from the CSV file. This action cannot be undone.")
+        }
+        .alert("Error", isPresented: $showingErrorAlert) {
+            Button("OK") { }
+        } message: {
+            Text(errorMessage)
+        }
+    }
+    
+    private func loadTestWorkers() {
+        isLoading = true
+        
+        let loader = WorkerTestDataLoader(viewContext: viewContext)
+        
+        Task {
+            do {
+                try loader.loadWorkerTestData()
+                
+                await MainActor.run {
+                    isLoading = false
+                    // Show success feedback
+                }
+            } catch {
+                await MainActor.run {
+                    isLoading = false
+                    errorMessage = error.localizedDescription
+                    showingErrorAlert = true
+                }
+            }
+        }
     }
 }
