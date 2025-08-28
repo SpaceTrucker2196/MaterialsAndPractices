@@ -110,7 +110,7 @@ struct AmendmentSelectionView: View {
             }
             .padding(.horizontal, AppTheme.Spacing.medium)
             .padding(.vertical, AppTheme.Spacing.small)
-            .background(AppTheme.Colors.surfaceSecondary)
+            .background(AppTheme.Colors.surface)
             .cornerRadius(AppTheme.CornerRadius.medium)
             
             // Filter toggle
@@ -130,7 +130,7 @@ struct AmendmentSelectionView: View {
     private var amendmentsList: some View {
         List {
             if filteredAmendments.isEmpty {
-                EmptyStateView()
+                OrganicEmptyStateView()
             } else {
                 ForEach(filteredAmendments, id: \.amendmentID) { amendment in
                     AmendmentSelectionRow(
@@ -253,7 +253,7 @@ struct OrganicCertificationBadge: View {
 // MARK: - Empty State View
 
 /// View displayed when no amendments match the filter criteria
-struct EmptyStateView: View {
+struct OrganicEmptyStateView: View {
     var body: some View {
         VStack(spacing: AppTheme.Spacing.medium) {
             Image(systemName: "leaf.circle")

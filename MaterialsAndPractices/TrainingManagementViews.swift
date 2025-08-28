@@ -1508,4 +1508,4 @@ struct AssignmentWorkerRow: View {
         return AppTheme.Colors.info
     }
 }
-}
+
