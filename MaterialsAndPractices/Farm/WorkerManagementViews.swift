@@ -1163,22 +1163,329 @@ struct CreateWorkerView: View {
     }
 }
 
-/// Placeholder for edit worker view
+/// Enhanced edit worker view with comprehensive profile editing
 struct EditWorkerView: View {
     let worker: Worker
     @Binding var isPresented: Bool
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    // MARK: - Form State
+    @State private var name: String
+    @State private var position: String
+    @State private var email: String
+    @State private var phone: String
+    @State private var emergencyContact: String
+    @State private var emergencyPhone: String
+    @State private var hireDate: Date
+    @State private var notes: String
+    @State private var isActive: Bool
+    
+    // MARK: - Photo Management
+    @State private var profileImage: UIImage?
+    @State private var showingImagePicker = false
+    @State private var showingImageOptions = false
+    @StateObject private var photoManager = PhotoManager()
+    
+    // MARK: - UI State
+    @State private var isSaving = false
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
+    
+    init(worker: Worker, isPresented: Binding<Bool>) {
+        self.worker = worker
+        self._isPresented = isPresented
+        
+        // Initialize form state with worker data
+        self._name = State(initialValue: worker.name ?? "")
+        self._position = State(initialValue: worker.position ?? "")
+        self._email = State(initialValue: worker.email ?? "")
+        self._phone = State(initialValue: worker.phone ?? "")
+        self._emergencyContact = State(initialValue: worker.emergencyContact ?? "")
+        self._emergencyPhone = State(initialValue: worker.emergencyPhone ?? "")
+        self._hireDate = State(initialValue: worker.hireDate ?? Date())
+        self._notes = State(initialValue: worker.notes ?? "")
+        self._isActive = State(initialValue: worker.isActive)
+        
+        // Initialize profile image if available
+        if let photoData = worker.profilePhotoData,
+           let uiImage = UIImage(data: photoData) {
+            self._profileImage = State(initialValue: uiImage)
+        }
+    }
     
     var body: some View {
         NavigationView {
-            Text("Edit Worker - Coming Soon")
-                .navigationTitle("Edit Worker")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel") {
-                            isPresented = false
+            Form {
+                // Profile Photo Section
+                profilePhotoSection
+                
+                // Basic Information Section
+                basicInformationSection
+                
+                // Contact Information Section
+                contactInformationSection
+                
+                // Emergency Contact Section
+                emergencyContactSection
+                
+                // Employment Information Section
+                employmentInformationSection
+                
+                // Notes Section
+                notesSection
+            }
+            .navigationTitle("Edit Worker")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Save") {
+                        saveWorker()
+                    }
+                    .disabled(name.isEmpty || isSaving)
+                }
+            }
+            .sheet(isPresented: $showingImagePicker) {
+                //GenericPhotoCaptureView(selectedImage: $profileImage)
+            }
+            .actionSheet(isPresented: $showingImageOptions) {
+                ActionSheet(
+                    title: Text("Profile Photo"),
+                    buttons: [
+                        .default(Text("Take Photo")) {
+                            if photoManager.isCameraAuthorized {
+                                showingImagePicker = true
+                            } else {
+                                photoManager.requestCameraPermission { granted in
+                                    if granted {
+                                        showingImagePicker = true
+                                    }
+                                }
+                            }
+                        },
+                        .default(Text("Choose from Library")) {
+                            showingImagePicker = true
+                        },
+                        .cancel()
+                    ]
+                )
+            }
+            .alert("Error", isPresented: $showingErrorAlert) {
+                Button("OK") { }
+            } message: {
+                Text(errorMessage)
+            }
+            .disabled(isSaving)
+        }
+    }
+    
+    // MARK: - Section Views (Reusing from CreateWorkerView)
+    
+    private var profilePhotoSection: some View {
+        Section("Profile Photo") {
+            HStack {
+                Spacer()
+                
+                VStack(spacing: AppTheme.Spacing.medium) {
+                    // Photo display
+                    if let profileImage = profileImage {
+                        Image(uiImage: profileImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 120, height: 120)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(AppTheme.Colors.primary, lineWidth: 2)
+                            )
+                    } else {
+                        Circle()
+                            .fill(AppTheme.Colors.backgroundSecondary)
+                            .frame(width: 120, height: 120)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 48))
+                                    .foregroundColor(AppTheme.Colors.primary)
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(AppTheme.Colors.primary, lineWidth: 2)
+                            )
+                    }
+                    
+                    // Photo action buttons
+                    HStack(spacing: AppTheme.Spacing.medium) {
+                        if profileImage != nil {
+                            Button("Change Photo") {
+                                showingImageOptions = true
+                            }
+                            .font(AppTheme.Typography.bodySmall)
+                            
+                            Button("Remove") {
+                                profileImage = nil
+                            }
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.error)
+                        } else {
+                            Button("Add Photo") {
+                                showingImageOptions = true
+                            }
+                            .font(AppTheme.Typography.bodyMedium)
                         }
                     }
                 }
+                
+                Spacer()
+            }
+            .padding(.vertical, AppTheme.Spacing.medium)
+        }
+    }
+    
+    private var basicInformationSection: some View {
+        Section("Basic Information") {
+            HStack {
+                Image(systemName: "person")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                TextField("Full Name", text: $name)
+                    .textContentType(.name)
+            }
+            
+            HStack {
+                Image(systemName: "briefcase")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                TextField("Position/Title", text: $position)
+                    .textContentType(.jobTitle)
+            }
+            
+            HStack {
+                Image(systemName: "person.crop.circle.badge.checkmark")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                Toggle("Active Employee", isOn: $isActive)
+            }
+        }
+    }
+    
+    private var contactInformationSection: some View {
+        Section("Contact Information") {
+            HStack {
+                Image(systemName: "envelope")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                TextField("Email Address", text: $email)
+                    .textContentType(.emailAddress)
+                    .keyboardType(.emailAddress)
+                    .autocapitalization(.none)
+            }
+            
+            HStack {
+                Image(systemName: "phone")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                TextField("Phone Number", text: $phone)
+                    .textContentType(.telephoneNumber)
+                    .keyboardType(.phonePad)
+            }
+        }
+    }
+    
+    private var emergencyContactSection: some View {
+        Section("Emergency Contact") {
+            HStack {
+                Image(systemName: "person.2")
+                    .foregroundColor(AppTheme.Colors.error)
+                    .frame(width: 20)
+                
+                TextField("Emergency Contact Name", text: $emergencyContact)
+                    .textContentType(.name)
+            }
+            
+            HStack {
+                Image(systemName: "phone.badge.plus")
+                    .foregroundColor(AppTheme.Colors.error)
+                    .frame(width: 20)
+                
+                TextField("Emergency Phone Number", text: $emergencyPhone)
+                    .textContentType(.telephoneNumber)
+                    .keyboardType(.phonePad)
+            }
+        }
+    }
+    
+    private var employmentInformationSection: some View {
+        Section("Employment Information") {
+            HStack {
+                Image(systemName: "calendar.badge.plus")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                DatePicker("Hire Date", selection: $hireDate, displayedComponents: .date)
+            }
+        }
+    }
+    
+    private var notesSection: some View {
+        Section("Notes") {
+            HStack(alignment: .top) {
+                Image(systemName: "note.text")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                    .padding(.top, 4)
+                
+                TextField("Additional notes or comments", text: $notes, axis: .vertical)
+                    .lineLimit(3...6)
+            }
+        }
+    }
+    
+    // MARK: - Actions
+    
+    private func saveWorker() {
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            errorMessage = "Worker name is required"
+            showingErrorAlert = true
+            return
+        }
+        
+        isSaving = true
+        
+        // Update worker properties
+        worker.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.position = position.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : position.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.email = email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : email.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.phone = phone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : phone.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.emergencyContact = emergencyContact.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : emergencyContact.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.emergencyPhone = emergencyPhone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : emergencyPhone.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.hireDate = hireDate
+        worker.notes = notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : notes.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.isActive = isActive
+        
+        // Update profile photo if changed
+        if let profileImage = profileImage {
+            worker.profilePhotoData = profileImage.jpegData(compressionQuality: 0.7)
+        } else {
+            worker.profilePhotoData = nil
+        }
+        
+        do {
+            try viewContext.save()
+            isPresented = false
+        } catch {
+            isSaving = false
+            errorMessage = "Failed to save worker: \(error.localizedDescription)"
+            showingErrorAlert = true
         }
     }
 }

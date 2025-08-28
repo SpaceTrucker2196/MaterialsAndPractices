@@ -468,23 +468,307 @@ struct TrainingRecordRow: View {
 
 // MARK: - Placeholder Views
 
-/// Placeholder for assign training view
+/// Complete training assignment view with worker selection and record creation
 struct AssignTrainingView: View {
     let course: TrainingCourse
     var selectedWorker: Worker? = nil
     @Binding var isPresented: Bool
     
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @FetchRequest var workers: FetchedResults<Worker>
+    
+    // Form state
+    @State private var selectedWorkers: Set<Worker> = []
+    @State private var trainingDate = Date()
+    @State private var trainerName = ""
+    @State private var languageProvided = "English"
+    @State private var trainingMethod: TrainingMethod = .inPerson
+    @State private var comprehensionCheckMethod: ComprehensionCheckMethod = .verbal
+    @State private var passStatus = true
+    @State private var notes = ""
+    @State private var requiresAnnualReview = true
+    
+    // UI state
+    @State private var isSaving = false
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
+    
+    init(course: TrainingCourse, selectedWorker: Worker? = nil, isPresented: Binding<Bool>) {
+        self.course = course
+        self.selectedWorker = selectedWorker
+        self._isPresented = isPresented
+        
+        // Fetch active workers
+        self._workers = FetchRequest(
+            entity: Worker.entity(),
+            sortDescriptors: [NSSortDescriptor(keyPath: \Worker.name, ascending: true)],
+            predicate: NSPredicate(format: "isActive == YES")
+        )
+    }
+    
     var body: some View {
         NavigationView {
-            Text("Assign Training - Coming Soon")
-                .navigationTitle("Assign Training")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel") {
-                            isPresented = false
-                        }
+            Form {
+                // Course Information Section
+                courseInformationSection
+                
+                // Worker Selection Section
+                workerSelectionSection
+                
+                // Training Details Section
+                trainingDetailsSection
+                
+                // Assessment Section
+                assessmentSection
+                
+                // Notes Section
+                notesSection
+            }
+            .navigationTitle("Assign Training")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isPresented = false
                     }
                 }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Assign") {
+                        assignTraining()
+                    }
+                    .disabled(selectedWorkers.isEmpty || trainerName.isEmpty || isSaving)
+                }
+            }
+            .onAppear {
+                setupInitialState()
+            }
+            .alert("Error", isPresented: $showingErrorAlert) {
+                Button("OK") { }
+            } message: {
+                Text(errorMessage)
+            }
+        }
+    }
+    
+    // MARK: - Section Views
+    
+    private var courseInformationSection: some View {
+        Section("Training Course") {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                Text(course.courseName ?? "Unknown Course")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .fontWeight(.semibold)
+                
+                if let courseDescription = course.courseDescription {
+                    Text(courseDescription)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                HStack {
+                    if let complianceCategory = course.complianceCategoryEnum {
+                        ComplianceBadge(category: complianceCategory)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("\(course.estimatedDurationMin) minutes")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+            }
+            .padding(.vertical, AppTheme.Spacing.small)
+        }
+    }
+    
+    private var workerSelectionSection: some View {
+        Section("Select Workers") {
+            if workers.isEmpty {
+                Text("No active workers available")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            } else {
+                ForEach(workers, id: \.id) { worker in
+                    HStack {
+                        Button(action: {
+                            toggleWorkerSelection(worker)
+                        }) {
+                            HStack {
+                                Image(systemName: selectedWorkers.contains(worker) ? "checkmark.circle.fill" : "circle")
+                                    .foregroundColor(selectedWorkers.contains(worker) ? AppTheme.Colors.success : AppTheme.Colors.textSecondary)
+                                
+                                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                                    Text(worker.name ?? "Unknown Worker")
+                                        .font(AppTheme.Typography.bodyMedium)
+                                        .foregroundColor(AppTheme.Colors.textPrimary)
+                                    
+                                    if let position = worker.position {
+                                        Text(position)
+                                            .font(AppTheme.Typography.bodySmall)
+                                            .foregroundColor(AppTheme.Colors.textSecondary)
+                                    }
+                                }
+                                
+                                Spacer()
+                            }
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+            }
+        }
+    }
+    
+    private var trainingDetailsSection: some View {
+        Section("Training Details") {
+            DatePicker("Training Date", selection: $trainingDate, displayedComponents: .date)
+            
+            HStack {
+                Text("Trainer Name")
+                Spacer()
+                TextField("Trainer Name", text: $trainerName)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .frame(maxWidth: 200)
+            }
+            
+            HStack {
+                Text("Language")
+                Spacer()
+                Picker("Language", selection: $languageProvided) {
+                    Text("English").tag("English")
+                    Text("Spanish").tag("Spanish")
+                }
+                .pickerStyle(MenuPickerStyle())
+            }
+            
+            HStack {
+                Text("Training Method")
+                Spacer()
+                Picker("Method", selection: $trainingMethod) {
+                    ForEach(TrainingMethod.allCases, id: \.self) { method in
+                        Text(method.rawValue).tag(method)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+            }
+        }
+    }
+    
+    private var assessmentSection: some View {
+        Section("Assessment") {
+            HStack {
+                Text("Comprehension Check")
+                Spacer()
+                Picker("Check Method", selection: $comprehensionCheckMethod) {
+                    ForEach(ComprehensionCheckMethod.allCases, id: \.self) { method in
+                        Text(method.rawValue).tag(method)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+            }
+            
+            Toggle("Passed Training", isOn: $passStatus)
+            
+            Toggle("Requires Annual Review", isOn: $requiresAnnualReview)
+        }
+    }
+    
+    private var notesSection: some View {
+        Section("Notes") {
+            TextField("Additional notes or observations", text: $notes, axis: .vertical)
+                .lineLimit(3...6)
+        }
+    }
+    
+    // MARK: - Methods
+    
+    private func setupInitialState() {
+        // Pre-select worker if provided
+        if let selectedWorker = selectedWorker {
+            selectedWorkers.insert(selectedWorker)
+        }
+        
+        // Set default values based on course
+        if let deliveryMethod = course.deliveryMethodEnum {
+            switch deliveryMethod {
+            case .inPerson:
+                trainingMethod = .inPerson
+            case .video:
+                trainingMethod = .video
+            case .online:
+                trainingMethod = .online
+            case .documentReview:
+                trainingMethod = .written
+            case .onsiteDemo:
+                trainingMethod = .inPerson
+            }
+        }
+        
+        // Set recertification requirement
+        if let recertificationInterval = course.recertificationIntervalEnum {
+            requiresAnnualReview = (recertificationInterval == .annual)
+        }
+    }
+    
+    private func toggleWorkerSelection(_ worker: Worker) {
+        if selectedWorkers.contains(worker) {
+            selectedWorkers.remove(worker)
+        } else {
+            selectedWorkers.insert(worker)
+        }
+    }
+    
+    private func assignTraining() {
+        guard !selectedWorkers.isEmpty else {
+            errorMessage = "Please select at least one worker"
+            showingErrorAlert = true
+            return
+        }
+        
+        guard !trainerName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            errorMessage = "Trainer name is required"
+            showingErrorAlert = true
+            return
+        }
+        
+        isSaving = true
+        
+        do {
+            // Create training records for each selected worker
+            for worker in selectedWorkers {
+                let trainingRecord = TrainingRecord(context: viewContext)
+                trainingRecord.trainingID = UUID()
+                trainingRecord.worker = worker
+                trainingRecord.trainingCourse = course
+                trainingRecord.trainingDate = trainingDate
+                trainingRecord.trainerName = trainerName.trimmingCharacters(in: .whitespacesAndNewlines)
+                trainingRecord.languageProvided = languageProvided
+                trainingRecord.trainingMethod = trainingMethod.rawValue
+                trainingRecord.comprehensionCheckMethod = comprehensionCheckMethod.rawValue
+                trainingRecord.passStatus = passStatus
+                trainingRecord.requiresAnnualReview = requiresAnnualReview
+                trainingRecord.complianceCategory = course.complianceCategory
+                trainingRecord.trainingDurationMinutes = Int32(course.estimatedDurationMin)
+                
+                if !notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    trainingRecord.notes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
+                }
+                
+                // Set next review date if annual review is required
+                if requiresAnnualReview {
+                    trainingRecord.nextScheduledReview = Calendar.current.date(byAdding: .year, value: 1, to: trainingDate)
+                }
+            }
+            
+            try viewContext.save()
+            isPresented = false
+            
+        } catch {
+            isSaving = false
+            errorMessage = "Failed to assign training: \(error.localizedDescription)"
+            showingErrorAlert = true
         }
     }
 }
