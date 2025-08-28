@@ -239,6 +239,13 @@ struct FarmerProfileView: View {
             let existingFarmers = try viewContext.fetch(fetchRequest)
             if let existingFarmer = existingFarmers.first {
                 currentFarmer = existingFarmer
+                
+                // Set default imagePath if blank
+                if existingFarmer.imagePath == nil || existingFarmer.imagePath?.isEmpty == true {
+                    existingFarmer.imagePath = ZappaProfile.getRandomImagePath()
+                    try? viewContext.save()
+                }
+                
                 populateFormFieldsFromFarmer()
             } else {
                 isCurrentlyEditing = true
@@ -276,6 +283,9 @@ struct FarmerProfileView: View {
         if currentFarmer == nil {
             currentFarmer = Farmer(context: viewContext)
             currentFarmer?.id = UUID()
+            
+            // Set default imagePath for new farmer
+            currentFarmer?.imagePath = ZappaProfile.getRandomImagePath()
         }
 
         updateFarmerWithFormData()
@@ -306,12 +316,22 @@ struct FarmerProfileImage: View {
     let farmer: Farmer
 
     var body: some View {
-        if let photoData = farmer.profilePhotoData,
+        // First try to load from imagePath
+        if let imagePath = farmer.imagePath,
+           let image = ZappaProfile.loadImage(from: imagePath) {
+            Image(uiImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        }
+        // Fallback to profilePhotoData
+        else if let photoData = farmer.profilePhotoData,
            let uiImage = UIImage(data: photoData) {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-        } else {
+        } 
+        // Default placeholder
+        else {
             Image(systemName: "person.fill")
                 .font(.system(size: 50))
                 .foregroundColor(AppTheme.Colors.primary)

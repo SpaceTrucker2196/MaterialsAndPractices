@@ -95,7 +95,16 @@ struct WorkerRow: View {
         NavigationLink(destination: WorkerDetailView(worker: worker)) {
             HStack {
                 // Worker photo
-                if let photoData = worker.profilePhotoData,
+                if let imagePath = worker.imagePath,
+                   let image = ZappaProfile.loadImage(from: imagePath) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 40, height: 40)
+                        .clipShape(Circle())
+                }
+                // Fallback to profilePhotoData
+                else if let photoData = worker.profilePhotoData,
                    let uiImage = UIImage(data: photoData) {
                     Image(uiImage: uiImage)
                         .resizable()
@@ -213,7 +222,16 @@ struct WorkerDetailView: View {
             
             HStack {
                 // Worker photo
-                if let photoData = worker.profilePhotoData,
+                if let imagePath = worker.imagePath,
+                   let image = ZappaProfile.loadImage(from: imagePath) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 80, height: 80)
+                        .clipShape(Circle())
+                }
+                // Fallback to profilePhotoData
+                else if let photoData = worker.profilePhotoData,
                    let uiImage = UIImage(data: photoData) {
                     Image(uiImage: uiImage)
                         .resizable()
@@ -379,6 +397,12 @@ struct WorkerDetailView: View {
     // MARK: - Methods
     
     private func loadWorkerData() {
+        // Set default imagePath if blank
+        if worker.imagePath == nil || worker.imagePath?.isEmpty == true {
+            worker.imagePath = ZappaProfile.getRandomImagePath()
+            try? viewContext.save()
+        }
+        
         checkTodayClockStatus()
         calculateCurrentWeekHours()
     }
@@ -802,6 +826,9 @@ struct CreateWorkerView: View {
         if let profileImage = profileImage {
             newWorker.profilePhotoData = profileImage.jpegData(compressionQuality: 0.7)
         }
+        
+        // Set default imagePath for new worker
+        newWorker.imagePath = ZappaProfile.getRandomImagePath()
         
         do {
             try viewContext.save()

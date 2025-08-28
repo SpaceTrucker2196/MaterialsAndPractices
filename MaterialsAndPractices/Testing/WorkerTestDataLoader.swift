@@ -159,6 +159,9 @@ class WorkerTestDataLoader {
             worker.iosSymbol = fields[symbolIndex]
         }
         
+        // Set random imagePath for test worker
+        worker.imagePath = ZappaProfile.getRandomImagePath()
+        
         // Parse hire date
         if let hireDateIndex = columnMap["hiredate"], hireDateIndex < fields.count {
             let dateString = fields[hireDateIndex]

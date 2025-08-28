@@ -281,7 +281,16 @@ struct WorkerSelectionTile: View {
     /// Worker profile photo or default placeholder
     private var workerProfileDisplay: some View {
         Group {
-            if let photoData = worker.profilePhotoData,
+            if let imagePath = worker.imagePath,
+               let image = ZappaProfile.loadImage(from: imagePath) {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 30, height: 30)
+                    .clipShape(Circle())
+            }
+            // Fallback to profilePhotoData
+            else if let photoData = worker.profilePhotoData,
                let uiImage = UIImage(data: photoData) {
                 Image(uiImage: uiImage)
                     .resizable()
