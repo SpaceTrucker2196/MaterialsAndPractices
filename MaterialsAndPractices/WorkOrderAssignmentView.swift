@@ -31,6 +31,7 @@ struct WorkOrderAssignmentView: View {
     @State private var showingWorkerSelection = false
     @State private var showingInfrastructureSelection = false
     @State private var showingInspectionAssignment = false
+    @State private var showingExpenseCreation = false
     
     // Infrastructure options
     private let commonInfrastructure = [
@@ -371,11 +372,27 @@ struct WorkOrderAssignmentView: View {
                     }
                 }
                 
+                // Add Expense button
+                HStack {
+                    CommonActionButton(
+                        title: "Add Expense",
+                        style: .secondary
+                        
+                    ) {
+                        showingExpenseCreation = true
+                    }
+                    
+                    Spacer()
+                }
+                
                 // Inspection assignment section
                 if isEditMode {
                     inspectionAssignmentSection
                 }
             }
+        }
+        .sheet(isPresented: $showingExpenseCreation) {
+            WorkOrderExpenseView(workOrder: workOrder, isPresented: $showingExpenseCreation)
         }
     }
     

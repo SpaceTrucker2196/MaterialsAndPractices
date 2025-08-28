@@ -466,15 +466,57 @@ struct FarmDashboardView: View {
     private var leaseAgreementsOverviewSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             sectionHeaderWithNavigation(
-                title: "Lease Agreements",
-                destination: nil,
-                showNavigation: false
+                title: "Lease Agreements & Payments",
+                destination: AnyView(LeaseManagementView()),
+                showNavigation: true
             )
 
             if !activeLeaseAgreements.isEmpty {
-                leaseAgreementsContent
+                VStack(spacing: AppTheme.Spacing.medium) {
+                    leaseAgreementsContent
+                    upcomingPaymentsSection
+                }
             } else {
                 leaseAgreementsEmptyState
+            }
+        }
+    }
+    
+    /// Upcoming lease payments section
+    private var upcomingPaymentsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            HStack {
+                Text("Upcoming Payments")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                    .fontWeight(.semibold)
+                
+                Spacer()
+                
+                if upcomingLeasePayments.count > 0 {
+                    Text("\(upcomingLeasePayments.count) due")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.warning)
+                }
+            }
+            
+            if upcomingLeasePayments.isEmpty {
+                Text("No payments due in the next 30 days")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .padding(.vertical, AppTheme.Spacing.small)
+            } else {
+                VStack(spacing: AppTheme.Spacing.small) {
+                    ForEach(upcomingLeasePayments.prefix(3), id: \.dueDate) { payment in
+                        LeasePaymentRow(payment: payment)
+                    }
+                    
+                    if upcomingLeasePayments.count > 3 {
+                        Text("+ \(upcomingLeasePayments.count - 3) more payments")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
             }
         }
     }
@@ -675,6 +717,11 @@ struct FarmDashboardView: View {
                 return false
             }
         }
+    }
+    
+    /// Upcoming lease payments within the next 30 days
+    private var upcomingLeasePayments: [LeasePayment] {
+        return LeasePaymentTracker.upcomingPayments(for: Array(activeLeaseAgreements), within: 30)
     }
 }
 
@@ -893,7 +940,16 @@ struct TeamMemberTile: View {
     /// Worker profile photo or default placeholder with consistent sizing
     private var workerProfileDisplay: some View {
         Group {
-            if let photoData = worker.profilePhotoData,
+            if let imagePath = worker.imagePath,
+               let image = ZappaProfile.loadImage(from: imagePath) {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 30, height: 30)
+                    .clipShape(Circle())
+            }
+            // Fallback to profilePhotoData
+            else if let photoData = worker.profilePhotoData,
                let uiImage = UIImage(data: photoData) {
                 Image(uiImage: uiImage)
                     .resizable()

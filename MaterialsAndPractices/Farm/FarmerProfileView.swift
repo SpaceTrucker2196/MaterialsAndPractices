@@ -100,11 +100,10 @@ struct FarmerProfileView: View {
 
     private var profilePhotoManagementSection: some View {
         VStack(spacing: AppTheme.Spacing.medium) {
-            HStack {
-                Spacer()
-                profilePhotoDisplayWithEditCapability
-                Spacer()
-            }
+            SectionHeader(title: "Farmer Profile")
+            
+            profilePhotoDisplayWithEditCapability
+                .frame(maxWidth: .infinity)
 
             if isCurrentlyEditing {
                 profilePhotoEditInstructions
@@ -123,11 +122,27 @@ struct FarmerProfileView: View {
 
     private var profilePhotoVisualDisplay: some View {
         Group {
-            if let farmer = currentFarmer, farmer.profilePhotoData != nil {
+            if let farmer = currentFarmer, let imagePath = farmer.imagePath,
+               let image = ZappaProfile.loadImage(from: imagePath) {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: 1024, maxHeight: 400)
+                    .clipped()
+                    .cornerRadius(AppTheme.CornerRadius.large)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                            .stroke(AppTheme.Colors.primary, lineWidth: 3)
+                    )
+            } else if let farmer = currentFarmer, farmer.profilePhotoData != nil {
                 FarmerProfileImage(farmer: farmer)
-                    .frame(width: 120, height: 120)
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(AppTheme.Colors.primary, lineWidth: 3))
+                    .frame(maxWidth: 1024, maxHeight: 400)
+                    .clipped()
+                    .cornerRadius(AppTheme.CornerRadius.large)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                            .stroke(AppTheme.Colors.primary, lineWidth: 3)
+                    )
             } else {
                 profilePhotoPlaceholder
             }
@@ -136,12 +151,12 @@ struct FarmerProfileView: View {
 
     private var profilePhotoPlaceholder: some View {
         ZStack {
-            Circle()
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
                 .fill(AppTheme.Colors.backgroundSecondary)
-                .frame(width: 120, height: 120)
+                .frame(maxWidth: 1024, maxHeight: 400)
 
             Image(systemName: "person.fill")
-                .font(.system(size: 50))
+                .font(.system(size: 80))
                 .foregroundColor(AppTheme.Colors.primary)
         }
     }
@@ -239,6 +254,13 @@ struct FarmerProfileView: View {
             let existingFarmers = try viewContext.fetch(fetchRequest)
             if let existingFarmer = existingFarmers.first {
                 currentFarmer = existingFarmer
+                
+                // Set default imagePath if blank
+                if existingFarmer.imagePath == nil || existingFarmer.imagePath?.isEmpty == true {
+                    existingFarmer.imagePath = ZappaProfile.getRandomImagePath()
+                    try? viewContext.save()
+                }
+                
                 populateFormFieldsFromFarmer()
             } else {
                 isCurrentlyEditing = true
@@ -276,6 +298,9 @@ struct FarmerProfileView: View {
         if currentFarmer == nil {
             currentFarmer = Farmer(context: viewContext)
             currentFarmer?.id = UUID()
+            
+            // Set default imagePath for new farmer
+            currentFarmer?.imagePath = ZappaProfile.getRandomImagePath()
         }
 
         updateFarmerWithFormData()
@@ -306,12 +331,22 @@ struct FarmerProfileImage: View {
     let farmer: Farmer
 
     var body: some View {
-        if let photoData = farmer.profilePhotoData,
+        // First try to load from imagePath
+        if let imagePath = farmer.imagePath,
+           let image = ZappaProfile.loadImage(from: imagePath) {
+            Image(uiImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        }
+        // Fallback to profilePhotoData
+        else if let photoData = farmer.profilePhotoData,
            let uiImage = UIImage(data: photoData) {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-        } else {
+        } 
+        // Default placeholder
+        else {
             Image(systemName: "person.fill")
                 .font(.system(size: 50))
                 .foregroundColor(AppTheme.Colors.primary)

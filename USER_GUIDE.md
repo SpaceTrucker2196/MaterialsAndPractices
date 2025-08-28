@@ -5,16 +5,17 @@
 2. [Getting Started](#getting-started)
 3. [Dashboard Overview](#dashboard-overview)
 4. [Farm Management](#farm-management)
-5. [Soil Health & Testing](#soil-health--testing)
-6. [Materials Management](#materials-management)
-7. [Worker Tracking](#worker-tracking)
-8. [Health and Safety Training](#health-and-safety-training)
-9. [Organic Certification Compliance](#organic-certification-compliance)
-10. [Lot Tracking & Traceability](#lot-tracking--traceability)
-11. [Reports and Documentation](#reports-and-documentation)
-12. [Troubleshooting](#troubleshooting)
-13. [FAQ](#faq)
-14. [Contact Support](#contact-support)
+5. [Lease Management](#lease-management)
+6. [Soil Health & Testing](#soil-health--testing)
+7. [Materials Management](#materials-management)
+8. [Worker Tracking](#worker-tracking)
+9. [Health and Safety Training](#health-and-safety-training)
+10. [Organic Certification Compliance](#organic-certification-compliance)
+11. [Lot Tracking & Traceability](#lot-tracking--traceability)
+12. [Reports and Documentation](#reports-and-documentation)
+13. [Troubleshooting](#troubleshooting)
+14. [FAQ](#faq)
+15. [Contact Support](#contact-support)
 
 ## Introduction
 
@@ -22,13 +23,15 @@ Materials and Practices is a comprehensive farm management system designed speci
 
 ### Key Features
 - Complete materials inventory management (inputs and outputs)
+- Comprehensive lease agreement management and payment tracking
 - Worker tracking and certification management
 - Health and safety training documentation
 - Organic certification compliance tools
 - Field-to-market lot tracking system
+- Visual indicators for lease status and payment issues
 - Comprehensive reporting for regulatory compliance
 
-This application bridges the gap between daily farm operations and the complex requirements of organic certification, creating a seamless experience that enhances productivity while ensuring compliance.
+This application bridges the gap between daily farm operations and the complex requirements of organic certification, creating a seamless experience that enhances productivity while ensuring compliance. The integrated lease management system helps farmers track property agreements, payment schedules, and generate documentation for property owners and tax purposes.
 
 ## Getting Started
 
@@ -81,6 +84,134 @@ Use the navigation menu on the left side to access specific modules.
 2. Create seasonal planting schedules
 3. Assign crops to specific fields
 4. Generate material requirement forecasts based on planned crops
+
+## Lease Management
+
+The lease management system provides comprehensive tools for managing agricultural lease agreements, tracking payments, and maintaining records for property owners and tax purposes.
+
+### Overview
+
+The lease management system includes:
+- Pre-built agricultural lease agreement templates
+- Payment tracking and reminder system
+- Visual indicators for lease status
+- Document generation for property owners
+- Integration with farm dashboard for financial oversight
+
+### Creating a New Lease Agreement
+
+1. Navigate to "Utilities" → "Lease Management"
+2. Click "New Lease" to start the lease creation workflow
+3. Complete the four-step process:
+
+#### Step 1: Template Selection
+- Choose from available lease templates:
+  - **Cash Rent Agricultural Lease**: Fixed annual payment
+  - **Crop Share Agricultural Lease**: Percentage-based sharing
+  - **Flexible Cash Rent Lease**: Rent with price/yield adjustments
+  - **Pasture Grazing Lease**: Livestock grazing agreements
+  - **Custom Farming Agreement**: Services-based arrangements
+
+#### Step 2: Basic Information
+- Select the **Growing Year** (current year to 3 years future)
+- Choose the **Property** from your managed properties
+- Select the **Farmer/Tenant** from your contacts
+- Set **Start Date** and **End Date** for the lease period
+
+#### Step 3: Payment Terms
+- Enter the **Rent Amount** (annual total)
+- Select **Payment Frequency**:
+  - Annual (single payment)
+  - Semi-Annual (two payments)
+  - Quarterly (four payments)
+  - Monthly (twelve payments)
+
+#### Step 4: Review and Create
+- Review all lease details for accuracy
+- Click "Create Lease" to generate the agreement
+- The system will create both a Core Data record and a markdown document
+
+### Managing Existing Leases
+
+#### Viewing Active Leases
+- Access from the main Dashboard "Lease Agreements & Payments" section
+- View lease details including property, farmer, and payment status
+- See upcoming payments and overdue amounts
+
+#### Payment Tracking
+The system automatically calculates payment schedules based on:
+- Lease start and end dates
+- Payment frequency settings
+- Annual rent amount
+
+Upcoming payments appear on the Dashboard with:
+- 🟠 Orange indicators for payments due within 30 days
+- 🔴 Red indicators for overdue payments
+
+### Visual Lease Status Indicators
+
+#### Field Tiles
+Field selection interfaces show lease status indicators:
+- 🟠 Orange dollar sign ($): Field not covered by active lease
+- No indicator: Field has active lease coverage
+
+#### Farm Dashboard
+The dashboard displays:
+- Count of active lease agreements
+- Number of urgent payments requiring attention
+- Upcoming payment summaries
+
+### Exporting Documents for Property Owners
+
+#### Individual Lease Export
+1. Navigate to Lease Management
+2. Select a specific lease
+3. Use "Export for Property Owner" option
+4. Document includes:
+   - Complete lease summary
+   - Payment schedule for current year
+   - Record-keeping sections for tax purposes
+   - GAAP-compliant formatting
+
+#### Bulk Export
+1. Use "Export All Leases" for year-end reporting
+2. Generates individual documents for each property owner
+3. Creates summary report for your records
+
+### Lease Documentation Features
+
+#### Generated Documents Include:
+- **Property Information**: Location, acreage, contact details
+- **Tenant Information**: Farmer details and organization
+- **Financial Terms**: Rent amounts, payment frequency, responsibilities
+- **Payment Record Tables**: Tracking actual vs. scheduled payments
+- **Tax Documentation**: GAAP-compliant record-keeping guidance
+- **Legal References**: Recommendations for professional consultation
+
+#### File Organization
+- Documents saved to `Documents/LeaseExports/`
+- Timestamped filenames for easy organization
+- Markdown format for universal compatibility
+
+### Best Practices
+
+#### Record Keeping
+- Export lease documents annually for tax records
+- Maintain signed copies of all lease agreements
+- Track all payments and property-related expenses
+- Consult with tax professionals for proper reporting
+
+#### Payment Management
+- Review dashboard regularly for upcoming payments
+- Set up reminders for quarterly and annual payments
+- Document any payment adjustments or modifications
+- Keep records of communication with tenants
+
+#### Lease Renewal Process
+- Begin renewal discussions 60-90 days before expiration
+- Review and update rental rates based on market conditions
+- Update lease terms to reflect any property changes
+- Create new lease agreements through the system
 
 ## Soil Health & Testing
 

@@ -28,38 +28,36 @@ struct LeaseManagementView: View {
     ) private var allLeases: FetchedResults<Lease>
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                leaseHeaderSection
-                
-                ScrollView {
-                    LazyVStack(spacing: AppTheme.Spacing.large) {
-                        quickActionsSection
-                        
-                        leaseFilterSection
-                        
-                        activeLeasesSection
-                        
-                        upcomingLeasesSection
-                        
-                        expiredLeasesSection
-                    }
-                    .padding()
+        VStack(spacing: 0) {
+            leaseHeaderSection
+            
+            ScrollView {
+                LazyVStack(spacing: AppTheme.Spacing.large) {
+                    quickActionsSection
+                    
+                    leaseFilterSection
+                    
+                    filteredLeasesSection
+                    
+                    upcomingLeasesSection
+                    
+                    expiredLeasesSection
                 }
+                .padding()
             }
-            .navigationTitle("Lease Management")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("New Lease") {
-                        showingLeaseCreation = true
-                    }
-                    .foregroundColor(AppTheme.Colors.primary)
+        }
+        .navigationTitle("Lease Management")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("New Lease") {
+                    showingLeaseCreation = true
                 }
+                .foregroundColor(AppTheme.Colors.primary)
             }
-            .sheet(isPresented: $showingLeaseCreation) {
-                LeaseCreationView(isPresented: $showingLeaseCreation)
-            }
+        }
+        .sheet(isPresented: $showingLeaseCreation) {
+            LeaseCreationWorkflowView(isPresented: $showingLeaseCreation)
         }
     }
     
@@ -76,19 +74,27 @@ struct LeaseManagementView: View {
                     color: AppTheme.Colors.success
                 )
                 
+                NavigationLink(destination: PaymentManagementView()) {
+                    PaymentStatCard(
+                        title: "Payments",
+                        value: "\(paymentsDue.count)",
+                        subtitle: "Need Attention",
+                        color: paymentsDue.isEmpty ? AppTheme.Colors.success : AppTheme.Colors.warning
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                
                 LeaseStatCard(
                     title: "Expiring",
                     value: "\(expiringSoonLeases.count)",
                     subtitle: "This Month",
                     color: AppTheme.Colors.warning
                 )
-                
-                LeaseStatCard(
-                    title: "Total",
-                    value: "\(allLeases.count)",
-                    subtitle: "All Time",
-                    color: AppTheme.Colors.primary
-                )
+            }
+            
+            // Payments requiring attention tiles
+            if !paymentsDue.isEmpty {
+                paymentsRequiringAttentionSection
             }
             
             Divider()
@@ -116,23 +122,25 @@ struct LeaseManagementView: View {
                     showingLeaseCreation = true
                 }
                 
-                LeaseActionCard(
-                    title: "Renewals",
-                    description: "Manage lease renewals and extensions",
-                    icon: "arrow.clockwise.circle.fill",
-                    color: AppTheme.Colors.secondary
-                ) {
-                    // Navigate to renewals view
+                NavigationLink(destination: LeaseRenewalsView()) {
+                    LeaseActionCardView(
+                        title: "Renewals",
+                        description: "Manage lease renewals and extensions",
+                        icon: "arrow.clockwise.circle.fill",
+                        color: AppTheme.Colors.secondary
+                    )
                 }
+                .buttonStyle(PlainButtonStyle())
                 
-                LeaseActionCard(
-                    title: "Payments",
-                    description: "Track lease payments and history",
-                    icon: "dollarsign.circle.fill",
-                    color: AppTheme.Colors.compliance
-                ) {
-                    // Navigate to payments view
+                NavigationLink(destination: PaymentManagementView()) {
+                    LeaseActionCardView(
+                        title: "Payments",
+                        description: "Track lease payments and history",
+                        icon: "dollarsign.circle.fill",
+                        color: AppTheme.Colors.compliance
+                    )
                 }
+                .buttonStyle(PlainButtonStyle())
                 
                 LeaseActionCard(
                     title: "Reports",
@@ -146,7 +154,7 @@ struct LeaseManagementView: View {
         }
     }
     
-    /// Lease filter section
+    /// Lease filter section with functional filtering
     private var leaseFilterSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             SectionHeader(title: "Filter Leases")
@@ -167,42 +175,57 @@ struct LeaseManagementView: View {
         }
     }
     
-    /// Active leases section
-    private var activeLeasesSection: some View {
+    /// Combined active leases section with filtering and 5-item limit
+    private var filteredLeasesSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             HStack {
-                SectionHeader(title: "Active Leases")
+                SectionHeader(title: selectedFilter == .all ? "All Leases" : selectedFilter.displayName)
                 Spacer()
-                if activeLeases.count > 3 {
-                    NavigationLink("View All", destination: AllLeasesListView(leases: activeLeases))
+                if filteredLeases.count > 5 {
+                    NavigationLink("View All (\(filteredLeases.count))", destination: AllLeasesListView(leases: filteredLeases, title: selectedFilter.displayName))
                         .font(AppTheme.Typography.bodySmall)
                         .foregroundColor(AppTheme.Colors.primary)
                 }
             }
             
-            if activeLeases.isEmpty {
+            if filteredLeases.isEmpty {
                 LeaseEmptyStateView(
-                    icon: "doc.text",
-                    title: "No Active Leases",
-                    description: "Create a lease to get started",
-                    actionTitle: "Create Lease"
+                    icon: selectedFilter.icon,
+                    title: "No \(selectedFilter.displayName) Leases",
+                    description: selectedFilter == .all ? "Create a lease to get started" : "No leases match the current filter",
+                    actionTitle: selectedFilter == .all ? "Create Lease" : "View All Leases"
                 ) {
-                    showingLeaseCreation = true
+                    if selectedFilter == .all {
+                        showingLeaseCreation = true
+                    } else {
+                        selectedFilter = .all
+                    }
                 }
             } else {
                 VStack(spacing: AppTheme.Spacing.small) {
-                    ForEach(Array(activeLeases.prefix(3)), id: \.objectID) { lease in
-                        LeaseRowView(lease: lease)
+                    ForEach(Array(filteredLeases.prefix(5)), id: \.objectID) { lease in
+                        NavigationLink(destination: LeaseDetailView(lease: lease)) {
+                            LeaseRowView(lease: lease, showExpirationWarning: isExpiringSoon(lease), isExpired: isExpired(lease))
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
             }
         }
     }
     
-    /// Upcoming leases section
+    /// Upcoming leases section as rows
     private var upcomingLeasesSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            SectionHeader(title: "Expiring Soon")
+            HStack {
+                SectionHeader(title: "Expiring Soon")
+                Spacer()
+                if expiringSoonLeases.count > 3 {
+                    NavigationLink("View All", destination: AllLeasesListView(leases: expiringSoonLeases, title: "Expiring Soon"))
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+            }
             
             if expiringSoonLeases.isEmpty {
                 Text("No leases expiring in the next 30 days")
@@ -212,21 +235,24 @@ struct LeaseManagementView: View {
             } else {
                 VStack(spacing: AppTheme.Spacing.small) {
                     ForEach(Array(expiringSoonLeases.prefix(3)), id: \.objectID) { lease in
-                        LeaseRowView(lease: lease, showExpirationWarning: true)
+                        NavigationLink(destination: LeaseDetailView(lease: lease)) {
+                            LeaseRowView(lease: lease, showExpirationWarning: true)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
             }
         }
     }
     
-    /// Expired leases section
+    /// Expired leases section as rows
     private var expiredLeasesSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             HStack {
                 SectionHeader(title: "Recently Expired")
                 Spacer()
                 if expiredLeases.count > 2 {
-                    NavigationLink("View All", destination: AllLeasesListView(leases: expiredLeases))
+                    NavigationLink("View All", destination: AllLeasesListView(leases: expiredLeases, title: "Recently Expired"))
                         .font(AppTheme.Typography.bodySmall)
                         .foregroundColor(AppTheme.Colors.primary)
                 }
@@ -240,7 +266,10 @@ struct LeaseManagementView: View {
             } else {
                 VStack(spacing: AppTheme.Spacing.small) {
                     ForEach(Array(expiredLeases.prefix(2)), id: \.objectID) { lease in
-                        LeaseRowView(lease: lease, isExpired: true)
+                        NavigationLink(destination: LeaseDetailView(lease: lease)) {
+                            LeaseRowView(lease: lease, isExpired: true)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
             }
@@ -267,6 +296,86 @@ struct LeaseManagementView: View {
         allLeases.filter { lease in
             guard let endDate = lease.endDate else { return false }
             return endDate < Date()
+        }
+    }
+    
+    /// Filtered leases based on selected filter
+    private var filteredLeases: [Lease] {
+        switch selectedFilter {
+        case .all:
+            return Array(allLeases)
+        case .active:
+            return activeLeases
+        case .expiring:
+            return expiringSoonLeases
+        case .expired:
+            return expiredLeases
+        case .cash:
+            return allLeases.filter { $0.leaseType?.lowercased().contains("cash") == true }
+        case .share:
+            return allLeases.filter { $0.leaseType?.lowercased().contains("share") == true }
+        }
+    }
+    
+    /// Check if lease is expiring soon
+    private func isExpiringSoon(_ lease: Lease) -> Bool {
+        guard let endDate = lease.endDate else { return false }
+        let thirtyDaysFromNow = Date().addingTimeInterval(30 * 24 * 60 * 60)
+        return endDate > Date() && endDate <= thirtyDaysFromNow
+    }
+    
+    /// Check if lease is expired
+    private func isExpired(_ lease: Lease) -> Bool {
+        guard let endDate = lease.endDate else { return false }
+        return endDate < Date()
+    }
+    
+    /// Fetch payments that need attention (overdue or due soon)
+    private var paymentsDue: [Payment] {
+        let fetchRequest: NSFetchRequest<Payment> = Payment.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "isPaid == NO")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Payment.dueDate, ascending: true)]
+        
+        do {
+            let allPayments = try viewContext.fetch(fetchRequest)
+            let now = Date()
+            let thirtyDaysFromNow = now.addingTimeInterval(30 * 24 * 60 * 60)
+            
+            return allPayments.filter { payment in
+                guard let dueDate = payment.dueDate else { return false }
+                return dueDate <= thirtyDaysFromNow
+            }
+        } catch {
+            print("❌ Failed to fetch payments: \(error)")
+            return []
+        }
+    }
+    
+    /// Payments requiring attention section
+    private var paymentsRequiringAttentionSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            Text("Payments Requiring Attention")
+                .font(AppTheme.Typography.headlineSmall)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: AppTheme.Spacing.medium) {
+                    ForEach(Array(paymentsDue.prefix(5)), id: \.objectID) { payment in
+                        NavigationLink(destination: PaymentDetailView(payment: payment)) {
+                            PaymentTileView(payment: payment)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                    
+                    if paymentsDue.count > 5 {
+                        NavigationLink(destination: PaymentManagementView()) {
+                            MorePaymentsTileView(count: paymentsDue.count - 5)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding(.horizontal)
+            }
         }
     }
 }
@@ -401,69 +510,62 @@ struct LeaseRowView: View {
     let lease: Lease
     var showExpirationWarning: Bool = false
     var isExpired: Bool = false
-    @State private var showingDetail = false
     
     var body: some View {
-        Button(action: {
-            showingDetail = true
-        }) {
-            HStack {
-                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                    Text(lease.leaseType?.capitalized ?? "Lease")
-                        .font(AppTheme.Typography.bodyMedium)
-                        .foregroundColor(AppTheme.Colors.textPrimary)
-                    
-                    if let property = lease.property {
-                        Text(property.displayName ?? "Unknown Property")
-                            .font(AppTheme.Typography.bodySmall)
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                    }
-                    
-                    if let startDate = lease.startDate, let endDate = lease.endDate {
-                        Text("\(startDate, style: .date) - \(endDate, style: .date)")
-                            .font(AppTheme.Typography.labelSmall)
-                            .foregroundColor(AppTheme.Colors.textTertiary)
-                    }
+        HStack {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                Text(lease.leaseType?.capitalized ?? "Lease")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                if let property = lease.property {
+                    Text(property.displayName ?? "Unknown Property")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
                 }
                 
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
-                    if showExpirationWarning {
-                        MetadataTag(
-                            text: "Expiring Soon",
-                            backgroundColor: AppTheme.Colors.warning.opacity(0.2),
-                            textColor: AppTheme.Colors.warning
-                        )
-                    } else if isExpired {
-                        MetadataTag(
-                            text: "Expired",
-                            backgroundColor: AppTheme.Colors.error.opacity(0.2),
-                            textColor: AppTheme.Colors.error
-                        )
-                    } else {
-                        MetadataTag(
-                            text: lease.status?.capitalized ?? "Unknown",
-                            backgroundColor: AppTheme.Colors.success.opacity(0.2),
-                            textColor: AppTheme.Colors.success
-                        )
-                    }
-                    
-                    Image(systemName: "chevron.right")
+                if let startDate = lease.startDate, let endDate = lease.endDate {
+                    Text("\(startDate, style: .date) - \(endDate, style: .date)")
+                        .font(AppTheme.Typography.labelSmall)
                         .foregroundColor(AppTheme.Colors.textTertiary)
-                        .font(.caption)
                 }
             }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                if showExpirationWarning {
+                    MetadataTag(
+                        text: "Expiring Soon",
+                        backgroundColor: AppTheme.Colors.warning.opacity(0.2),
+                        textColor: AppTheme.Colors.warning
+                    )
+                } else if isExpired {
+                    MetadataTag(
+                        text: "Expired",
+                        backgroundColor: AppTheme.Colors.error.opacity(0.2),
+                        textColor: AppTheme.Colors.error
+                    )
+                } else {
+                    MetadataTag(
+                        text: lease.status?.capitalized ?? "Unknown",
+                        backgroundColor: AppTheme.Colors.success.opacity(0.2),
+                        textColor: AppTheme.Colors.success
+                    )
+                }
+                
+                Image(systemName: "chevron.right")
+                    .foregroundColor(AppTheme.Colors.textTertiary)
+                    .font(.caption)
+            }
         }
-        .buttonStyle(PlainButtonStyle())
         .padding()
         .background(AppTheme.Colors.backgroundPrimary)
         .cornerRadius(AppTheme.CornerRadius.medium)
-        .sheet(isPresented: $showingDetail) {
-            LeaseDetailView(lease: lease)
-        }
     }
 }
+
+
 
 /// Empty state view for leases
 struct LeaseEmptyStateView: View {
@@ -499,72 +601,200 @@ struct LeaseEmptyStateView: View {
     }
 }
 
-// MARK: - Placeholder Views
-
-/// Placeholder for lease creation
-struct LeaseCreationView: View {
-    @Binding var isPresented: Bool
+/// Action card view for navigation links
+struct LeaseActionCardView: View {
+    let title: String
+    let description: String
+    let icon: String
+    let color: Color
     
     var body: some View {
-        NavigationView {
-            VStack {
-                Text("Lease Creation")
-                    .font(AppTheme.Typography.displayMedium)
-                
-                Text("Comprehensive lease creation interface will be implemented here")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-                    .multilineTextAlignment(.center)
-                
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundColor(color)
                 Spacer()
             }
-            .padding()
-            .navigationTitle("New Lease")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        isPresented = false
-                    }
-                }
-            }
+            
+            Text(title)
+                .font(AppTheme.Typography.headlineSmall)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+                .multilineTextAlignment(.leading)
+            
+            Text(description)
+                .font(AppTheme.Typography.bodySmall)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+                .multilineTextAlignment(.leading)
+            
+            Spacer()
         }
+        .padding()
+        .frame(height: 120)
+        .background(AppTheme.Colors.backgroundPrimary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .contentShape(Rectangle())
     }
 }
 
-/// Placeholder for lease detail view
-struct LeaseDetailView: View {
-    let lease: Lease
+/// Payment statistics card for overview
+struct PaymentStatCard: View {
+    let title: String
+    let value: String
+    let subtitle: String
+    let color: Color
     
     var body: some View {
-        NavigationView {
-            VStack {
-                Text("Lease Details")
-                    .font(AppTheme.Typography.displayMedium)
-                
-                Text("Detailed lease view for: \(lease.leaseType?.capitalized ?? "Unknown")")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-                    .multilineTextAlignment(.center)
+        VStack(spacing: AppTheme.Spacing.tiny) {
+            Text(title)
+                .font(AppTheme.Typography.labelSmall)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+            
+            Text(value)
+                .font(AppTheme.Typography.displaySmall)
+                .fontWeight(.bold)
+                .foregroundColor(color)
+            
+            Text(subtitle)
+                .font(AppTheme.Typography.labelSmall)
+                .foregroundColor(AppTheme.Colors.textTertiary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(AppTheme.Colors.backgroundPrimary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .overlay(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .stroke(color, lineWidth: 2)
+        )
+    }
+}
+
+/// Payment tile view for horizontal scrolling
+struct PaymentTileView: View {
+    let payment: Payment
+    
+    private var statusColor: Color {
+        if let dueDate = payment.dueDate, dueDate < Date() {
+            return AppTheme.Colors.error
+        } else {
+            return AppTheme.Colors.warning
+        }
+    }
+    
+    private var statusText: String {
+        if let dueDate = payment.dueDate, dueDate < Date() {
+            return "Overdue"
+        } else {
+            return "Due Soon"
+        }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            HStack {
+                Text(statusText)
+                    .font(AppTheme.Typography.labelSmall)
+                    .fontWeight(.medium)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, AppTheme.Spacing.small)
+                    .padding(.vertical, AppTheme.Spacing.tiny)
+                    .background(statusColor)
+                    .cornerRadius(AppTheme.CornerRadius.small)
                 
                 Spacer()
             }
-            .padding()
-            .navigationTitle("Lease Details")
+            
+            Text(payment.lease?.property?.displayName ?? "Unknown Property")
+                .font(AppTheme.Typography.bodyMedium)
+                .fontWeight(.medium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+                .lineLimit(1)
+            
+            Text(formatCurrency(payment.amount! as Decimal))
+                .font(AppTheme.Typography.headlineSmall)
+                .fontWeight(.bold)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+            
+            if let dueDate = payment.dueDate {
+                Text("Due \(dueDate, style: .date)")
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
         }
+        .frame(width: 140)
+        .padding()
+        .background(AppTheme.Colors.backgroundPrimary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .overlay(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .stroke(statusColor, lineWidth: 2)
+        )
+    }
+    
+    private func formatCurrency(_ amount: Decimal) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        return formatter.string(from: amount as NSDecimalNumber) ?? "$0.00"
+    }
+}
+
+/// More payments tile view
+struct MorePaymentsTileView: View {
+    let count: Int
+    
+    var body: some View {
+        VStack(spacing: AppTheme.Spacing.medium) {
+            Image(systemName: "plus.circle.fill")
+                .font(.largeTitle)
+                .foregroundColor(AppTheme.Colors.primary)
+            
+            Text("+\(count) more")
+                .font(AppTheme.Typography.bodyMedium)
+                .fontWeight(.medium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+            
+            Text("View All")
+                .font(AppTheme.Typography.labelSmall)
+                .foregroundColor(AppTheme.Colors.primary)
+        }
+        .frame(width: 140)
+        .padding()
+        .background(AppTheme.Colors.backgroundPrimary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .overlay(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .stroke(
+                    AppTheme.Colors.primary,
+                    style: StrokeStyle(
+                        lineWidth: 1,
+                        lineCap: .round,
+                        dash: [5]
+                    )
+                )
+        )
     }
 }
 
 /// Placeholder for all leases list
 struct AllLeasesListView: View {
     let leases: [Lease]
+    let title: String
+    
+    init(leases: [Lease], title: String = "All Leases") {
+        self.leases = leases
+        self.title = title
+    }
     
     var body: some View {
         List {
             ForEach(leases, id: \.objectID) { lease in
-                LeaseRowView(lease: lease)
+                NavigationLink(destination: LeaseDetailView(lease: lease)) {
+                    LeaseRowView(lease: lease)
+                }
+                .buttonStyle(PlainButtonStyle())
             }
         }
-        .navigationTitle("All Leases")
+        .navigationTitle(title)
     }
 }

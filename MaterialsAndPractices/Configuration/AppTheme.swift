@@ -28,7 +28,7 @@ enum AppTheme {
         
         /// Accent color for interactive elements
         static let accent = Color("AccentColor")
-        
+        static let border = Color("BorderColor01")
         static let surface = Color("BackgroundTertiery")
         
         // MARK: - Semantic Colors

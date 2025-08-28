@@ -1,0 +1,42 @@
+create a organic system plan
+submit plan and have approved by organic certification agency
+have yearly inspection from certifier
+have seeds information available maintaining source contact information
+seeds should not be coated with any chemical 
+organic varieties when commercial available
+
+fallow ground
+
+I want to make a list of test data for the materials and practices app. 
+This will be for all the workers. 
+Using this list of characters. Make csv file with a row for each character containing the following fields 
+inferring test data in the spirit of frank zappa. 
+
+profilePhotoData - only contains "No Photo"
+position - inferred title from lyric context 
+phone - random phone number	
+notes - something funny about the worker infered from zappa songs
+name - full name
+isActive - true
+id - a random id 
+email - use "test@test.com"
+canInspect - random select true or false
+employeeID - a guid generated for each user
+firstName - the employees first name
+lastname - the employees last name
+nickname - the name the employee might be called around the farm
+hiredate - the date the character was introduced in a frank Zappa song
+birthdate - a likely birth date for the character 
+emergancyContact - person to call in case of an emergency 
+emergancyPhone - phone number to call for emergency.
+hometown - the workers hometown
+currentStreet1 - current street address
+currentStreet2 - 2nd address line
+currentCity - current city 
+currentState - current state
+currentZip - current zip
+history - write a brief history of the worker
+emoji - the most likely emoji for this character
+symbol - the most likely symbol the character might select from apples symbol fonts
+
+

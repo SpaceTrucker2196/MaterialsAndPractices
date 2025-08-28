@@ -113,12 +113,16 @@ struct ContentView: View {
     
     /// Performs startup check for existing farmer profile
     /// Triggers profile setup flow if no farmer profile exists
+    /// Also initializes system components like templates
     private func performStartupProfileCheck() {
         let request: NSFetchRequest<Farmer> = Farmer.fetchRequest()
         request.fetchLimit = 1
         
         do {
             let farmers = try viewContext.fetch(request)
+            
+            // Initialize system components
+            initializeSystemComponents()
             
             // Set completion flag
             hasCheckedProfile = true
@@ -133,6 +137,19 @@ struct ContentView: View {
             print("❌ Error checking farmer profile during startup: \(error)")
             hasCheckedProfile = true
         }
+    }
+    
+    /// Initializes system components during app startup
+    private func initializeSystemComponents() {
+        // Initialize inspection templates
+        let inspectionSeeder = InspectionTemplateSeeder()
+        inspectionSeeder.seedTemplatesIfNeeded()
+        
+        // Initialize lease templates
+        let leaseSeeder = LeaseTemplateSeeder()
+        leaseSeeder.seedTemplatesIfNeeded()
+        
+        print("✅ System components initialized")
     }
 }
 
