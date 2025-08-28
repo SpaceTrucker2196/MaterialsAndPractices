@@ -187,7 +187,7 @@
         </fetchIndex>
     </entity>
     <entity name="Farmer" representedClassName="Farmer" syncable="YES" codeGenerationType="class">
-        <attribute name="attribute" optional="YES"/>
+        <attribute name="attribute" optional="YES" attributeType="String"/>
         <attribute name="email" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>

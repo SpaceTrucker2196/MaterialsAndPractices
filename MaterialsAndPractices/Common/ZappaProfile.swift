@@ -33,9 +33,9 @@ class ZappaProfile {
             
             // Filter for ZappaProfile images
             let zappaProfileImages = contents.filter { filename in
-                filename.hasPrefix("ZappaProfile") && 
-                (filename.lowercased().hasSuffix(".png") || 
-                 filename.lowercased().hasSuffix(".jpg") || 
+                filename.hasPrefix("ZappaProfile") &&
+                (filename.lowercased().hasSuffix(".png") ||
+                 filename.lowercased().hasSuffix(".jpg") ||
                  filename.lowercased().hasSuffix(".jpeg"))
             }
             
@@ -72,9 +72,9 @@ class ZappaProfile {
             
             // Filter for ZappaProfile images
             let zappaProfileImages = contents.filter { filename in
-                filename.hasPrefix("ZappaProfile") && 
-                (filename.lowercased().hasSuffix(".png") || 
-                 filename.lowercased().hasSuffix(".jpg") || 
+                filename.hasPrefix("ZappaProfile") &&
+                (filename.lowercased().hasSuffix(".png") ||
+                 filename.lowercased().hasSuffix(".jpg") ||
                  filename.lowercased().hasSuffix(".jpeg"))
             }
             
@@ -100,12 +100,7 @@ class ZappaProfile {
     /// - Returns: Path to a random ZappaProfile image, or nil if no images found
     private static func getRandomImagePathFromBundle() -> String? {
         let fileManager = FileManager.default
-        
-        // Search for ZappaProfile images in main bundle
-        guard let bundlePath = Bundle.main.bundlePath else {
-            print("❌ Could not get main bundle path")
-            return nil
-        }
+        let bundlePath = Bundle.main.bundlePath  // FIX: bundlePath is non-optional
         
         do {
             // Recursive search for ZappaProfile images
@@ -148,10 +143,10 @@ class ZappaProfile {
                     // Recursively search subdirectories
                     let subImages = try findZappaProfileImages(in: itemPath, fileManager: fileManager)
                     zappaProfileImages.append(contentsOf: subImages)
-                } else if item.hasPrefix("ZappaProfile") && 
-                         (item.lowercased().hasSuffix(".png") || 
-                          item.lowercased().hasSuffix(".jpg") || 
-                          item.lowercased().hasSuffix(".jpeg")) {
+                } else if item.hasPrefix("ZappaProfile") &&
+                          (item.lowercased().hasSuffix(".png") ||
+                           item.lowercased().hasSuffix(".jpg") ||
+                           item.lowercased().hasSuffix(".jpeg")) {
                     zappaProfileImages.append(itemPath)
                 }
             }
@@ -165,9 +160,7 @@ class ZappaProfile {
     /// - Returns: True if image exists and can be loaded
     static func imageExists(at imagePath: String?) -> Bool {
         guard let imagePath = imagePath else { return false }
-        
-        let fileManager = FileManager.default
-        return fileManager.fileExists(atPath: imagePath)
+        return FileManager.default.fileExists(atPath: imagePath)
     }
     
     /// Load UIImage from the given path
@@ -178,7 +171,6 @@ class ZappaProfile {
               imageExists(at: imagePath) else {
             return nil
         }
-        
         return UIImage(contentsOfFile: imagePath)
     }
 }
