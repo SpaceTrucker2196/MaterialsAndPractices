@@ -179,6 +179,7 @@ struct WorkerDetailView: View {
     @State private var currentWeekHours: Double = 0
     @State private var isClockedIn = false
     @State private var todayEntry: TimeClock?
+    @State private var showingOffboardAlert = false
     
     // Calculate today's hours worked
     private var todayHoursWorked: Double {
@@ -216,6 +217,9 @@ struct WorkerDetailView: View {
                 
                 // Work Order History Section
                 workOrderHistorySection
+                
+                // Off-board Worker Section
+                offboardWorkerSection
             }
             .padding()
         }
@@ -496,20 +500,23 @@ struct WorkerDetailView: View {
                 
                 Spacer()
                 
-                NavigationLink(destination: HealthSafetyTrainingView(worker: worker)) {
+                NavigationLink(destination: WorkerTrainingRecordsView(worker: worker)) {
                     Image(systemName: "plus.circle.fill")
                         .foregroundColor(AppTheme.Colors.primary)
                 }
             }
             
-            if let trainings = worker.healthSafetyTrainings?.allObjects as? [HealthSafetyTraining],
-               !trainings.isEmpty {
+            // Show TrainingRecord entities instead of HealthSafetyTraining
+            if let trainingRecords = worker.trainingRecords?.allObjects as? [TrainingRecord],
+               !trainingRecords.isEmpty {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
                 ], spacing: AppTheme.Spacing.medium) {
-                    ForEach(trainings.sorted(by: { ($0.completedDate ?? Date.distantPast) > ($1.completedDate ?? Date.distantPast) }), id: \.id) { training in
-                        TrainingTile(training: training)
+                    ForEach(trainingRecords.sorted(by: { ($0.trainingDate ?? Date.distantPast) > ($1.trainingDate ?? Date.distantPast) }), id: \.trainingID) { record in
+                        NavigationLink(destination: TrainingRecordDetailView(record: record)) {
+                            TrainingRecordTile(record: record)
+                        }
                     }
                 }
             } else {
@@ -543,6 +550,44 @@ struct WorkerDetailView: View {
                     .padding()
                     .background(AppTheme.Colors.backgroundSecondary)
                     .cornerRadius(AppTheme.CornerRadius.medium)
+            }
+        }
+    }
+    
+    private var offboardWorkerSection: some View {
+        VStack(spacing: AppTheme.Spacing.large) {
+            // Spacer rows as requested
+            Rectangle()
+                .fill(Color.clear)
+                .frame(height: AppTheme.Spacing.medium)
+            
+            Rectangle()
+                .fill(Color.clear)
+                .frame(height: AppTheme.Spacing.medium)
+            
+            // Off-board button
+            Button(action: offboardWorker) {
+                HStack {
+                    Image(systemName: "person.slash.fill")
+                        .font(.title2)
+                    
+                    Text("Off-board Worker")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .foregroundColor(.white)
+                .background(AppTheme.Colors.error)
+                .cornerRadius(AppTheme.CornerRadius.medium)
+            }
+            .alert("Off-board Worker", isPresented: $showingOffboardAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Off-board", role: .destructive) {
+                    confirmOffboardWorker()
+                }
+            } message: {
+                Text("This will set \(worker.name ?? "this worker") as inactive and hide them from the app. This action can be reversed later.")
             }
         }
     }
@@ -635,6 +680,24 @@ struct WorkerDetailView: View {
         // For now, return empty array since we don't have direct work order relationship
         // In a full implementation, we would fetch work orders where this worker was assigned
         return []
+    }
+    
+    // MARK: - Off-boarding Methods
+    
+    private func offboardWorker() {
+        showingOffboardAlert = true
+    }
+    
+    private func confirmOffboardWorker() {
+        worker.isActive = false
+        
+        do {
+            try viewContext.save()
+            // Note: Navigation back would typically be handled by a coordinator
+            // For now, we'll just update the worker status
+        } catch {
+            print("Error off-boarding worker: \(error)")
+        }
     }
 }
 
@@ -1392,6 +1455,88 @@ struct WorkerDailyTimeEntryRow: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d"
         return formatter.string(from: date)
+    }
+}
+
+// MARK: - Training Record Tile
+
+/// Tile view for training record with expiration status
+struct TrainingRecordTile: View {
+    let record: TrainingRecord
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            HStack {
+                // Training icon
+                Image(systemName: record.isExpired ? "exclamationmark.triangle.fill" : 
+                     record.passStatus ? "checkmark.circle.fill" : "xmark.circle.fill")
+                    .foregroundColor(record.isExpired ? AppTheme.Colors.error : 
+                                   record.passStatus ? AppTheme.Colors.success : AppTheme.Colors.error)
+                    .font(.title2)
+                
+                Spacer()
+                
+                // Status indicator
+                if record.isExpired {
+                    Text("EXPIRED")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.error)
+                        .fontWeight(.bold)
+                } else if record.expiresWithin30Days {
+                    Text("EXPIRING")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.warning)
+                        .fontWeight(.bold)
+                } else if record.passStatus {
+                    Text("PASSED")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.success)
+                        .fontWeight(.bold)
+                } else {
+                    Text("FAILED")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.error)
+                        .fontWeight(.bold)
+                }
+            }
+            
+            Text(record.trainingCourse?.courseName ?? "Unknown Training")
+                .font(AppTheme.Typography.bodyMedium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+                .fontWeight(.semibold)
+                .lineLimit(2)
+            
+            if let trainingDate = record.trainingDate {
+                Text("Completed: \(trainingDate, style: .date)")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            if let complianceCategory = record.complianceCategoryEnum {
+                Text(complianceCategory.rawValue)
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+        }
+        .padding(AppTheme.Spacing.medium)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .overlay(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .stroke(record.isExpired ? AppTheme.Colors.error : 
+                       record.expiresWithin30Days ? AppTheme.Colors.warning : 
+                       record.passStatus ? AppTheme.Colors.success : AppTheme.Colors.error, lineWidth: 1)
+        )
+    }
+}
+
+/// Placeholder for worker training records view
+struct WorkerTrainingRecordsView: View {
+    let worker: Worker
+    
+    var body: some View {
+        Text("Training Records - Coming Soon")
+            .navigationTitle("Training Records")
     }
 }
 
