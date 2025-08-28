@@ -111,6 +111,34 @@ enum OrganicCertificationStatus: String, CaseIterable, Identifiable {
     case unaffectedOrganic = "Unaffected by Organic"
 
     var id: String { rawValue }
+    
+    /// Display text for the organic certification status
+    var displayText: String {
+        switch self {
+        case .requiredForOrganic:
+            return "Required for Organic Certification"
+        case .failedForOrganic:
+            return "Failed Organic Compliance - Non-OMRI Amendments Present"
+        case .notRequiredForOrganic:
+            return "Not Required for Organic"
+        case .unaffectedOrganic:
+            return "Unaffected by Organic Requirements"
+        }
+    }
+    
+    /// Color asset name for visual representation
+    var colorName: String {
+        switch self {
+        case .requiredForOrganic:
+            return "requiredForOrganic"
+        case .failedForOrganic:
+            return "failedForOrganic"
+        case .notRequiredForOrganic:
+            return "notRequiredForOrganic"
+        case .unaffectedOrganic:
+            return "unaffectedOrganic"
+        }
+    }
 }
 
 // MARK: - Worker Training Status
