@@ -244,84 +244,89 @@ struct WorkerDetailView: View {
     
     private var workerInformationSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            // Profile Image Section - Large display
-            VStack(spacing: AppTheme.Spacing.medium) {
-                Text(worker.name ?? "Worker")
-                    .font(AppTheme.Typography.headlineLarge)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                
-                // Large worker photo
-                if let imagePath = worker.imagePath,
-                   let image = ZappaProfile.loadImage(from: imagePath) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(maxWidth: 1024, maxHeight: 400)
-                        .clipped()
-                        .cornerRadius(AppTheme.CornerRadius.large)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
-                                .stroke(AppTheme.Colors.primary, lineWidth: 3)
-                        )
-                }
-                // Fallback to profilePhotoData
-                else if let photoData = worker.profilePhotoData,
-                   let uiImage = UIImage(data: photoData) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(maxWidth: 1024, maxHeight: 400)
-                        .clipped()
-                        .cornerRadius(AppTheme.CornerRadius.large)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
-                                .stroke(AppTheme.Colors.primary, lineWidth: 3)
-                        )
-                } else {
-                    RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
-                        .fill(AppTheme.Colors.backgroundSecondary)
-                        .frame(maxWidth: 1024, maxHeight: 400)
-                        .overlay(
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 80))
-                                .foregroundColor(AppTheme.Colors.primary)
-                        )
-                }
-            }
+            // Worker name header
+            Text(worker.name ?? "Worker")
+                .font(AppTheme.Typography.headlineLarge)
+                .foregroundColor(AppTheme.Colors.textPrimary)
             
-            // Worker Information Details
-            SectionHeader(title: "Worker Information")
-            
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                if let position = worker.position {
-                    CommonInfoRow(label: "Position:") {
-                        Text(position)
+            // Split layout: Profile image and worker information side by side
+            HStack(alignment: .top, spacing: AppTheme.Spacing.large) {
+                // Left side - Profile image
+                VStack {
+                    if let imagePath = worker.imagePath,
+                       let image = ZappaProfile.loadImage(from: imagePath) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 200, height: 200)
+                            .clipped()
+                            .cornerRadius(AppTheme.CornerRadius.large)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                                    .stroke(AppTheme.Colors.primary, lineWidth: 3)
+                            )
+                    }
+                    // Fallback to profilePhotoData
+                    else if let photoData = worker.profilePhotoData,
+                       let uiImage = UIImage(data: photoData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 200, height: 200)
+                            .clipped()
+                            .cornerRadius(AppTheme.CornerRadius.large)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                                    .stroke(AppTheme.Colors.primary, lineWidth: 3)
+                            )
+                    } else {
+                        RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                            .fill(AppTheme.Colors.backgroundSecondary)
+                            .frame(width: 200, height: 200)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 60))
+                                    .foregroundColor(AppTheme.Colors.primary)
+                            )
                     }
                 }
                 
-                if let email = worker.email {
-                    CommonInfoRow(label: "Email:") {
-                        Text(email)
-                    }
-                }
-                
-                if let phone = worker.phone {
-                    CommonInfoRow(label: "Phone:") {
-                        Text(phone)
-                    }
-                }
-                
-                if let hireDate = worker.hireDate {
-                    CommonInfoRow(label: "Hire Date:") {
-                        VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
-                            Text(hireDate, style: .date)
-                                .font(AppTheme.Typography.bodyMedium)
-                            Text(hireDateWithDayName(hireDate))
-                                .font(AppTheme.Typography.bodySmall)
-                                .foregroundColor(AppTheme.Colors.textSecondary)
+                // Right side - Worker information
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+                    if let position = worker.position {
+                        CommonInfoRow(label: "Position:") {
+                            Text(position)
                         }
                     }
+                    
+                    if let email = worker.email {
+                        CommonInfoRow(label: "Email:") {
+                            Text(email)
+                        }
+                    }
+                    
+                    if let phone = worker.phone {
+                        CommonInfoRow(label: "Phone:") {
+                            Text(phone)
+                        }
+                    }
+                    
+                    if let hireDate = worker.hireDate {
+                        CommonInfoRow(label: "Hire Date:") {
+                            VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                                Text(hireDate, style: .date)
+                                    .font(AppTheme.Typography.bodyMedium)
+                                Text(hireDateWithDayName(hireDate))
+                                    .font(AppTheme.Typography.bodySmall)
+                                    .foregroundColor(AppTheme.Colors.textSecondary)
+                            }
+                        }
+                    }
+                    
+                    // Add spacer to push content to top
+                    Spacer()
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
