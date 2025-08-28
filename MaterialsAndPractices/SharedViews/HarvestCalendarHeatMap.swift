@@ -1,13 +1,3 @@
-//
-//  HarvestCalendarHeatMap.swift
-//  MaterialsAndPractices
-//
-//  Provides reusable harvest calendar heat map component showing
-//  optimal harvest timing throughout the growing year with visual indicators.
-//  Supports comprehensive farm management system scheduling.
-//
-//  Created by GitHub Copilot on 12/18/24.
-//
 
 import SwiftUI
 import Foundation
@@ -104,7 +94,7 @@ struct HarvestCalendarHeatMap: View {
             HStack {
                 Text(harvestData.cultivar.emoji ?? "🌱")
                     .font(.title2)
-                Text("Harvest Calendar: \(harvestData.cultivar.name ?? "Unknown")")
+                Text("\(harvestData.cultivar.name ?? "Unknown")")
                     .font(AppTheme.Typography.headlineSmall)
                     .foregroundColor(AppTheme.Colors.textPrimary)
             }

@@ -74,35 +74,36 @@ struct GrowDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
-                // MARK: - Cultivar Information Section
-                cultivarInformationSection
+                locationInformationSection
+                harvestCalendarSection
+               // cultivarInformationSection
+
+                timelineInformationSection
+               
+                    //
                 
-                // MARK: - Cultivar Growing Details Section
-                cultivarGrowingDetailsSection
-                
-                // MARK: - Field and Farm Information Section
+             
                 fieldAndFarmInformationSection
                 
-                // MARK: - Timeline Information Section  
-                timelineInformationSection
+     
                 
-                // MARK: - Harvest Calendar Section
-                harvestCalendarSection
+
                 
-                // MARK: - Location Information Section
+              
                 locationInformationSection
                 
-                // MARK: - Work Practices Section
+               
                 workPracticesSection
                 
-                // MARK: - Amendments Section
-                amendmentsSection
+              
+               // amendmentsSection
                 
                 // MARK: - Harvest Safety Section
-                harvestSafetySection
+               // harvestSafetySection
                 
                 // MARK: - Inspection Section
                 inspectionSection
+                cultivarGrowingDetailsSection
             }
             .padding()
         }
@@ -465,8 +466,7 @@ struct GrowDetailView: View {
     /// Section displaying harvest calendar heat map
     private var harvestCalendarSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            SectionHeader(title: "Harvest Calendar")
-            
+
             if let cultivar = growViewModel.grow.cultivar,
                let plantedDate = growViewModel.grow.plantedDate {
                 let harvestData = HarvestCalculator.calculateHarvestCalendarData(
