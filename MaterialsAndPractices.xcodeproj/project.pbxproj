@@ -13,6 +13,7 @@
 		1F2AAD8D2E5FA50C0001C7A3 /* LedgerTestDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2AAD8C2E5FA50C0001C7A3 /* LedgerTestDataLoader.swift */; };
 		1F2AAE352E6005F20001C7A3 /* ZappaProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2AAE252E6005F20001C7A3 /* ZappaProfile.swift */; };
 		1F2AAE362E6005F20001C7A3 /* MaterialsAndPractices.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1F2AAE242E6005F20001C7A3 /* MaterialsAndPractices.xcdatamodeld */; };
+		1F2AAE382E601EA10001C7A3 /* TimeClockDonutChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2AAE372E601EA10001C7A3 /* TimeClockDonutChart.swift */; };
 		1F2E92262E5A1FA2003962BA /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92242E5A1FA2003962BA /* AppTheme.swift */; };
 		1F2E923B2E5A5352003962BA /* HarvestHeatMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92392E5A5352003962BA /* HarvestHeatMapView.swift */; };
 		1F2E923D2E5A5352003962BA /* GrowingSeasonTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92382E5A5352003962BA /* GrowingSeasonTimelineView.swift */; };
@@ -135,6 +136,7 @@
 		1F2AAE322E6005F20001C7A3 /* MaterialsAndPractices 12.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 12.xcdatamodel"; sourceTree = "<group>"; };
 		1F2AAE332E6005F20001C7A3 /* MaterialsAndPractices 13.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 13.xcdatamodel"; sourceTree = "<group>"; };
 		1F2AAE342E6005F20001C7A3 /* MaterialsAndPractices 14.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 14.xcdatamodel"; sourceTree = "<group>"; };
+		1F2AAE372E601EA10001C7A3 /* TimeClockDonutChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeClockDonutChart.swift; sourceTree = "<group>"; };
 		1F2E92242E5A1FA2003962BA /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		1F2E92362E5A5352003962BA /* CultivarDataTestUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarDataTestUtility.swift; sourceTree = "<group>"; };
 		1F2E92382E5A5352003962BA /* GrowingSeasonTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowingSeasonTimelineView.swift; sourceTree = "<group>"; };
@@ -312,6 +314,7 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
+				1F2AAE372E601EA10001C7A3 /* TimeClockDonutChart.swift */,
 				1F2AAE242E6005F20001C7A3 /* MaterialsAndPractices.xcdatamodeld */,
 				1F2AAE252E6005F20001C7A3 /* ZappaProfile.swift */,
 				1F2AAD8C2E5FA50C0001C7A3 /* LedgerTestDataLoader.swift */,
@@ -658,6 +661,7 @@
 				1FB247BB2E5ACC3000F7BAF7 /* PhotoOverlay.swift in Sources */,
 				1FEE44C22E5E168400A1887B /* DeviceDetection.swift in Sources */,
 				1FEE44C42E5E168400A1887B /* AdaptiveDashboardView.swift in Sources */,
+				1F2AAE382E601EA10001C7A3 /* TimeClockDonutChart.swift in Sources */,
 				1FD918352E595AB900D18920 /* CultivarViews.swift in Sources */,
 				1FD918362E595AB900D18920 /* CultivarSeeder.swift in Sources */,
 				1F4F48B8257DB4C2005E559D /* CurrentGrowsView.swift in Sources */,
