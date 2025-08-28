@@ -180,6 +180,22 @@ struct WorkerDetailView: View {
     @State private var isClockedIn = false
     @State private var todayEntry: TimeClock?
     
+    // Calculate today's hours worked
+    private var todayHoursWorked: Double {
+        guard let todayEntry = todayEntry else { return 0 }
+        
+        if let clockIn = todayEntry.clockInTime {
+            if let clockOut = todayEntry.clockOutTime {
+                // Completed shift
+                return clockOut.timeIntervalSince(clockIn) / 3600.0
+            } else if todayEntry.isActive {
+                // Currently clocked in
+                return Date().timeIntervalSince(clockIn) / 3600.0
+            }
+        }
+        return 0
+    }
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
@@ -194,6 +210,9 @@ struct WorkerDetailView: View {
                 
                 // Health & Safety Training Section
                 healthSafetySection
+                
+                // Work Order History Section
+                workOrderHistorySection
             }
             .padding()
         }
@@ -218,17 +237,25 @@ struct WorkerDetailView: View {
     
     private var workerInformationSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            SectionHeader(title: "Worker Information")
-            
-            HStack {
-                // Worker photo
+            // Profile Image Section - Large display
+            VStack(spacing: AppTheme.Spacing.medium) {
+                Text(worker.name ?? "Worker")
+                    .font(AppTheme.Typography.headlineLarge)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                // Large worker photo
                 if let imagePath = worker.imagePath,
                    let image = ZappaProfile.loadImage(from: imagePath) {
                     Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: 80, height: 80)
-                        .clipShape(Circle())
+                        .frame(maxWidth: 1024, maxHeight: 400)
+                        .clipped()
+                        .cornerRadius(AppTheme.CornerRadius.large)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                                .stroke(AppTheme.Colors.primary, lineWidth: 3)
+                        )
                 }
                 // Fallback to profilePhotoData
                 else if let photoData = worker.profilePhotoData,
@@ -236,46 +263,52 @@ struct WorkerDetailView: View {
                     Image(uiImage: uiImage)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: 80, height: 80)
-                        .clipShape(Circle())
+                        .frame(maxWidth: 1024, maxHeight: 400)
+                        .clipped()
+                        .cornerRadius(AppTheme.CornerRadius.large)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                                .stroke(AppTheme.Colors.primary, lineWidth: 3)
+                        )
                 } else {
-                    Circle()
+                    RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
                         .fill(AppTheme.Colors.backgroundSecondary)
-                        .frame(width: 80, height: 80)
+                        .frame(maxWidth: 1024, maxHeight: 400)
                         .overlay(
                             Image(systemName: "person.fill")
-                                .font(.system(size: 32))
+                                .font(.system(size: 80))
                                 .foregroundColor(AppTheme.Colors.primary)
                         )
                 }
-                
-                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                    if let position = worker.position {
-                        CommonInfoRow(label: "Position:") {
-                            Text(position)
-                        }
-                    }
-                    
-                    if let email = worker.email {
-                        CommonInfoRow(label: "Email:") {
-                            Text(email)
-                        }
-                    }
-                    
-                    if let phone = worker.phone {
-                        CommonInfoRow(label: "Phone:") {
-                            Text(phone)
-                        }
-                    }
-                    
-                    if let hireDate = worker.hireDate {
-                        CommonInfoRow(label: "Hire Date:") {
-                            Text(hireDate, style: .date)
-                        }
+            }
+            
+            // Worker Information Details
+            SectionHeader(title: "Worker Information")
+            
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                if let position = worker.position {
+                    CommonInfoRow(label: "Position:") {
+                        Text(position)
                     }
                 }
                 
-                Spacer()
+                if let email = worker.email {
+                    CommonInfoRow(label: "Email:") {
+                        Text(email)
+                    }
+                }
+                
+                if let phone = worker.phone {
+                    CommonInfoRow(label: "Phone:") {
+                        Text(phone)
+                    }
+                }
+                
+                if let hireDate = worker.hireDate {
+                    CommonInfoRow(label: "Hire Date:") {
+                        Text(hireDate, style: .date)
+                    }
+                }
             }
         }
     }
@@ -285,37 +318,84 @@ struct WorkerDetailView: View {
             SectionHeader(title: "Time Clock")
             
             VStack(spacing: AppTheme.Spacing.medium) {
-                // Clock status
+                // Top banner showing clock status
                 HStack {
-                    Circle()
-                        .fill(isClockedIn ? AppTheme.Colors.success : AppTheme.Colors.textSecondary)
-                        .frame(width: 12, height: 12)
-                    
-                    Text(isClockedIn ? "Currently Clocked In" : "Currently Clocked Out")
-                        .font(AppTheme.Typography.bodyMedium)
-                        .foregroundColor(isClockedIn ? AppTheme.Colors.success : AppTheme.Colors.textSecondary)
-                    
                     Spacer()
-                    
-                    if let todayEntry = todayEntry, let clockInTime = todayEntry.clockInTime {
-                        Text("Since: \(clockInTime, style: .time)")
-                            .font(AppTheme.Typography.bodySmall)
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                    }
+                    Text(isClockedIn ? "CLOCKED IN" : "CLOCKED OUT")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(isClockedIn ? AppTheme.Colors.textPrimary : AppTheme.Colors.textSecondary)
+                        .fontWeight(.semibold)
+                    Spacer()
                 }
+                .padding(.vertical, AppTheme.Spacing.small)
+                .background(isClockedIn ? AppTheme.Colors.success : AppTheme.Colors.backgroundSecondary)
+                .cornerRadius(AppTheme.CornerRadius.small)
                 
-                // Clock buttons
-                HStack(spacing: AppTheme.Spacing.medium) {
-                    if !isClockedIn {
-                        CommonActionButton(title: "Clock In", style: .primary) {
-                            clockIn()
-                        }
-                    } else {
-                        CommonActionButton(title: "Clock Out", style: .secondary) {
-                            clockOut()
+                // Main time clock interface
+                HStack(spacing: AppTheme.Spacing.large) {
+                    // Left side - Donut chart
+                    VStack {
+                        TimeClockDonutChart(
+                            hoursWorked: todayHoursWorked,
+                            clockInTime: todayEntry?.clockInTime,
+                            isActive: isClockedIn
+                        )
+                        
+                        if let todayEntry = todayEntry, let clockInTime = todayEntry.clockInTime {
+                            Text("Since: \(clockInTime, style: .time)")
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textSecondary)
                         }
                     }
+                    
+                    // Right side - Clock button
+                    VStack {
+                        Spacer()
+                        
+                        if !isClockedIn {
+                            Button(action: clockIn) {
+                                VStack(spacing: AppTheme.Spacing.small) {
+                                    Image(systemName: "clock")
+                                        .font(.system(size: 40))
+                                        .foregroundColor(AppTheme.Colors.success)
+                                    
+                                    Text("Clock In")
+                                        .font(AppTheme.Typography.bodyMedium)
+                                        .foregroundColor(AppTheme.Colors.success)
+                                        .fontWeight(.semibold)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                                        .stroke(AppTheme.Colors.success, lineWidth: 2)
+                                )
+                            }
+                        } else {
+                            Button(action: clockOut) {
+                                VStack(spacing: AppTheme.Spacing.small) {
+                                    Image(systemName: "clock.fill")
+                                        .font(.system(size: 40))
+                                        .foregroundColor(AppTheme.Colors.error)
+                                    
+                                    Text("Clock Out")
+                                        .font(AppTheme.Typography.bodyMedium)
+                                        .foregroundColor(AppTheme.Colors.error)
+                                        .fontWeight(.semibold)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                                        .stroke(AppTheme.Colors.error, lineWidth: 2)
+                                )
+                            }
+                        }
+                        
+                        Spacer()
+                    }
                 }
+                .frame(height: 200)
             }
             .padding(AppTheme.Spacing.medium)
             .background(AppTheme.Colors.backgroundSecondary)
@@ -371,7 +451,7 @@ struct WorkerDetailView: View {
     private var healthSafetySection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             HStack {
-                SectionHeader(title: "Health & Safety Training")
+                SectionHeader(title: "Completed Training")
                 
                 Spacer()
                 
@@ -383,13 +463,45 @@ struct WorkerDetailView: View {
             
             if let trainings = worker.healthSafetyTrainings?.allObjects as? [HealthSafetyTraining],
                !trainings.isEmpty {
-                ForEach(trainings.sorted(by: { ($0.completedDate ?? Date.distantPast) > ($1.completedDate ?? Date.distantPast) }), id: \.id) { training in
-                    HealthSafetyTrainingRow(training: training)
+                LazyVGrid(columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: AppTheme.Spacing.medium) {
+                    ForEach(trainings.sorted(by: { ($0.completedDate ?? Date.distantPast) > ($1.completedDate ?? Date.distantPast) }), id: \.id) { training in
+                        TrainingTile(training: training)
+                    }
                 }
             } else {
                 Text("No training records")
                     .font(AppTheme.Typography.bodyMedium)
                     .foregroundColor(AppTheme.Colors.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding()
+                    .background(AppTheme.Colors.backgroundSecondary)
+                    .cornerRadius(AppTheme.CornerRadius.medium)
+            }
+        }
+    }
+    
+    private var workOrderHistorySection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Recent Work Orders")
+            
+            // Get last month's work orders
+            if let recentWorkOrders = getRecentWorkOrders(), !recentWorkOrders.isEmpty {
+                LazyVStack(spacing: AppTheme.Spacing.small) {
+                    ForEach(recentWorkOrders, id: \.id) { workOrder in
+                        WorkOrderHistoryRow(workOrder: workOrder)
+                    }
+                }
+            } else {
+                Text("No recent work orders")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding()
+                    .background(AppTheme.Colors.backgroundSecondary)
+                    .cornerRadius(AppTheme.CornerRadius.medium)
             }
         }
     }
@@ -468,8 +580,14 @@ struct WorkerDetailView: View {
         }
     }
     
-    /// Clock out worker - SHOULD BE MOVED to TimeClockInteractor use case  
-    /// Hours calculation and data persistence should be in application layer
+    private func getRecentWorkOrders() -> [WorkOrder]? {
+        let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
+        
+        // For now, return empty array since we don't have direct work order relationship
+        // In a full implementation, we would fetch work orders where this worker was assigned
+        return []
+    }
+    
     /// Clock out worker - SHOULD BE MOVED to TimeClockInteractor use case  
     /// Hours calculation and data persistence should be in application layer
     private func clockOut() {
@@ -492,6 +610,122 @@ struct WorkerDetailView: View {
         } catch {
             print("Error clocking out: \(error)")
         }
+    }
+}
+
+// MARK: - New UI Components
+
+/// Tile view for training certifications
+struct TrainingTile: View {
+    let training: HealthSafetyTraining
+    
+    private var isExpired: Bool {
+        guard let expiryDate = training.expiryDate else { return false }
+        return expiryDate < Date()
+    }
+    
+    private var expiresWithin30Days: Bool {
+        guard let expiryDate = training.expiryDate else { return false }
+        let thirtyDaysFromNow = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
+        return expiryDate <= thirtyDaysFromNow && expiryDate >= Date()
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            HStack {
+                // Training icon
+                Image(systemName: isExpired ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
+                    .foregroundColor(isExpired ? AppTheme.Colors.error : AppTheme.Colors.success)
+                    .font(.title2)
+                
+                Spacer()
+                
+                // Status indicator
+                if isExpired {
+                    Text("EXPIRED")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.error)
+                        .fontWeight(.bold)
+                } else if expiresWithin30Days {
+                    Text("EXPIRING")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.warning)
+                        .fontWeight(.bold)
+                }
+            }
+            
+            Text(training.trainingName ?? "Unknown Training")
+                .font(AppTheme.Typography.bodyMedium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+                .fontWeight(.semibold)
+                .lineLimit(2)
+            
+            if let completedDate = training.completedDate {
+                Text("Completed: \(completedDate, style: .date)")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            if let expiryDate = training.expiryDate {
+                Text("Expires: \(expiryDate, style: .date)")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(isExpired ? AppTheme.Colors.error : AppTheme.Colors.textSecondary)
+            }
+        }
+        .padding(AppTheme.Spacing.medium)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .overlay(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .stroke(isExpired ? AppTheme.Colors.error : 
+                       expiresWithin30Days ? AppTheme.Colors.warning : 
+                       AppTheme.Colors.success, lineWidth: 1)
+        )
+    }
+}
+
+/// Compact row for work order history
+struct WorkOrderHistoryRow: View {
+    let workOrder: WorkOrder
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                Text(workOrder.title ?? "Work Order")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                    .lineLimit(1)
+                
+                if let dueDate = workOrder.dueDate {
+                    Text("Due: \(dueDate, style: .date)")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                // Status indicator
+                if workOrder.isCompleted {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(AppTheme.Colors.success)
+                } else {
+                    Image(systemName: "clock")
+                        .foregroundColor(AppTheme.Colors.warning)
+                }
+                
+                if let status = workOrder.status {
+                    Text(status.capitalized)
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+            }
+        }
+        .padding(.vertical, AppTheme.Spacing.small)
+        .padding(.horizontal, AppTheme.Spacing.medium)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.small)
     }
 }
 

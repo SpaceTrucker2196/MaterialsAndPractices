@@ -100,11 +100,10 @@ struct FarmerProfileView: View {
 
     private var profilePhotoManagementSection: some View {
         VStack(spacing: AppTheme.Spacing.medium) {
-            HStack {
-                Spacer()
-                profilePhotoDisplayWithEditCapability
-                Spacer()
-            }
+            SectionHeader(title: "Farmer Profile")
+            
+            profilePhotoDisplayWithEditCapability
+                .frame(maxWidth: .infinity)
 
             if isCurrentlyEditing {
                 profilePhotoEditInstructions
@@ -123,11 +122,27 @@ struct FarmerProfileView: View {
 
     private var profilePhotoVisualDisplay: some View {
         Group {
-            if let farmer = currentFarmer, farmer.profilePhotoData != nil {
+            if let farmer = currentFarmer, let imagePath = farmer.imagePath,
+               let image = ZappaProfile.loadImage(from: imagePath) {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: 1024, maxHeight: 400)
+                    .clipped()
+                    .cornerRadius(AppTheme.CornerRadius.large)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                            .stroke(AppTheme.Colors.primary, lineWidth: 3)
+                    )
+            } else if let farmer = currentFarmer, farmer.profilePhotoData != nil {
                 FarmerProfileImage(farmer: farmer)
-                    .frame(width: 120, height: 120)
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(AppTheme.Colors.primary, lineWidth: 3))
+                    .frame(maxWidth: 1024, maxHeight: 400)
+                    .clipped()
+                    .cornerRadius(AppTheme.CornerRadius.large)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                            .stroke(AppTheme.Colors.primary, lineWidth: 3)
+                    )
             } else {
                 profilePhotoPlaceholder
             }
@@ -136,12 +151,12 @@ struct FarmerProfileView: View {
 
     private var profilePhotoPlaceholder: some View {
         ZStack {
-            Circle()
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
                 .fill(AppTheme.Colors.backgroundSecondary)
-                .frame(width: 120, height: 120)
+                .frame(maxWidth: 1024, maxHeight: 400)
 
             Image(systemName: "person.fill")
-                .font(.system(size: 50))
+                .font(.system(size: 80))
                 .foregroundColor(AppTheme.Colors.primary)
         }
     }
