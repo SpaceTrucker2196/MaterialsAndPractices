@@ -102,6 +102,29 @@ enum JobRole: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+// MARK: - Organic Certification Status
+
+enum OrganicCertificationStatus: String, CaseIterable, Identifiable {
+    case requiredForOrganic = "Required for Organic"
+    case failedForOrganic = "Failed for Organic"
+    case notRequiredForOrganic = "Not Required for Organic"
+    case unaffectedOrganic = "Unaffected by Organic"
+
+    var id: String { rawValue }
+}
+
+// MARK: - Worker Training Status
+
+enum WorkerTrainingStatus: String, CaseIterable, Identifiable {
+    case needed = "Needed"
+    case failed = "Failed"
+    case passed = "Passed"
+    case completed = "Completed"
+    case expired = "Expired"
+
+    var id: String { rawValue }
+}
+
 // MARK: - Default Training Courses Data
 
 struct DefaultTrainingCourse {

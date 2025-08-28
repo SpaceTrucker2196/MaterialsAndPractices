@@ -57,6 +57,34 @@ enum AppTheme {
         /// Color for clock out actions - red
         static let clockOut = Color("ClockOutColor")
         
+        // MARK: - Organic Certification Colors
+        
+        /// Required for organic certification - deep green
+        static let requiredForOrganic = Color("RequiredForOrganicColor")
+        
+        /// Failed for organic certification - deep red
+        static let failedForOrganic = Color("FailedForOrganicColor")
+        
+        /// Not required for organic certification - gray
+        static let notRequiredForOrganic = Color("NotRequiredForOrganicColor")
+        
+        /// Unaffected by organic certification - blue
+        static let unaffectedOrganic = Color("UnaffectedOrganicColor")
+        
+        // MARK: - Worker Training Status Colors
+        
+        /// Worker needs course for the first time - blue
+        static let trainingNeeded = Color("TrainingNeededColor")
+        
+        /// Worker needs retraining (expired) - orange
+        static let trainingExpired = Color("TrainingExpiredColor")
+        
+        /// Worker has passed and is current - green
+        static let trainingCurrent = Color("TrainingCurrentColor")
+        
+        /// Worker has failed certification - red
+        static let trainingFailed = Color("TrainingFailedColor")
+        
         // MARK: - Organic Certification Specific Colors
         
         /// Color for organic material indicators

@@ -857,7 +857,7 @@ struct AssignTrainingUtilityView: View {
                         .padding()
                 } else {
                     ForEach(trainingCourses, id: \.courseID) { course in
-                        NavigationLink(destination: TrainingCourseDetailView(course: course)) {
+                        NavigationLink(destination: CourseAssignmentDetailView(course: course)) {
                             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
                                 Text(course.courseName ?? "Unknown Course")
                                     .font(AppTheme.Typography.bodyMedium)

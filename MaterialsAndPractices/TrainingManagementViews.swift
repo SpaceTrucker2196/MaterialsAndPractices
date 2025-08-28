@@ -169,8 +169,20 @@ struct TrainingCourseDetailView: View {
     @State private var showingAssignTraining = false
     @State private var showingEditCourse = false
     
+    // Search and filtering state
+    @State private var searchText = ""
+    @State private var selectedStatusFilter: WorkerTrainingStatusFilter = .all
+    
     @FetchRequest var workers: FetchedResults<Worker>
     @FetchRequest var trainingRecords: FetchedResults<TrainingRecord>
+    
+    // Filter options for worker training status
+    enum WorkerTrainingStatusFilter: String, CaseIterable {
+        case all = "All"
+        case needed = "Needed"
+        case failed = "Failed"
+        case passed = "Passed"
+    }
     
     init(course: TrainingCourse) {
         self.course = course
@@ -193,6 +205,11 @@ struct TrainingCourseDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                // Organic Certification Banner (if applicable)
+                if course.complianceCategoryEnum == .organicCertification {
+                    organicCertificationBanner
+                }
+                
                 // Course Information Section
                 courseInformationSection
                 
@@ -229,6 +246,30 @@ struct TrainingCourseDetailView: View {
         }
     }
     
+    // MARK: - Organic Certification Banner
+    
+    private var organicCertificationBanner: some View {
+        HStack {
+            Image(systemName: "leaf.fill")
+                .foregroundColor(.white)
+                .font(.title3)
+            
+            Text("REQUIRED FOR ORGANIC CERTIFICATION")
+                .font(AppTheme.Typography.labelMedium)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+            
+            Spacer()
+            
+            Image(systemName: "checkmark.seal.fill")
+                .foregroundColor(.white)
+                .font(.title3)
+        }
+        .padding()
+        .background(AppTheme.Colors.requiredForOrganic)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+    
     // MARK: - Course Information Section
     
     private var courseInformationSection: some View {
@@ -242,15 +283,9 @@ struct TrainingCourseDetailView: View {
                         .foregroundColor(AppTheme.Colors.textPrimary)
                 }
                 
-                // Compliance and delivery info
+                // Duration and delivery info
                 HStack {
-                    if let complianceCategory = course.complianceCategoryEnum {
-                        ComplianceBadge(category: complianceCategory)
-                    }
-                    
-                    Spacer()
-                    
-                    VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
                         Text("Duration")
                             .font(AppTheme.Typography.labelSmall)
                             .foregroundColor(AppTheme.Colors.textSecondary)
@@ -258,6 +293,14 @@ struct TrainingCourseDetailView: View {
                         Text("\(course.estimatedDurationMin) minutes")
                             .font(AppTheme.Typography.bodySmall)
                             .foregroundColor(AppTheme.Colors.textPrimary)
+                    }
+                    
+                    Spacer()
+                    
+                    // Compliance category badge (only if not organic certification)
+                    if let complianceCategory = course.complianceCategoryEnum,
+                       complianceCategory != .organicCertification {
+                        ComplianceBadge(category: complianceCategory)
                     }
                 }
                 
@@ -293,9 +336,54 @@ struct TrainingCourseDetailView: View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             SectionHeader(title: "Worker Training Status")
             
+            // Search bar
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                TextField("Search workers...", text: $searchText)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                
+                if !searchText.isEmpty {
+                    Button("Clear") {
+                        searchText = ""
+                    }
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.primary)
+                }
+            }
+            .padding(.horizontal, AppTheme.Spacing.medium)
+            
+            // Status filter tabs
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: AppTheme.Spacing.small) {
+                    ForEach(WorkerTrainingStatusFilter.allCases, id: \.rawValue) { filter in
+                        Button(action: {
+                            selectedStatusFilter = filter
+                        }) {
+                            Text(filter.rawValue)
+                                .font(AppTheme.Typography.labelMedium)
+                                .fontWeight(selectedStatusFilter == filter ? .bold : .medium)
+                                .foregroundColor(selectedStatusFilter == filter ? .white : AppTheme.Colors.textPrimary)
+                                .padding(.horizontal, AppTheme.Spacing.medium)
+                                .padding(.vertical, AppTheme.Spacing.small)
+                                .background(
+                                    selectedStatusFilter == filter ? 
+                                    AppTheme.Colors.primary : 
+                                    AppTheme.Colors.backgroundSecondary
+                                )
+                                .cornerRadius(AppTheme.CornerRadius.small)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding(.horizontal, AppTheme.Spacing.medium)
+            }
+            
+            // Filtered workers list
             LazyVStack(spacing: AppTheme.Spacing.small) {
-                ForEach(workers, id: \.id) { worker in
-                    WorkerTrainingStatusRow(
+                ForEach(filteredWorkers, id: \.id) { worker in
+                    EnhancedWorkerTrainingStatusRow(
                         worker: worker,
                         course: course,
                         trainingRecord: getTrainingRecord(for: worker)
@@ -303,6 +391,53 @@ struct TrainingCourseDetailView: View {
                 }
             }
         }
+    }
+    
+    // MARK: - Filtered Workers
+    
+    private var filteredWorkers: [Worker] {
+        let searchFiltered = searchText.isEmpty ? 
+            Array(workers) : 
+            workers.filter { worker in
+                (worker.name?.localizedCaseInsensitiveContains(searchText) ?? false) ||
+                (worker.position?.localizedCaseInsensitiveContains(searchText) ?? false)
+            }
+        
+        return searchFiltered.filter { worker in
+            let record = getTrainingRecord(for: worker)
+            let status = getWorkerTrainingStatus(for: worker, record: record)
+            
+            switch selectedStatusFilter {
+            case .all:
+                return true
+            case .needed:
+                return status == .needed
+            case .failed:
+                return status == .failed
+            case .passed:
+                return status == .passed
+            }
+        }.sorted { worker1, worker2 in
+            (worker1.name ?? "") < (worker2.name ?? "")
+        }
+    }
+    
+    // MARK: - Worker Training Status Helper
+    
+    private func getWorkerTrainingStatus(for worker: Worker, record: TrainingRecord?) -> WorkerTrainingStatusFilter {
+        guard let record = record else {
+            return .needed
+        }
+        
+        if !record.passStatus {
+            return .failed
+        }
+        
+        if record.isExpired {
+            return .needed
+        }
+        
+        return .passed
     }
     
     // MARK: - Training Records Section
@@ -338,88 +473,140 @@ struct TrainingCourseDetailView: View {
     }
 }
 
-// MARK: - Worker Training Status Row
+// MARK: - Enhanced Worker Training Status Row
 
-/// Row showing a worker's training status for a specific course
-struct WorkerTrainingStatusRow: View {
+/// Enhanced row showing a worker's training status with color coding and proper button styling
+struct EnhancedWorkerTrainingStatusRow: View {
     let worker: Worker
     let course: TrainingCourse
     let trainingRecord: TrainingRecord?
     
     @Environment(\.managedObjectContext) private var viewContext
     @State private var showingAssignTraining = false
+    @State private var showingWorkerDetail = false
     
     var body: some View {
-        HStack {
-            // Worker info
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                Text(worker.name ?? "Unknown Worker")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                
-                if let position = worker.position {
-                    Text(position)
-                        .font(AppTheme.Typography.bodySmall)
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                }
-            }
-            
-            Spacer()
-            
-            // Training status
-            if let record = trainingRecord {
-                VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
-                    // Pass status
-                    HStack {
-                        Image(systemName: record.passStatus ? "checkmark.circle.fill" : "xmark.circle.fill")
-                            .foregroundColor(record.passStatus ? AppTheme.Colors.success : AppTheme.Colors.error)
+        HStack(spacing: AppTheme.Spacing.medium) {
+            // Worker info with color coding
+            Button(action: {
+                showingWorkerDetail = true
+            }) {
+                HStack(spacing: AppTheme.Spacing.medium) {
+                    // Color indicator
+                    Rectangle()
+                        .fill(statusColor)
+                        .frame(width: 4)
+                        .cornerRadius(2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text(worker.name ?? "Unknown Worker")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
                         
-                        Text(record.passStatus ? "Passed" : "Failed")
+                        if let position = worker.position {
+                            Text(position)
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textSecondary)
+                        }
+                        
+                        // Status text
+                        Text(statusText)
                             .font(AppTheme.Typography.labelSmall)
-                            .foregroundColor(record.passStatus ? AppTheme.Colors.success : AppTheme.Colors.error)
+                            .fontWeight(.medium)
+                            .foregroundColor(statusColor)
                     }
                     
-                    // Training date
-                    if let trainingDate = record.trainingDate {
-                        Text(trainingDate, style: .date)
-                            .font(AppTheme.Typography.bodySmall)
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                    }
-                    
-                    // Expiration warning
-                    if record.isExpired {
-                        Text("EXPIRED")
-                            .font(AppTheme.Typography.labelSmall)
-                            .foregroundColor(AppTheme.Colors.error)
-                            .fontWeight(.bold)
-                    } else if record.expiresWithin30Days {
-                        Text("EXPIRING")
-                            .font(AppTheme.Typography.labelSmall)
-                            .foregroundColor(AppTheme.Colors.warning)
-                            .fontWeight(.bold)
-                    }
-                }
-            } else {
-                VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
-                    Text("Not Trained")
-                        .font(AppTheme.Typography.bodySmall)
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                    
-                    Button("Assign") {
-                        showingAssignTraining = true
-                    }
-                    .font(AppTheme.Typography.labelSmall)
-                    .foregroundColor(AppTheme.Colors.primary)
+                    Spacer()
                 }
             }
+            .buttonStyle(PlainButtonStyle())
+            
+            // Action button
+            Button(action: {
+                showingAssignTraining = true
+            }) {
+                Text(buttonText)
+                    .font(AppTheme.Typography.labelMedium)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .frame(width: 100, height: 44)
+                    .background(buttonColor)
+                    .cornerRadius(AppTheme.CornerRadius.small)
+            }
+            .buttonStyle(PlainButtonStyle())
         }
-        .padding(.vertical, AppTheme.Spacing.small)
         .padding(.horizontal, AppTheme.Spacing.medium)
+        .padding(.vertical, AppTheme.Spacing.small)
         .background(AppTheme.Colors.backgroundSecondary)
         .cornerRadius(AppTheme.CornerRadius.small)
         .sheet(isPresented: $showingAssignTraining) {
             AssignTrainingView(course: course, selectedWorker: worker, isPresented: $showingAssignTraining)
         }
+        .sheet(isPresented: $showingWorkerDetail) {
+            WorkerTrainingDetailView(worker: worker, course: course)
+        }
+    }
+    
+    // MARK: - Status Properties
+    
+    private var statusColor: Color {
+        guard let record = trainingRecord else {
+            return AppTheme.Colors.trainingNeeded // Blue - Needs course for first time
+        }
+        
+        if !record.passStatus {
+            return AppTheme.Colors.trainingFailed // Red - Failed certification
+        }
+        
+        if record.isExpired {
+            return AppTheme.Colors.trainingExpired // Orange - Needs retraining
+        }
+        
+        return AppTheme.Colors.trainingCurrent // Green - Current certification
+    }
+    
+    private var statusText: String {
+        guard let record = trainingRecord else {
+            return "Needs Course"
+        }
+        
+        if !record.passStatus {
+            return "Failed Certification"
+        }
+        
+        if record.isExpired {
+            return "Certification Expired"
+        }
+        
+        if record.expiresWithin30Days {
+            return "Expiring Soon"
+        }
+        
+        return "Current Certification"
+    }
+    
+    private var buttonText: String {
+        guard let record = trainingRecord else {
+            return "Assign"
+        }
+        
+        if !record.passStatus || record.isExpired {
+            return "Reassess"
+        }
+        
+        return "View"
+    }
+    
+    private var buttonColor: Color {
+        guard let record = trainingRecord else {
+            return AppTheme.Colors.primary
+        }
+        
+        if !record.passStatus || record.isExpired {
+            return AppTheme.Colors.warning
+        }
+        
+        return AppTheme.Colors.info
     }
 }
 
@@ -820,4 +1007,505 @@ struct TrainingRecordDetailView: View {
         Text("Training Record Detail - Coming Soon")
             .navigationTitle("Training Record")
     }
+}
+
+// MARK: - Worker Training Detail View
+
+/// Detailed view showing a worker's training history for a specific course
+struct WorkerTrainingDetailView: View {
+    let worker: Worker
+    let course: TrainingCourse
+    
+    @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.dismiss) private var dismiss
+    
+    @FetchRequest var trainingRecords: FetchedResults<TrainingRecord>
+    
+    init(worker: Worker, course: TrainingCourse) {
+        self.worker = worker
+        self.course = course
+        
+        // Fetch training records for this worker and course
+        self._trainingRecords = FetchRequest(
+            entity: TrainingRecord.entity(),
+            sortDescriptors: [NSSortDescriptor(keyPath: \TrainingRecord.trainingDate, ascending: false)],
+            predicate: NSPredicate(format: "worker == %@ AND trainingCourse == %@", worker, course)
+        )
+    }
+    
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                    // Worker profile section
+                    workerProfileSection
+                    
+                    // Training history section
+                    trainingHistorySection
+                }
+                .padding()
+            }
+            .navigationTitle("Training History")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+    
+    // MARK: - Worker Profile Section
+    
+    private var workerProfileSection: some View {
+        HStack(spacing: AppTheme.Spacing.large) {
+            // Profile image placeholder
+            Circle()
+                .fill(AppTheme.Colors.backgroundSecondary)
+                .frame(width: 80, height: 80)
+                .overlay(
+                    Image(systemName: "person.circle.fill")
+                        .font(.largeTitle)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                )
+            
+            // Worker information
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                Text(worker.name ?? "Unknown Worker")
+                    .font(AppTheme.Typography.headlineMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                if let position = worker.position {
+                    Text(position)
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                if let email = worker.email {
+                    Text(email)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                if let phone = worker.phone {
+                    Text(phone)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+            }
+            
+            Spacer()
+        }
+        .padding()
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+    
+    // MARK: - Training History Section
+    
+    private var trainingHistorySection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Training History for \(course.courseName ?? "Course")")
+            
+            if trainingRecords.isEmpty {
+                Text("No training records found")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding()
+                    .background(AppTheme.Colors.backgroundSecondary)
+                    .cornerRadius(AppTheme.CornerRadius.medium)
+            } else {
+                LazyVStack(spacing: AppTheme.Spacing.small) {
+                    ForEach(trainingRecords, id: \.trainingID) { record in
+                        TrainingHistoryRow(record: record)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Training History Row
+
+/// Row component for displaying training history entries
+struct TrainingHistoryRow: View {
+    let record: TrainingRecord
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                if let trainingDate = record.trainingDate {
+                    Text(trainingDate, style: .date)
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                }
+                
+                if let trainerName = record.trainerName {
+                    Text("Trainer: \(trainerName)")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                Text("Duration: \(record.trainingDurationMinutes) minutes")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                // Pass status
+                HStack {
+                    Image(systemName: record.passStatus ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .foregroundColor(record.passStatus ? AppTheme.Colors.success : AppTheme.Colors.error)
+                    
+                    Text(record.passStatus ? "Passed" : "Failed")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(record.passStatus ? AppTheme.Colors.success : AppTheme.Colors.error)
+                }
+                
+                // Expiration status
+                if record.isExpired {
+                    Text("EXPIRED")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.error)
+                        .fontWeight(.bold)
+                } else if record.expiresWithin30Days {
+                    Text("EXPIRING")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.warning)
+                        .fontWeight(.bold)
+                } else if record.passStatus {
+                    Text("CURRENT")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.success)
+                        .fontWeight(.bold)
+                }
+            }
+        }
+        .padding()
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.small)
+    }
+}
+
+// MARK: - Course Assignment Detail View
+
+/// Course assignment detail view accessed from Assign Training workflow
+/// Filters to "needed" status by default as requested
+struct CourseAssignmentDetailView: View {
+    let course: TrainingCourse
+    @Environment(\.managedObjectContext) private var viewContext
+    @State private var showingAssignTraining = false
+    
+    // Search and filtering state - defaults to "needed" for assignment workflow
+    @State private var searchText = ""
+    @State private var selectedStatusFilter: AssignmentStatusFilter = .needed
+    
+    @FetchRequest var workers: FetchedResults<Worker>
+    @FetchRequest var trainingRecords: FetchedResults<TrainingRecord>
+    
+    // Filter options for assignment workflow
+    enum AssignmentStatusFilter: String, CaseIterable {
+        case all = "All"
+        case needed = "Needed"
+        case failed = "Failed"
+        case completed = "Completed"
+    }
+    
+    init(course: TrainingCourse) {
+        self.course = course
+        
+        // Fetch all active workers
+        self._workers = FetchRequest(
+            entity: Worker.entity(),
+            sortDescriptors: [NSSortDescriptor(keyPath: \Worker.name, ascending: true)],
+            predicate: NSPredicate(format: "isActive == YES")
+        )
+        
+        // Fetch training records for this course
+        self._trainingRecords = FetchRequest(
+            entity: TrainingRecord.entity(),
+            sortDescriptors: [NSSortDescriptor(keyPath: \TrainingRecord.trainingDate, ascending: false)],
+            predicate: NSPredicate(format: "trainingCourse == %@", course)
+        )
+    }
+    
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                // Course Information Section
+                courseInformationSection
+                
+                // Worker Assignment Status Section
+                workerAssignmentStatusSection
+            }
+            .padding()
+        }
+        .navigationTitle("Course Assignment")
+        .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $showingAssignTraining) {
+            AssignTrainingView(course: course, isPresented: $showingAssignTraining)
+        }
+    }
+    
+    // MARK: - Course Information Section
+    
+    private var courseInformationSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Course Information")
+            
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                Text(course.courseName ?? "Unknown Course")
+                    .font(AppTheme.Typography.headlineMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                if let courseDescription = course.courseDescription {
+                    Text(courseDescription)
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                }
+                
+                HStack {
+                    if let complianceCategory = course.complianceCategoryEnum {
+                        ComplianceBadge(category: complianceCategory)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("\(course.estimatedDurationMin) minutes")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+            }
+            .padding(AppTheme.Spacing.medium)
+            .background(AppTheme.Colors.backgroundSecondary)
+            .cornerRadius(AppTheme.CornerRadius.medium)
+        }
+    }
+    
+    // MARK: - Worker Assignment Status Section
+    
+    private var workerAssignmentStatusSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Worker Training Status")
+            
+            // Search bar
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                TextField("Search workers...", text: $searchText)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                
+                if !searchText.isEmpty {
+                    Button("Clear") {
+                        searchText = ""
+                    }
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.primary)
+                }
+            }
+            .padding(.horizontal, AppTheme.Spacing.medium)
+            
+            // Status filter tabs
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: AppTheme.Spacing.small) {
+                    ForEach(AssignmentStatusFilter.allCases, id: \.rawValue) { filter in
+                        Button(action: {
+                            selectedStatusFilter = filter
+                        }) {
+                            Text(filter.rawValue)
+                                .font(AppTheme.Typography.labelMedium)
+                                .fontWeight(selectedStatusFilter == filter ? .bold : .medium)
+                                .foregroundColor(selectedStatusFilter == filter ? .white : AppTheme.Colors.textPrimary)
+                                .padding(.horizontal, AppTheme.Spacing.medium)
+                                .padding(.vertical, AppTheme.Spacing.small)
+                                .background(
+                                    selectedStatusFilter == filter ? 
+                                    AppTheme.Colors.primary : 
+                                    AppTheme.Colors.backgroundSecondary
+                                )
+                                .cornerRadius(AppTheme.CornerRadius.small)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding(.horizontal, AppTheme.Spacing.medium)
+            }
+            
+            // Filtered workers list for assignment
+            LazyVStack(spacing: AppTheme.Spacing.small) {
+                ForEach(filteredWorkersForAssignment, id: \.id) { worker in
+                    AssignmentWorkerRow(
+                        worker: worker,
+                        course: course,
+                        trainingRecord: getTrainingRecord(for: worker)
+                    )
+                }
+            }
+        }
+    }
+    
+    // MARK: - Filtered Workers for Assignment
+    
+    private var filteredWorkersForAssignment: [Worker] {
+        let searchFiltered = searchText.isEmpty ? 
+            Array(workers) : 
+            workers.filter { worker in
+                (worker.name?.localizedCaseInsensitiveContains(searchText) ?? false) ||
+                (worker.position?.localizedCaseInsensitiveContains(searchText) ?? false)
+            }
+        
+        return searchFiltered.filter { worker in
+            let record = getTrainingRecord(for: worker)
+            let status = getAssignmentStatus(for: worker, record: record)
+            
+            switch selectedStatusFilter {
+            case .all:
+                return true
+            case .needed:
+                return status == .needed
+            case .failed:
+                return status == .failed
+            case .completed:
+                return status == .completed
+            }
+        }.sorted { worker1, worker2 in
+            (worker1.name ?? "") < (worker2.name ?? "")
+        }
+    }
+    
+    // MARK: - Assignment Status Helper
+    
+    private func getAssignmentStatus(for worker: Worker, record: TrainingRecord?) -> AssignmentStatusFilter {
+        guard let record = record else {
+            return .needed
+        }
+        
+        if !record.passStatus {
+            return .failed
+        }
+        
+        if record.isExpired {
+            return .needed
+        }
+        
+        return .completed
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func getTrainingRecord(for worker: Worker) -> TrainingRecord? {
+        return trainingRecords.first { $0.worker == worker }
+    }
+}
+
+// MARK: - Assignment Worker Row
+
+/// Row component for worker assignment workflow with proper button styling
+struct AssignmentWorkerRow: View {
+    let worker: Worker
+    let course: TrainingCourse
+    let trainingRecord: TrainingRecord?
+    
+    @Environment(\.managedObjectContext) private var viewContext
+    @State private var showingAssignTraining = false
+    
+    var body: some View {
+        HStack(spacing: AppTheme.Spacing.medium) {
+            // Worker info
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                Text(worker.name ?? "Unknown Worker")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                if let position = worker.position {
+                    Text(position)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                // Status indicator
+                if let record = trainingRecord {
+                    if !record.passStatus {
+                        Text("Failed Certification")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.error)
+                    } else if record.isExpired {
+                        Text("Certification Expired")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.warning)
+                    } else {
+                        Text("Current Certification")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.success)
+                    }
+                } else {
+                    Text("Needs Training")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+            }
+            
+            Spacer()
+            
+            // Assignment button - tall as row contents with standard width
+            Button(action: {
+                showingAssignTraining = true
+            }) {
+                Text(buttonText)
+                    .font(AppTheme.Typography.labelMedium)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .frame(width: 100)
+                    .frame(maxHeight: .infinity) // Makes button as tall as row content
+                    .background(buttonColor)
+                    .cornerRadius(AppTheme.CornerRadius.small)
+            }
+            .buttonStyle(PlainButtonStyle())
+        }
+        .frame(minHeight: 60) // Ensure consistent row height
+        .padding(.horizontal, AppTheme.Spacing.medium)
+        .padding(.vertical, AppTheme.Spacing.small)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.small)
+        .sheet(isPresented: $showingAssignTraining) {
+            AssignTrainingView(course: course, selectedWorker: worker, isPresented: $showingAssignTraining)
+        }
+    }
+    
+    // MARK: - Button Properties
+    
+    private var buttonText: String {
+        guard let record = trainingRecord else {
+            return "Assign"
+        }
+        
+        if !record.passStatus || record.isExpired {
+            return "Reassess"
+        }
+        
+        return "Assign"
+    }
+    
+    private var buttonColor: Color {
+        guard let record = trainingRecord else {
+            return AppTheme.Colors.primary
+        }
+        
+        if !record.passStatus {
+            return AppTheme.Colors.error
+        }
+        
+        if record.isExpired {
+            return AppTheme.Colors.warning
+        }
+        
+        return AppTheme.Colors.info
+    }
+}
 }
