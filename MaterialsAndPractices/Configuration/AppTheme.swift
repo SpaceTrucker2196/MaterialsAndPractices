@@ -49,6 +49,14 @@ enum AppTheme {
         static let error = Color("ErrorColor")
         static let info = Color("InfoColor")
         
+        // MARK: - Time Clock Colors
+        
+        /// Color for clock in actions - bright green
+        static let clockIn = Color("ClockInColor")
+        
+        /// Color for clock out actions - red
+        static let clockOut = Color("ClockOutColor")
+        
         // MARK: - Organic Certification Specific Colors
         
         /// Color for organic material indicators

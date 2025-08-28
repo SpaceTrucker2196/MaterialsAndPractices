@@ -208,6 +208,9 @@ struct WorkerDetailView: View {
                 // Weekly Hours Section
                 weeklyHoursSection
                 
+                // This Week Time Blocks Section
+                thisWeekTimeBlocksSection
+                
                 // Health & Safety Training Section
                 healthSafetySection
                 
@@ -306,7 +309,13 @@ struct WorkerDetailView: View {
                 
                 if let hireDate = worker.hireDate {
                     CommonInfoRow(label: "Hire Date:") {
-                        Text(hireDate, style: .date)
+                        VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                            Text(hireDate, style: .date)
+                                .font(AppTheme.Typography.bodyMedium)
+                            Text(hireDateWithDayName(hireDate))
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textSecondary)
+                        }
                     }
                 }
             }
@@ -357,18 +366,18 @@ struct WorkerDetailView: View {
                                 VStack(spacing: AppTheme.Spacing.small) {
                                     Image(systemName: "clock")
                                         .font(.system(size: 40))
-                                        .foregroundColor(AppTheme.Colors.success)
+                                        .foregroundColor(AppTheme.Colors.clockIn)
                                     
-                                    Text("Clock In")
+                                    Text("Start Work")
                                         .font(AppTheme.Typography.bodyMedium)
-                                        .foregroundColor(AppTheme.Colors.success)
+                                        .foregroundColor(AppTheme.Colors.clockIn)
                                         .fontWeight(.semibold)
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .overlay(
                                     RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
-                                        .stroke(AppTheme.Colors.success, lineWidth: 2)
+                                        .stroke(AppTheme.Colors.clockIn, lineWidth: 2)
                                 )
                             }
                         } else {
@@ -376,18 +385,18 @@ struct WorkerDetailView: View {
                                 VStack(spacing: AppTheme.Spacing.small) {
                                     Image(systemName: "clock.fill")
                                         .font(.system(size: 40))
-                                        .foregroundColor(AppTheme.Colors.error)
+                                        .foregroundColor(AppTheme.Colors.clockOut)
                                     
-                                    Text("Clock Out")
+                                    Text("Stop Work")
                                         .font(AppTheme.Typography.bodyMedium)
-                                        .foregroundColor(AppTheme.Colors.error)
+                                        .foregroundColor(AppTheme.Colors.clockOut)
                                         .fontWeight(.semibold)
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .overlay(
                                     RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
-                                        .stroke(AppTheme.Colors.error, lineWidth: 2)
+                                        .stroke(AppTheme.Colors.clockOut, lineWidth: 2)
                                 )
                             }
                         }
@@ -445,6 +454,38 @@ struct WorkerDetailView: View {
             .padding(AppTheme.Spacing.medium)
             .background(AppTheme.Colors.backgroundSecondary)
             .cornerRadius(AppTheme.CornerRadius.medium)
+        }
+    }
+    
+    private var thisWeekTimeBlocksSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "This Week - Daily Time Blocks")
+            
+            LazyVStack(spacing: AppTheme.Spacing.small) {
+                ForEach(daysInCurrentWeek, id: \.self) { day in
+                    DailyTimeBlocksRow(
+                        date: day,
+                        worker: worker,
+                        timeClockService: MultiBlockTimeClockService(context: viewContext)
+                    )
+                }
+            }
+        }
+    }
+    
+    // MARK: - Computed Properties for This Week
+    
+    private var daysInCurrentWeek: [Date] {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        // Get Monday of current week
+        let weekday = calendar.component(.weekday, from: now)
+        let daysFromMonday = (weekday + 5) % 7 // Convert Sunday=1 to Monday=0
+        let monday = calendar.date(byAdding: .day, value: -daysFromMonday, to: calendar.startOfDay(for: now))!
+        
+        return (0..<7).compactMap { dayOffset in
+            calendar.date(byAdding: .day, value: dayOffset, to: monday)
         }
     }
     
@@ -508,6 +549,13 @@ struct WorkerDetailView: View {
     
     // MARK: - Methods
     
+    /// Format hire date with full day name
+    private func hireDateWithDayName(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMMM d, yyyy"
+        return formatter.string(from: date)
+    }
+    
     private func loadWorkerData() {
         // Set default imagePath if blank
         if worker.imagePath == nil || worker.imagePath?.isEmpty == true {
@@ -553,30 +601,31 @@ struct WorkerDetailView: View {
         }
     }
     
-    /// Clock in worker - SHOULD BE MOVED to TimeClockInteractor use case
-    /// Business logic for time tracking should not be in the view layer
+    /// Clock in worker using multi-block time clock service
     private func clockIn() {
-        if todayEntry == nil {
-            todayEntry = TimeClock(context: viewContext)
-            todayEntry?.id = UUID()
-            todayEntry?.date = Calendar.current.startOfDay(for: Date())
-            todayEntry?.worker = worker
-            
-            // Set week and year for tracking
-            let calendar = Calendar.current
-            let now = Date()
-            todayEntry?.year = Int16(calendar.component(.yearForWeekOfYear, from: now))
-            todayEntry?.weekNumber = Int16(calendar.component(.weekOfYear, from: now))
-        }
-        
-        todayEntry?.clockInTime = Date()
-        todayEntry?.isActive = true
+        let timeClockService = MultiBlockTimeClockService(context: viewContext)
         
         do {
-            try viewContext.save()
+            try timeClockService.clockIn(worker: worker)
             isClockedIn = true
+            checkTodayClockStatus() // Refresh status
+            calculateCurrentWeekHours() // Refresh weekly totals
         } catch {
             print("Error clocking in: \(error)")
+        }
+    }
+    
+    /// Clock out worker using multi-block time clock service
+    private func clockOut() {
+        let timeClockService = MultiBlockTimeClockService(context: viewContext)
+        
+        do {
+            try timeClockService.clockOut(worker: worker)
+            isClockedIn = false
+            checkTodayClockStatus() // Refresh status
+            calculateCurrentWeekHours() // Refresh weekly totals
+        } catch {
+            print("Error clocking out: \(error)")
         }
     }
     
@@ -586,30 +635,6 @@ struct WorkerDetailView: View {
         // For now, return empty array since we don't have direct work order relationship
         // In a full implementation, we would fetch work orders where this worker was assigned
         return []
-    }
-    
-    /// Clock out worker - SHOULD BE MOVED to TimeClockInteractor use case  
-    /// Hours calculation and data persistence should be in application layer
-    private func clockOut() {
-        guard let entry = todayEntry else { return }
-        
-        let clockOutTime = Date()
-        entry.clockOutTime = clockOutTime
-        entry.isActive = false
-        
-        // Calculate hours worked
-        if let clockInTime = entry.clockInTime {
-            let interval = clockOutTime.timeIntervalSince(clockInTime)
-            entry.hoursWorked = interval / 3600 // Convert to hours
-        }
-        
-        do {
-            try viewContext.save()
-            isClockedIn = false
-            calculateCurrentWeekHours() // Refresh weekly totals
-        } catch {
-            print("Error clocking out: \(error)")
-        }
     }
 }
 
@@ -1367,6 +1392,166 @@ struct WorkerDailyTimeEntryRow: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d"
         return formatter.string(from: date)
+    }
+}
+
+// MARK: - Daily Time Blocks Row
+
+/// Row showing all time blocks for a worker on a specific day
+struct DailyTimeBlocksRow: View {
+    let date: Date
+    let worker: Worker
+    let timeClockService: MultiBlockTimeClockService
+    
+    @State private var timeBlocks: [TimeClock] = []
+    
+    private let calendar = Calendar.current
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            // Date header
+            HStack {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    Text(dayOfWeekString)
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                        .fontWeight(.semibold)
+                    
+                    Text(dateString)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                Spacer()
+                
+                // Total hours for the day
+                if !timeBlocks.isEmpty {
+                    VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                        Text("Total")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                        
+                        Text("\(totalHoursForDay, specifier: "%.1f") hrs")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.primary)
+                            .fontWeight(.semibold)
+                    }
+                }
+            }
+            
+            // Time blocks for this day
+            if timeBlocks.isEmpty {
+                Text("No time recorded")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .italic()
+                    .padding(.vertical, AppTheme.Spacing.small)
+            } else {
+                ForEach(timeBlocks.sorted(by: { $0.blockNumber < $1.blockNumber }), id: \.id) { block in
+                    TimeBlockRow(timeBlock: block)
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.medium)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .onAppear {
+            loadTimeBlocks()
+        }
+        .onChange(of: date) { _ in
+            loadTimeBlocks()
+        }
+    }
+    
+    // MARK: - Computed Properties
+    
+    private var dayOfWeekString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE"
+        return formatter.string(from: date)
+    }
+    
+    private var dateString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        return formatter.string(from: date)
+    }
+    
+    private var totalHoursForDay: Double {
+        return timeBlocks.reduce(0) { total, block in
+            if block.isActive {
+                // Calculate current hours for active block
+                if let clockInTime = block.clockInTime {
+                    let currentHours = Date().timeIntervalSince(clockInTime) / 3600.0
+                    return total + currentHours
+                }
+            }
+            return total + block.hoursWorked
+        }
+    }
+    
+    // MARK: - Methods
+    
+    private func loadTimeBlocks() {
+        timeBlocks = timeClockService.getTimeBlocks(for: worker, on: date)
+    }
+}
+
+// MARK: - Time Block Row
+
+/// Individual time block display (e.g., "Block 1: 7:00 AM - 10:00 AM")
+struct TimeBlockRow: View {
+    let timeBlock: TimeClock
+    
+    var body: some View {
+        HStack {
+            // Block number
+            Text("Block \(timeBlock.blockNumber)")
+                .font(AppTheme.Typography.labelSmall)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+                .frame(width: 50, alignment: .leading)
+            
+            // Time range
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                HStack {
+                    if let clockInTime = timeBlock.clockInTime {
+                        Text("In: \(clockInTime, style: .time)")
+                            .font(AppTheme.Typography.bodySmall)
+                    } else {
+                        Text("In: --")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    if let clockOutTime = timeBlock.clockOutTime {
+                        Text("Out: \(clockOutTime, style: .time)")
+                            .font(AppTheme.Typography.bodySmall)
+                    } else if timeBlock.isActive {
+                        Text("Out: Active")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.success)
+                    } else {
+                        Text("Out: --")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
+            }
+            
+            Spacer()
+            
+            // Duration
+            Text(timeBlock.formattedDuration)
+                .font(AppTheme.Typography.bodySmall)
+                .foregroundColor(AppTheme.Colors.primary)
+                .fontWeight(.medium)
+        }
+        .padding(.vertical, AppTheme.Spacing.tiny)
+        .padding(.horizontal, AppTheme.Spacing.small)
+        .background(AppTheme.Colors.backgroundPrimary)
+        .cornerRadius(AppTheme.CornerRadius.small)
     }
 }
 

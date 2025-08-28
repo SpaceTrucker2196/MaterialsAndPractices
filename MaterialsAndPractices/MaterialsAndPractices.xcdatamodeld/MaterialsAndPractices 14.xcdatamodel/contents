@@ -589,6 +589,7 @@
         </fetchIndex>
     </entity>
     <entity name="TimeClock" representedClassName="TimeClock" syncable="YES" codeGenerationType="class">
+        <attribute name="blockNumber" optional="YES" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES"/>
         <attribute name="clockInTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="clockOutTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -697,6 +698,7 @@
         <relationship name="healthSafetyTrainings" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="HealthSafetyTraining" inverseName="worker" inverseEntity="HealthSafetyTraining"/>
         <relationship name="teams" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkTeam" inverseName="members" inverseEntity="WorkTeam"/>
         <relationship name="timeClockEntries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TimeClock" inverseName="worker" inverseEntity="TimeClock"/>
+        <relationship name="trainingRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TrainingRecord" inverseName="worker" inverseEntity="TrainingRecord"/>
         <fetchIndex name="byIdIndex">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -743,6 +745,56 @@
         </fetchIndex>
         <fetchIndex name="byNameIndex">
             <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="TrainingCourse" representedClassName="TrainingCourse" syncable="YES" codeGenerationType="class">
+        <attribute name="active" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="assessmentMethod" optional="YES" attributeType="String"/>
+        <attribute name="complianceCategory" optional="YES" attributeType="String"/>
+        <attribute name="courseDescription" optional="YES" attributeType="String"/>
+        <attribute name="courseID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="courseName" optional="YES" attributeType="String"/>
+        <attribute name="deliveryMethod" optional="YES" attributeType="String"/>
+        <attribute name="estimatedDurationMin" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="languageOptions" optional="YES" attributeType="String"/>
+        <attribute name="lastUpdated" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="passingScore" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="recertificationInterval" optional="YES" attributeType="String"/>
+        <attribute name="regulatoryReferences" optional="YES" attributeType="String"/>
+        <attribute name="requiredForRoles" optional="YES" attributeType="String"/>
+        <attribute name="trainerQualification" optional="YES" attributeType="String"/>
+        <relationship name="trainingRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TrainingRecord" inverseName="trainingCourse" inverseEntity="TrainingRecord"/>
+        <fetchIndex name="byCourseIDIndex">
+            <fetchIndexElement property="courseID" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byCourseNameIndex">
+            <fetchIndexElement property="courseName" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="TrainingRecord" representedClassName="TrainingRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="associatedPolicyID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="complianceCategory" optional="YES" attributeType="String"/>
+        <attribute name="comprehensionCheckMethod" optional="YES" attributeType="String"/>
+        <attribute name="employeeSignatureData" optional="YES" attributeType="Binary"/>
+        <attribute name="followUpDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="languageProvided" optional="YES" attributeType="String"/>
+        <attribute name="nextScheduledReview" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="passStatus" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="requiresAnnualReview" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="trainingDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="trainingDurationMinutes" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="trainingID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="trainingMethod" optional="YES" attributeType="String"/>
+        <attribute name="trainerName" optional="YES" attributeType="String"/>
+        <attribute name="trainerSignatureData" optional="YES" attributeType="Binary"/>
+        <relationship name="trainingCourse" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrainingCourse" inverseName="trainingRecords" inverseEntity="TrainingCourse"/>
+        <relationship name="worker" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Worker" inverseName="trainingRecords" inverseEntity="Worker"/>
+        <fetchIndex name="byTrainingIDIndex">
+            <fetchIndexElement property="trainingID" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byWorkerIndex">
+            <fetchIndexElement property="worker" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
 </model>
