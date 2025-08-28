@@ -1,0 +1,1215 @@
+//
+//  WorkOrderDetailView.swift
+//  MaterialsAndPractices
+//
+//  Unified work order view supporting both display and insert modes
+//  with time tracking, team management, and audit trail functionality.
+//
+//  Created by GitHub Copilot on 12/18/24.
+//
+
+import SwiftUI
+import CoreData
+
+/// Mode for the work order view
+enum WorkOrderViewMode {
+    case display    // View existing work order
+    case insert     // Create new work order
+}
+
+/// State for work order operations
+enum WorkOrderOperationState {
+    case notStarted
+    case inProgress
+    case stopped
+    case completed
+    case locked     // Cannot be modified after completion
+}
+
+/// Unified work order view that handles both creation and display
+struct WorkOrderDetailView: View {
+    // MARK: - Properties
+    
+    let mode: WorkOrderViewMode
+    let grow: Grow
+    @Binding var isPresented: Bool
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    // Existing work order (for display mode)
+    let workOrder: WorkOrder?
+    
+    // Form state for insert mode or edits
+    @State private var workOrderTitle = ""
+    @State private var workOrderNotes = ""
+    @State private var selectedPriority = WorkOrderPriority.medium
+    @State private var selectedStatus = AgricultureWorkStatus.notStarted
+    @State private var selectedWorkOrderType = WorkOrderType.other
+    @State private var dueDate = Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date()
+    @State private var estimatedHours: Double = 8.0
+    
+    // Amendment tracking
+    @State private var selectedAmendments: Set<CropAmendment> = []
+    @State private var showingAmendmentSelection = false
+    @State private var organicCertificationStatus: OrganicCertificationStatus = .requiredForOrganic
+    
+    // Work practice state
+    @State private var practiceName = ""
+    @State private var practiceNotes = ""
+    
+    // Work shift state
+    @State private var selectedShifts: Set<WorkShift> = []
+    
+    // Team assignment
+    @State private var selectedTeam: WorkTeam?
+    @State private var showingTeamPicker = false
+    
+    // Time tracking state
+    @State private var currentWorkSegment: WorkSegment?
+    @State private var workSegments: [WorkSegment] = []
+    @State private var totalHours: Double = 0.0
+    @State private var operationState: WorkOrderOperationState = .notStarted
+    
+    // Edit mode for display view
+    @State private var isEditing = false
+    
+    // Available teams
+    @FetchRequest(
+        entity: WorkTeam.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \WorkTeam.name, ascending: true)],
+        predicate: NSPredicate(format: "isActive == YES")
+    ) private var availableTeams: FetchedResults<WorkTeam>
+    
+    // MARK: - Initializers
+    
+    /// Initialize for insert mode (new work order)
+    init(mode: WorkOrderViewMode, grow: Grow, isPresented: Binding<Bool>) {
+        self.mode = mode
+        self.grow = grow
+        self.workOrder = nil
+        self._isPresented = isPresented
+    }
+    
+    /// Initialize for display mode (existing work order)
+    init(workOrder: WorkOrder, isPresented: Binding<Bool>) {
+        self.mode = .display
+        self.grow = workOrder.grow!
+        self.workOrder = workOrder
+        self._isPresented = isPresented
+    }
+    
+    // MARK: - Body
+    
+    var body: some View {
+        NavigationView {
+            Form {
+                if mode == .display && !isEditing {
+                    displayModeContent
+                } else {
+                    editModeContent
+                }
+            }
+            .navigationTitle(navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                }
+                
+                if mode == .display {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        if operationState == .completed {
+                            Text("Completed")
+                                .foregroundColor(AppTheme.Colors.success)
+                        } else if operationState != .locked {
+                            Button(isEditing ? "Done" : "Edit") {
+                                if isEditing {
+                                    saveWorkOrder()
+                                }
+                                isEditing.toggle()
+                            }
+                        }
+                    }
+                }
+            }
+            .onAppear {
+                setupInitialState()
+            }
+            .onChange(of: selectedAmendments) { _ in
+                updateOrganicCertificationStatus()
+            }
+            .sheet(isPresented: $showingAmendmentSelection) {
+                AmendmentSelectionView(
+                    selectedAmendments: $selectedAmendments,
+                    isPresented: $showingAmendmentSelection
+                )
+            }
+            .sheet(isPresented: $showingTeamPicker) {
+                TeamPickerView(
+                    selectedTeam: $selectedTeam,
+                    isPresented: $showingTeamPicker,
+                    workOrderDate: dueDate
+                )
+            }
+        }
+    }
+    
+    // MARK: - Display Mode Content
+    
+    private var displayModeContent: some View {
+        Group {
+            // Work Order Status Section
+            workOrderStatusSection
+            
+            // Time Tracking Section
+            timeTrackingSection
+            
+            // Work Order Information Section
+            workOrderInfoDisplaySection
+            
+            // Team Information Section
+            teamInfoDisplaySection
+            
+            // Amendment Information Section
+            if !selectedAmendments.isEmpty {
+                amendmentInfoDisplaySection
+            }
+            
+            // Work Segments History
+            workSegmentsSection
+            
+            // Action Section (for work control)
+            if operationState != .locked {
+                workControlSection
+            }
+        }
+    }
+    
+    // MARK: - Edit Mode Content
+    
+    private var editModeContent: some View {
+        Group {
+            // Organic Certification Banner
+            organicCertificationBanner
+            
+            // Work Order Section
+            workOrderSection
+            
+            // Work Practice Section
+            workPracticeSection
+            
+            // Amendment Application Section
+            amendmentApplicationSection
+            
+            // Work Shift Section
+            workShiftSection
+            
+            // Team Assignment Section
+            teamAssignmentSection
+            
+            // Schedule Section
+            scheduleSection
+            
+            // Action Section
+            if mode == .insert {
+                insertActionSection
+            }
+        }
+    }
+    
+    // MARK: - UI Sections for Display Mode
+    
+    private var workOrderStatusSection: some View {
+        Section("Status") {
+            HStack {
+                StatusIndicator(state: operationState)
+                
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    Text(operationState.displayText)
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    if let workOrder = workOrder {
+                        Text("Created \(formattedDate(workOrder.createdDate ?? Date()))")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
+                
+                Spacer()
+                
+                if operationState == .locked {
+                    Image(systemName: "lock.fill")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                }
+            }
+        }
+    }
+    
+    private var timeTrackingSection: some View {
+        Section("Time Tracking") {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+                // Total hours display
+                HStack {
+                    Text("Total Hours:")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    Text(String(format: "%.1f hours", totalHours))
+                        .font(AppTheme.Typography.headlineSmall)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                }
+                
+                // Current segment info
+                if let currentSegment = currentWorkSegment {
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        Text("Current Segment:")
+                            .font(AppTheme.Typography.labelMedium)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                        
+                        HStack {
+                            Text("Started: \(formattedTime(currentSegment.startTime))")
+                                .font(AppTheme.Typography.bodySmall)
+                            
+                            Spacer()
+                            
+                            Text("Team: \(currentSegment.teamSize) members")
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.info)
+                        }
+                    }
+                    .padding(AppTheme.Spacing.small)
+                    .background(AppTheme.Colors.primary.opacity(0.1))
+                    .cornerRadius(AppTheme.CornerRadius.small)
+                }
+            }
+        }
+    }
+    
+    private var workOrderInfoDisplaySection: some View {
+        Section("Work Order Details") {
+            InfoDisplayRow(label: "Title", value: workOrderTitle)
+            InfoDisplayRow(label: "Type", value: selectedWorkOrderType.displayWithEmoji)
+            InfoDisplayRow(label: "Priority", value: selectedPriority.displayWithEmoji)
+            InfoDisplayRow(label: "Status", value: selectedStatus.displayWithEmoji)
+            
+            if !workOrderNotes.isEmpty {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text("Notes:")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Text(workOrderNotes)
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                }
+            }
+        }
+    }
+    
+    private var teamInfoDisplaySection: some View {
+        Section("Team Assignment") {
+            if let team = selectedTeam {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    InfoDisplayRow(label: "Team", value: team.name ?? "Unnamed Team")
+                    InfoDisplayRow(label: "Members", value: "\(team.activeMembers().count)")
+                    
+                    if !team.activeMembers().isEmpty {
+                        Text("Team Members:")
+                            .font(AppTheme.Typography.labelMedium)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                        
+                        ForEach(team.activeMembers(), id: \.self) { worker in
+                            HStack {
+                                Image(systemName: worker.isClockedIn() ? "clock.fill" : "clock")
+                                    .foregroundColor(worker.isClockedIn() ? AppTheme.Colors.success : AppTheme.Colors.textSecondary)
+                                    .font(.caption)
+                                
+                                Text(worker.name ?? "Unknown Worker")
+                                    .font(AppTheme.Typography.bodySmall)
+                                
+                                if worker.isClockedIn() {
+                                    Text("(Active)")
+                                        .font(AppTheme.Typography.labelSmall)
+                                        .foregroundColor(AppTheme.Colors.success)
+                                }
+                                
+                                Spacer()
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("No team assigned")
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+        }
+    }
+    
+    private var amendmentInfoDisplaySection: some View {
+        Section("Applied Amendments") {
+            ForEach(Array(selectedAmendments), id: \.amendmentID) { amendment in
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    HStack {
+                        Text(amendment.productName)
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Spacer()
+                        
+                        OrganicCertificationBadge(isOMRIListed: amendment.omriListed)
+                    }
+                    
+                    Text(amendment.formattedApplicationRate)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    if !amendment.safetyIntervalInfo.isEmpty && amendment.safetyIntervalInfo != "No restrictions" {
+                        Text(amendment.safetyIntervalInfo)
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.warning)
+                    }
+                }
+            }
+        }
+    }
+    
+    private var workSegmentsSection: some View {
+        Section("Work History") {
+            if workSegments.isEmpty && currentWorkSegment == nil {
+                Text("No work segments recorded")
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            } else {
+                ForEach(workSegments.indices, id: \.self) { index in
+                    WorkSegmentRow(segment: workSegments[index], index: index + 1)
+                }
+                
+                if let current = currentWorkSegment {
+                    WorkSegmentRow(segment: current, index: workSegments.count + 1, isCurrent: true)
+                }
+            }
+        }
+    }
+    
+    private var workControlSection: some View {
+        Section("Work Control") {
+            VStack(spacing: AppTheme.Spacing.medium) {
+                if operationState == .notStarted {
+                    CommonActionButton(
+                        title: "Start Work",
+                        style: .primary,
+                        action: startWork
+                    )
+                    .disabled(selectedTeam == nil)
+                } else if operationState == .inProgress {
+                    HStack(spacing: AppTheme.Spacing.medium) {
+                        CommonActionButton(
+                            title: "Stop Work",
+                            style: .secondary,
+                            action: stopWork
+                        )
+                        
+                        CommonActionButton(
+                            title: "Complete Work Order",
+                            style: .primary,
+                            action: completeWorkOrder
+                        )
+                    }
+                } else if operationState == .stopped {
+                    HStack(spacing: AppTheme.Spacing.medium) {
+                        CommonActionButton(
+                            title: "Resume Work",
+                            style: .secondary,
+                            action: startWork
+                        )
+                        
+                        CommonActionButton(
+                            title: "Complete Work Order",
+                            style: .primary,
+                            action: completeWorkOrder
+                        )
+                    }
+                }
+                
+                if operationState != .notStarted {
+                    Text("Once completed, this work order cannot be modified")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Reusable UI Sections (Edit Mode)
+    
+    private var organicCertificationBanner: some View {
+        Section {
+            HStack {
+                Image(systemName: organicCertificationStatus == .requiredForOrganic ? "leaf.circle.fill" : "exclamationmark.triangle.fill")
+                    .foregroundColor(Color(organicCertificationStatus.colorName))
+                    .font(.title3)
+                
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    Text("Organic Certification Status")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    Text(organicCertificationStatus.displayText)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(Color(organicCertificationStatus.colorName))
+                }
+                
+                Spacer()
+                
+                if organicCertificationStatus != .requiredForOrganic {
+                    Image(systemName: "info.circle")
+                        .foregroundColor(AppTheme.Colors.info)
+                        .font(.caption)
+                }
+            }
+            .padding(.vertical, AppTheme.Spacing.small)
+            .background(
+                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                    .fill(Color(organicCertificationStatus.colorName).opacity(0.1))
+            )
+        }
+    }
+    
+    private var workOrderSection: some View {
+        Section("Work Order") {
+            TextField("Work Order Title", text: $workOrderTitle)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+            
+            HStack {
+                Text("Type:")
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                Spacer()
+                
+                Picker("Work Order Type", selection: $selectedWorkOrderType) {
+                    ForEach(WorkOrderType.allCases, id: \.self) { type in
+                        Text(type.displayWithEmoji)
+                            .tag(type)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+            }
+            
+            HStack {
+                Text("Priority:")
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                Spacer()
+                
+                Picker("Priority", selection: $selectedPriority) {
+                    ForEach(WorkOrderPriority.allCases, id: \.self) { priority in
+                        Text("\(priority.emoji) \(priority.displayText)")
+                            .tag(priority)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+            }
+            
+            HStack {
+                Text("Status:")
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                Spacer()
+                
+                Picker("Status", selection: $selectedStatus) {
+                    ForEach(AgricultureWorkStatus.allCases, id: \.self) { status in
+                        Text(status.displayWithEmoji)
+                            .tag(status)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+            }
+            
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                Text("Notes:")
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                TextEditor(text: $workOrderNotes)
+                    .frame(minHeight: 80)
+                    .padding(AppTheme.Spacing.small)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppTheme.CornerRadius.small)
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                    )
+            }
+        }
+    }
+    
+    private var amendmentApplicationSection: some View {
+        Section("Amendment Application") {
+            Button(action: {
+                showingAmendmentSelection = true
+            }) {
+                HStack {
+                    Image(systemName: "leaf.circle")
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .font(.title3)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Amendment Application")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.primary)
+                        
+                        Text(selectedAmendments.isEmpty ? "No amendments selected" : "\(selectedAmendments.count) amendment(s) selected")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
+            }
+            
+            // Display selected amendments
+            if !selectedAmendments.isEmpty {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text("Selected Amendments:")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    ForEach(Array(selectedAmendments), id: \.amendmentID) { amendment in
+                        HStack {
+                            Image(systemName: amendment.omriListed ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                                .foregroundColor(Color(amendment.omriListed ? "requiredForOrganic" : "failedForOrganic"))
+                                .font(.caption)
+                            
+                            Text(amendment.productName)
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textPrimary)
+                            
+                            if !amendment.omriListed {
+                                Text("(Not OMRI)")
+                                    .font(AppTheme.Typography.labelSmall)
+                                    .foregroundColor(Color("failedForOrganic"))
+                            }
+                            
+                            Spacer()
+                        }
+                    }
+                }
+                .padding(.top, AppTheme.Spacing.small)
+            }
+        }
+    }
+    
+    private var workPracticeSection: some View {
+        Section("Work Practice") {
+            TextField("Practice Name (e.g., Weeding, Harvesting)", text: $practiceName)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+            
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                Text("Practice Notes:")
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                TextEditor(text: $practiceNotes)
+                    .frame(minHeight: 60)
+                    .padding(AppTheme.Spacing.small)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppTheme.CornerRadius.small)
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                    )
+            }
+        }
+    }
+    
+    private var workShiftSection: some View {
+        Section("Work Shifts") {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                Text("Select which 4-hour shifts this work order will occupy for the day:")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                ForEach(WorkShift.allCases, id: \.self) { shift in
+                    WorkShiftToggleRow(
+                        shift: shift,
+                        isSelected: selectedShifts.contains(shift),
+                        onToggle: { isSelected in
+                            if isSelected {
+                                selectedShifts.insert(shift)
+                            } else {
+                                selectedShifts.remove(shift)
+                            }
+                        }
+                    )
+                }
+                
+                if selectedShifts.isEmpty {
+                    Text("At least one shift must be selected")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.error)
+                }
+            }
+        }
+    }
+    
+    private var teamAssignmentSection: some View {
+        Section("Team Assignment") {
+            Button(action: { showingTeamPicker = true }) {
+                HStack {
+                    Text("Assigned Team:")
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    if let selectedTeam = selectedTeam {
+                        VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                            Text(selectedTeam.name ?? "Unnamed Team")
+                                .foregroundColor(AppTheme.Colors.textPrimary)
+                            
+                            Text("\(selectedTeam.activeMembers().count) members")
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textSecondary)
+                        }
+                    } else {
+                        Text("Select Team")
+                            .foregroundColor(AppTheme.Colors.primary)
+                    }
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
+            }
+            
+            if let selectedTeam = selectedTeam {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text("Team Members:")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    ForEach(selectedTeam.activeMembers(), id: \.self) { worker in
+                        HStack {
+                            Image(systemName: worker.isClockedIn() ? "clock.fill" : "clock")
+                                .foregroundColor(worker.isClockedIn() ? AppTheme.Colors.primary : AppTheme.Colors.textSecondary)
+                                .font(.caption)
+                            
+                            Text(worker.name ?? "Unknown Worker")
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textPrimary)
+                            
+                            if worker.isClockedIn() {
+                                Text("(Clocked In)")
+                                    .font(AppTheme.Typography.labelSmall)
+                                    .foregroundColor(AppTheme.Colors.primary)
+                            }
+                            
+                            Spacer()
+                        }
+                    }
+                }
+                .padding(.top, AppTheme.Spacing.small)
+            }
+        }
+    }
+    
+    private var scheduleSection: some View {
+        Section("Schedule & Estimation") {
+            DatePicker(
+                "Due Date:",
+                selection: $dueDate,
+                in: Date()...,
+                displayedComponents: [.date]
+            )
+            
+            HStack {
+                Text("Estimated Hours:")
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                Spacer()
+                
+                Stepper(
+                    value: $estimatedHours,
+                    in: 0.5...40.0,
+                    step: 0.5
+                ) {
+                    Text("\(estimatedHours, specifier: "%.1f") hours")
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                }
+            }
+        }
+    }
+    
+    private var insertActionSection: some View {
+        Section {
+            CommonActionButton(
+                title: "Create Work Order",
+                style: .primary
+            ) {
+                createWorkOrder()
+            }
+            .disabled(!isFormValid)
+        }
+    }
+    
+    // MARK: - Computed Properties
+    
+    private var navigationTitle: String {
+        switch mode {
+        case .insert:
+            return "New Work Order"
+        case .display:
+            return workOrderTitle.isEmpty ? "Work Order" : workOrderTitle
+        }
+    }
+    
+    private var isFormValid: Bool {
+        return !workOrderTitle.isEmpty && 
+               !practiceName.isEmpty && 
+               !selectedShifts.isEmpty &&
+               selectedTeam != nil
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func setupInitialState() {
+        if let workOrder = workOrder {
+            // Load existing work order data
+            workOrderTitle = workOrder.title ?? ""
+            workOrderNotes = workOrder.notes ?? ""
+            
+            if let priorityRaw = workOrder.priority {
+                selectedPriority = WorkOrderPriority(rawValue: priorityRaw) ?? .medium
+            }
+            
+            if let statusRaw = workOrder.status {
+                selectedStatus = AgricultureWorkStatus(rawValue: statusRaw) ?? .notStarted
+            }
+            
+            selectedTeam = workOrder.assignedTeam
+            dueDate = workOrder.dueDate ?? Date()
+            estimatedHours = workOrder.totalEstimatedHours
+            
+            // Determine operation state
+            if workOrder.isCompleted {
+                operationState = .locked
+            } else {
+                operationState = .notStarted // TODO: Load actual state from time segments
+            }
+            
+            // Load work segments and calculate total hours
+            loadWorkSegments()
+        } else {
+            // Set up for new work order
+            generateWorkOrderTitle()
+            updateOrganicCertificationStatus()
+            operationState = .notStarted
+        }
+    }
+    
+    private func generateWorkOrderTitle() {
+        let fieldName = grow.locationName ?? "Field"
+        let growName = grow.title ?? "Grow"
+        
+        // Extract first 6 letters of field name
+        let fieldPrefix = String(fieldName.prefix(6))
+        
+        // Extract first word of grow name
+        let growFirstWord = growName.components(separatedBy: " ").first ?? growName
+        
+        // Get current date components
+        let now = Date()
+        let calendar = Calendar.current
+        
+        // Full day name
+        let dayFormatter = DateFormatter()
+        dayFormatter.dateFormat = "EEEE"
+        let dayName = dayFormatter.string(from: now)
+        
+        // Week number
+        let weekNumber = calendar.component(.weekOfYear, from: now)
+        
+        // Hour of the day
+        let hour = calendar.component(.hour, from: now)
+        
+        // Format: "First6-FirstWord-DayName-Week##-Hour##"
+        workOrderTitle = "\(fieldPrefix)-\(growFirstWord)-\(dayName)-Week\(weekNumber)-Hour\(hour)"
+    }
+    
+    private func updateOrganicCertificationStatus() {
+        let hasNonOrganicAmendments = selectedAmendments.contains { !$0.omriListed }
+        
+        if hasNonOrganicAmendments {
+            organicCertificationStatus = .failedForOrganic
+        } else if selectedAmendments.isEmpty {
+            organicCertificationStatus = .requiredForOrganic
+        } else {
+            organicCertificationStatus = .requiredForOrganic
+        }
+    }
+    
+    private func loadWorkSegments() {
+        // TODO: Load work segments from Core Data
+        // This would query TimeClock entries associated with this work order
+        // and calculate total hours with team multipliers
+    }
+    
+    private func createWorkOrder() {
+        guard isFormValid else { return }
+        
+        // Prepare notes with amendment information
+        var combinedNotes = workOrderNotes
+        
+        if !selectedAmendments.isEmpty {
+            if !combinedNotes.isEmpty {
+                combinedNotes += "\n\n"
+            }
+            
+            combinedNotes += "Applied Amendments:\n"
+            for amendment in selectedAmendments {
+                combinedNotes += "• \(amendment.fullDescription)\n"
+            }
+        }
+        
+        // Create work order
+        let newWorkOrder = WorkOrder(context: viewContext)
+        newWorkOrder.id = UUID()
+        newWorkOrder.title = workOrderTitle
+        newWorkOrder.notes = combinedNotes
+        newWorkOrder.priority = selectedPriority.rawValue
+        newWorkOrder.status = selectedStatus.rawValue
+        newWorkOrder.createdDate = Date()
+        newWorkOrder.dueDate = dueDate
+        newWorkOrder.totalEstimatedHours = estimatedHours
+        newWorkOrder.isCompleted = false
+        newWorkOrder.assignedTeam = selectedTeam
+        newWorkOrder.grow = grow
+        
+        // Create work practice
+        let workPractice = Work(context: viewContext)
+        workPractice.name = practiceName
+        workPractice.practice = practiceNotes
+        workPractice.jobCompleted = false
+        workPractice.grow = grow
+        workPractice.workOrder = newWorkOrder
+        
+        // Create audit trail entry
+        createAuditTrailEntry(for: newWorkOrder, action: "created")
+        
+        // Save context
+        do {
+            try viewContext.save()
+            
+            // Post notification for work order creation
+            CoreDataNotificationCenter.postWorkOrderNotification(
+                type: .created,
+                workOrder: newWorkOrder
+            )
+            
+            isPresented = false
+        } catch {
+            print("Error creating work order: \(error)")
+            // In a real app, show an error alert
+        }
+    }
+    
+    private func saveWorkOrder() {
+        guard let workOrder = workOrder else { return }
+        
+        // Update work order with changes
+        workOrder.title = workOrderTitle
+        workOrder.notes = workOrderNotes
+        workOrder.priority = selectedPriority.rawValue
+        workOrder.status = selectedStatus.rawValue
+        workOrder.dueDate = dueDate
+        workOrder.totalEstimatedHours = estimatedHours
+        workOrder.assignedTeam = selectedTeam
+        
+        // Create audit trail entry
+        createAuditTrailEntry(for: workOrder, action: "modified")
+        
+        do {
+            try viewContext.save()
+        } catch {
+            print("Error saving work order: \(error)")
+        }
+    }
+    
+    private func startWork() {
+        guard let team = selectedTeam else { return }
+        
+        let segment = WorkSegment(
+            startTime: Date(),
+            teamSize: team.activeMembers().count,
+            teamMembers: team.activeMembers().map { $0.name ?? "Unknown" }
+        )
+        
+        currentWorkSegment = segment
+        operationState = .inProgress
+        
+        // Create audit trail entry
+        if let workOrder = workOrder {
+            createAuditTrailEntry(for: workOrder, action: "started", details: "Team: \(team.name ?? ""), Members: \(segment.teamSize)")
+        }
+    }
+    
+    private func stopWork() {
+        guard var segment = currentWorkSegment else { return }
+        
+        segment.endTime = Date()
+        segment.calculateHours()
+        
+        workSegments.append(segment)
+        currentWorkSegment = nil
+        operationState = .stopped
+        
+        // Update total hours
+        calculateTotalHours()
+        
+        // Create audit trail entry
+        if let workOrder = workOrder {
+            createAuditTrailEntry(for: workOrder, action: "stopped", details: "Segment duration: \(String(format: "%.1f", segment.totalHours)) hours")
+        }
+    }
+    
+    private func completeWorkOrder() {
+        // Stop current work if in progress
+        if operationState == .inProgress {
+            stopWork()
+        }
+        
+        operationState = .completed
+        
+        if let workOrder = workOrder {
+            workOrder.isCompleted = true
+            workOrder.completedDate = Date()
+            
+            // Create audit trail entry
+            createAuditTrailEntry(for: workOrder, action: "completed", details: "Total hours: \(String(format: "%.1f", totalHours))")
+            
+            do {
+                try viewContext.save()
+                
+                // Lock the work order
+                operationState = .locked
+            } catch {
+                print("Error completing work order: \(error)")
+            }
+        }
+    }
+    
+    private func calculateTotalHours() {
+        var total: Double = 0.0
+        
+        for segment in workSegments {
+            total += segment.totalHours
+        }
+        
+        if let current = currentWorkSegment {
+            let elapsed = Date().timeIntervalSince(current.startTime) / 3600.0 // Convert to hours
+            total += elapsed * Double(current.teamSize)
+        }
+        
+        totalHours = total
+    }
+    
+    private func createAuditTrailEntry(for workOrder: WorkOrder, action: String, details: String = "") {
+        // TODO: Implement audit trail creation
+        // This would create an AuditTrail entity with all available context information
+        print("Audit: Work Order \(workOrder.title ?? "") - \(action) - \(details)")
+    }
+    
+    private func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+    
+    private func formattedTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+}
+
+// MARK: - Supporting Types
+
+/// Represents a work segment with team tracking
+struct WorkSegment {
+    let startTime: Date
+    var endTime: Date?
+    let teamSize: Int
+    let teamMembers: [String]
+    var totalHours: Double = 0.0
+    
+    mutating func calculateHours() {
+        guard let endTime = endTime else { return }
+        let duration = endTime.timeIntervalSince(startTime) / 3600.0 // Convert to hours
+        totalHours = duration * Double(teamSize) // Multiply by team size
+    }
+    
+    var isActive: Bool {
+        return endTime == nil
+    }
+}
+
+/// Operation state display properties
+extension WorkOrderOperationState {
+    var displayText: String {
+        switch self {
+        case .notStarted: return "Not Started"
+        case .inProgress: return "In Progress"
+        case .stopped: return "Stopped"
+        case .completed: return "Completed"
+        case .locked: return "Locked (Completed)"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .notStarted: return AppTheme.Colors.textSecondary
+        case .inProgress: return AppTheme.Colors.primary
+        case .stopped: return AppTheme.Colors.warning
+        case .completed: return AppTheme.Colors.success
+        case .locked: return AppTheme.Colors.textTertiary
+        }
+    }
+}
+
+// MARK: - Supporting Views
+
+/// Status indicator for work order state
+struct StatusIndicator: View {
+    let state: WorkOrderOperationState
+    
+    var body: some View {
+        Circle()
+            .fill(state.color)
+            .frame(width: 12, height: 12)
+    }
+}
+
+/// Information display row
+struct InfoDisplayRow: View {
+    let label: String
+    let value: String
+    
+    var body: some View {
+        HStack {
+            Text(label + ":")
+                .font(AppTheme.Typography.bodyMedium)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+            
+            Spacer()
+            
+            Text(value)
+                .font(AppTheme.Typography.bodyMedium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+        }
+    }
+}
+
+/// Work segment display row
+struct WorkSegmentRow: View {
+    let segment: WorkSegment
+    let index: Int
+    let isCurrent: Bool
+    
+    init(segment: WorkSegment, index: Int, isCurrent: Bool = false) {
+        self.segment = segment
+        self.index = index
+        self.isCurrent = isCurrent
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            HStack {
+                Text("Segment \(index)")
+                    .font(AppTheme.Typography.labelMedium)
+                    .foregroundColor(isCurrent ? AppTheme.Colors.primary : AppTheme.Colors.textPrimary)
+                
+                if isCurrent {
+                    Text("(Active)")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+                
+                Spacer()
+                
+                Text("\(String(format: "%.1f", segment.totalHours)) hrs")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            HStack {
+                Text("Started: \(formattedTime(segment.startTime))")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                if let endTime = segment.endTime {
+                    Text("• Ended: \(formattedTime(endTime))")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                Spacer()
+                
+                Text("Team: \(segment.teamSize)")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.info)
+            }
+        }
+        .padding(.vertical, AppTheme.Spacing.small)
+        .if(isCurrent) { view in
+            view.background(AppTheme.Colors.primary.opacity(0.1))
+                .cornerRadius(AppTheme.CornerRadius.small)
+        }
+    }
+    
+    private func formattedTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+}
+
+// MARK: - View Extension for Conditional Modifiers
+
+extension View {
+    @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
+    }
+}
+
+// MARK: - Preview
+
+struct WorkOrderDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        let context = PersistenceController.preview.container.viewContext
+        let sampleGrow = Grow(context: context)
+        sampleGrow.title = "Sample Grow"
+        
+        Group {
+            // Insert mode preview
+            WorkOrderDetailView(
+                mode: .insert,
+                grow: sampleGrow,
+                isPresented: .constant(true)
+            )
+            .environment(\.managedObjectContext, context)
+            .previewDisplayName("Insert Mode")
+            
+            // Display mode preview (would need existing work order)
+            // WorkOrderDetailView(
+            //     workOrder: sampleWorkOrder,
+            //     isPresented: .constant(true)
+            // )
+        }
+    }
+}

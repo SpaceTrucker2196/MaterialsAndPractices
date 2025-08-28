@@ -82,7 +82,7 @@ struct PerformWorkView: View {
                 // Action Section
                 actionSection
             }
-            .navigationTitle("Perform Work")
+            .navigationTitle("Work Order")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
