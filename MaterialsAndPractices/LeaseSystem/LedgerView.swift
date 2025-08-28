@@ -5,12 +5,14 @@
 //  GAAP-compliant ledger view for agricultural business accounting.
 //  Provides comprehensive ledger management with detailed entry views.
 //  Optimized for efficient data display with tight layout and date-based organization.
+//  Internationalized date handling for UI, exports, and filenames.
 //
 //  Created by GitHub Copilot on current date.
 //
 
 import SwiftUI
 import CoreData
+import UIKit
 
 // MARK: - Shared Currency Formatter
 
@@ -27,10 +29,84 @@ private func formatCurrency(_ amount: Decimal) -> String {
     CurrencyFormatter.shared.string(from: amount as NSDecimalNumber) ?? "$0.00"
 }
 
+// MARK: - Date / Time Formatters (International-Friendly)
+
+fileprivate let dayTitleFormatter: DateFormatter = {
+    // Localized long-ish day label for section headers and Markdown (reader-friendly)
+    let f = DateFormatter()
+    f.locale = .current
+    f.dateStyle = .medium
+    f.timeStyle = .none
+    return f
+}()
+
+fileprivate let longDayHeaderFormatter: DateFormatter = {
+    // Used in Markdown section headers
+    let f = DateFormatter()
+    f.locale = .current
+    f.dateStyle = .full
+    f.timeStyle = .none
+    return f
+}()
+
+fileprivate let uiTimeFormatter: DateFormatter = {
+    // Localized short time for UI rows
+    let f = DateFormatter()
+    f.locale = .current
+    f.dateStyle = .none
+    f.timeStyle = .short
+    return f
+}()
+
+fileprivate let csvISODateFormatter: DateFormatter = {
+    // ISO 8601 date for CSV (unambiguous, machine-friendly)
+    // Use en_US_POSIX to ensure stable formatting regardless of user locale.
+    let f = DateFormatter()
+    f.locale = Locale(identifier: "en_US_POSIX")
+    f.calendar = Calendar(identifier: .iso8601)
+    f.timeZone = TimeZone(secondsFromGMT: 0)
+    f.dateFormat = "yyyy-MM-dd"
+    return f
+}()
+
+fileprivate let csvISOTimeFormatter: DateFormatter = {
+    // 24-hour time for CSV, UTC; adjust to local if preferred
+    let f = DateFormatter()
+    f.locale = Locale(identifier: "en_US_POSIX")
+    f.calendar = Calendar(identifier: .iso8601)
+    f.timeZone = TimeZone(secondsFromGMT: 0)
+    f.dateFormat = "HH:mm"
+    return f
+}()
+
+fileprivate let isoFilenameDateFormatter: ISO8601DateFormatter = {
+    let f = ISO8601DateFormatter()
+    f.formatOptions = [.withFullDate]
+    f.timeZone = TimeZone(secondsFromGMT: 0)
+    return f
+}()
+
+// MARK: - CSV Helpers
+
+fileprivate func csvEscape(_ s: String) -> String {
+    "\"" + s.replacingOccurrences(of: "\"", with: "\"\"") + "\""
+}
+
+fileprivate func csvNumber(_ d: NSDecimalNumber?) -> String {
+    guard let d = d else { return "" }
+    let nf = NumberFormatter()
+    nf.locale = Locale(identifier: "en_US_POSIX")
+    nf.numberStyle = .decimal
+    nf.minimumFractionDigits = 2
+    nf.maximumFractionDigits = 2
+    return csvEscape(nf.string(from: d) ?? "")
+}
+
 // MARK: - Date Grouping Helper
 
-struct DateSection {
-    let id: String
+struct DateSection: Identifiable {
+    // Use a stable Date (start of day) for identity and sorting across locales
+    let id: Date
     let title: String
     let entries: [LedgerEntry]
     let totalDebits: Decimal
@@ -69,7 +145,7 @@ struct LedgerView: View {
                         filterSection
                         
                         List(selection: $selectedEntryID) {
-                            ForEach(groupedEntries, id: \.id) { section in
+                            ForEach(groupedEntries) { section in
                                 Section {
                                     ForEach(section.entries, id: \.objectID) { entry in
                                         CompactLedgerEntryRowView(entry: entry, showDetailSheet: false) {
@@ -132,7 +208,7 @@ struct LedgerView: View {
                         filterSection
                         
                         List {
-                            ForEach(groupedEntries, id: \.id) { section in
+                            ForEach(groupedEntries) { section in
                                 Section {
                                     ForEach(section.entries, id: \.objectID) { entry in
                                         CompactLedgerEntryRowView(entry: entry, showDetailSheet: true) { }
@@ -288,30 +364,29 @@ struct LedgerView: View {
     
     private var groupedEntries: [DateSection] {
         let calendar = Calendar.current
-        let grouped = Dictionary(grouping: filteredEntries) { entry -> String in
-            guard let date = entry.date else { return "No Date" }
-            return calendar.dateInterval(of: .day, for: date)?.start.formatted(date: .abbreviated, time: .omitted) ?? "No Date"
+        let grouped = Dictionary(grouping: filteredEntries) { entry -> Date in
+            guard let date = entry.date,
+                  let dayStart = calendar.dateInterval(of: .day, for: date)?.start else {
+                return Date.distantPast
+            }
+            return dayStart
         }
         
-        return grouped.map { (key, entries) in
+        return grouped.map { (dayStart, entries) in
             let totalDebits = entries.reduce(Decimal.zero) { $0 + ($1.debitAmount?.decimalValue ?? 0) }
             let totalCredits = entries.reduce(Decimal.zero) { $0 + ($1.creditAmount?.decimalValue ?? 0) }
             let netAmount = totalCredits - totalDebits
             
             return DateSection(
-                id: key,
-                title: key,
+                id: dayStart,
+                title: (dayStart == .distantPast) ? NSLocalizedString("No Date", comment: "No date section title") : dayTitleFormatter.string(from: dayStart),
                 entries: entries.sorted { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) },
                 totalDebits: totalDebits,
                 totalCredits: totalCredits,
                 netAmount: netAmount
             )
-        }.sorted { section1, section2 in
-            // Sort sections by date (newest first)
-            guard let date1 = section1.entries.first?.date,
-                  let date2 = section2.entries.first?.date else { return false }
-            return date1 > date2
         }
+        .sorted { $0.id > $1.id } // newest day first
     }
     
     private var availableAccounts: [String] {
@@ -513,7 +588,7 @@ struct CompactLedgerEntryRowView: View {
                         Spacer()
                         
                         if let date = entry.date {
-                            Text(date, style: .time)
+                            Text(uiTimeFormatter.string(from: date))
                                 .font(AppTheme.Typography.labelSmall)
                                 .foregroundColor(AppTheme.Colors.textTertiary)
                         }
@@ -609,7 +684,7 @@ struct ReceiptStyleLedgerDetailView: View {
     
     init(entry: LedgerEntry, isSheet: Bool = true) {
         self.entry = entry
-        self.isSheet = isSheet
+               self.isSheet = isSheet
     }
     
     var body: some View {
@@ -686,7 +761,7 @@ struct ReceiptStyleLedgerDetailView: View {
                         Spacer()
                         
                         if let date = entry.date {
-                            Text(date, style: .date)
+                            Text(DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .none))
                                 .font(AppTheme.Typography.bodyMedium)
                                 .foregroundColor(AppTheme.Colors.textSecondary)
                         }
@@ -973,13 +1048,15 @@ struct LedgerExportView: View {
         let dates = entries.compactMap { $0.date }.sorted()
         guard let first = dates.first, let last = dates.last else { return nil }
         
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
+        let f = DateFormatter()
+        f.locale = .current
+        f.dateStyle = .medium
+        f.timeStyle = .none
         
         if Calendar.current.isDate(first, inSameDayAs: last) {
-            return formatter.string(from: first)
+            return f.string(from: first)
         } else {
-            return "\(formatter.string(from: first)) - \(formatter.string(from: last))"
+            return "\(f.string(from: first)) - \(f.string(from: last))"
         }
     }
     
@@ -998,7 +1075,7 @@ struct LedgerExportView: View {
         var markdown = """
         # General Ledger Export
         
-        **Export Date:** \(Date().formatted(date: .complete, time: .shortened))
+        **Export Date:** \(DateFormatter.localizedString(from: Date(), dateStyle: .full, timeStyle: .short))
         **Total Entries:** \(entries.count)
         
         """
@@ -1007,23 +1084,24 @@ struct LedgerExportView: View {
             markdown += "**Date Range:** \(range)\n\n"
         }
         
-        // Group by date for better organization
+        // Group by date (start of day) for better organization
         let calendar = Calendar.current
         let grouped = Dictionary(grouping: entries.sorted { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) }) { entry in
-            guard let date = entry.date else { return "No Date" }
-            return calendar.dateInterval(of: .day, for: date)?.start ?? Date.distantPast
+            guard let date = entry.date,
+                  let dayStart = calendar.dateInterval(of: .day, for: date)?.start else {
+                return Date.distantPast
+            }
+            return dayStart
         }
         
         for (date, dayEntries) in grouped.sorted(by: { $0.key > $1.key }) {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .full
-            markdown += "## \(formatter.string(from: date))\n\n"
+            markdown += "## \(date == .distantPast ? NSLocalizedString("No Date", comment: "No date section title") : longDayHeaderFormatter.string(from: date))\n\n"
             
             markdown += "| Time | Account | Description | Debit | Credit | Reference |\n"
             markdown += "|------|---------|-------------|-------|--------|-----------|\n"
             
             for entry in dayEntries.sorted(by: { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) }) {
-                let time = entry.date?.formatted(date: .omitted, time: .shortened) ?? ""
+                let time = entry.date.map { uiTimeFormatter.string(from: $0) } ?? ""
                 let account = "\(entry.accountCode ?? "") - \(entry.accountName ?? "")"
                 let description = entry.ledgerDescription ?? ""
                 let debit = entry.debitAmount?.decimalValue ?? 0 > 0 ? formatCurrency(entry.debitAmount!.decimalValue) : ""
@@ -1043,26 +1121,36 @@ struct LedgerExportView: View {
         var csv = "Date,Time,Account Code,Account Name,Description,Debit Amount,Credit Amount,Reference Number,Vendor,Reconciled,Approved\n"
         
         for entry in entries.sorted(by: { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) }) {
-            let date = entry.date?.formatted(date: .abbreviated, time: .omitted) ?? ""
-            let time = entry.date?.formatted(date: .omitted, time: .shortened) ?? ""
+            let date = entry.date.map { csvISODateFormatter.string(from: $0) } ?? ""
+            let time = entry.date.map { csvISOTimeFormatter.string(from: $0) } ?? ""
             let accountCode = entry.accountCode ?? ""
             let accountName = entry.accountName ?? ""
-            let description = (entry.ledgerDescription ?? "").replacingOccurrences(of: ",", with: ";")
-            let debit = entry.debitAmount?.decimalValue ?? 0
-            let credit = entry.creditAmount?.decimalValue ?? 0
+            let description = entry.ledgerDescription ?? ""
             let reference = entry.referenceNumber ?? ""
             let vendor = entry.vendorName ?? ""
             let reconciled = entry.reconciled ? "Yes" : "No"
             let approved = entry.expenseApproval ? "Yes" : "No"
             
-            csv += "\(date),\(time),\(accountCode),\(accountName),\(description),\(debit),\(credit),\(reference),\(vendor),\(reconciled),\(approved)\n"
+            csv += [
+                csvEscape(date),
+                csvEscape(time),
+                csvEscape(accountCode),
+                csvEscape(accountName),
+                csvEscape(description),
+                csvNumber(entry.debitAmount),
+                csvNumber(entry.creditAmount),
+                csvEscape(reference),
+                csvEscape(vendor),
+                csvEscape(reconciled),
+                csvEscape(approved)
+            ].joined(separator: ",") + "\n"
         }
         
         return csv
     }
     
     private func saveAndShare() {
-        let fileName = "GeneralLedger_\(Date().formatted(date: .abbreviated, time: .omitted)).\(selectedFormat.fileExtension)"
+        let fileName = "GeneralLedger_\(isoFilenameDateFormatter.string(from: Date())).\(selectedFormat.fileExtension)"
         let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
         
         do {
