@@ -118,6 +118,7 @@
 		1F06C22225807A59006F8C83 /* OptionalBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalBinding.swift; sourceTree = "<group>"; };
 		1F2AAD7C2E5FA43B0001C7A3 /* WorkOrderExpenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkOrderExpenseView.swift; path = LeaseSystem/WorkOrderExpenseView.swift; sourceTree = "<group>"; };
 		1F2AAD8C2E5FA50C0001C7A3 /* LedgerTestDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LedgerTestDataLoader.swift; sourceTree = "<group>"; };
+		1F2AAE232E5FFD9C0001C7A3 /* MaterialsAndPractices 13.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 13.xcdatamodel"; sourceTree = "<group>"; };
 		1F2E92242E5A1FA2003962BA /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		1F2E92362E5A5352003962BA /* CultivarDataTestUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CultivarDataTestUtility.swift; sourceTree = "<group>"; };
 		1F2E92382E5A5352003962BA /* GrowingSeasonTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowingSeasonTimelineView.swift; sourceTree = "<group>"; };
@@ -1029,6 +1030,7 @@
 		AB28BC0B2E5FE61A00AF523B /* MaterialsAndPractices.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				1F2AAE232E5FFD9C0001C7A3 /* MaterialsAndPractices 13.xcdatamodel */,
 				AB28BC0C2E5FE61A00AF523B /* MaterialsAndPractices.xcdatamodel */,
 				AB28BC0D2E5FE61A00AF523B /* MaterialsAndPractices 2.xcdatamodel */,
 				AB28BC0E2E5FE61A00AF523B /* MaterialsAndPractices 3.xcdatamodel */,
