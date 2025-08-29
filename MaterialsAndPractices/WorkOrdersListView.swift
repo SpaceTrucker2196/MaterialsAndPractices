@@ -117,15 +117,15 @@ struct WorkOrderCard: View {
                         
                         if let priority = workOrder.priority,
                            let workOrderPriority = WorkOrderPriority(rawValue: priority) {
-                            Text(workOrderPriority.displayWithEmoji)
-                                .font(AppTheme.Typography.labelSmall)
-                                .foregroundColor(AppTheme.Colors.textSecondary)
+//                            Text(workOrderPriority.displayWithEmoji)
+//                                .font(AppTheme.Typography.labelSmall)
+//                                .foregroundColor(AppTheme.Colors.textSecondary)
                         }
                     }
                     
                     Spacer()
                     
-                    StatusBadge(workOrder: workOrder)
+                    WorkOrderStatusBadge(workOrder: workOrder)
                 }
                 
                 // Work type and team info
@@ -200,37 +200,36 @@ struct WorkOrderCard: View {
     }
     
     // MARK: - Helper Methods
-    
     private func formattedDueDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        
-        if Calendar.current.isToday(date) {
-            return "Today"
-        } else if Calendar.current.isTomorrow(date) {
-            return "Tomorrow"
-        } else if Calendar.current.isYesterday(date) {
-            return "Yesterday"
-        } else {
-            formatter.dateStyle = .short
-            return formatter.string(from: date)
-        }
-    }
-    
-    private func dueDateColor(_ date: Date) -> Color {
-        if isOverdue {
-            return AppTheme.Colors.error
-        } else if Calendar.current.isToday(date) {
-            return AppTheme.Colors.warning
-        } else {
-            return AppTheme.Colors.textSecondary
-        }
-    }
+           let formatter = DateFormatter()
+           
+           if Calendar.current.isToday(date) {
+               return "Today"
+           } else if Calendar.current.isTomorrow(date) {
+               return "Tomorrow"
+           } else if Calendar.current.isYesterday(date) {
+               return "Yesterday"
+           } else {
+               formatter.dateStyle = .short
+               return formatter.string(from: date)
+           }
+       }
+
+       private func dueDateColor(_ date: Date) -> Color {
+           if isOverdue {
+               return AppTheme.Colors.error
+           } else if Calendar.current.isToday(date) {
+               return AppTheme.Colors.warning
+           } else {
+               return AppTheme.Colors.textSecondary
+           }
+       }
 }
 
 // MARK: - Status Badge
 
 /// Status badge for work orders
-struct StatusBadge: View {
+struct WorkOrderStatusBadge: View {
     let workOrder: WorkOrder
     
     var body: some View {
@@ -268,6 +267,18 @@ struct StatusBadge: View {
             case .completed:
                 return AppTheme.Colors.success
             case .onHold:
+                return AppTheme.Colors.warning
+            case .cancelled:
+                return AppTheme.Colors.warning
+            case .weatherDelay:
+                return AppTheme.Colors.warning
+            case .tooWet:
+                return AppTheme.Colors.warning
+            case .equipmentIssue:
+                return AppTheme.Colors.warning
+            case .waitingForMaterials:
+                return AppTheme.Colors.warning
+            case .waitingForInspection:
                 return AppTheme.Colors.warning
             }
         } else {

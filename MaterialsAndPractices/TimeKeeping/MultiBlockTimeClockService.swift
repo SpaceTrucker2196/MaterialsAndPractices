@@ -9,6 +9,33 @@
 import Foundation
 import CoreData
 
+//date and time extensions
+extension Date {
+    var isToday: Bool {
+        Calendar.current.isDateInToday(self)
+    }
+
+    var isTomorrow: Bool {
+        Calendar.current.isDateInTomorrow(self)
+    }
+
+    var isYesterday: Bool {
+        Calendar.current.isDateInYesterday(self)
+    }
+}
+extension Calendar {
+    func isToday(_ date: Date) -> Bool {
+        return isDateInToday(date)
+    }
+    
+    func isTomorrow(_ date: Date) -> Bool {
+        return isDateInTomorrow(date)
+    }
+    
+    func isYesterday(_ date: Date) -> Bool {
+        return isDateInYesterday(date)
+    }
+}
 class MultiBlockTimeClockService {
     
     private let context: NSManagedObjectContext
@@ -16,7 +43,7 @@ class MultiBlockTimeClockService {
     init(context: NSManagedObjectContext) {
         self.context = context
     }
-    
+    // Added Date functions
     /// Clock in a worker, creating a new time block for the day
     func clockIn(worker: Worker, date: Date = Date()) throws {
         // Check if worker is already clocked in for any block today

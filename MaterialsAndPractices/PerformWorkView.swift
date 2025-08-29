@@ -251,7 +251,7 @@ struct PerformWorkView: View {
                                 .foregroundColor(Color(amendment.omriListed ? "requiredForOrganic" : "failedForOrganic"))
                                 .font(.caption)
                             
-                            Text(amendment.productName)
+                            Text(amendment.productName ?? "Taco Sauce")
                                 .font(AppTheme.Typography.bodySmall)
                                 .foregroundColor(AppTheme.Colors.textPrimary)
                             
@@ -496,7 +496,7 @@ struct PerformWorkView: View {
             
             combinedNotes += "Applied Amendments:\n"
             for amendment in selectedAmendments {
-                combinedNotes += "• \(amendment.fullDescription)\n"
+                //combinedNotes += "• \(amendment.fullDescription)\n"
             }
         }
         

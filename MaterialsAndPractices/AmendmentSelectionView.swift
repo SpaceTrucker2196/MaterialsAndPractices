@@ -46,9 +46,9 @@ struct AmendmentSelectionView: View {
         // Apply search filter
         if !searchText.isEmpty {
             amendments = amendments.filter { amendment in
-                amendment.productName.localizedCaseInsensitiveContains(searchText) ||
-                amendment.productType.localizedCaseInsensitiveContains(searchText) ||
-                amendment.applicationMethod.localizedCaseInsensitiveContains(searchText)
+                amendment.productName!.localizedCaseInsensitiveContains(searchText) ||
+                amendment.productType!.localizedCaseInsensitiveContains(searchText) ||
+                amendment.applicationMethod!.localizedCaseInsensitiveContains(searchText)
             }
         }
         
@@ -182,7 +182,7 @@ struct AmendmentSelectionRow: View {
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
                     // Product name and OMRI status
                     HStack {
-                        Text(amendment.productName)
+                        Text(amendment.productName ?? "Taco Sauce")
                             .font(AppTheme.Typography.bodyMedium)
                             .foregroundColor(AppTheme.Colors.textPrimary)
                             .lineLimit(2)
@@ -195,20 +195,20 @@ struct AmendmentSelectionRow: View {
                     
                     // Product type and application method
                     HStack {
-                        Text(amendment.productType)
+                        Text(amendment.productType ?? "Taco Sauce")
                             .font(AppTheme.Typography.bodySmall)
                             .foregroundColor(AppTheme.Colors.textSecondary)
                         
                         Text("•")
                             .foregroundColor(AppTheme.Colors.textTertiary)
                         
-                        Text(amendment.applicationMethod)
+                        Text(amendment.applicationMethod ?? "Just a dab")
                             .font(AppTheme.Typography.bodySmall)
                             .foregroundColor(AppTheme.Colors.textSecondary)
                     }
                     
                     // Application rate
-                    if !amendment.applicationRate.isEmpty && !amendment.unitOfMeasure.isEmpty {
+                    if !amendment.applicationRate!.isEmpty && !amendment.unitOfMeasure!.isEmpty {
                         Text("Rate: \(amendment.applicationRate) \(amendment.unitOfMeasure)")
                             .font(AppTheme.Typography.labelSmall)
                             .foregroundColor(AppTheme.Colors.info)
@@ -216,9 +216,9 @@ struct AmendmentSelectionRow: View {
                     
                     // Safety intervals (if any)
                     if amendment.reEntryIntervalHours > 0 || amendment.preHarvestIntervalDays > 0 {
-                        Text(amendment.safetyIntervalInfo)
-                            .font(AppTheme.Typography.labelSmall)
-                            .foregroundColor(AppTheme.Colors.warning)
+//                        Text(amendment.safetyIntervalInfo)
+//                            .font(AppTheme.Typography.labelSmall)
+//                            .foregroundColor(AppTheme.Colors.warning)
                     }
                 }
                 

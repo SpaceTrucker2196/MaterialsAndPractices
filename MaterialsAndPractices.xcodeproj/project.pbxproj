@@ -22,6 +22,8 @@
 		1F4F48BF257DB4C4005E559D /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48BE257DB4C4005E559D /* Persistence.swift */; };
 		1F4F48CD257DB4C4005E559D /* MaterialsAndPracticesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48CC257DB4C4005E559D /* MaterialsAndPracticesTests.swift */; };
 		1F4F48D8257DB4C4005E559D /* MaterialsAndPracticesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48D7257DB4C4005E559D /* MaterialsAndPracticesUITests.swift */; };
+		1F60A7902E6136D60006ABA1 /* WorkOrderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60A78E2E6136D60006ABA1 /* WorkOrderDetailView.swift */; };
+		1F60A7912E6136D60006ABA1 /* WorkOrdersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60A78F2E6136D60006ABA1 /* WorkOrdersListView.swift */; };
 		1F812225258281EC007394D0 /* WorkPractices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812224258281EC007394D0 /* WorkPractices.swift */; };
 		1F81222A258295D0007394D0 /* WorkPracticeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812229258295D0007394D0 /* WorkPracticeDetailView.swift */; };
 		1F812235258298EC007394D0 /* WorkViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812234258298EC007394D0 /* WorkViews.swift */; };
@@ -35,15 +37,11 @@
 		1FB247BB2E5ACC3000F7BAF7 /* PhotoOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */; };
 		1FB247C12E5ACD7C00F7BAF7 /* CommonUIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */; };
 		1FBCAA902E5E769600E3C619 /* LeaseManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBCAA8E2E5E769600E3C619 /* LeaseManagementView.swift */; };
-		1FBECE072E610173008997EA /* MaterialsAndPractices.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1FBECDF72E610173008997EA /* MaterialsAndPractices.xcdatamodeld */; };
 		1FBECE0F2E6101A8008997EA /* CropAmendmentSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBECE0B2E6101A8008997EA /* CropAmendmentSeeder.swift */; };
 		1FBECE102E6101A8008997EA /* TrainingManagementViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBECE0D2E6101A8008997EA /* TrainingManagementViews.swift */; };
-		1FBECE112E6101A8008997EA /* CropAmendment+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBECE0A2E6101A8008997EA /* CropAmendment+CoreDataProperties.swift */; };
 		1FBECE122E6101A8008997EA /* WorkOrderTypeEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBECE0E2E6101A8008997EA /* WorkOrderTypeEnum.swift */; };
 		1FBECE132E6101A8008997EA /* TrainingComplianceEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBECE0C2E6101A8008997EA /* TrainingComplianceEnums.swift */; };
 		1FBECE142E6101A8008997EA /* AmendmentSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBECE082E6101A8008997EA /* AmendmentSelectionView.swift */; };
-		1FBECE152E6101A8008997EA /* CropAmendment+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBECE092E6101A8008997EA /* CropAmendment+CoreDataClass.swift */; };
-		1FBECE172E6101D5008997EA /* MultiBlockTimeClockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBECE162E6101D5008997EA /* MultiBlockTimeClockService.swift */; };
 		1FBECE192E6101FF008997EA /* TrainingCourseSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBECE182E6101FF008997EA /* TrainingCourseSeeder.swift */; };
 		1FC1210B2E5F5079008B4851 /* PaymentManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC1210A2E5F5079008B4851 /* PaymentManagementView.swift */; };
 		1FC1210C2E5F5079008B4851 /* LeaseRenewalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC121082E5F5079008B4851 /* LeaseRenewalsView.swift */; };
@@ -144,6 +142,8 @@
 		1F4F48D3257DB4C4005E559D /* MaterialsAndPracticesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MaterialsAndPracticesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F4F48D7257DB4C4005E559D /* MaterialsAndPracticesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsAndPracticesUITests.swift; sourceTree = "<group>"; };
 		1F4F48D9257DB4C4005E559D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1F60A78E2E6136D60006ABA1 /* WorkOrderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkOrderDetailView.swift; sourceTree = "<group>"; };
+		1F60A78F2E6136D60006ABA1 /* WorkOrdersListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkOrdersListView.swift; sourceTree = "<group>"; };
 		1F812224258281EC007394D0 /* WorkPractices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkPractices.swift; sourceTree = "<group>"; };
 		1F812229258295D0007394D0 /* WorkPracticeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkPracticeDetailView.swift; sourceTree = "<group>"; };
 		1F812234258298EC007394D0 /* WorkViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkViews.swift; sourceTree = "<group>"; };
@@ -157,29 +157,11 @@
 		1FB247B22E5ACC3000F7BAF7 /* PhotoOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoOverlay.swift; sourceTree = "<group>"; };
 		1FB247BF2E5ACD7C00F7BAF7 /* CommonUIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUIComponents.swift; sourceTree = "<group>"; };
 		1FBCAA8E2E5E769600E3C619 /* LeaseManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LeaseManagementView.swift; path = Farm/LeaseManagementView.swift; sourceTree = "<group>"; };
-		1FBECDF82E610173008997EA /* MaterialsAndPractices.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MaterialsAndPractices.xcdatamodel; sourceTree = "<group>"; };
-		1FBECDF92E610173008997EA /* MaterialsAndPractices 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 2.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECDFA2E610173008997EA /* MaterialsAndPractices 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 3.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECDFB2E610173008997EA /* MaterialsAndPractices 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 4.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECDFC2E610173008997EA /* MaterialsAndPractices 4_CSVSync.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 4_CSVSync.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECDFD2E610173008997EA /* MaterialsAndPractices 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 5.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECDFE2E610173008997EA /* MaterialsAndPractices 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 6.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECDFF2E610173008997EA /* MaterialsAndPractices 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 7.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECE002E610173008997EA /* MaterialsAndPractices 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 8.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECE012E610173008997EA /* MaterialsAndPractices 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 9.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECE022E610173008997EA /* MaterialsAndPractices 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 10.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECE032E610173008997EA /* MaterialsAndPractices 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 11.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECE042E610173008997EA /* MaterialsAndPractices 12.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 12.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECE052E610173008997EA /* MaterialsAndPractices 13.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 13.xcdatamodel"; sourceTree = "<group>"; };
-		1FBECE062E610173008997EA /* MaterialsAndPractices 14.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 14.xcdatamodel"; sourceTree = "<group>"; };
 		1FBECE082E6101A8008997EA /* AmendmentSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmendmentSelectionView.swift; sourceTree = "<group>"; };
-		1FBECE092E6101A8008997EA /* CropAmendment+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CropAmendment+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1FBECE0A2E6101A8008997EA /* CropAmendment+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CropAmendment+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		1FBECE0B2E6101A8008997EA /* CropAmendmentSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropAmendmentSeeder.swift; sourceTree = "<group>"; };
 		1FBECE0C2E6101A8008997EA /* TrainingComplianceEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingComplianceEnums.swift; sourceTree = "<group>"; };
 		1FBECE0D2E6101A8008997EA /* TrainingManagementViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingManagementViews.swift; sourceTree = "<group>"; };
 		1FBECE0E2E6101A8008997EA /* WorkOrderTypeEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkOrderTypeEnum.swift; sourceTree = "<group>"; };
-		1FBECE162E6101D5008997EA /* MultiBlockTimeClockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiBlockTimeClockService.swift; sourceTree = "<group>"; };
 		1FBECE182E6101FF008997EA /* TrainingCourseSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingCourseSeeder.swift; sourceTree = "<group>"; };
 		1FC121072E5F5079008B4851 /* LeaseDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LeaseDetailView.swift; path = LeaseSystem/LeaseDetailView.swift; sourceTree = "<group>"; };
 		1FC121082E5F5079008B4851 /* LeaseRenewalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LeaseRenewalsView.swift; path = LeaseSystem/LeaseRenewalsView.swift; sourceTree = "<group>"; };
@@ -261,6 +243,8 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		1F60A7922E613ABA0006ABA1 /* DataModel */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = DataModel; sourceTree = "<group>"; };
+		1F60A7932E613AE90006ABA1 /* TimeKeeping */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TimeKeeping; sourceTree = "<group>"; };
 		1FBCAA562E5E596200E3C619 /* InspectionSystem */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = InspectionSystem; sourceTree = "<group>"; };
 		1FC121242E5F86B2008B4851 /* TestData */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (1FC121252E5F86BE008B4851 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 1FC1212A2E5F86E4008B4851 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestData; sourceTree = "<group>"; };
 		1FEE44B12E5E094C00A1887B /* Infrastructrure */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Infrastructrure; sourceTree = "<group>"; };
@@ -326,16 +310,16 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
+				1F60A7932E613AE90006ABA1 /* TimeKeeping */,
+				1F60A7922E613ABA0006ABA1 /* DataModel */,
+				1F60A78E2E6136D60006ABA1 /* WorkOrderDetailView.swift */,
+				1F60A78F2E6136D60006ABA1 /* WorkOrdersListView.swift */,
 				1FBECE182E6101FF008997EA /* TrainingCourseSeeder.swift */,
-				1FBECE162E6101D5008997EA /* MultiBlockTimeClockService.swift */,
 				1FBECE082E6101A8008997EA /* AmendmentSelectionView.swift */,
-				1FBECE092E6101A8008997EA /* CropAmendment+CoreDataClass.swift */,
-				1FBECE0A2E6101A8008997EA /* CropAmendment+CoreDataProperties.swift */,
 				1FBECE0B2E6101A8008997EA /* CropAmendmentSeeder.swift */,
 				1FBECE0C2E6101A8008997EA /* TrainingComplianceEnums.swift */,
 				1FBECE0D2E6101A8008997EA /* TrainingManagementViews.swift */,
 				1FBECE0E2E6101A8008997EA /* WorkOrderTypeEnum.swift */,
-				1FBECDF72E610173008997EA /* MaterialsAndPractices.xcdatamodeld */,
 				1FDC8616257E872000EF71E0 /* Grow */,
 				1F2AAD7C2E5FA43B0001C7A3 /* WorkOrderExpenseView.swift */,
 				1FC121242E5F86B2008B4851 /* TestData */,
@@ -524,6 +508,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				1F60A7922E613ABA0006ABA1 /* DataModel */,
+				1F60A7932E613AE90006ABA1 /* TimeKeeping */,
 				1FBCAA562E5E596200E3C619 /* InspectionSystem */,
 				1FC121242E5F86B2008B4851 /* TestData */,
 				1FEE44B12E5E094C00A1887B /* Infrastructrure */,
@@ -698,15 +684,15 @@
 				1FCEB4632E5B7C0E00021D62 /* EnhancedEditGrowView.swift in Sources */,
 				AB0FC3E92E5EC8C300FD8006 /* LeaseCreationWorkflowView.swift in Sources */,
 				AB0FC3EA2E5EC8C300FD8006 /* LeaseStatusIndicator.swift in Sources */,
-				1FBECE172E6101D5008997EA /* MultiBlockTimeClockService.swift in Sources */,
 				AB0FC3EB2E5EC8C300FD8006 /* LeaseDocumentExporter.swift in Sources */,
+				1F60A7902E6136D60006ABA1 /* WorkOrderDetailView.swift in Sources */,
+				1F60A7912E6136D60006ABA1 /* WorkOrdersListView.swift in Sources */,
 				1FCEB4562E5B790100021D62 /* FarmDashboardView.swift in Sources */,
 				1FEE44B02E5E06FD00A1887B /* TeamCreationView.swift in Sources */,
 				1FCEB4582E5B790100021D62 /* FieldManagementViews.swift in Sources */,
 				1FCEB4592E5B790100021D62 /* WorkerManagementViews.swift in Sources */,
 				1FDF44B02E5D2F640058E376 /* HarvestCalendarHeatMap.swift in Sources */,
 				1FDF44B12E5D2F640058E376 /* WorkOrderHelpDocumentation.swift in Sources */,
-				1FBECE072E610173008997EA /* MaterialsAndPractices.xcdatamodeld in Sources */,
 				1FDF44B22E5D2F640058E376 /* WorkOrderSystem.swift in Sources */,
 				1FDF44B32E5D2F640058E376 /* CultivarExtensions.swift in Sources */,
 				1FDF44B42E5D2F640058E376 /* WeeklyWorkerSummaryViews.swift in Sources */,
@@ -717,11 +703,9 @@
 				1FC1210B2E5F5079008B4851 /* PaymentManagementView.swift in Sources */,
 				1FBECE0F2E6101A8008997EA /* CropAmendmentSeeder.swift in Sources */,
 				1FBECE102E6101A8008997EA /* TrainingManagementViews.swift in Sources */,
-				1FBECE112E6101A8008997EA /* CropAmendment+CoreDataProperties.swift in Sources */,
 				1FBECE122E6101A8008997EA /* WorkOrderTypeEnum.swift in Sources */,
 				1FBECE132E6101A8008997EA /* TrainingComplianceEnums.swift in Sources */,
 				1FBECE142E6101A8008997EA /* AmendmentSelectionView.swift in Sources */,
-				1FBECE152E6101A8008997EA /* CropAmendment+CoreDataClass.swift in Sources */,
 				1FC1210C2E5F5079008B4851 /* LeaseRenewalsView.swift in Sources */,
 				1FC1210D2E5F5079008B4851 /* LeaseDetailView.swift in Sources */,
 				1FC1210E2E5F5079008B4851 /* LedgerView.swift in Sources */,
@@ -1058,33 +1042,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		1FBECDF72E610173008997EA /* MaterialsAndPractices.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				1FBECDF82E610173008997EA /* MaterialsAndPractices.xcdatamodel */,
-				1FBECDF92E610173008997EA /* MaterialsAndPractices 2.xcdatamodel */,
-				1FBECDFA2E610173008997EA /* MaterialsAndPractices 3.xcdatamodel */,
-				1FBECDFB2E610173008997EA /* MaterialsAndPractices 4.xcdatamodel */,
-				1FBECDFC2E610173008997EA /* MaterialsAndPractices 4_CSVSync.xcdatamodel */,
-				1FBECDFD2E610173008997EA /* MaterialsAndPractices 5.xcdatamodel */,
-				1FBECDFE2E610173008997EA /* MaterialsAndPractices 6.xcdatamodel */,
-				1FBECDFF2E610173008997EA /* MaterialsAndPractices 7.xcdatamodel */,
-				1FBECE002E610173008997EA /* MaterialsAndPractices 8.xcdatamodel */,
-				1FBECE012E610173008997EA /* MaterialsAndPractices 9.xcdatamodel */,
-				1FBECE022E610173008997EA /* MaterialsAndPractices 10.xcdatamodel */,
-				1FBECE032E610173008997EA /* MaterialsAndPractices 11.xcdatamodel */,
-				1FBECE042E610173008997EA /* MaterialsAndPractices 12.xcdatamodel */,
-				1FBECE052E610173008997EA /* MaterialsAndPractices 13.xcdatamodel */,
-				1FBECE062E610173008997EA /* MaterialsAndPractices 14.xcdatamodel */,
-			);
-			currentVersion = 1FBECE062E610173008997EA /* MaterialsAndPractices 14.xcdatamodel */;
-			path = MaterialsAndPractices.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 1F4F48AA257DB4C2005E559D /* Project object */;
 }

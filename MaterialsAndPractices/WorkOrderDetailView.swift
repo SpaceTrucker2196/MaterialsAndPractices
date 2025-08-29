@@ -173,7 +173,7 @@ struct WorkOrderDetailView: View {
             
             // Amendment Information Section
             if !selectedAmendments.isEmpty {
-                amendmentInfoDisplaySection
+                amendmentApplicationSection
             }
             
             // Work Segments History
@@ -291,20 +291,23 @@ struct WorkOrderDetailView: View {
     
     private var workOrderInfoDisplaySection: some View {
         Section("Work Order Details") {
-            InfoDisplayRow(label: "Title", value: workOrderTitle)
-            InfoDisplayRow(label: "Type", value: selectedWorkOrderType.displayWithEmoji)
-            InfoDisplayRow(label: "Priority", value: selectedPriority.displayWithEmoji)
-            InfoDisplayRow(label: "Status", value: selectedStatus.displayWithEmoji)
-            
-            if !workOrderNotes.isEmpty {
-                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                    Text("Notes:")
-                        .font(AppTheme.Typography.labelMedium)
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                    
-                    Text(workOrderNotes)
-                        .font(AppTheme.Typography.bodyMedium)
-                        .foregroundColor(AppTheme.Colors.textPrimary)
+            VStack(spacing: AppTheme.Spacing.medium) {
+                InfoDisplayRow(label: "Title", value: workOrderTitle)
+//                InfoDisplayRow(label: "Type", value: selectedWorkOrderType.displayWithEmoji)
+               
+       //         InfoDisplayRow(label: "Status", value: selectedStatus.displayWithEmoji)
+
+                if !workOrderNotes.isEmpty {
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        Text("Notes:")
+                            .font(AppTheme.Typography.labelMedium)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+
+                        Text(workOrderNotes)
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
         }
@@ -349,51 +352,53 @@ struct WorkOrderDetailView: View {
         }
     }
     
-    private var amendmentInfoDisplaySection: some View {
-        Section("Applied Amendments") {
-            ForEach(Array(selectedAmendments), id: \.amendmentID) { amendment in
-                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                    HStack {
-                        Text(amendment.productName)
-                            .font(AppTheme.Typography.bodyMedium)
-                            .foregroundColor(AppTheme.Colors.textPrimary)
-                        
-                        Spacer()
-                        
-                        OrganicCertificationBadge(isOMRIListed: amendment.omriListed)
-                    }
-                    
-                    Text(amendment.formattedApplicationRate)
-                        .font(AppTheme.Typography.bodySmall)
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                    
-                    if !amendment.safetyIntervalInfo.isEmpty && amendment.safetyIntervalInfo != "No restrictions" {
-                        Text(amendment.safetyIntervalInfo)
-                            .font(AppTheme.Typography.labelSmall)
-                            .foregroundColor(AppTheme.Colors.warning)
-                    }
-                }
-            }
-        }
-    }
     
-    private var workSegmentsSection: some View {
+    // 1. Main method that simply calls the helper method
+    
+    // 2. Helper method that creates the section structure
+    private func createWorkSegmentsSection() -> some View {
         Section("Work History") {
-            if workSegments.isEmpty && currentWorkSegment == nil {
-                Text("No work segments recorded")
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-            } else {
-                ForEach(workSegments.indices, id: \.self) { index in
-                    WorkSegmentRow(segment: workSegments[index], index: index + 1)
-                }
-                
-                if let current = currentWorkSegment {
-                    WorkSegmentRow(segment: current, index: workSegments.count + 1, isCurrent: true)
-                }
+            workSegmentsContent
+        }
+    }
+
+    // 3. Helper method for the content based on state
+    @ViewBuilder
+    private var workSegmentsContent: some View {
+        if workSegments.isEmpty && currentWorkSegment == nil {
+            emptyWorkSegmentsView
+        } else {
+            completedWorkSegmentsView
+            
+            if let current = currentWorkSegment {
+                currentWorkSegmentView(current)
             }
         }
     }
+
+    // 4. Helper method for empty state
+    private var emptyWorkSegmentsView: some View {
+        Text("No work segments recorded")
+            .foregroundColor(AppTheme.Colors.textSecondary)
+    }
+
+    // 5. Helper method for completed segments
+    private var completedWorkSegmentsView: some View {
+        ForEach(workSegments.indices, id: \.self) { index in
+            WorkSegmentRow(segment: workSegments[index], index: index + 1)
+        }
+    }
+
+    // 6. Helper method for current segment
+    private func currentWorkSegmentView(_ segment: WorkSegment) -> some View {
+        WorkSegmentRow(segment: segment, index: workSegments.count + 1, isCurrent: true)
+    }
     
+
+    private var workSegmentsSection: some View {
+        createWorkSegmentsSection()
+    }
+
     private var workControlSection: some View {
         Section("Work Control") {
             VStack(spacing: AppTheme.Spacing.medium) {
@@ -585,7 +590,7 @@ struct WorkOrderDetailView: View {
                                 .foregroundColor(Color(amendment.omriListed ? "requiredForOrganic" : "failedForOrganic"))
                                 .font(.caption)
                             
-                            Text(amendment.productName)
+                            Text(amendment.productName ?? "Taco Sauce")
                                 .font(AppTheme.Typography.bodySmall)
                                 .foregroundColor(AppTheme.Colors.textPrimary)
                             
@@ -968,7 +973,7 @@ struct WorkOrderDetailView: View {
             
             combinedNotes += "Applied Amendments:\n"
             for amendment in selectedAmendments {
-                combinedNotes += "• \(amendment.fullDescription)\n"
+                //combinedNotes += "• \(amendment.fullDescription)\n"
             }
         }
         
@@ -1112,7 +1117,7 @@ struct WorkOrderDetailView: View {
         
         // Check for team changes and auto-restart if team composition has changed
         checkForTeamChangesAndRestart()
-        
+    }
     private func checkForTeamChangesAndRestart() {
         guard let currentTeam = selectedTeam else { return }
         
@@ -1176,7 +1181,7 @@ struct WorkOrderDetailView: View {
                 
                 // Post notification for work order completion
                 CoreDataNotificationCenter.postWorkOrderNotification(
-                    type: .completed,
+                    type: .updated,
                     workOrder: workOrder
                 )
                 
@@ -1239,7 +1244,7 @@ struct WorkOrderDetailView: View {
         
         // Amendment information
         if !selectedAmendments.isEmpty {
-            let amendmentNames = selectedAmendments.map { $0.productName }.joined(separator: ", ")
+            let amendmentNames = selectedAmendments.map { $0.productName ?? "Taco Sauce" }.joined(separator: ", ")
             auditInfo.append("Amendments Applied: \(amendmentNames)")
         }
         
@@ -1439,7 +1444,7 @@ struct WorkOrderDetailView_Previews: PreviewProvider {
     static var previews: some View {
         let context = PersistenceController.preview.container.viewContext
         let sampleGrow = Grow(context: context)
-        sampleGrow.title = "Sample Grow"
+       // sampleGrow.title = "Sample Grow"
         
         Group {
             // Insert mode preview
