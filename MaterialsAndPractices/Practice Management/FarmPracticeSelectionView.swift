@@ -110,7 +110,7 @@ struct FarmPracticeRow: View {
             
             // Practice content
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                Text(practice.name ?? "Taco Sauce")
+                Text(practice.name ?? "Unknown Practice")
                     .font(AppTheme.Typography.bodyMedium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
                     .lineLimit(2)
