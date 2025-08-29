@@ -700,8 +700,7 @@ struct AssignTrainingView: View {
                 // Course Information Section
                 courseInformationSection
                 
-                // Worker Selection Section
-                workerSelectionSection
+               
                 
                 // Training Details Section
                 trainingDetailsSection
@@ -711,6 +710,8 @@ struct AssignTrainingView: View {
                 
                 // Notes Section
                 notesSection
+                // Worker Selection Section
+                workerSelectionSection
             }
             .navigationTitle("Assign Training")
             .navigationBarTitleDisplayMode(.large)
