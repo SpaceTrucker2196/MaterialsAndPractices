@@ -274,209 +274,480 @@ The app helps you stay organized and professional with all your land rental agre
 
 ## Materials Management
 
-Materials in the system refer to all inputs used in farming and all products produced by your farm.
+Materials are anything you use on your farm (inputs) or produce from your farm (outputs). The app helps you track everything from seeds to harvest.
 
-### Input Materials
-1. Navigate to "Materials" → "Inputs"
-2. Categories include:
-   - Seeds and transplants
-   - Fertilizers
-   - Pest management products
-   - Soil amendments
-   - Processing aids
+### Farm Inputs (Things You Buy)
 
-### Adding New Input Materials
-1. Click "+ Add Material"
-2. Complete the material profile:
-   - Material name and supplier
-   - Organic certification status
-   - OMRI or WSDA listing information
-   - Upload certificates and documentation
-   - Set inventory tracking parameters
+**What are inputs?**
+- Seeds and plants
+- Fertilizers and compost
+- Pest control products  
+- Soil amendments like lime
+- Tools and supplies
 
-### Output Products
-1. Navigate to "Materials" → "Products"
-2. Add your farm products with:
+**Adding New Inputs:**
+1. Go to **Materials** → **Inputs**
+2. Tap **Add Material**
+3. Enter the material information:
+   - Name of the product
+   - Company you bought it from
+   - Whether it's organic approved (OMRI listed)
+   - Upload photos of labels or receipts
+   - Set up inventory tracking
+
+**Why track inputs?**
+- Required for organic certification
+- Helps manage inventory and reordering  
+- Tracks costs for different crops
+- Proves you used approved materials
+
+### Farm Outputs (Things You Grow)
+
+**What are outputs?**
+- Vegetables, fruits, grains you harvest
+- Products you process (like dried herbs)
+- Items you sell at market
+
+**Adding Your Products:**
+1. Go to **Materials** → **Products**  
+2. Enter product details:
    - Product name and varieties
-   - Packaging information
-   - Storage requirements
-   - Pricing tiers
+   - How you package it (boxes, bags, bunches)
+   - Storage needs (cool, dry, refrigerated)
+   - Selling prices
 
-### Inventory Management
-1. Track real-time inventory levels
-2. Set low-stock alerts
-3. Generate purchase orders for inputs
-4. Record material usage by field, date, and purpose
+### Managing Inventory
+
+**Track Your Supplies:**
+- See how much you have left of each input
+- Get alerts when supplies run low
+- Know when to reorder before you run out
+- Track how much you spend on each crop
+
+**Recording Usage:**
+- When you use an input, record:
+  - What you used
+  - How much
+  - Which field
+  - What date
+  - What crop it was for
+
+This helps you know the true cost of growing each crop and proves to inspectors what you applied where.
 
 ## Worker Tracking
 
-The worker tracking system allows you to maintain comprehensive records of all personnel working on your farm—a critical component for organic certification and food safety compliance.
+The app helps you keep track of everyone who works on your farm. This is required for food safety rules and organic certification.
 
 ### Adding Workers
-1. Navigate to "Workers" → "Add Worker"
-2. Enter personal information and contact details
-3. Upload required identification documents
-4. Assign worker roles and permissions in the system
 
-### Worker Certifications
-1. Access "Workers" → "Certifications"
-2. Record required certifications for each worker:
-   - Pesticide applicator licenses
-   - Equipment operation certifications
+1. Go to **Workers** → **Add Worker**
+2. Enter their information:
+   - Full name and contact details
+   - Job title (field worker, manager, etc.)
+   - When they were hired
+   - Emergency contact person and phone
+   - Upload a photo (optional)
+
+### Worker Certifications and Training
+
+**Why track certifications?**
+- Some jobs require special licenses
+- Organic certification requires training records
+- Food safety rules require documentation
+
+**What to record:**
+1. Go to **Workers** → **Certifications**
+2. For each worker, add:
+   - Pesticide applicator license (if they apply materials)
+   - Equipment operation training
    - Food safety training
-3. Set expiration notifications for certification renewals
+   - First aid certification
+3. Set reminders for when certifications expire
 
 ### Time and Activity Tracking
-1. Workers can log in to record their daily activities
-2. For each task, document:
-   - Fields worked
-   - Tasks performed
-   - Materials applied or harvested
-   - Equipment used
-   - Hours worked
-3. Supervisors can approve and modify time entries
 
-### Worker Performance Analytics
-1. View productivity metrics by worker, task type, or field
-2. Identify training needs based on performance data
-3. Generate worker activity reports for payroll and compliance
+**Daily Time Recording:**
+Workers can use the app to:
+- Clock in when they start work
+- Clock out when they finish
+- Take breaks during the day
+- Record which tasks they worked on
+
+**What gets tracked:**
+- Which fields they worked in
+- What work they did (planting, weeding, harvesting)
+- What materials they used
+- Which equipment they operated
+- Total hours worked each day
+
+**Supervisor Review:**
+- Managers can check and approve time entries
+- Fix any mistakes in the records
+- Add notes about the work completed
+
+### Understanding Worker Reports
+
+The app automatically calculates:
+- **Regular hours** (up to 40 per week)
+- **Overtime hours** (over 40 per week) 
+- **Weekly totals** for payroll
+- **Productivity by worker** and task type
+
+**Overtime Warning:**
+- App highlights workers with more than 40 hours
+- Helps you manage labor costs
+- Required for proper wage calculations
+
+### Safety and Compliance
+
+**Training Documentation:**
+- Schedule safety training sessions
+- Record completed training
+- Store certificates of completion  
+- Set automatic reminders for refresher training
+
+**Incident Reporting:**
+- Document any workplace accidents
+- Track what happened and why
+- Record corrective actions taken
+- Analyze patterns to prevent future incidents
+
+**Food Safety Requirements:**
+Workers handling food must have:
+- Current food safety training
+- Understanding of proper hygiene
+- Knowledge of contamination prevention
+- Records of all training completed
+
+The app keeps all these records organized and ready for inspections.
 
 ## Health and Safety Training
 
-Maintaining comprehensive health and safety training records protects both your workers and your certification status.
+Keeping good safety training records protects your workers and helps you meet certification requirements.
 
-### Training Management
-1. Navigate to "Workers" → "Training"
-2. Schedule training sessions for:
-   - Equipment operation
-   - First aid
-   - Proper handling of materials
-   - Food safety protocols
-   - Emergency procedures
+### Planning Training Sessions
 
-### Training Documentation
-1. Record completed training for each worker
-2. Upload certificates of completion
-3. Set automatic reminders for refresher courses
-4. Generate training compliance reports for inspections
+1. Go to **Workers** → **Training**
+2. Schedule training for:
+   - **Equipment use**: How to safely operate tractors, tillers, etc.
+   - **First aid**: Basic medical emergency response  
+   - **Material handling**: Safe use of fertilizers and pest control
+   - **Food safety**: Proper hygiene and contamination prevention
+   - **Emergency procedures**: What to do in case of accidents
 
-### Safety Incident Reporting
-1. Document any workplace incidents or near-misses
-2. Track incident investigations and corrective actions
-3. Analyze incident patterns to improve safety protocols
+### Recording Completed Training
+
+**For each training session:**
+- Date of training
+- Who attended  
+- What was covered
+- Who taught it
+- Upload certificates or photos
+
+**Setting Reminders:**
+- Most certifications expire after 1-3 years
+- App can remind you when refresher training is due
+- Helps ensure workers stay current
+
+### Safety Incident Reports
+
+**If someone gets hurt:**
+1. Get medical help first
+2. Document the incident in the app:
+   - What happened
+   - When and where it occurred  
+   - Who was involved
+   - What caused it
+   - What you did to fix the problem
+
+**Why this matters:**
+- Required by workplace safety laws
+- Helps prevent similar accidents
+- Shows inspectors you take safety seriously
+- May be needed for insurance claims
+
+### Best Practices
+
+- Train workers before they start new tasks
+- Keep training records for at least 3 years
+- Update training when you get new equipment
+- Review safety procedures at least once a year
+- Make sure all workers understand the training
 
 ## Organic Certification Compliance
 
-Materials and Practices simplifies the complex process of maintaining organic certification by tracking all required documentation in real-time.
+The app makes it easier to keep your organic certification by tracking all the required paperwork automatically.
 
-### Certification Management
-1. Store current organic certificates
-2. Track certification renewal dates
-3. Maintain inspector contact information
-4. Store previous inspection reports
+### Managing Your Certification
 
-### Compliance Monitoring
-1. Real-time alerts for potential compliance issues:
-   - Buffer zone violations
-   - Non-approved material usage
-   - Missing documentation
-   - Incomplete records
+**Store Important Documents:**
+- Current organic certificate
+- Inspection reports
+- Inspector contact information
+- Certification renewal dates
 
-### Preparing for Inspection
-1. Generate comprehensive inspection preparation reports:
-   - Materials list with all input documentation
-   - Field activity logs
-   - Harvest and sales records
-   - Worker training documentation
-   - Equipment cleaning logs
+**The app reminds you:**
+- When your certification expires
+- When annual updates are due
+- If any records are missing
+
+### Staying in Compliance
+
+**Real-time Monitoring:**
+The app watches for potential problems:
+- **Buffer zones**: Warns if you're too close to non-organic fields
+- **Prohibited materials**: Alerts if you try to use non-approved inputs  
+- **Missing records**: Shows what documentation you still need
+- **Incomplete tracking**: Highlights gaps in your record-keeping
+
+**Quick Problem Solving:**
+- Red warnings mean immediate attention needed
+- Orange warnings mean you should address soon
+- Green indicators mean everything is on track
+
+### Preparing for Inspections
+
+**When the inspector comes**, the app can instantly generate:
+- Complete list of all materials used with documentation
+- Field-by-field activity logs showing what was applied when
+- Harvest records with full traceability
+- Worker training documentation  
+- Equipment cleaning logs
+- All supporting receipts and certificates
+
+**Inspection Tips:**
+- Run the inspection preparation report a few days early
+- Fix any missing information before the inspector arrives
+- Have both digital and printed copies ready
+- Know where to find supporting documents quickly
 
 ### Organic System Plan (OSP)
-1. Digital maintenance of your Organic System Plan
-2. Track changes and updates to your OSP
-3. Export OSP sections for submission to certifiers
+
+**What it is**: Your written plan describing how you farm organically
+
+**How the app helps:**
+- Stores your current OSP digitally
+- Tracks any changes you make over time
+- Generates updated sections for your certifier
+- Reminds you when updates are due
+
+**Common OSP sections the app supports:**
+- Field history and rotation plans
+- Materials list with documentation
+- Pest and disease management strategies
+- Soil building practices
+- Harvest and post-harvest handling
+
+### Record-Keeping Requirements
+
+**The app automatically tracks:**
+- **Seeds**: Source, variety, organic status
+- **Inputs**: What you applied, where, when, and how much
+- **Harvest**: When picked, by whom, quantities, lot numbers
+- **Storage**: Where products are kept and for how long
+- **Sales**: Who you sold to and when
+
+**Three-Year Rule**: 
+Organic regulations require 3 years of records. The app keeps everything organized and won't delete old records you might need.
+
+### Common Compliance Issues and Solutions
+
+**Problem**: Can't find receipt for organic seed
+**Solution**: App links purchases to scanned receipts automatically
+
+**Problem**: Forgot to record compost application  
+**Solution**: App reminds you to log activities as you do them
+
+**Problem**: Mixed up application dates
+**Solution**: App timestamps all entries and shows field history
+
+**Problem**: Missing worker training records
+**Solution**: App tracks all training with automated reminders
+
+The app is designed to make organic certification easier, not harder. It keeps track of everything so you can focus on farming.
 
 ## Lot Tracking & Traceability
 
-The system's lot tracking capabilities meet and exceed USDA standards for organic produce traceability—a key feature for food safety and organic integrity.
+The app helps you track your produce from seed to sale. This is required for food safety and organic certification.
 
-### Harvest Lot Creation
-1. When recording harvests, create uniquely identified lots
-2. For each lot, document:
-   - Harvest date and time
-   - Field source
-   - Crop and variety
-   - Quantity harvested
-   - Workers involved
-   - Equipment used
-   - Storage location
+### Creating Harvest Lots
 
-### Complete Traceability Chain
-Materials and Practices creates a comprehensive traceability record for each product:
-1. Seed source and planting date
-2. All inputs applied to the field (with dates and rates)
-3. Workers who handled the crop during growth and harvest
-4. Processing steps and handling
-5. Storage conditions and duration
-6. Distribution channels
+**What is a lot?**
+A lot is a specific harvest from a specific field on a specific day. Each lot gets a unique number so you can track it.
 
-### Mock Recall Testing
-1. Conduct simulated recall exercises
-2. Test the system's ability to trace products forward and backward
-3. Generate recall reports within minutes
-4. Document mock recall results for certification
+**When you harvest:**
+1. Create a new lot in the app
+2. Record:
+   - **Date and time** of harvest
+   - **Which field** it came from
+   - **Crop and variety** 
+   - **How much** you harvested
+   - **Who** did the harvesting
+   - **Equipment** used for harvest
+   - **Where** you're storing it
+
+### Complete Traceability
+
+For each product, the app tracks the complete story:
+
+**From Planting:**
+- Where you got the seeds
+- When and where you planted
+- What variety you used
+
+**During Growing:**
+- All fertilizers or compost applied
+- Any pest control materials used
+- Workers who tended the crop
+- Equipment used in the field
+
+**At Harvest:**
+- Harvest date and weather conditions
+- Who picked the crop
+- Equipment used for harvest
+- Initial quality observations
+
+**After Harvest:**
+- Where it's stored and at what temperature
+- Any processing or packing done  
+- When and where it was sold
+- Customer information
+
+### Why Traceability Matters
+
+**Food Safety**: If there's ever a problem with your produce, you can quickly find:
+- Which field it came from
+- What was applied to that field
+- Who handled the product
+- Where the rest of that lot went
+
+**Organic Certification**: Inspectors need to see the complete chain showing:
+- Organic inputs were used
+- No prohibited materials were applied
+- Buffer zones were maintained
+- Proper record-keeping was followed
+
+### Mock Recall Practice
+
+**Test your system** by doing practice recalls:
+1. Pick a random product you sold
+2. See how quickly you can trace it back to the field
+3. Find all other products from that same lot
+4. Check if you can contact customers who bought it
+
+**Good traceability means:**
+- Finding the information in under 4 hours
+- Having all supporting documents
+- Being able to contact customers quickly
+
+The app makes this much easier than paper records by linking everything automatically.
 
 ## Reports and Documentation
 
+The app creates reports to help you manage your farm and meet regulatory requirements.
+
 ### Standard Reports
-1. Navigate to "Reports" to access pre-built report templates:
-   - Material usage by field
-   - Worker activities
-   - Harvest yields
-   - Compliance documentation
-   - Inventory status
 
-### Custom Reports
-1. Use the report builder to create custom reports
-2. Select data fields to include
-3. Apply filters and sorting
-4. Save report templates for future use
+Go to **Reports** to find ready-made reports:
+- **Material usage**: What inputs you used on each field
+- **Worker activities**: Hours worked and tasks completed
+- **Harvest yields**: How much you harvested from each field
+- **Compliance documentation**: Everything needed for inspections
+- **Inventory status**: What supplies you have on hand
 
-### Exporting Data
-1. Export reports in multiple formats:
-   - PDF for printing
-   - CSV for data analysis
-   - JSON for system integration
+### Creating Custom Reports
 
-### Document Management
-1. Store all farm documentation digitally:
-   - Organic certificates
-   - Field maps
-   - Water tests
-   - Soil analyses
-   - Training records
+1. Use the report builder to make your own reports
+2. Choose what information to include
+3. Set filters for specific date ranges or fields
+4. Save report templates to use again later
+
+### Exporting Your Data
+
+**File formats available:**
+- **PDF**: For printing or emailing
+- **CSV**: For spreadsheets and data analysis
+- **JSON**: For connecting to other software
+
+### Document Storage
+
+**Store all farm documents digitally:**
+- Organic certificates and inspection reports
+- Field maps and soil test results
+- Water quality tests
+- Training certificates and safety records
+- Receipts and invoices
+
+**Benefits of digital storage:**
+- Never lose important documents
+- Search for documents quickly
+- Share documents easily with inspectors
+- Backup automatically to the cloud
+- Access from anywhere with internet
 
 ## Troubleshooting
 
-### Common Issues and Solutions
-- **Data Not Saving**: Ensure you have a stable internet connection and click "Save" before navigating away
-- **Missing Materials**: Check filter settings in the materials view
-- **Report Generation Errors**: Verify all required fields have data for the selected date range
-- **Login Problems**: Try clearing browser cache or resetting your password
+### Common Problems and Solutions
+
+**Problem: Can't save my work**
+- Check your internet connection
+- Make sure to tap "Save" before leaving the screen
+- Try closing and reopening the app
+
+**Problem: Can't find materials I added**
+- Check the filter settings at the top of the screen
+- Make sure you're looking in the right category
+- Use the search function to find specific items
+
+**Problem: Reports won't generate**
+- Make sure you have data for the date range selected
+- Check that all required fields have information
+- Try a shorter date range if the report is very large
+
+**Problem: App is running slowly**
+- Close other apps running in the background
+- Restart your device if needed
+- Make sure you have the latest app update
+
+**Problem: Can't log in**
+- Double-check your username and password
+- Make sure you have internet connection
+- Contact your farm administrator if problems continue
+
+### Getting Help
+
+- Use the built-in help system (if enabled in Settings)
+- Contact your farm manager or IT support
+- Check for app updates in the App Store
+- Restart the app if it's acting strange
 
 ### System Status
-Check the status dashboard for any known issues or scheduled maintenance.
+
+The app will show you if there are any known problems or if maintenance is scheduled.
 
 ## FAQ
 
-**Q: How often should I update my materials inventory?**  
-A: For best results, update your inventory in real-time as materials are received or used. At minimum, perform a weekly reconciliation.
+**Q: How often should I update my inventory?**  
+A: Update it every time you use materials or receive new supplies. At least check it once a week.
 
-**Q: Can I use the system offline?**  
-A: The mobile app has limited offline functionality, but will sync data when connectivity is restored.
+**Q: Can I use the app without internet?**  
+A: You can enter some information offline, but it will sync when you get internet again.
 
-**Q: How does the system help with organic certification?**  
-A: The system automatically organizes all documentation required for certification, tracks compliance issues in real-time, and can generate complete reports for inspectors.
+**Q: How does this help with organic certification?**  
+A: The app keeps all the records you need for inspections and organizes them automatically.
 
-**Q: Who can see worker health and safety records?**  
-A: Access to sensitive worker information is restricted by permission level. Farm administrators and designated safety officers typically have access.
+**Q: Who can see worker information?**  
+A: Only farm managers and people with the right permissions can see sensitive worker data.
+
+**Q: How long are records kept?**  
+A: The app keeps records for as long as needed for certification (usually 3-5 years).
+
+**Q: What if I make a mistake in my records?**  
+A: You can edit most information, and the app keeps track of changes for audit purposes.
+
+**Q: Can multiple people use the app at the same time?**  
+A: Yes, the app syncs changes between devices so your team can work together.
+
+**Q: What happens to my data if I stop using the app?**  
+A: You can export all your data before canceling, and you own all your farm records.
 ials and Practices - Empowering Organic Farmers with Comprehensive Management Tools
