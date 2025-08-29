@@ -42,7 +42,7 @@ class WorkOrderFeatureTests: XCTestCase {
         workOrder = WorkOrder(context: context)
         workOrder.id = UUID()
         workOrder.title = "Test Work Order"
-        workOrder.workDescription = "Test work order description"
+        workOrder.notes = "Test work order description"
         workOrder.createdDate = Date()
         workOrder.dueDate = Calendar.current.date(byAdding: .day, value: 7, to: Date())
         workOrder.isCompleted = false
@@ -63,7 +63,7 @@ class WorkOrderFeatureTests: XCTestCase {
     func testWorkOrderCreation() throws {
         XCTAssertNotNil(workOrder.id)
         XCTAssertEqual(workOrder.title, "Test Work Order")
-        XCTAssertEqual(workOrder.workDescription, "Test work order description")
+        XCTAssertEqual(workOrder.notes, "Test work order description")
         XCTAssertFalse(workOrder.isCompleted)
         XCTAssertEqual(workOrder.status, "assigned")
         XCTAssertEqual(workOrder.priority, "medium")

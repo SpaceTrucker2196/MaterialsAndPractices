@@ -850,9 +850,109 @@ struct WorkOrderDetailView: View {
     }
     
     private func loadWorkSegments() {
-        // TODO: Load work segments from Core Data
-        // This would query TimeClock entries associated with this work order
-        // and calculate total hours with team multipliers
+        guard let workOrder = workOrder else { return }
+        
+        // Load time clock entries associated with this work order
+        let request: NSFetchRequest<TimeClock> = TimeClock.fetchRequest()
+        request.predicate = NSPredicate(format: "workOrder == %@", workOrder)
+        request.sortDescriptors = [
+            NSSortDescriptor(keyPath: \TimeClock.date, ascending: true),
+            NSSortDescriptor(keyPath: \TimeClock.blockNumber, ascending: true)
+        ]
+        
+        do {
+            let timeEntries = try viewContext.fetch(request)
+            
+            // Group time entries by date and block to create work segments
+            workSegments = createWorkSegmentsFromTimeEntries(timeEntries)
+            
+            // Calculate total hours
+            calculateTotalHours()
+            
+            // Determine current operation state based on work segments
+            updateOperationStateFromWorkSegments()
+            
+        } catch {
+            print("Error loading work segments: \(error)")
+        }
+    }
+    
+    private func createWorkSegmentsFromTimeEntries(_ timeEntries: [TimeClock]) -> [WorkSegment] {
+        var segments: [WorkSegment] = []
+        var currentSegmentEntries: [TimeClock] = []
+        var lastDate: Date?
+        var lastBlockNumber: Int16 = -1
+        
+        for entry in timeEntries {
+            let entryDate = Calendar.current.startOfDay(for: entry.date ?? Date())
+            
+            // Check if we need to start a new segment
+            let shouldStartNewSegment = lastDate != entryDate || 
+                                      entry.blockNumber != lastBlockNumber ||
+                                      currentSegmentEntries.isEmpty
+            
+            if shouldStartNewSegment && !currentSegmentEntries.isEmpty {
+                // Create segment from current entries
+                if let segment = createWorkSegmentFromEntries(currentSegmentEntries) {
+                    segments.append(segment)
+                }
+                currentSegmentEntries = []
+            }
+            
+            currentSegmentEntries.append(entry)
+            lastDate = entryDate
+            lastBlockNumber = entry.blockNumber
+        }
+        
+        // Handle remaining entries
+        if !currentSegmentEntries.isEmpty {
+            if let segment = createWorkSegmentFromEntries(currentSegmentEntries) {
+                segments.append(segment)
+            }
+        }
+        
+        return segments
+    }
+    
+    private func createWorkSegmentFromEntries(_ entries: [TimeClock]) -> WorkSegment? {
+        guard !entries.isEmpty else { return nil }
+        
+        // Get the earliest start time and latest end time
+        let startTimes = entries.compactMap { $0.clockInTime }
+        let endTimes = entries.compactMap { $0.clockOutTime }
+        
+        guard let earliestStart = startTimes.min() else { return nil }
+        
+        let teamMembers = entries.compactMap { $0.worker?.name }
+        let teamSize = entries.count
+        
+        var segment = WorkSegment(
+            startTime: earliestStart,
+            teamSize: teamSize,
+            teamMembers: teamMembers
+        )
+        
+        // Set end time if all entries are completed
+        if endTimes.count == entries.count, let latestEnd = endTimes.max() {
+            segment.endTime = latestEnd
+            segment.calculateHours()
+        }
+        
+        return segment
+    }
+    
+    private func updateOperationStateFromWorkSegments() {
+        guard let workOrder = workOrder else { return }
+        
+        if workOrder.isCompleted {
+            operationState = .locked
+        } else if workSegments.isEmpty {
+            operationState = .notStarted
+        } else if currentWorkSegment != nil {
+            operationState = .inProgress
+        } else {
+            operationState = .stopped
+        }
     }
     
     private func createWorkOrder() {
@@ -948,6 +1048,29 @@ struct WorkOrderDetailView: View {
         currentWorkSegment = segment
         operationState = .inProgress
         
+        // Create TimeClock entries for each team member
+        let timeClockService = MultiBlockTimeClockService(context: viewContext)
+        
+        for worker in team.activeMembers() {
+            do {
+                try timeClockService.clockIn(worker: worker, date: segment.startTime)
+                
+                // Associate the time clock entry with this work order
+                if let activeBlock = timeClockService.getActiveTimeBlock(for: worker, on: segment.startTime) {
+                    activeBlock.workOrder = workOrder
+                }
+            } catch {
+                print("Error clocking in worker \(worker.name ?? ""): \(error)")
+            }
+        }
+        
+        // Save context to persist time clock entries
+        do {
+            try viewContext.save()
+        } catch {
+            print("Error saving time clock entries: \(error)")
+        }
+        
         // Create audit trail entry
         if let workOrder = workOrder {
             createAuditTrailEntry(for: workOrder, action: "started", details: "Team: \(team.name ?? ""), Members: \(segment.teamSize)")
@@ -956,9 +1079,29 @@ struct WorkOrderDetailView: View {
     
     private func stopWork() {
         guard var segment = currentWorkSegment else { return }
+        guard let team = selectedTeam else { return }
         
-        segment.endTime = Date()
+        let endTime = Date()
+        segment.endTime = endTime
         segment.calculateHours()
+        
+        // Update TimeClock entries for each team member
+        let timeClockService = MultiBlockTimeClockService(context: viewContext)
+        
+        for worker in team.activeMembers() {
+            do {
+                try timeClockService.clockOut(worker: worker, date: endTime)
+            } catch {
+                print("Error clocking out worker \(worker.name ?? ""): \(error)")
+            }
+        }
+        
+        // Save context to persist time clock entries
+        do {
+            try viewContext.save()
+        } catch {
+            print("Error saving time clock entries: \(error)")
+        }
         
         workSegments.append(segment)
         currentWorkSegment = nil
@@ -967,9 +1110,39 @@ struct WorkOrderDetailView: View {
         // Update total hours
         calculateTotalHours()
         
-        // Create audit trail entry
-        if let workOrder = workOrder {
-            createAuditTrailEntry(for: workOrder, action: "stopped", details: "Segment duration: \(String(format: "%.1f", segment.totalHours)) hours")
+        // Check for team changes and auto-restart if team composition has changed
+        checkForTeamChangesAndRestart()
+        
+    private func checkForTeamChangesAndRestart() {
+        guard let currentTeam = selectedTeam else { return }
+        
+        // Get the last completed segment to compare team composition
+        guard let lastSegment = workSegments.last else { return }
+        
+        let currentTeamMembers = Set(currentTeam.activeMembers().map { $0.name ?? "Unknown" })
+        let lastSegmentMembers = Set(lastSegment.teamMembers)
+        
+        // Check if team composition has changed
+        if currentTeamMembers != lastSegmentMembers {
+            // Team has changed, automatically start a new segment
+            startWork()
+            
+            // Create audit trail entry for team change
+            if let workOrder = workOrder {
+                let addedMembers = currentTeamMembers.subtracting(lastSegmentMembers)
+                let removedMembers = lastSegmentMembers.subtracting(currentTeamMembers)
+                
+                var changeDetails = "Team change detected. "
+                if !addedMembers.isEmpty {
+                    changeDetails += "Added: \(addedMembers.joined(separator: ", ")). "
+                }
+                if !removedMembers.isEmpty {
+                    changeDetails += "Removed: \(removedMembers.joined(separator: ", ")). "
+                }
+                changeDetails += "New segment started automatically."
+                
+                createAuditTrailEntry(for: workOrder, action: "team_changed", details: changeDetails)
+            }
         }
     }
     
@@ -984,12 +1157,28 @@ struct WorkOrderDetailView: View {
         if let workOrder = workOrder {
             workOrder.isCompleted = true
             workOrder.completedDate = Date()
+            // Note: totalActualHours property doesn't exist in WorkOrder entity
+            // Store actual hours in notes or create a separate tracking mechanism
+            
+            // Update notes with actual hours information
+            let hoursInfo = "\n\nActual Hours Worked: \(String(format: "%.1f", totalHours)) hours across \(workSegments.count) work segments"
+            if let existingNotes = workOrder.notes {
+                workOrder.notes = existingNotes + hoursInfo
+            } else {
+                workOrder.notes = "Work completed." + hoursInfo
+            }
             
             // Create audit trail entry
-            createAuditTrailEntry(for: workOrder, action: "completed", details: "Total hours: \(String(format: "%.1f", totalHours))")
+            createAuditTrailEntry(for: workOrder, action: "completed", details: "Total hours: \(String(format: "%.1f", totalHours)), Segments: \(workSegments.count)")
             
             do {
                 try viewContext.save()
+                
+                // Post notification for work order completion
+                CoreDataNotificationCenter.postWorkOrderNotification(
+                    type: .completed,
+                    workOrder: workOrder
+                )
                 
                 // Lock the work order
                 operationState = .locked
@@ -1015,9 +1204,66 @@ struct WorkOrderDetailView: View {
     }
     
     private func createAuditTrailEntry(for workOrder: WorkOrder, action: String, details: String = "") {
-        // TODO: Implement audit trail creation
-        // This would create an AuditTrail entity with all available context information
-        print("Audit: Work Order \(workOrder.title ?? "") - \(action) - \(details)")
+        // Create audit trail entry using actual AuditTrail entity schema
+        let auditEntry = AuditTrail(context: viewContext)
+        auditEntry.id = UUID()
+        auditEntry.createdAt = Date()
+        
+        // Store action in notes field or appropriate field
+        let auditDescription = "WorkOrder Action: \(action)"
+        
+        // Build comprehensive audit information
+        var auditInfo: [String] = [auditDescription]
+        
+        if !details.isEmpty {
+            auditInfo.append("Details: \(details)")
+        }
+        
+        // Add contextual information
+        auditInfo.append("Work Order: \(workOrder.title ?? "Untitled")")
+        auditInfo.append("Status: \(workOrder.status ?? "Unknown")")
+        auditInfo.append("Grow: \(workOrder.grow?.title ?? "Unknown")")
+        auditInfo.append("Location: \(workOrder.grow?.locationName ?? "Unknown")")
+        
+        // Team information
+        if let team = selectedTeam {
+            auditInfo.append("Team: \(team.name ?? "Unnamed") (\(team.activeMembers().count) members)")
+            let memberNames = team.activeMembers().map { $0.name ?? "Unknown" }.joined(separator: ", ")
+            auditInfo.append("Members: \(memberNames)")
+        }
+        
+        // Current work progress
+        auditInfo.append("Total Hours: \(String(format: "%.1f", totalHours))")
+        auditInfo.append("Completed Segments: \(workSegments.count)")
+        auditInfo.append("Operation State: \(operationState.displayText)")
+        
+        // Amendment information
+        if !selectedAmendments.isEmpty {
+            let amendmentNames = selectedAmendments.map { $0.productName }.joined(separator: ", ")
+            auditInfo.append("Amendments Applied: \(amendmentNames)")
+        }
+        
+        // Use available fields from AuditTrail entity
+        // Based on schema: id, createdAt, auditHash, shortHash, longHash, inspectionType, inspectorName, etc.
+        auditEntry.inspectionType = "WorkOrder" // Use this to categorize as work order audit
+        auditEntry.inspectorName = "System" // Could be current user in real implementation
+        
+        // Store detailed information in available text fields
+        // Since there's no general "details" field, we can use inspection file path as a notes field
+        auditEntry.inspectionFilePath = auditInfo.joined(separator: " | ")
+        
+        // Create hash for integrity
+        let auditString = auditInfo.joined(separator: "")
+        auditEntry.auditHash = auditString.hash.description
+        auditEntry.shortHash = String(auditString.hash.description.prefix(8))
+        auditEntry.longHash = auditString.hash.description
+        
+        do {
+            try viewContext.save()
+            print("Audit: Work Order \(workOrder.title ?? "") - \(action) - \(details)")
+        } catch {
+            print("Error saving audit trail entry: \(error)")
+        }
     }
     
     private func formattedDate(_ date: Date) -> String {
