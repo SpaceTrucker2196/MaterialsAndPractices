@@ -196,7 +196,7 @@ public extension SupplierSource {
         isOrganicCertified: Bool = false
     ) -> SupplierSource {
         let supplier = SupplierSource(context: context)
-        supplier.guid = guid
+        supplier.id = guid
         supplier.name = name
         supplier.kind = kind
         supplier.isOrganicCertified = isOrganicCertified
@@ -260,7 +260,7 @@ public extension SupplierSource {
 
     static func fetch(withID guid: UUID) -> NSFetchRequest<SupplierSource> {
         let request: NSFetchRequest<SupplierSource> = SupplierSource.fetchRequest()
-        request.predicate = NSPredicate(format: "%K == %@", #keyPath(SupplierSource.guid), guid as CVarArg)
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(SupplierSource.id), guid as CVarArg)
         request.fetchLimit = 1
         return request
     }

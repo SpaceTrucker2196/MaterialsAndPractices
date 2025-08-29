@@ -93,7 +93,7 @@ struct CultivarDetailView: View {
         }
         .sheet(isPresented: $showingNewSupplierCreation) {
             CreateSupplierView(
-                suppierKind: SupplierKind.seed,
+                supplierKind: SupplierKind.seed,
                 isPresented: $showingNewSupplierCreation,
                 onSupplierCreated: { supplier in
                     associateSupplierWithCultivar(supplier)
