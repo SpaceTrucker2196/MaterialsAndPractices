@@ -175,6 +175,8 @@ xcodebuild test \
 
 #### Core Source Files
 - `MaterialsAndPractices/MaterialsAndPracticesApp.swift` - Main app entry point
+- `MaterialsAndPractices/Configuration/AppTheme.swift` - Centralized design system (colors, typography)
+- `MaterialsAndPractices/Configuration/SecureConfiguration.swift` - App configuration and settings
 - `MaterialsAndPractices/Farm/` - Farm management views and logic
 - `MaterialsAndPractices/TimeKeeping/` - Time clock system implementation
 - `MaterialsAndPractices/Material/` - Harvest and cultivation tracking
@@ -188,6 +190,13 @@ xcodebuild test \
 #### Important Data Files
 - `vegetable_cultivars_master.csv` - USDA plant cultivar data (303KB)
 - `vegetable_cultivars_master_enriched_with_family_common.csv` - Enhanced cultivar data (210KB)
+
+#### Documentation Files (Reference These)
+- `README.md` - Comprehensive project overview and test coverage details
+- `ARCHITECTURE.md` - Detailed architecture patterns and clean architecture implementation
+- `COLOR_THEME_DOCUMENTATION.md` - Dual-theme system (light/dark mode) documentation
+- `USER_GUIDE.md` - Complete user guide for application features
+- `HELP_SYSTEM_INTEGRATION.md` - Localization and help system integration details
 
 ### Performance Expectations
 - **App Launch**: 30-60 seconds in simulator (includes Core Data setup)
@@ -250,7 +259,10 @@ sudo xcodebuild -downloadPlatform iOS
 ### Architecture Guidelines
 - Follow Clean Architecture with Domain, Use Cases, Interface Adapters, and Frameworks layers
 - Use SwiftUI for all UI components with adaptive layouts
+- **Theme System**: Always use `AppTheme.Colors` and `AppTheme.Typography` instead of hardcoded values
+- **Dual Themes**: Support both light mode (farm theme) and dark mode (retro phosphor theme)
 - Implement proper Core Data relationships and migrations
 - Maintain device-aware responsive design for iPhone and iPad
+- Use `SecureConfiguration` for app settings and user preferences
 
 This comprehensive guide ensures efficient development while maintaining the high-quality standards expected for iOS applications targeting organic farming operations.
