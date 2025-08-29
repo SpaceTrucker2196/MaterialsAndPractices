@@ -1,516 +1,280 @@
 //
-//  SupplierManagementViews.swift
+//  SupplierSource+Extensions.swift
 //  MaterialsAndPractices
 //
-//  Supporting views for supplier management including selection, creation, and detail views.
-//  Provides comprehensive supplier management capabilities integrated with cultivar and 
-//  amendment management workflows.
-//
-//  Created by AI Assistant on current date.
+//  Non-conflicting extensions for the Core Data–generated SupplierSource class.
+//  Adds convenience APIs, formatting, validation, and fetch helpers.
+//  NOTE: Does not redeclare any @NSManaged properties.
 //
 
-import SwiftUI
+import Foundation
 import CoreData
 
-// MARK: - Supplier Selection View
+// ============================================================
+// MARK: - Lightweight Type Helpers
+// ============================================================
 
-/// View for selecting existing suppliers for association with cultivars
-struct SupplierSelectionView: View {
-    // MARK: - Properties
-    
-    let cultivar: Cultivar
-    @Binding var isPresented: Bool
-    let onSupplierSelected: (SupplierSource) -> Void
-    
-    // MARK: - Environment
-    
-    @Environment(\.managedObjectContext) private var viewContext
-    
-    // MARK: - Fetch Request
-    
-    @FetchRequest var suppliers: FetchedResults<SupplierSource>
-    
-    // MARK: - State
-    
-    @State private var searchText = ""
-    
-    // MARK: - Initialization
-    
-    init(cultivar: Cultivar, isPresented: Binding<Bool>, onSupplierSelected: @escaping (SupplierSource) -> Void) {
-        self.cultivar = cultivar
-        self._isPresented = isPresented
-        self.onSupplierSelected = onSupplierSelected
-        
-        // Initialize fetch request for seed suppliers
-        self._suppliers = FetchRequest(
-            entity: SupplierSource.entity(),
-            sortDescriptors: [NSSortDescriptor(keyPath: \SupplierSource.name, ascending: true)],
-            predicate: NSPredicate(format: "supplierType == %@", SupplierSource.SupplierType.seed.rawValue)
-        )
-    }
-    
-    // MARK: - Body
-    
-    var body: some View {
-        NavigationView {
-            VStack {
-                // Search bar
-                SearchBar(text: $searchText, placeholder: "Search suppliers...")
-                
-                // Supplier list
-                List(filteredSuppliers, id: \.id) { supplier in
-                    Button(action: {
-                        onSupplierSelected(supplier)
-                        isPresented = false
-                    }) {
-                        SupplierRowView(supplier: supplier)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-            }
-            .navigationTitle("Select Supplier")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        isPresented = false
-                    }
-                }
-            }
+public enum SupplierKind: String, CaseIterable, Codable {
+    case seed
+    case fertilizer
+    case amendment
+    case equipment
+    case service
+    case packaging
+    case transport
+    case other
+}
+
+public extension SupplierKind {
+    var displayName: String {
+        switch self {
+        case .seed: return "Seed"
+        case .fertilizer: return "Fertilizer"
+        case .amendment: return "Amendment"
+        case .equipment: return "Equipment"
+        case .service: return "Service"
+        case .packaging: return "Packaging"
+        case .transport: return "Transport"
+        case .other: return "Other"
         }
     }
-    
-    // MARK: - Computed Properties
-    
-    private var filteredSuppliers: [SupplierSource] {
-        if searchText.isEmpty {
-            return Array(suppliers)
-        } else {
-            return suppliers.filter { supplier in
-                (supplier.name?.lowercased().contains(searchText.lowercased()) ?? false) ||
-                (supplier.contactPerson?.lowercased().contains(searchText.lowercased()) ?? false)
-            }
+
+    var icon: String {
+        switch self {
+        case .seed: return "leaf"
+        case .fertilizer: return "drop.triangle"
+        case .amendment: return "leaf.circle"
+        case .equipment: return "wrench.and.screwdriver"
+        case .service: return "person.2"
+        case .packaging: return "shippingbox"
+        case .transport: return "truck.box"
+        case .other: return "building.2"
         }
     }
 }
 
-// MARK: - Create Supplier View
+// ============================================================
+// MARK: - SupplierSource Extensions
+// ============================================================
 
-/// View for creating new suppliers
-struct CreateSupplierView: View {
-    // MARK: - Properties
-    
-    let supplierType: SupplierSource.SupplierType
-    @Binding var isPresented: Bool
-    let onSupplierCreated: (SupplierSource) -> Void
-    
-    // MARK: - Environment
-    
-    @Environment(\.managedObjectContext) private var viewContext
-    
-    // MARK: - State
-    
-    @State private var name = ""
-    @State private var contactPerson = ""
-    @State private var phoneNumber = ""
-    @State private var email = ""
-    @State private var address = ""
-    @State private var city = ""
-    @State private var state = ""
-    @State private var zipCode = ""
-    @State private var websiteURL = ""
-    @State private var isOrganicCertified = false
-    @State private var certificationNumber = ""
-    @State private var certificationExpiryDate = Date()
-    @State private var notes = ""
-    
-    // MARK: - Body
-    
-    var body: some View {
-        NavigationView {
-            Form {
-                Section("Basic Information") {
-                    TextField("Company Name", text: $name)
-                    TextField("Contact Person", text: $contactPerson)
-                    TextField("Phone Number", text: $phoneNumber)
-                        .keyboardType(.phonePad)
-                    TextField("Email", text: $email)
-                        .keyboardType(.emailAddress)
-                        .autocapitalization(.none)
-                }
-                
-                Section("Address") {
-                    TextField("Street Address", text: $address)
-                    TextField("City", text: $city)
-                    TextField("State", text: $state)
-                    TextField("ZIP Code", text: $zipCode)
-                        .keyboardType(.numberPad)
-                }
-                
-                Section("Additional Information") {
-                    TextField("Website URL", text: $websiteURL)
-                        .keyboardType(.URL)
-                        .autocapitalization(.none)
-                    
-                    Toggle("Organic Certified", isOn: $isOrganicCertified)
-                    
-                    if isOrganicCertified {
-                        TextField("Certification Number", text: $certificationNumber)
-                        DatePicker("Certification Expires", selection: $certificationExpiryDate, displayedComponents: .date)
-                    }
-                }
-                
-                Section("Notes") {
-                    TextField("Notes", text: $notes, axis: .vertical)
-                        .lineLimit(3...6)
-                }
+public extension SupplierSource {
+    /// Safe typed accessor mapping the `supplierType` String to a `SupplierKind`
+    var kind: SupplierKind {
+        get {
+            SupplierKind(rawValue: supplierType?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .lowercased() ?? "") ?? .other
+        }
+        set { supplierType = newValue.rawValue }
+    }
+
+    /// Back-compat type alias (old code may have used `SupplierSource.SupplierType`)
+    typealias SupplierType = SupplierKind
+    var supplierTypeEnum: SupplierKind { kind }
+}
+
+// MARK: - Computed Convenience
+
+public extension SupplierSource {
+    var isCertified: Bool { isOrganicCertified }
+
+    var isCertificationExpired: Bool {
+        guard let expiry = certificationExpiryDate else { return false }
+        return expiry < Date()
+    }
+
+    var daysUntilExpiry: Int? {
+        guard let expiry = certificationExpiryDate else { return nil }
+        let start = Calendar.current.startOfDay(for: Date())
+        let end = Calendar.current.startOfDay(for: expiry)
+        return Calendar.current.dateComponents([.day], from: start, to: end).day
+    }
+
+    var formattedAddressSingleLine: String {
+        [address, city, state, zipCode]
+            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .joined(separator: ", ")
+    }
+
+    var formattedAddressMultiLine: String {
+        let street = (address ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let locality = [city, state, zipCode]
+            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .joined(separator: ", ")
+        return [street, locality].filter { !$0.isEmpty }.joined(separator: "\n")
+    }
+
+    var fullAddress: String { formattedAddressSingleLine }
+
+    var formattedPhoneNumber: String? {
+        guard let raw = phoneNumber?.filter({ $0.isNumber }), !raw.isEmpty else { return nil }
+        if raw.count == 10 {
+            let a = raw.prefix(3)
+            let b = raw.dropFirst(3).prefix(3)
+            let c = raw.suffix(4)
+            return "(\(a)) \(b)-\(c)"
+        }
+        return phoneNumber
+    }
+
+    var websiteURLValue: URL? {
+        guard let s = websiteURL?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !s.isEmpty else { return nil }
+        if let url = URL(string: s), url.scheme != nil { return url }
+        return URL(string: "https://\(s)")
+    }
+
+    var displayName: String {
+        (name?.trimmingCharacters(in: .whitespacesAndNewlines))
+            .flatMap { $0.isEmpty ? nil : $0 } ?? "Unnamed Supplier"
+    }
+
+    var contactSummary: String {
+        let person = contactPerson?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let phone = formattedPhoneNumber ?? ""
+        let email = self.email?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return [person, phone, email].filter { !$0.isEmpty }.joined(separator: " • ")
+    }
+
+    var certificationStatusText: String {
+        guard isOrganicCertified else { return "Not organic certified" }
+        if let d = certificationExpiryDate {
+            if d < Date() { return "Organic certified (expired)" }
+            if let days = daysUntilExpiry { return "Organic certified (expires in \(days) days)" }
+        }
+        return "Organic certified"
+    }
+}
+
+// ============================================================
+// MARK: - Validation
+// ============================================================
+
+public struct SupplierSourceValidationError: LocalizedError, Equatable {
+    public let message: String
+    public var errorDescription: String? { message }
+    public static func field(_ name: String, _ issue: String) -> SupplierSourceValidationError {
+        .init(message: "\(name): \(issue)")
+    }
+}
+
+public extension SupplierSource {
+    func validateForSave() -> [SupplierSourceValidationError] {
+        var issues: [SupplierSourceValidationError] = []
+
+        if displayName == "Unnamed Supplier" {
+            issues.append(.field("name", "is required"))
+        }
+        if let email = email, !email.isEmpty, !email.contains("@") {
+            issues.append(.field("email", "appears invalid"))
+        }
+        if isCertified {
+            if certificationNumber?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty != false {
+                issues.append(.field("certificationNumber", "is required when organic certified"))
             }
-            .navigationTitle("New \(supplierType.displayName) Supplier")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        isPresented = false
-                    }
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
-                        saveSupplier()
-                    }
-                    .disabled(name.isEmpty)
-                }
+            if certificationExpiryDate == nil {
+                issues.append(.field("certificationExpiryDate", "is required when organic certified"))
             }
         }
+        return issues
     }
-    
-    // MARK: - Actions
-    
-    private func saveSupplier() {
-        let supplier = SupplierSource.create(in: viewContext, name: name, type: supplierType)
-        
-        supplier.contactPerson = contactPerson.isEmpty ? nil : contactPerson
-        supplier.phoneNumber = phoneNumber.isEmpty ? nil : phoneNumber
-        supplier.email = email.isEmpty ? nil : email
-        supplier.address = address.isEmpty ? nil : address
-        supplier.city = city.isEmpty ? nil : city
-        supplier.state = state.isEmpty ? nil : state
-        supplier.zipCode = zipCode.isEmpty ? nil : zipCode
-        supplier.websiteURL = websiteURL.isEmpty ? nil : websiteURL
+}
+
+// ============================================================
+// MARK: - Convenience Initializers / Upserts
+// ============================================================
+
+public extension SupplierSource {
+    @discardableResult
+    static func insert(
+        in context: NSManagedObjectContext,
+        guid: UUID = UUID(),
+        name: String,
+        kind: SupplierKind = .other,
+        isOrganicCertified: Bool = false
+    ) -> SupplierSource {
+        let supplier = SupplierSource(context: context)
+        supplier.guid = guid
+        supplier.name = name
+        supplier.kind = kind
         supplier.isOrganicCertified = isOrganicCertified
-        supplier.certificationNumber = certificationNumber.isEmpty ? nil : certificationNumber
-        supplier.certificationExpiryDate = isOrganicCertified ? certificationExpiryDate : nil
-        supplier.notes = notes.isEmpty ? nil : notes
-        
-        do {
-            try viewContext.save()
-            onSupplierCreated(supplier)
-            isPresented = false
-        } catch {
-            print("Error saving supplier: \(error)")
-        }
+        return supplier
+    }
+
+    @discardableResult
+    static func create(in context: NSManagedObjectContext, name: String, type: SupplierKind) -> SupplierSource {
+        insert(in: context, name: name, kind: type)
+    }
+
+    func apply(
+        name: String? = nil,
+        contactPerson: String? = nil,
+        email: String? = nil,
+        phoneNumber: String? = nil,
+        address: String? = nil,
+        city: String? = nil,
+        state: String? = nil,
+        zipCode: String? = nil,
+        websiteURL: String? = nil,
+        kind: SupplierKind? = nil,
+        isOrganicCertified: Bool? = nil,
+        certificationNumber: String? = nil,
+        certificationExpiryDate: Date? = nil,
+        notes: String? = nil,
+        faxNumber: String? = nil
+    ) {
+        if let name { self.name = name }
+        if let contactPerson { self.contactPerson = contactPerson }
+        if let email { self.email = email }
+        if let phoneNumber { self.phoneNumber = phoneNumber }
+        if let address { self.address = address }
+        if let city { self.city = city }
+        if let state { self.state = state }
+        if let zipCode { self.zipCode = zipCode }
+        if let websiteURL { self.websiteURL = websiteURL }
+        if let kind { self.kind = kind }
+        if let isOrganicCertified { self.isOrganicCertified = isOrganicCertified }
+        if let certificationNumber { self.certificationNumber = certificationNumber }
+        if let certificationExpiryDate { self.certificationExpiryDate = certificationExpiryDate }
+        if let notes { self.notes = notes }
+        if let faxNumber { self.faxNumber = faxNumber }
     }
 }
 
-// MARK: - Supplier Detail View
+// ============================================================
+// MARK: - Fetch Helpers
+// ============================================================
 
-/// Detailed view for individual suppliers
-struct SupplierDetailView: View {
-    // MARK: - Properties
-    
-    @ObservedObject var supplier: SupplierSource
-    
-    // MARK: - Environment
-    
-    @Environment(\.managedObjectContext) private var viewContext
-    
-    // MARK: - State
-    
-    @State private var showingEditMode = false
-    
-    // MARK: - Body
-    
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
-                // Header with basic info
-                supplierHeaderSection
-                
-                // Contact information
-                contactInformationSection
-                
-                // Certification status
-                certificationSection
-                
-                // Associated products
-                associatedProductsSection
-            }
-            .padding()
-        }
-        .navigationTitle(supplier.displayName)
-        .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Edit") {
-                    showingEditMode = true
-                }
-            }
-        }
-        .sheet(isPresented: $showingEditMode) {
-            EditSupplierView(supplier: supplier, isPresented: $showingEditMode)
-        }
+public extension SupplierSource {
+    static func fetchRequestSortedByName() -> NSFetchRequest<SupplierSource> {
+        let request: NSFetchRequest<SupplierSource> = SupplierSource.fetchRequest()
+        request.sortDescriptors = [
+            NSSortDescriptor(key: #keyPath(SupplierSource.name),
+                             ascending: true,
+                             selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))
+        ]
+        return request
     }
-    
-    // MARK: - View Components
-    
-    private var supplierHeaderSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            HStack {
-                Image(systemName: supplier.supplierTypeEnum?.icon ?? "building.2")
-                    .foregroundColor(AppTheme.Colors.primary)
-                    .font(.title)
-                
-                VStack(alignment: .leading) {
-                    Text(supplier.displayName)
-                        .font(AppTheme.Typography.displaySmall)
-                        .fontWeight(.bold)
-                    
-                    if let type = supplier.supplierTypeEnum {
-                        Text(type.displayName)
-                            .font(AppTheme.Typography.bodyMedium)
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                    }
-                }
-                
-                Spacer()
-            }
-        }
-    }
-    
-    private var contactInformationSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            Text("Contact Information")
-                .font(AppTheme.Typography.headlineMedium)
-                .fontWeight(.semibold)
-            
-            VStack(spacing: AppTheme.Spacing.small) {
-                if let contact = supplier.contactPerson {
-                    InfoRow(label: "Contact Person", value: contact, icon: "person.fill")
-                }
-                
-                if let phone = supplier.phoneNumber {
-                    InfoRow(label: "Phone", value: phone, icon: "phone.fill")
-                }
-                
-                if let email = supplier.email {
-                    InfoRow(label: "Email", value: email, icon: "envelope.fill")
-                }
-                
-                if !supplier.fullAddress.isEmpty {
-                    InfoRow(label: "Address", value: supplier.fullAddress, icon: "location.fill")
-                }
-                
-                if let website = supplier.websiteURL {
-                    InfoRow(label: "Website", value: website, icon: "globe")
-                }
-            }
-        }
-    }
-    
-    private var certificationSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            Text("Certification Status")
-                .font(AppTheme.Typography.headlineMedium)
-                .fontWeight(.semibold)
-            
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                HStack {
-                    Image(systemName: supplier.isOrganicCertified ? "checkmark.seal.fill" : "xmark.seal.fill")
-                        .foregroundColor(supplier.isOrganicCertified ? AppTheme.Colors.organicPractice : AppTheme.Colors.textSecondary)
-                    
-                    Text(supplier.certificationStatusText)
-                        .font(AppTheme.Typography.bodyMedium)
-                        .foregroundColor(AppTheme.Colors.textPrimary)
-                }
-                
-                if let certNumber = supplier.certificationNumber {
-                    InfoRow(label: "Certification Number", value: certNumber, icon: "number")
-                }
-            }
-            .padding()
-            .background(AppTheme.Colors.backgroundSecondary)
-            .cornerRadius(AppTheme.CornerRadius.medium)
-        }
-    }
-    
-    private var associatedProductsSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            Text("Associated Products")
-                .font(AppTheme.Typography.headlineMedium)
-                .fontWeight(.semibold)
-            
-            if supplier.productCount == 0 {
-                Text("No associated products")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(AppTheme.Colors.backgroundSecondary)
-                    .cornerRadius(AppTheme.CornerRadius.medium)
-            } else {
-                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                    Text("\(supplier.cultivarsArray.count) cultivar(s)")
-                        .font(AppTheme.Typography.bodyMedium)
-                    
-                    Text("\(supplier.cropAmendmentsArray.count) amendment(s)")
-                        .font(AppTheme.Typography.bodyMedium)
-                }
-                .padding()
-                .background(AppTheme.Colors.backgroundSecondary)
-                .cornerRadius(AppTheme.CornerRadius.medium)
-            }
-        }
-    }
-}
 
-// MARK: - Supporting Views
-
-/// Search bar component
-struct SearchBar: View {
-    @Binding var text: String
-    let placeholder: String
-    
-    var body: some View {
-        HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(AppTheme.Colors.textSecondary)
-            
-            TextField(placeholder, text: $text)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-        }
-        .padding(.horizontal)
+    static func fetch(withID guid: UUID) -> NSFetchRequest<SupplierSource> {
+        let request: NSFetchRequest<SupplierSource> = SupplierSource.fetchRequest()
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(SupplierSource.guid), guid as CVarArg)
+        request.fetchLimit = 1
+        return request
     }
-}
 
-/// Information row component
-struct InfoRow: View {
-    let label: String
-    let value: String
-    let icon: String
-    
-    var body: some View {
-        HStack(spacing: AppTheme.Spacing.medium) {
-            Image(systemName: icon)
-                .foregroundColor(AppTheme.Colors.primary)
-                .frame(width: 20)
-            
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                Text(label)
-                    .font(AppTheme.Typography.labelMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-                
-                Text(value)
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-            }
-            
-            Spacer()
-        }
-    }
-}
-
-// MARK: - Edit Supplier View (Placeholder)
-
-/// Edit supplier view (placeholder implementation)
-struct EditSupplierView: View {
-    @ObservedObject var supplier: SupplierSource
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        NavigationView {
-            Text("Edit Supplier - Coming Soon")
-                .navigationTitle("Edit Supplier")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel") {
-                            isPresented = false
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Save") {
-                            isPresented = false
-                        }
-                    }
-                }
-        }
-    }
-}
-
-// MARK: - Additional Placeholder Views
-
-/// Create grow from cultivar view (placeholder)
-struct CreateGrowFromCultivarView: View {
-    let cultivar: Cultivar
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        NavigationView {
-            Text("Create Grow from \(cultivar.displayName) - Coming Soon")
-                .navigationTitle("New Grow")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel") {
-                            isPresented = false
-                        }
-                    }
-                }
-        }
-    }
-}
-
-/// Cultivar grows list view (placeholder)
-struct CultivarGrowsListView: View {
-    let cultivar: Cultivar
-    
-    var body: some View {
-        List {
-            ForEach(cultivar.growsArray, id: \.self) { grow in
-                Text(grow.title ?? "Untitled Grow")
-            }
-        }
-        .navigationTitle("Grows for \(cultivar.displayName)")
-    }
-}
-
-/// Create amendment view (placeholder)
-struct CreateAmendmentView: View {
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        NavigationView {
-            Text("Create New Amendment - Coming Soon")
-                .navigationTitle("New Amendment")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel") {
-                            isPresented = false
-                        }
-                    }
-                }
-        }
-    }
-}
-
-/// Amendment detail view (placeholder)
-struct AmendmentDetailView: View {
-    let amendment: CropAmendment
-    
-    var body: some View {
-        Text("Amendment Detail for \(amendment.displayName) - Coming Soon")
-            .navigationTitle(amendment.displayName)
+    static func search(_ query: String) -> NSFetchRequest<SupplierSource> {
+        let request: NSFetchRequest<SupplierSource> = SupplierSource.fetchRequest()
+        let q = query as NSString
+        request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(SupplierSource.name), q),
+            NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(SupplierSource.contactPerson), q),
+            NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(SupplierSource.city), q),
+            NSPredicate(format: "%K CONTAINS[cd] %@", #keyPath(SupplierSource.state), q)
+        ])
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(SupplierSource.name), ascending: true)]
+        return request
     }
 }

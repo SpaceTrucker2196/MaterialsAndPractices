@@ -48,7 +48,7 @@ extension SwiftUI.Image {
 
 /// Comprehensive cultivar detail view displaying all cultivar information,
 /// associated active grows, and historical completed grows with navigation support
-struct CultivarDetailView: View {
+struct CultivarGrowView: View {
     let cultivar: Cultivar
     @Environment(\.managedObjectContext) private var viewContext
     

@@ -51,7 +51,7 @@ struct CultivarDetailView: View {
         self._seedSuppliers = FetchRequest(
             entity: SupplierSource.entity(),
             sortDescriptors: [NSSortDescriptor(keyPath: \SupplierSource.name, ascending: true)],
-            predicate: NSPredicate(format: "supplierType == %@", SupplierSource.SupplierType.seed.rawValue)
+            predicate: NSPredicate(format: "supplierType == %@", SupplierKind.seed.rawValue)
         )
     }
     
@@ -93,7 +93,7 @@ struct CultivarDetailView: View {
         }
         .sheet(isPresented: $showingNewSupplierCreation) {
             CreateSupplierView(
-                supplierType: .seed,
+                suppierKind: SupplierKind.seed,
                 isPresented: $showingNewSupplierCreation,
                 onSupplierCreated: { supplier in
                     associateSupplierWithCultivar(supplier)
@@ -305,19 +305,19 @@ struct CultivarDetailView: View {
             
             VStack(spacing: AppTheme.Spacing.medium) {
                 if let soilInfo = cultivar.soilInfo {
-                    DetailSection(title: "Soil Requirements", content: soilInfo, icon: "globe.americas")
+                    GrowCultivarDetailSection(title: "Soil Requirements", content: soilInfo, icon: "globe.americas")
                 }
                 
                 if let growingAdvice = cultivar.growingAdvice {
-                    DetailSection(title: "Growing Advice", content: growingAdvice, icon: "lightbulb")
+                    GrowCultivarDetailSection(title: "Growing Advice", content: growingAdvice, icon: "lightbulb")
                 }
                 
                 if let harvestInstructions = cultivar.harvestInstructions {
-                    DetailSection(title: "Harvest Instructions", content: harvestInstructions, icon: "basket.fill")
+                    GrowCultivarDetailSection(title: "Harvest Instructions", content: harvestInstructions, icon: "basket.fill")
                 }
                 
                 if let pests = cultivar.pests {
-                    DetailSection(title: "Common Pests", content: pests, icon: "ladybug")
+                    GrowCultivarDetailSection(title: "Common Pests", content: pests, icon: "ladybug")
                 }
             }
         }
@@ -442,7 +442,7 @@ struct InfoCard: View {
 }
 
 /// Detailed section for cultivation information
-struct DetailSection: View {
+struct GrowCultivarDetailSection: View {
     let title: String
     let content: String
     let icon: String
@@ -476,7 +476,7 @@ struct SupplierRowView: View {
     var body: some View {
         HStack(spacing: AppTheme.Spacing.medium) {
             // Supplier type icon
-            Image(systemName: supplier.supplierTypeEnum?.icon ?? "building.2")
+            Image(systemName:"building.2")
                 .foregroundColor(AppTheme.Colors.primary)
                 .frame(width: 24, height: 24)
             
@@ -487,11 +487,11 @@ struct SupplierRowView: View {
                     .fontWeight(.medium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
                 
-                if let contact = supplier.primaryContact {
-                    Text(contact)
-                        .font(AppTheme.Typography.bodySmall)
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                }
+//                if let contact = supplier.primaryContact {
+//                    Text(contact)
+//                        .font(AppTheme.Typography.bodySmall)
+//                        .foregroundColor(AppTheme.Colors.textSecondary)
+//                }
                 
                 // Certification status
                 HStack {
@@ -536,31 +536,33 @@ extension Cultivar {
     }
 }
 
-// MARK: - Preview Provider
-
-struct CultivarDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            CultivarDetailView(cultivar: PreviewData.sampleCultivar)
-        }
-        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-    }
-}
 
 // MARK: - Preview Data
 
-extension PreviewData {
-    static var sampleCultivar: Cultivar {
-        let context = PersistenceController.preview.container.viewContext
-        let cultivar = Cultivar(context: context)
-        cultivar.name = "Cherokee Purple Tomato"
-        cultivar.commonName = "Heirloom Tomato"
-        cultivar.family = "Solanaceae"
-        cultivar.season = "Summer"
-        cultivar.growingDays = "80-90"
-        cultivar.emoji = "🍅"
-        cultivar.isOrganicCertified = true
-        cultivar.cultivarDescription = "A beautiful heirloom tomato with deep purple shoulders and rich, complex flavor."
-        return cultivar
-    }
-}
+//extension PreviewData {
+//    static var sampleCultivar: Cultivar {
+//        let context = PersistenceController.preview.container.viewContext
+//        let cultivar = Cultivar(context: context)
+//        cultivar.name = "Cherokee Purple Tomato"
+//        cultivar.commonName = "Heirloom Tomato"
+//        cultivar.family = "Solanaceae"
+//        cultivar.season = "Summer"
+//        cultivar.growingDays = "80-90"
+//        cultivar.emoji = "🍅"
+//        cultivar.isOrganicCertified = true
+//        cultivar.cultivarDescription = "A beautiful heirloom tomato with deep purple shoulders and rich, complex flavor."
+//        return cultivar
+//    }
+//}
+//
+//// MARK: - Preview Provider
+//
+//struct CultivarDetailView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        NavigationView {
+//            CultivarDetailView(cultivar: PreviewData.sampleCultivar)
+//        }
+//        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+//    }
+//}
+

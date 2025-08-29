@@ -645,7 +645,7 @@
         <attribute name="contactPerson" optional="YES" attributeType="String"/>
         <attribute name="email" optional="YES" attributeType="String"/>
         <attribute name="faxNumber" optional="YES" attributeType="String"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="guid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isOrganicCertified" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String" defaultValueString=""/>
         <attribute name="notes" optional="YES" attributeType="String"/>
@@ -657,7 +657,7 @@
         <relationship name="cropAmendments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CropAmendment" inverseName="supplier" inverseEntity="CropAmendment"/>
         <relationship name="cultivars" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cultivar" inverseName="seedSources" inverseEntity="Cultivar"/>
         <fetchIndex name="byIdIndex">
-            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+            <fetchIndexElement property="guid" type="Binary" order="ascending"/>
         </fetchIndex>
         <fetchIndex name="byNameIndex">
             <fetchIndexElement property="name" type="Binary" order="ascending"/>

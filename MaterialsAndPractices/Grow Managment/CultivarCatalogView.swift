@@ -379,7 +379,7 @@ struct CultivarRowView: View {
 }
 
 /// Filter chip component for quick filtering
-struct FilterChip: View {
+struct CultivarFilterChip: View {
     let title: String
     let isSelected: Bool
     let icon: String?
