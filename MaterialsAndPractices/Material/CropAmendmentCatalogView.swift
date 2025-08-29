@@ -22,7 +22,7 @@ import CoreData
 
 /// Main amendment catalog view with comprehensive management capabilities
 /// Serves as the central hub for farm amendment inventory and compliance tracking
-struct AmendmentCatalogView: View {
+struct CropAmendmentCatalogView: View {
     // MARK: - Environment Properties
     
     @Environment(\.managedObjectContext) private var viewContext
@@ -135,7 +135,7 @@ struct AmendmentCatalogView: View {
                 filterSheet
             }
             .sheet(isPresented: $showingNewAmendment) {
-                CreateAmendmentView(isPresented: $showingNewAmendment)
+              //  CreateAmendmentView(isPresented: $showingNewAmendment)
             }
         }
     }
@@ -206,9 +206,9 @@ struct AmendmentCatalogView: View {
             ForEach(groupedAmendments, id: \.0) { productType, typeAmendments in
                 Section(header: productTypeSectionHeader(productType)) {
                     ForEach(typeAmendments, id: \.amendmentID) { amendment in
-                        NavigationLink(destination: AmendmentDetailView(amendment: amendment)) {
-                            AmendmentRowView(amendment: amendment)
-                        }
+//                        NavigationLink(destination: AmendmentDetailView(amendment: amendment)) {
+//                            AmendmentRowView(amendment: amendment)
+//                        }
                     }
                 }
             }
@@ -541,7 +541,7 @@ struct FilterChip: View {
 
 struct AmendmentCatalogView_Previews: PreviewProvider {
     static var previews: some View {
-        AmendmentCatalogView()
+        CropAmendmentCatalogView()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
