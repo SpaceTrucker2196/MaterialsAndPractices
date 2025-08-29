@@ -35,31 +35,47 @@ This application bridges the gap between daily farm operations and the complex r
 
 ## Getting Started
 
-### System Requirements
+### What You Need
+- iPhone or iPad with iOS 15 or newer
+- Internet connection for syncing data
+- Farm account setup (contact your farm administrator)
 
-### Logging In
-1. Navigate to the Materials and Practices login page
-2. Enter your username and password
-3. Select your farm profile if you manage multiple farms
-4. Click "Login"
+### First Time Setup
+1. Download the Materials and Practices app from the App Store
+2. Open the app and enter your login details
+3. Choose your farm if you work on multiple farms
+4. Allow location access for field mapping
+5. Complete your profile with contact information
 
-### Initial Setup
-1. Complete your farm profile with location, acreage, and certification details
-2. Set up user permissions for farm workers and managers
-3. Import or manually enter your initial materials inventory
-4. Configure notification preferences
+### Learning the App
+The app has built-in help that you can turn on or off:
+1. Go to Settings → Configuration
+2. Turn on "Help System" to see helpful tips
+3. Look for the "Help" button in different screens
+4. Tips are available in English and Spanish
 
 ## Dashboard Overview
 
-The dashboard provides a snapshot of your farm's key metrics and upcoming tasks:
+The main screen shows you the most important information about your farm right now:
 
-- **Activity Calendar**: Shows scheduled activities, applications, and harvests
-- **Materials Summary**: Quick view of input inventory levels with alerts for low stock
-- **Worker Status**: Overview of worker certifications and training status
-- **Compliance Indicators**: Visual markers showing certification status and upcoming deadlines
-- **Recent Activity Feed**: Latest actions taken within the system
+### What You'll See
+- **Today's Tasks**: Work that needs to be done today
+- **Field Status**: Quick view of all your fields and what's growing
+- **Worker Time**: Who's working and their hours for the week
+- **Lease Payments**: Any rent payments coming due soon
+- **Weather Alerts**: Important weather information for your area
+- **Low Inventory**: Materials running low that need reordering
 
-Use the navigation menu on the left side to access specific modules.
+### Navigation Tips
+- **iPhone**: Use the tabs at the bottom to move between sections
+- **iPad**: Use the sidebar on the left to navigate
+- **Help**: Tap any "?" button to get help with that screen
+
+### Urgent Items
+The app shows important items that need your attention:
+- 🔴 Red: Overdue items that need immediate action
+- 🟠 Orange: Items due within 30 days
+- 🟢 Green: Everything is on track
 
 ## Farm Management
 
@@ -85,366 +101,176 @@ Use the navigation menu on the left side to access specific modules.
 3. Assign crops to specific fields
 4. Generate material requirement forecasts based on planned crops
 
+## Soil Health & Testing
+
+Healthy soil is the foundation of good farming. The app helps you track your soil condition and make it better over time.
+
+### Why Soil Testing Matters
+
+Good soil has billions of tiny helpful creatures called microbes. These microbes:
+- Break down compost into food that plants can use
+- Help plants fight off diseases naturally  
+- Make soil hold water better during dry times
+- Keep nutrients from washing away in heavy rain
+
+### When to Test Your Soil
+
+**Test every 2-3 years** if your field management stays the same.
+**Test before planting** new crops or changing how you manage a field.
+**Test when problems happen** like poor plant growth or yellowing leaves.
+**Test after adding lots of compost** or lime to see if it worked.
+
+### Taking Good Soil Samples
+
+The app guides you through proper soil sampling:
+
+**Best Time**: When soil is moist but not muddy (like a wrung-out sponge)
+**How Many**: Take 15-20 random samples across each field
+**How Deep**: 6-8 inches deep for most crops (3-4 inches for pasture)
+**What Tools**: Clean stainless steel tools (not rusty or galvanized)
+**Mix Well**: Combine all samples in a clean plastic bucket
+
+**Avoid These Areas**:
+- Near roads or fence lines
+- Where animals gather regularly
+- Recently fertilized or limed spots
+
+### Understanding Your Test Results
+
+The app shows your results with easy-to-read color charts:
+
+**pH Level (Acidity)**:
+- 6.0-7.0 is best for most crops
+- Below 6.0 means soil is too acidic (add lime)
+- Above 7.5 means soil is too alkaline (add sulfur)
+
+**Organic Matter**:
+- 3-5% is the goal for healthy soil
+- Below 2% means you need more compost
+- Higher organic matter means better soil life
+
+**Nutrients (Phosphorus and Potassium)**:
+- The app shows if levels are low, good, or high
+- Low levels mean you need to add fertilizer
+- High levels mean you have plenty stored up
+
+### Adding Your Test Results
+
+1. Go to **Settings** → **Soil Testing**
+2. Tap **Add Soil Test**
+3. Choose which field you tested
+4. Select your lab or add a new one
+5. Enter the numbers from your test report
+6. Add any notes from the lab
+
+The app will show your results with helpful color charts and track changes over time.
+
+### Fixing Common Soil Problems
+
+**Problem: Plants look pale yellow**
+- Likely cause: Not enough nitrogen
+- Solution: Add compost, blood meal, or other organic nitrogen
+
+**Problem: Purple or red leaves**
+- Likely cause: Not enough phosphorus  
+- Solution: Add bone meal or rock phosphate; check pH
+
+**Problem: Brown leaf edges**
+- Likely cause: Not enough potassium
+- Solution: Add wood ash, granite meal, or greensand
+
+**Problem: Yellow leaves with green veins**
+- Likely cause: Can't get iron (often pH problem)
+- Solution: Lower pH if above 7.5; improve drainage
+
+### Building Healthy Soil
+
+**Add Organic Matter**: Use compost, aged manure, or cover crops
+**Reduce Tillage**: Don't disturb soil more than necessary  
+**Keep Soil Covered**: Use mulch or cover crops
+**Rotate Crops**: Different plants feed different soil microbes
+**Avoid Chemical Fertilizers**: These can kill beneficial soil life
+
 ## Lease Management
 
-The lease management system provides comprehensive tools for managing agricultural lease agreements, tracking payments, and maintaining records for property owners and tax purposes.
+If you rent farmland from others, the app helps you track lease agreements and payments.
 
-### Overview
+### What the Lease System Does
 
-The lease management system includes:
-- Pre-built agricultural lease agreement templates
-- Payment tracking and reminder system
-- Visual indicators for lease status
-- Document generation for property owners
-- Integration with farm dashboard for financial oversight
+- Creates professional lease agreements
+- Tracks when payments are due
+- Shows which fields need lease agreements
+- Generates reports for landowners and taxes
 
-### Creating a New Lease Agreement
+### Creating a New Lease
 
-1. Navigate to "Utilities" → "Lease Management"
-2. Click "New Lease" to start the lease creation workflow
-3. Complete the four-step process:
+1. Go to **Utilities** → **Lease Management**
+2. Tap **New Lease** to start
+3. Follow the 4 steps:
 
-#### Step 1: Template Selection
-- Choose from available lease templates:
-  - **Cash Rent Agricultural Lease**: Fixed annual payment
-  - **Crop Share Agricultural Lease**: Percentage-based sharing
-  - **Flexible Cash Rent Lease**: Rent with price/yield adjustments
-  - **Pasture Grazing Lease**: Livestock grazing agreements
-  - **Custom Farming Agreement**: Services-based arrangements
+**Step 1: Choose Lease Type**
+- **Cash Rent**: Pay a fixed amount each year
+- **Crop Share**: Share a percentage of your harvest
+- **Flexible Rent**: Payment changes based on crop prices
+- **Pasture Lease**: For grazing livestock
+- **Custom Farming**: Pay for specific services
 
-#### Step 2: Basic Information
-- Select the **Growing Year** (current year to 3 years future)
-- Choose the **Property** from your managed properties
-- Select the **Farmer/Tenant** from your contacts
-- Set **Start Date** and **End Date** for the lease period
+**Step 2: Basic Information**
+- Pick the year this lease covers
+- Choose which property/field
+- Select the farmer (tenant)
+- Set start and end dates
 
-#### Step 3: Payment Terms
-- Enter the **Rent Amount** (annual total)
-- Select **Payment Frequency**:
-  - Annual (single payment)
-  - Semi-Annual (two payments)
-  - Quarterly (four payments)
-  - Monthly (twelve payments)
+**Step 3: Payment Details**
+- Enter the total rent amount for the year
+- Choose how often to pay:
+  - Once a year
+  - Twice a year
+  - Four times a year (quarterly)
+  - Every month
 
-#### Step 4: Review and Create
-- Review all lease details for accuracy
-- Click "Create Lease" to generate the agreement
-- The system will create both a Core Data record and a markdown document
+**Step 4: Review and Create**
+- Check all details are correct
+- Tap **Create Lease**
+- App creates the agreement and sets up payment reminders
 
-### Managing Existing Leases
+### Understanding Lease Indicators
 
-#### Viewing Active Leases
-- Access from the main Dashboard "Lease Agreements & Payments" section
-- View lease details including property, farmer, and payment status
-- See upcoming payments and overdue amounts
+The app shows visual signs about your leases:
 
-#### Payment Tracking
-The system automatically calculates payment schedules based on:
-- Lease start and end dates
-- Payment frequency settings
-- Annual rent amount
+- **🟠 Orange $ sign**: Field doesn't have an active lease
+- **🔴 Red warnings**: Payments are overdue  
+- **🟠 Orange warnings**: Payments due within 30 days
+- **No indicator**: Everything is current
 
-Upcoming payments appear on the Dashboard with:
-- 🟠 Orange indicators for payments due within 30 days
-- 🔴 Red indicators for overdue payments
+### Managing Payments
 
-### Visual Lease Status Indicators
+The app automatically:
+- Calculates when payments are due
+- Shows upcoming payments on the dashboard
+- Warns you about overdue payments
+- Tracks payment history
 
-#### Field Tiles
-Field selection interfaces show lease status indicators:
-- 🟠 Orange dollar sign ($): Field not covered by active lease
-- No indicator: Field has active lease coverage
+### Generating Documents
 
-#### Farm Dashboard
-The dashboard displays:
-- Count of active lease agreements
-- Number of urgent payments requiring attention
-- Upcoming payment summaries
-
-### Exporting Documents for Property Owners
-
-#### Individual Lease Export
-1. Navigate to Lease Management
+For tax time or landowner records:
+1. Go to **Lease Management**
 2. Select a specific lease
-3. Use "Export for Property Owner" option
-4. Document includes:
-   - Complete lease summary
-   - Payment schedule for current year
-   - Record-keeping sections for tax purposes
-   - GAAP-compliant formatting
-
-#### Bulk Export
-1. Use "Export All Leases" for year-end reporting
-2. Generates individual documents for each property owner
-3. Creates summary report for your records
-
-### Lease Documentation Features
-
-#### Generated Documents Include:
-- **Property Information**: Location, acreage, contact details
-- **Tenant Information**: Farmer details and organization
-- **Financial Terms**: Rent amounts, payment frequency, responsibilities
-- **Payment Record Tables**: Tracking actual vs. scheduled payments
-- **Tax Documentation**: GAAP-compliant record-keeping guidance
-- **Legal References**: Recommendations for professional consultation
-
-#### File Organization
-- Documents saved to `Documents/LeaseExports/`
-- Timestamped filenames for easy organization
-- Markdown format for universal compatibility
+3. Choose **Export for Property Owner**
+4. App creates a complete document with:
+   - All lease details
+   - Payment schedule and history
+   - Tax record sections
 
 ### Best Practices
 
-#### Record Keeping
-- Export lease documents annually for tax records
-- Maintain signed copies of all lease agreements
-- Track all payments and property-related expenses
-- Consult with tax professionals for proper reporting
+- Review the dashboard weekly for payment reminders
+- Export lease documents each year for tax records
+- Keep signed paper copies of all agreements
+- Update lease terms before they expire
+- Talk to a tax professional about proper reporting
 
-#### Payment Management
-- Review dashboard regularly for upcoming payments
-- Set up reminders for quarterly and annual payments
-- Document any payment adjustments or modifications
-- Keep records of communication with tenants
-
-#### Lease Renewal Process
-- Begin renewal discussions 60-90 days before expiration
-- Review and update rental rates based on market conditions
-- Update lease terms to reflect any property changes
-- Create new lease agreements through the system
-
-## Soil Health & Testing
-
-Soil health monitoring is fundamental to sustainable agriculture and organic certification. Materials and Practices provides comprehensive soil testing tools to help you understand, track, and improve your soil conditions over time.
-
-### Understanding Soil Health
-
-Healthy soil is the foundation of successful organic farming. It's a living ecosystem containing billions of beneficial microorganisms that:
-
-- **Convert organic matter** into plant-available nutrients through natural decomposition processes
-- **Form symbiotic relationships** with plant roots (mycorrhizae) to improve nutrient uptake
-- **Improve soil structure** by creating aggregates that enhance water infiltration and root penetration
-- **Suppress plant diseases** naturally by maintaining beneficial microbial diversity
-- **Cycle nutrients** efficiently, reducing the need for external inputs
-
-### Taking Soil Samples
-
-Following USDA guidelines for accurate soil testing:
-
-#### When to Sample
-- **Every 2-3 years** for established fields under consistent management
-- **Before planting** new crops or changing field management
-- **When problems occur** such as poor growth, yellowing, or disease issues
-- **After major amendments** to monitor changes in soil chemistry
-
-#### Sampling Procedure
-1. **Timing**: Sample when soil is at field moisture capacity (not too wet or dry)
-2. **Distribution**: Take 15-20 random samples across each field or management zone
-3. **Depth**: Sample to 6-8 inches for most crops (3-4 inches for pasture)
-4. **Equipment**: Use clean, stainless steel tools; avoid brass or galvanized equipment
-5. **Mixing**: Thoroughly combine samples in a clean plastic bucket
-6. **Submission**: Submit 1-2 cups of mixed soil to a certified laboratory
-
-#### Avoiding Contamination
-- Don't sample near roads, fence lines, or areas where animals congregate
-- Avoid recently fertilized or limed areas
-- Keep samples separate for different fields or soil types
-- Label samples clearly with field identification and date
-
-### Understanding Soil Test Results
-
-#### pH Level (Soil Acidity/Alkalinity)
-- **Range**: 0-14 scale, with 7.0 being neutral
-- **Optimal for most crops**: 6.0-7.0
-- **Below 6.0**: Acidic conditions; nutrients like phosphorus become less available
-- **Above 7.5**: Alkaline conditions; iron and manganese may become unavailable
-- **Impact on microbes**: Most beneficial soil organisms prefer near-neutral pH
-
-#### Organic Matter Content
-- **Target range**: 3-5% for healthy agricultural soils
-- **Below 2%**: Low biological activity, poor nutrient cycling
-- **Above 3%**: Good soil biology, improved water retention and structure
-- **Benefits**: Higher organic matter supports more diverse microbial communities
-
-#### Phosphorus (P)
-- **Role**: Essential for root development, flowering, and seed formation
-- **Measurement**: Parts per million (ppm) in soil
-- **Low**: <15 ppm - may need supplementation
-- **Adequate**: 15-30 ppm - sufficient for most crops
-- **High**: >30 ppm - adequate reserves
-
-#### Potassium (K)
-- **Role**: Water regulation, disease resistance, winter hardiness
-- **Measurement**: Parts per million (ppm) in soil
-- **Low**: <100 ppm - deficiency likely
-- **Adequate**: 100-200 ppm - sufficient for most crops
-- **High**: >200 ppm - good reserves
-
-#### Cation Exchange Capacity (CEC)
-- **Definition**: Soil's ability to hold and exchange nutrients
-- **Sandy soils**: CEC 5-15 (lower nutrient holding capacity)
-- **Clay soils**: CEC 15-40 (higher nutrient holding capacity)
-- **Improving CEC**: Add organic matter and clay amendments
-
-### Managing Soil Tests in the App
-
-#### Adding a Soil Test
-1. Navigate to **Settings** → **Soil Testing** → **Add Soil Test**
-2. **Select Field**: Choose the field from the tile view
-3. **Choose Laboratory**: Select existing lab or create new one
-4. **Enter Results**: Input pH, organic matter, nutrients, and CEC values
-5. **Add Notes**: Include any lab recommendations or observations
-6. **Save**: Test results are immediately available for analysis
-
-#### Laboratory Management
-- **Add Labs**: Store contact information for testing laboratories
-- **Track History**: View all tests performed by each laboratory
-- **Compare Services**: Maintain notes about lab quality and turnaround times
-
-#### Visual Analysis Tools
-- **pH Spectrum**: Color-coded visualization showing optimal pH ranges
-- **Nutrient Indicators**: Bar charts displaying nutrient levels with interpretations
-- **Trend Analysis**: Track changes in soil health over time
-- **Field Comparison**: Compare soil conditions across different fields
-
-### Interpreting Results for Plant Health
-
-#### Signs Your Plants Need Soil Changes
-
-**Nitrogen Deficiency**:
-- Yellowing of lower leaves first
-- Stunted growth and pale green coloration
-- Solution: Increase organic matter, add compost or blood meal
-
-**Phosphorus Deficiency**:
-- Purple or reddish coloration on leaves
-- Delayed flowering and poor root development
-- Solution: Add bone meal or rock phosphate; check pH
-
-**Potassium Deficiency**:
-- Brown or scorched leaf edges
-- Weak stems susceptible to lodging
-- Increased disease problems
-- Solution: Add wood ash, granite meal, or greensand
-
-**Iron Deficiency** (often pH-related):
-- Yellow leaves with green veins (interveinal chlorosis)
-- Most visible on new growth
-- Solution: Lower pH if above 7.5; improve drainage
-
-#### Soil pH Adjustments
-
-**Raising pH** (reducing acidity):
-- Apply agricultural limestone (calcium carbonate)
-- Use dolomitic lime if magnesium is also low
-- Wood ash provides quick but temporary pH increase
-- Apply lime in fall for spring crops
-
-**Lowering pH** (reducing alkalinity):
-- Add sulfur (slow acting, long-lasting)
-- Use acidic organic matter like pine needles or peat
-- Apply iron sulfate for quick but temporary reduction
-- Improve drainage to reduce sodium accumulation
-
-### Soil Microbes and Chemical Fertilizers
-
-#### The Importance of Soil Microorganisms
-
-Healthy soil contains **billions of microorganisms per gram**, including:
-- **Bacteria**: Break down organic matter, fix nitrogen, cycle nutrients
-- **Fungi**: Form mycorrhizal networks, improve nutrient uptake
-- **Protozoa**: Release nutrients by consuming bacteria and fungi
-- **Beneficial insects**: Aerate soil and transport beneficial microbes
-
-#### Impact of Chemical Fertilizers on Soil Biology
-
-**Negative Effects**:
-- **Kill beneficial microorganisms** through salt concentration and pH changes
-- **Reduce microbial diversity** by favoring only certain species
-- **Disrupt nutrient cycling** by bypassing natural biological processes
-- **Increase soil compaction** over time due to reduced organic matter
-- **Create dependency** on external inputs as natural systems break down
-
-**Soil Health Decline Indicators**:
-- Reduced organic matter content over time
-- Increased need for fertilizer applications
-- Greater susceptibility to drought and disease
-- Poor soil structure and water infiltration
-- Loss of earthworms and beneficial insects
-
-#### Organic Alternatives for Soil Health
-
-**Building Soil Biology**:
-- **Compost applications**: Introduce diverse microbial communities
-- **Cover crops**: Feed soil organisms year-round with living roots
-- **Minimal tillage**: Preserve fungal networks and soil structure
-- **Diverse rotations**: Support different microbial populations
-- **Organic amendments**: Use materials that feed rather than bypass soil biology
-
-**Beneficial Practices**:
-- Apply mycorrhizal inoculants when transplanting
-- Use compost tea to introduce beneficial microorganisms
-- Maintain permanent soil cover to protect microbial communities
-- Integrate livestock for natural fertilization when possible
-
-### Organic Certification and Soil Testing
-
-#### Documentation Requirements
-- **Maintain records** of all soil test results for certification inspections
-- **Track amendments** applied based on soil test recommendations
-- **Document improvements** in soil health over time
-- **Show compliance** with organic standards for soil building
-
-#### USDA Organic Standards
-- Soil tests support evidence of soil health improvement
-- Results guide organic amendment programs
-- Help demonstrate sustainable farming practices
-- Required for transitioning conventional fields to organic
-
-### Troubleshooting Common Soil Issues
-
-#### Problem: Low Organic Matter
-**Symptoms**: Poor water retention, quick nutrient loss, compaction
-**Solutions**: 
-- Increase compost applications to 2-4 inches annually
-- Plant cover crops on all unused fields
-- Reduce tillage intensity and frequency
-- Add aged manure or other organic amendments
-
-#### Problem: pH Too High (Alkaline)
-**Symptoms**: Iron deficiency, poor phosphorus availability
-**Solutions**:
-- Apply elemental sulfur at 10-20 lbs per 1000 sq ft
-- Use acidic organic matter like pine needles
-- Improve drainage to reduce sodium buildup
-- Consider acid-tolerant crop varieties
-
-#### Problem: pH Too Low (Acidic)
-**Symptoms**: Aluminum toxicity, poor bacterial activity
-**Solutions**:
-- Apply agricultural lime based on soil test recommendations
-- Use dolomitic lime if magnesium is also low
-- Add wood ash for quick pH adjustment
-- Ensure adequate calcium and magnesium levels
-
-#### Problem: Nutrient Imbalances
-**Symptoms**: Deficiency signs despite adequate soil levels
-**Solutions**:
-- Check pH - most nutrients unavailable outside 6.0-7.0 range
-- Improve soil biology with compost and cover crops
-- Reduce tillage to preserve nutrient cycling
-- Consider foliar feeding for immediate correction
-
-### Best Practices for Soil Health
-
-1. **Test Regularly**: Every 2-3 years or when problems occur
-2. **Build Organic Matter**: Target 3-5% through compost and cover crops
-3. **Maintain pH**: Keep in optimal range for your crops (usually 6.0-7.0)
-4. **Feed the Soil Biology**: Use organic amendments that support microbial life
-5. **Minimize Disturbance**: Reduce tillage to preserve soil structure
-6. **Diversify**: Use crop rotations and polycultures to support soil health
-7. **Monitor Changes**: Track trends in soil health over time
-8. **Integrate Practices**: Combine soil testing with other sustainable practices
+The app helps you stay organized and professional with all your land rental agreements.
 
 ## Materials Management
 
