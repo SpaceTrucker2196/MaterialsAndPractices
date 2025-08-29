@@ -19,15 +19,15 @@ struct CertificationOverviewView: View {
     
     // Fetch all farms with location information
     @FetchRequest(
-        entity: Farm.entity(),
+        entity: Property.entity(),
         sortDescriptors: [
-            NSSortDescriptor(keyPath: \Farm.state, ascending: true),
-            NSSortDescriptor(keyPath: \Farm.county, ascending: true),
-            NSSortDescriptor(keyPath: \Farm.name, ascending: true)
+            NSSortDescriptor(keyPath: \Property.state, ascending: true),
+            NSSortDescriptor(keyPath: \Property.county, ascending: true),
+            NSSortDescriptor(keyPath: \Property.displayName, ascending: true)
         ]
-    ) private var farms: FetchedResults<Farm>
+    ) private var farms: FetchedResults<Property>
     
-    @State private var selectedFarm: Farm?
+    @State private var selectedFarm: Property?
     @State private var showingCertificationDetail = false
     
     // MARK: - Body
@@ -113,7 +113,7 @@ struct CertificationOverviewView: View {
                 .foregroundColor(AppTheme.Colors.textSecondary)
             
             Text("No Farms Available")
-                .font(AppTheme.Typography.headingMedium)
+                .font(AppTheme.Typography.headlineMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
             
             Text("Add farms in Utilities > Add New Farm to track certification status")
@@ -135,12 +135,12 @@ struct CertificationOverviewView: View {
         }
     }
     
-    private func locationGroupSection(for locationGroup: (key: String, value: [Farm])) -> some View {
+    private func locationGroupSection(for locationGroup: (key: String, value: [Property])) -> some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             // Location header
             HStack {
                 Text(locationGroup.key)
-                    .font(AppTheme.Typography.headingMedium)
+                    .font(AppTheme.Typography.headlineMedium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
                 
                 Spacer()
@@ -165,7 +165,7 @@ struct CertificationOverviewView: View {
     
     // MARK: - Computed Properties
     
-    private var locationGroups: [(key: String, value: [Farm])] {
+    private var locationGroups: [(key: String, value: [Property])] {
         let grouped = Dictionary(grouping: farms) { farm in
             let county = farm.county ?? "Unknown County"
             let state = farm.state ?? "Unknown State"
@@ -225,7 +225,7 @@ struct CertificationStatCard: View {
 
 /// Individual farm certification tile
 struct FarmCertificationTile: View {
-    let farm: Farm
+    let farm: Property
     let onTap: () -> Void
     
     var body: some View {
@@ -233,12 +233,12 @@ struct FarmCertificationTile: View {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
                 // Farm header
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                    Text(farm.name ?? "Unnamed Farm")
-                        .font(AppTheme.Typography.headingSmall)
+                    Text(farm.displayName  ?? "Unnamed Farm")
+                        .font(AppTheme.Typography.headlineMedium)
                         .foregroundColor(AppTheme.Colors.textPrimary)
                         .lineLimit(2)
                     
-                    if let address = farm.address {
+                    if let address = farm.county {
                         Text(address)
                             .font(AppTheme.Typography.bodySmall)
                             .foregroundColor(AppTheme.Colors.textSecondary)
@@ -317,19 +317,19 @@ struct CertificationIndicator: View {
 
 // MARK: - Farm Extensions for Certification
 
-extension Farm {
+extension Property {
     /// Indicates if farm has organic certification
     var isOrganicCertified: Bool {
         // TODO: Implement based on actual certification data model
         // For now, return true for some farms as demo
-        return (name?.hash ?? 0) % 3 == 0
+        return true
     }
     
     /// Indicates if farm has upcoming inspection
     var hasUpcomingInspection: Bool {
         // TODO: Implement based on actual inspection scheduling
         // For now, return true for some farms as demo
-        return (name?.hash ?? 0) % 4 == 0
+        return true
     }
     
     /// Next inspection date

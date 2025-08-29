@@ -81,7 +81,7 @@ struct PracticeManagementView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Text("\(farmPractices.count)")
-                            .font(AppTheme.Typography.headingLarge)
+                            .font(AppTheme.Typography.headlineMedium)
                             .foregroundColor(AppTheme.Colors.primary)
                         Text("Total Practices")
                             .font(AppTheme.Typography.labelMedium)
@@ -92,7 +92,7 @@ struct PracticeManagementView: View {
                     
                     VStack(alignment: .trailing) {
                         Text("\(workOrders.count)")
-                            .font(AppTheme.Typography.headingLarge)
+                            .font(AppTheme.Typography.headlineLarge)
                             .foregroundColor(AppTheme.Colors.secondary)
                         Text("Work Orders")
                             .font(AppTheme.Typography.labelMedium)
@@ -103,7 +103,7 @@ struct PracticeManagementView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Text("\(practicesInUseCount)")
-                            .font(AppTheme.Typography.headingMedium)
+                            .font(AppTheme.Typography.headlineMedium)
                             .foregroundColor(AppTheme.Colors.success)
                         Text("Practices in Use")
                             .font(AppTheme.Typography.labelSmall)
@@ -114,7 +114,7 @@ struct PracticeManagementView: View {
                     
                     VStack(alignment: .trailing) {
                         Text("\(unusedPracticesCount)")
-                            .font(AppTheme.Typography.headingMedium)
+                            .font(AppTheme.Typography.headlineMedium)
                             .foregroundColor(AppTheme.Colors.warning)
                         Text("Unused Practices")
                             .font(AppTheme.Typography.labelSmall)
@@ -136,7 +136,7 @@ struct PracticeManagementView: View {
                     .foregroundColor(AppTheme.Colors.textSecondary)
                 
                 Text("No Farm Practices")
-                    .font(AppTheme.Typography.headingMedium)
+                    .font(AppTheme.Typography.headlineMedium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
                 
                 Text("Create your first farm practice to start tracking compliance and training requirements.")
@@ -192,11 +192,11 @@ struct PracticeManagementView: View {
     private func practiceHeaderView(practice: FarmPractice) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text(practice.name)
-                    .font(AppTheme.Typography.headingSmall)
+                Text(practice.name ?? "Taco Sauce")
+                    .font(AppTheme.Typography.headlineSmall)
                     .foregroundColor(AppTheme.Colors.textPrimary)
                 
-                Text(practice.frequency)
+                Text(practice.frequency ?? "Weekly")
                     .font(AppTheme.Typography.labelSmall)
                     .foregroundColor(AppTheme.Colors.textSecondary)
             }

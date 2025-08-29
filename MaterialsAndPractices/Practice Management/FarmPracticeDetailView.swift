@@ -57,8 +57,8 @@ struct FarmPracticeDetailView: View {
     
     private var practiceHeaderSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-            Text(practice.name)
-                .font(AppTheme.Typography.headingLarge)
+            Text(practice.name ?? "Taco Sauce")
+                .font(AppTheme.Typography.headlineLarge)
                 .foregroundColor(AppTheme.Colors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
             
@@ -86,13 +86,13 @@ struct FarmPracticeDetailView: View {
                     .font(.title2)
                 
                 Text("Description")
-                    .font(AppTheme.Typography.headingMedium)
+                    .font(AppTheme.Typography.headlineMedium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
                 
                 Spacer()
             }
             
-            Text(practice.descriptionText)
+            Text(practice.descriptionText ?? "Taco Sauce is good on taco's too!")
                 .font(AppTheme.Typography.bodyMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -110,13 +110,13 @@ struct FarmPracticeDetailView: View {
                     .font(.title2)
                 
                 Text("Training Required")
-                    .font(AppTheme.Typography.headingMedium)
+                    .font(AppTheme.Typography.headlineMedium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
                 
                 Spacer()
             }
             
-            Text(practice.trainingRequired)
+            Text(practice.trainingRequired ?? "YES")
                 .font(AppTheme.Typography.bodyMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -139,13 +139,13 @@ struct FarmPracticeDetailView: View {
                         .foregroundColor(AppTheme.Colors.secondary)
                     
                     Text("Frequency")
-                        .font(AppTheme.Typography.headingSmall)
+                        .font(AppTheme.Typography.headlineSmall)
                         .foregroundColor(AppTheme.Colors.textPrimary)
                     
                     Spacer()
                 }
                 
-                Text(practice.frequency)
+                Text(practice.frequency ?? "Weekly")
                     .font(AppTheme.Typography.bodyMedium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -162,13 +162,13 @@ struct FarmPracticeDetailView: View {
                         .foregroundColor(AppTheme.Colors.success)
                     
                     Text("Certification")
-                        .font(AppTheme.Typography.headingSmall)
+                        .font(AppTheme.Typography.headlineSmall)
                         .foregroundColor(AppTheme.Colors.textPrimary)
                     
                     Spacer()
                 }
                 
-                Text(practice.certification)
+                Text(practice.certification ?? "Organic")
                     .font(AppTheme.Typography.bodyMedium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -193,7 +193,7 @@ struct FarmPracticeDetailView: View {
                 .font(AppTheme.Typography.labelMedium)
                 .foregroundColor(AppTheme.Colors.textSecondary)
             
-            Text(practice.lastUpdated, style: .date)
+            Text(practice.lastUpdated ?? Date(), style: .date)
                 .font(AppTheme.Typography.labelMedium)
                 .foregroundColor(AppTheme.Colors.textSecondary)
             

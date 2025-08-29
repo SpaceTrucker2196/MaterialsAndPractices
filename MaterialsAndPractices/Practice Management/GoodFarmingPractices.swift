@@ -10,6 +10,7 @@
 
 import Foundation
 import SwiftUI
+import CoreData
 
 /// Standardized Good Farming Practices for organic certification and food safety compliance
 /// Provides comprehensive practice definitions with training, frequency, and certification requirements

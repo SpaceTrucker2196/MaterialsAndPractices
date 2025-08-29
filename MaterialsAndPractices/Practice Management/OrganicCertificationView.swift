@@ -15,7 +15,7 @@ import CoreData
 struct OrganicCertificationView: View {
     // MARK: - Properties
     
-    let farm: Farm
+    let farm: Property
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) var presentationMode
     
@@ -70,11 +70,11 @@ struct OrganicCertificationView: View {
                     .foregroundColor(AppTheme.Colors.primary)
                 
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                    Text(farm.name ?? "Unnamed Farm")
+                    Text(farm.displayName ?? "Unnamed Farm")
                         .font(AppTheme.Typography.displayMedium)
                         .foregroundColor(AppTheme.Colors.textPrimary)
                     
-                    if let address = farm.address {
+                    if let address = farm.county {
                         Text(address)
                             .font(AppTheme.Typography.bodyMedium)
                             .foregroundColor(AppTheme.Colors.textSecondary)
@@ -98,7 +98,7 @@ struct OrganicCertificationView: View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             HStack {
                 Text("Certification Requirements")
-                    .font(AppTheme.Typography.headingMedium)
+                    .font(AppTheme.Typography.headlineMedium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
                 
                 Spacer()
@@ -164,7 +164,7 @@ struct OrganicCertificationView: View {
                     .foregroundColor(category.color)
                 
                 Text(category.rawValue)
-                    .font(AppTheme.Typography.headingSmall)
+                    .font(AppTheme.Typography.headlineMedium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
                 
                 Spacer()
@@ -208,7 +208,7 @@ struct OrganicCertificationView: View {
         // TODO: Load actual completion status from database
         // For now, initialize with some demo data
         for practice in GoodFarmingPractices.allCases {
-            practiceCompletionStatus[practice] = ((practice.rawValue.hash + (farm.name?.hash ?? 0)) % 3) == 0
+            practiceCompletionStatus[practice] = true
         }
     }
     
@@ -300,7 +300,7 @@ struct PracticeRequirementRow: View {
 /// Detailed practice instruction view (placeholder implementation)
 struct PracticeInstructionDetailView: View {
     let practice: GoodFarmingPractices
-    let farm: Farm
+    let farm: Property
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -363,7 +363,7 @@ struct PracticeInstructionDetailView: View {
     private var commonFarmingMethodsSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             Text("Common Farming Methods")
-                .font(AppTheme.Typography.headingSmall)
+                .font(AppTheme.Typography.headlineSmall)
                 .foregroundColor(AppTheme.Colors.textPrimary)
             
             Text("Detailed instructions using common farming methods to meet this practice will be implemented here. This will include step-by-step guidance, best practices, and compliance tips specific to \(practice.name.dropFirst(3)).")
@@ -378,7 +378,7 @@ struct PracticeInstructionDetailView: View {
     private var recordKeepingDataSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             Text("Record Keeping Data")
-                .font(AppTheme.Typography.headingSmall)
+                .font(AppTheme.Typography.headlineSmall)
                 .foregroundColor(AppTheme.Colors.textPrimary)
             
             NavigationLink(destination: PracticeReportingView(practice: practice, farm: farm)) {
@@ -413,7 +413,7 @@ struct PracticeInstructionDetailView: View {
 /// Practice reporting view for record keeping data (placeholder implementation)
 struct PracticeReportingView: View {
     let practice: GoodFarmingPractices
-    let farm: Farm
+    let farm: Property
     
     var body: some View {
         VStack(spacing: AppTheme.Spacing.large) {
@@ -422,7 +422,7 @@ struct PracticeReportingView: View {
                 .foregroundColor(AppTheme.Colors.textSecondary)
             
             Text("Practice Reporting")
-                .font(AppTheme.Typography.headingMedium)
+                .font(AppTheme.Typography.headlineMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
             
             Text("Detailed record keeping data and compliance reports for \(practice.name.dropFirst(3)) will be implemented here.")
@@ -441,11 +441,10 @@ struct PracticeReportingView: View {
 struct OrganicCertificationView_Previews: PreviewProvider {
     static var previews: some View {
         let context = PersistenceController.preview.container.viewContext
-        let sampleFarm = Farm(context: context)
-        sampleFarm.name = "Sample Farm"
-        sampleFarm.address = "123 Farm Road"
-        sampleFarm.county = "Sample County"
-        sampleFarm.state = "CA"
+        let sampleFarm = Property(context: context)
+        sampleFarm.displayName = "Montana Floss Farm"
+        sampleFarm.county = "Trempealeau"
+        sampleFarm.state = "Wisconsin"
         
         return OrganicCertificationView(farm: sampleFarm)
             .environment(\.managedObjectContext, context)

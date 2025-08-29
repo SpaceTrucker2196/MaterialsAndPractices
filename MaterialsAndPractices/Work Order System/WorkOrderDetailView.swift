@@ -1238,7 +1238,7 @@ struct WorkOrderDetailView: View {
         
         // Farm practice information
         if !selectedFarmPractices.isEmpty {
-            let practiceNames = selectedFarmPractices.map { $0.name }.joined(separator: ", ")
+            let practiceNames = selectedFarmPractices.map { $0.name! }.joined(separator: ", ")
             auditInfo.append("Farm Practices Applied: \(practiceNames)")
         }
         

@@ -233,6 +233,22 @@
             <fetchIndexElement property="name" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
+    <entity name="FarmPractice" representedClassName="FarmPractice" syncable="YES" codeGenerationType="class">
+        <attribute name="certification" attributeType="String" defaultValueString=""/>
+        <attribute name="descriptionText" attributeType="String" defaultValueString=""/>
+        <attribute name="frequency" attributeType="String" defaultValueString=""/>
+        <attribute name="lastUpdated" attributeType="Date" defaultDateTimeInterval="778170900" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="practiceID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="trainingRequired" attributeType="String" defaultValueString=""/>
+        <relationship name="workOrders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkOrder" inverseName="farmPractices" inverseEntity="WorkOrder"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="practiceID" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
     <entity name="Field" representedClassName="Field" syncable="YES" codeGenerationType="class">
         <attribute name="acres" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="hasDrainTile" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
@@ -822,22 +838,6 @@
         <relationship name="workOrders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkOrder" inverseName="assignedTeam" inverseEntity="WorkOrder"/>
         <fetchIndex name="byIdIndex">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
-        </fetchIndex>
-        <fetchIndex name="byNameIndex">
-            <fetchIndexElement property="name" type="Binary" order="ascending"/>
-        </fetchIndex>
-    </entity>
-    <entity name="FarmPractice" representedClassName="FarmPractice" syncable="YES" codeGenerationType="class">
-        <attribute name="practiceID" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="name" attributeType="String"/>
-        <attribute name="descriptionText" attributeType="String"/>
-        <attribute name="trainingRequired" attributeType="String"/>
-        <attribute name="frequency" attributeType="String"/>
-        <attribute name="certification" attributeType="String"/>
-        <attribute name="lastUpdated" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="workOrders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkOrder" inverseName="farmPractices" inverseEntity="WorkOrder"/>
-        <fetchIndex name="byIdIndex">
-            <fetchIndexElement property="practiceID" type="Binary" order="ascending"/>
         </fetchIndex>
         <fetchIndex name="byNameIndex">
             <fetchIndexElement property="name" type="Binary" order="ascending"/>
