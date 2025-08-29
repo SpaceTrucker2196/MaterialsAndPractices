@@ -247,6 +247,7 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
+				1F60A7922E613ABA0006ABA1 /* DataModel */,
 				1F2E92412E5A5641003962BA /* Configuration */,
 				1F60A83F2E61E8B10006ABA1 /* Practice Management */,
 				1F60A83D2E61E84D0006ABA1 /* Materials Managment */,
@@ -255,7 +256,6 @@
 				1F60A83A2E61E70A0006ABA1 /* Lease System */,
 				AB28BD862E614D8C00AF523B /* WorkerTraining */,
 				1F60A7932E613AE90006ABA1 /* TimeKeeping */,
-				1F60A7922E613ABA0006ABA1 /* DataModel */,
 				1FBECE082E6101A8008997EA /* AmendmentSelectionView.swift */,
 				1FBECE0B2E6101A8008997EA /* CropAmendmentSeeder.swift */,
 				1F60A8392E61E6B10006ABA1 /* Work Order System */,
