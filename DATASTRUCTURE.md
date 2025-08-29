@@ -162,6 +162,110 @@ The Materials and Practices app stores your farm information in organized record
 
 The app is designed to make record-keeping easier while meeting all the requirements for organic certification and food safety regulations.
 
+## Key Data Input Fields by Screen
+
+### When Adding a New Worker
+**Required Fields:**
+- **Worker Name**: Full legal name for payroll and identification
+- **Position/Job Title**: Helps assign appropriate work and training
+- **Email Address**: For communication and account access
+- **Phone Number**: Emergency contact and work coordination
+- **Hire Date**: Required for employment records and benefits
+
+**Optional but Helpful:**
+- **Emergency Contact**: Required by workplace safety regulations
+- **Profile Photo**: Helps identify workers in the field
+- **Notes**: Special skills, certifications, or restrictions
+
+### When Creating a Work Order
+**Required Fields:**
+- **Title/Description**: Clear description of work to be done
+- **Assigned Grow**: Links work to specific crop and field
+- **Priority Level**: High, Medium, or Low urgency
+- **Due Date**: When work must be completed
+
+**Helpful Details:**
+- **Detailed Notes**: Step-by-step instructions or special requirements
+- **Assigned Team**: Which workers should do this task
+- **Estimated Hours**: Helps with planning and budgeting
+
+### When Recording Soil Test Results
+**Required Fields:**
+- **Test Date**: When samples were taken
+- **Laboratory**: Which lab did the testing
+- **Field**: Which field was tested
+- **pH Level**: Key measurement for crop health
+
+**Important Measurements:**
+- **Organic Matter %**: Target is 3-5% for healthy soil
+- **Phosphorus (P) ppm**: Essential for root development
+- **Potassium (K) ppm**: Important for disease resistance
+- **Lab Recommendations**: What the lab suggests for improvements
+
+### When Adding Soil Amendments
+**Required Fields:**
+- **Amendment Name**: What product you're applying
+- **Application Date**: When you applied it
+- **Location**: Which field or grow area
+- **Rate Applied**: How much you used
+
+**Documentation Needed:**
+- **Material Source**: Where you bought it
+- **Organic Approval**: OMRI listing or certification info
+- **Labor Hours**: How long application took
+- **Application Method**: Broadcast, banded, injected, etc.
+
+### When Creating a Lease Agreement
+**Required Information:**
+- **Property**: Which land is being leased
+- **Landowner**: Contact information
+- **Tenant/Farmer**: Who is renting the land
+- **Lease Type**: Cash rent, crop share, etc.
+- **Rent Amount**: Annual payment amount
+- **Payment Schedule**: How often payments are due
+- **Start and End Dates**: Lease period
+
+### When Tracking Time
+**Automatic Fields:**
+- **Clock In/Out Times**: Recorded when buttons are pressed
+- **Date**: Automatically set to current date
+- **Total Hours**: Calculated automatically
+
+**You Enter:**
+- **Work Order**: What task you're working on
+- **Break Times**: When you take breaks
+- **Notes**: Any special information about the work
+
+### When Recording Harvests
+**Required Information:**
+- **Harvest Date**: When crop was picked
+- **Quantity**: How much was harvested
+- **Field/Grow**: Where it came from
+- **Lot Number**: Unique identifier for traceability
+
+**Quality Information:**
+- **Grade/Quality**: Premium, standard, processing
+- **Storage Location**: Where it's being kept
+- **Workers Involved**: Who did the harvesting
+- **Weather Conditions**: Important for quality tracking
+
+### Understanding Required vs. Optional Fields
+
+**Red asterisk (*)**: Required fields that must be filled in
+**Helpful but optional**: Fields that improve record-keeping but aren't required
+**Auto-calculated**: Fields the app fills in automatically
+**Pre-populated**: Fields with default values you can change
+
+### Tips for Better Data Entry
+
+1. **Use consistent names**: "North Field" not "north field" or "N. Field"
+2. **Be specific**: "Applied compost 2 tons/acre" not just "applied compost"
+3. **Include units**: Always specify pounds, gallons, acres, etc.
+4. **Add photos**: Pictures of receipts, labels, and field conditions
+5. **Use notes fields**: Extra details help during inspections
+6. **Double-check dates**: Wrong dates can cause compliance problems
+7. **Save frequently**: Don't lose work by forgetting to save
+
 ---
 
 # Technical Documentation for Developers
@@ -180,52 +284,64 @@ The MaterialsAndPractices app uses Core Data version 6 as its primary data persi
 ## Entity Overview
 
 ### Core Farm Management Entities
-| Entity | Primary Purpose | Key Relationships |
-|--------|----------------|-------------------|
-| **Farmer** | Farm operator profile | → Leases, HealthSafetyTrainings |
-| **Property** | Land holdings | → Owner, Fields, Infrastructure, Leases |
-| **Field** | Cultivation areas | → Property, Grows, SoilTests, CropPlans |
-| **Grow** | Active cultivation tracking | → Field, Cultivar, WorkOrders, Amendments |
-| **Cultivar** | Plant variety database | → Grows |
+*These entities store the basic information about your farm operation*
+
+| Entity | Primary Purpose | What Farmers Enter | Key Relationships |
+|--------|----------------|-------------------|-------------------|
+| **Farmer** | Farm operator profile | Your name, contact info, business name | → Leases, HealthSafetyTrainings |
+| **Property** | Land holdings | Property names, addresses, acreage | → Owner, Fields, Infrastructure, Leases |
+| **Field** | Cultivation areas | Field names, sizes, soil types | → Property, Grows, SoilTests, CropPlans |
+| **Grow** | Active cultivation tracking | What you're growing, where, when | → Field, Cultivar, WorkOrders, Amendments |
+| **Cultivar** | Plant variety database | Usually pre-loaded; add custom varieties | → Grows |
 
 ### Worker & Time Management Entities
-| Entity | Primary Purpose | Key Relationships |
-|--------|----------------|-------------------|
-| **Worker** | Employee profiles | → TimeClock, WorkTeams, HealthSafetyTrainings |
-| **TimeClock** | Time tracking system | → Worker, WorkOrder |
-| **WorkTeam** | Team organization | → Workers, WorkOrders |
-| **WorkOrder** | Task management | → Grow, WorkTeam, TimeClock, Work |
-| **Work** | Individual work items | → Grow, WorkOrder |
+*These entities track your farm workers and their activities*
+
+| Entity | Primary Purpose | What Farmers Enter | Key Relationships |
+|--------|----------------|-------------------|-------------------|
+| **Worker** | Employee profiles | Worker names, contact info, job titles | → TimeClock, WorkTeams, HealthSafetyTrainings |
+| **TimeClock** | Time tracking system | Clock in/out times, work notes | → Worker, WorkOrder |
+| **WorkTeam** | Team organization | Team names, which workers are on each team | → Workers, WorkOrders |
+| **WorkOrder** | Task management | Work descriptions, priorities, due dates | → Grow, WorkTeam, TimeClock, Work |
+| **Work** | Individual work items | Specific tasks, completion status | → Grow, WorkOrder |
 
 ### Agricultural Operations Entities
-| Entity | Primary Purpose | Key Relationships |
-|--------|----------------|-------------------|
-| **Amendment** | Soil amendment tracking | → Grow |
-| **SoilTest** | Soil analysis results | → Field, Lab |
-| **WaterTest** | Water quality analysis | → Property, Well |
-| **CropPlan** | Seasonal planning | → Field, Harvests, InputApplication |
-| **Harvest** | Harvest record keeping | → CropPlan |
+*These entities track what you do to grow your crops*
+### Agricultural Operations Entities
+*These entities track what you do to grow your crops*
+
+| Entity | Primary Purpose | What Farmers Enter | Key Relationships |
+|--------|----------------|-------------------|-------------------|
+| **Amendment** | Soil amendment tracking | Fertilizer/compost applications, rates, dates | → Grow |
+| **SoilTest** | Soil analysis results | pH, nutrient levels, lab test results | → Field, Lab |
+| **WaterTest** | Water quality analysis | Water test results for wells | → Property, Well |
+| **CropPlan** | Seasonal planning | Planting schedules, crop rotations | → Field, Harvests, InputApplication |
+| **Harvest** | Harvest record keeping | Harvest dates, quantities, lot numbers | → CropPlan |
 
 ### Infrastructure & Compliance Entities
-| Entity | Primary Purpose | Key Relationships |
-|--------|----------------|-------------------|
-| **Infrastructure** | Farm infrastructure | → Property |
-| **Well** | Water source management | → Property, Field, WaterTests |
-| **Lab** | Testing facilities | → SoilTests |
-| **ConservationPractice** | Conservation compliance | → Field |
-| **HealthSafetyTraining** | Safety compliance | → Farmer, Worker |
+*These entities track farm facilities and compliance requirements*
+
+| Entity | Primary Purpose | What Farmers Enter | Key Relationships |
+|--------|----------------|-------------------|-------------------|
+| **Infrastructure** | Farm infrastructure | Buildings, equipment, facility info | → Property |
+| **Well** | Water source management | Well locations, water test results | → Property, Field, WaterTests |
+| **Lab** | Testing facilities | Laboratory contact information | → SoilTests |
+| **ConservationPractice** | Conservation compliance | Cover crops, buffer strips, conservation practices | → Field |
+| **HealthSafetyTraining** | Safety compliance | Training records, certifications, dates | → Farmer, Worker |
 
 ### Business & Documentation Entities
-| Entity | Primary Purpose | Key Relationships |
-|--------|----------------|-------------------|
-| **Owner** | Land ownership | → Properties, Leases |
-| **Lease** | Land lease agreements | → Owner, Farmer, Properties |
-| **Document** | File attachments | → Multiple entities |
-| **Communication** | Communication logs | → Lease |
-| **Payment** | Financial transactions | → Lease |
-| **ExpenseShare** | Expense allocation | → Lease |
-| **ProgramEnrollment** | Government programs | → Lease |
-| **InputApplication** | Input usage tracking | → CropPlan |
+*These entities handle the business side of farming*
+
+| Entity | Primary Purpose | What Farmers Enter | Key Relationships |
+|--------|----------------|-------------------|-------------------|
+| **Owner** | Land ownership | Landowner contact information | → Properties, Leases |
+| **Lease** | Land lease agreements | Rent amounts, payment schedules, lease terms | → Owner, Farmer, Properties |
+| **Document** | File attachments | Receipts, certificates, photos | → Multiple entities |
+| **Communication** | Communication logs | Notes about conversations with landlords | → Lease |
+| **Payment** | Financial transactions | Payment amounts, dates, methods | → Lease |
+| **ExpenseShare** | Expense allocation | How expenses are split between parties | → Lease |
+| **ProgramEnrollment** | Government programs | USDA program participation | → Lease |
+| **InputApplication** | Input usage tracking | What inputs were applied where and when | → CropPlan |
 
 ---
 
