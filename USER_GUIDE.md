@@ -35,31 +35,47 @@ This application bridges the gap between daily farm operations and the complex r
 
 ## Getting Started
 
-### System Requirements
+### What You Need
+- iPhone or iPad with iOS 15 or newer
+- Internet connection for syncing data
+- Farm account setup (contact your farm administrator)
 
-### Logging In
-1. Navigate to the Materials and Practices login page
-2. Enter your username and password
-3. Select your farm profile if you manage multiple farms
-4. Click "Login"
+### First Time Setup
+1. Download the Materials and Practices app from the App Store
+2. Open the app and enter your login details
+3. Choose your farm if you work on multiple farms
+4. Allow location access for field mapping
+5. Complete your profile with contact information
 
-### Initial Setup
-1. Complete your farm profile with location, acreage, and certification details
-2. Set up user permissions for farm workers and managers
-3. Import or manually enter your initial materials inventory
-4. Configure notification preferences
+### Learning the App
+The app has built-in help that you can turn on or off:
+1. Go to Settings → Configuration
+2. Turn on "Help System" to see helpful tips
+3. Look for the "Help" button in different screens
+4. Tips are available in English and Spanish
 
 ## Dashboard Overview
 
-The dashboard provides a snapshot of your farm's key metrics and upcoming tasks:
+The main screen shows you the most important information about your farm right now:
 
-- **Activity Calendar**: Shows scheduled activities, applications, and harvests
-- **Materials Summary**: Quick view of input inventory levels with alerts for low stock
-- **Worker Status**: Overview of worker certifications and training status
-- **Compliance Indicators**: Visual markers showing certification status and upcoming deadlines
-- **Recent Activity Feed**: Latest actions taken within the system
+### What You'll See
+- **Today's Tasks**: Work that needs to be done today
+- **Field Status**: Quick view of all your fields and what's growing
+- **Worker Time**: Who's working and their hours for the week
+- **Lease Payments**: Any rent payments coming due soon
+- **Weather Alerts**: Important weather information for your area
+- **Low Inventory**: Materials running low that need reordering
 
-Use the navigation menu on the left side to access specific modules.
+### Navigation Tips
+- **iPhone**: Use the tabs at the bottom to move between sections
+- **iPad**: Use the sidebar on the left to navigate
+- **Help**: Tap any "?" button to get help with that screen
+
+### Urgent Items
+The app shows important items that need your attention:
+- 🔴 Red: Overdue items that need immediate action
+- 🟠 Orange: Items due within 30 days
+- 🟢 Green: Everything is on track
 
 ## Farm Management
 
@@ -85,572 +101,653 @@ Use the navigation menu on the left side to access specific modules.
 3. Assign crops to specific fields
 4. Generate material requirement forecasts based on planned crops
 
+## Soil Health & Testing
+
+Healthy soil is the foundation of good farming. The app helps you track your soil condition and make it better over time.
+
+### Why Soil Testing Matters
+
+Good soil has billions of tiny helpful creatures called microbes. These microbes:
+- Break down compost into food that plants can use
+- Help plants fight off diseases naturally  
+- Make soil hold water better during dry times
+- Keep nutrients from washing away in heavy rain
+
+### When to Test Your Soil
+
+**Test every 2-3 years** if your field management stays the same.
+**Test before planting** new crops or changing how you manage a field.
+**Test when problems happen** like poor plant growth or yellowing leaves.
+**Test after adding lots of compost** or lime to see if it worked.
+
+### Taking Good Soil Samples
+
+The app guides you through proper soil sampling:
+
+**Best Time**: When soil is moist but not muddy (like a wrung-out sponge)
+**How Many**: Take 15-20 random samples across each field
+**How Deep**: 6-8 inches deep for most crops (3-4 inches for pasture)
+**What Tools**: Clean stainless steel tools (not rusty or galvanized)
+**Mix Well**: Combine all samples in a clean plastic bucket
+
+**Avoid These Areas**:
+- Near roads or fence lines
+- Where animals gather regularly
+- Recently fertilized or limed spots
+
+### Understanding Your Test Results
+
+The app shows your results with easy-to-read color charts:
+
+**pH Level (Acidity)**:
+- 6.0-7.0 is best for most crops
+- Below 6.0 means soil is too acidic (add lime)
+- Above 7.5 means soil is too alkaline (add sulfur)
+
+**Organic Matter**:
+- 3-5% is the goal for healthy soil
+- Below 2% means you need more compost
+- Higher organic matter means better soil life
+
+**Nutrients (Phosphorus and Potassium)**:
+- The app shows if levels are low, good, or high
+- Low levels mean you need to add fertilizer
+- High levels mean you have plenty stored up
+
+### Adding Your Test Results
+
+1. Go to **Settings** → **Soil Testing**
+2. Tap **Add Soil Test**
+3. Choose which field you tested
+4. Select your lab or add a new one
+5. Enter the numbers from your test report
+6. Add any notes from the lab
+
+The app will show your results with helpful color charts and track changes over time.
+
+### Fixing Common Soil Problems
+
+**Problem: Plants look pale yellow**
+- Likely cause: Not enough nitrogen
+- Solution: Add compost, blood meal, or other organic nitrogen
+
+**Problem: Purple or red leaves**
+- Likely cause: Not enough phosphorus  
+- Solution: Add bone meal or rock phosphate; check pH
+
+**Problem: Brown leaf edges**
+- Likely cause: Not enough potassium
+- Solution: Add wood ash, granite meal, or greensand
+
+**Problem: Yellow leaves with green veins**
+- Likely cause: Can't get iron (often pH problem)
+- Solution: Lower pH if above 7.5; improve drainage
+
+### Building Healthy Soil
+
+**Add Organic Matter**: Use compost, aged manure, or cover crops
+**Reduce Tillage**: Don't disturb soil more than necessary  
+**Keep Soil Covered**: Use mulch or cover crops
+**Rotate Crops**: Different plants feed different soil microbes
+**Avoid Chemical Fertilizers**: These can kill beneficial soil life
+
 ## Lease Management
 
-The lease management system provides comprehensive tools for managing agricultural lease agreements, tracking payments, and maintaining records for property owners and tax purposes.
+If you rent farmland from others, the app helps you track lease agreements and payments.
 
-### Overview
+### What the Lease System Does
 
-The lease management system includes:
-- Pre-built agricultural lease agreement templates
-- Payment tracking and reminder system
-- Visual indicators for lease status
-- Document generation for property owners
-- Integration with farm dashboard for financial oversight
+- Creates professional lease agreements
+- Tracks when payments are due
+- Shows which fields need lease agreements
+- Generates reports for landowners and taxes
 
-### Creating a New Lease Agreement
+### Creating a New Lease
 
-1. Navigate to "Utilities" → "Lease Management"
-2. Click "New Lease" to start the lease creation workflow
-3. Complete the four-step process:
+1. Go to **Utilities** → **Lease Management**
+2. Tap **New Lease** to start
+3. Follow the 4 steps:
 
-#### Step 1: Template Selection
-- Choose from available lease templates:
-  - **Cash Rent Agricultural Lease**: Fixed annual payment
-  - **Crop Share Agricultural Lease**: Percentage-based sharing
-  - **Flexible Cash Rent Lease**: Rent with price/yield adjustments
-  - **Pasture Grazing Lease**: Livestock grazing agreements
-  - **Custom Farming Agreement**: Services-based arrangements
+**Step 1: Choose Lease Type**
+- **Cash Rent**: Pay a fixed amount each year
+- **Crop Share**: Share a percentage of your harvest
+- **Flexible Rent**: Payment changes based on crop prices
+- **Pasture Lease**: For grazing livestock
+- **Custom Farming**: Pay for specific services
 
-#### Step 2: Basic Information
-- Select the **Growing Year** (current year to 3 years future)
-- Choose the **Property** from your managed properties
-- Select the **Farmer/Tenant** from your contacts
-- Set **Start Date** and **End Date** for the lease period
+**Step 2: Basic Information**
+- Pick the year this lease covers
+- Choose which property/field
+- Select the farmer (tenant)
+- Set start and end dates
 
-#### Step 3: Payment Terms
-- Enter the **Rent Amount** (annual total)
-- Select **Payment Frequency**:
-  - Annual (single payment)
-  - Semi-Annual (two payments)
-  - Quarterly (four payments)
-  - Monthly (twelve payments)
+**Step 3: Payment Details**
+- Enter the total rent amount for the year
+- Choose how often to pay:
+  - Once a year
+  - Twice a year
+  - Four times a year (quarterly)
+  - Every month
 
-#### Step 4: Review and Create
-- Review all lease details for accuracy
-- Click "Create Lease" to generate the agreement
-- The system will create both a Core Data record and a markdown document
+**Step 4: Review and Create**
+- Check all details are correct
+- Tap **Create Lease**
+- App creates the agreement and sets up payment reminders
 
-### Managing Existing Leases
+### Understanding Lease Indicators
 
-#### Viewing Active Leases
-- Access from the main Dashboard "Lease Agreements & Payments" section
-- View lease details including property, farmer, and payment status
-- See upcoming payments and overdue amounts
+The app shows visual signs about your leases:
 
-#### Payment Tracking
-The system automatically calculates payment schedules based on:
-- Lease start and end dates
-- Payment frequency settings
-- Annual rent amount
+- **🟠 Orange $ sign**: Field doesn't have an active lease
+- **🔴 Red warnings**: Payments are overdue  
+- **🟠 Orange warnings**: Payments due within 30 days
+- **No indicator**: Everything is current
 
-Upcoming payments appear on the Dashboard with:
-- 🟠 Orange indicators for payments due within 30 days
-- 🔴 Red indicators for overdue payments
+### Managing Payments
 
-### Visual Lease Status Indicators
+The app automatically:
+- Calculates when payments are due
+- Shows upcoming payments on the dashboard
+- Warns you about overdue payments
+- Tracks payment history
 
-#### Field Tiles
-Field selection interfaces show lease status indicators:
-- 🟠 Orange dollar sign ($): Field not covered by active lease
-- No indicator: Field has active lease coverage
+### Generating Documents
 
-#### Farm Dashboard
-The dashboard displays:
-- Count of active lease agreements
-- Number of urgent payments requiring attention
-- Upcoming payment summaries
-
-### Exporting Documents for Property Owners
-
-#### Individual Lease Export
-1. Navigate to Lease Management
+For tax time or landowner records:
+1. Go to **Lease Management**
 2. Select a specific lease
-3. Use "Export for Property Owner" option
-4. Document includes:
-   - Complete lease summary
-   - Payment schedule for current year
-   - Record-keeping sections for tax purposes
-   - GAAP-compliant formatting
-
-#### Bulk Export
-1. Use "Export All Leases" for year-end reporting
-2. Generates individual documents for each property owner
-3. Creates summary report for your records
-
-### Lease Documentation Features
-
-#### Generated Documents Include:
-- **Property Information**: Location, acreage, contact details
-- **Tenant Information**: Farmer details and organization
-- **Financial Terms**: Rent amounts, payment frequency, responsibilities
-- **Payment Record Tables**: Tracking actual vs. scheduled payments
-- **Tax Documentation**: GAAP-compliant record-keeping guidance
-- **Legal References**: Recommendations for professional consultation
-
-#### File Organization
-- Documents saved to `Documents/LeaseExports/`
-- Timestamped filenames for easy organization
-- Markdown format for universal compatibility
+3. Choose **Export for Property Owner**
+4. App creates a complete document with:
+   - All lease details
+   - Payment schedule and history
+   - Tax record sections
 
 ### Best Practices
 
-#### Record Keeping
-- Export lease documents annually for tax records
-- Maintain signed copies of all lease agreements
-- Track all payments and property-related expenses
-- Consult with tax professionals for proper reporting
+- Review the dashboard weekly for payment reminders
+- Export lease documents each year for tax records
+- Keep signed paper copies of all agreements
+- Update lease terms before they expire
+- Talk to a tax professional about proper reporting
 
-#### Payment Management
-- Review dashboard regularly for upcoming payments
-- Set up reminders for quarterly and annual payments
-- Document any payment adjustments or modifications
-- Keep records of communication with tenants
-
-#### Lease Renewal Process
-- Begin renewal discussions 60-90 days before expiration
-- Review and update rental rates based on market conditions
-- Update lease terms to reflect any property changes
-- Create new lease agreements through the system
-
-## Soil Health & Testing
-
-Soil health monitoring is fundamental to sustainable agriculture and organic certification. Materials and Practices provides comprehensive soil testing tools to help you understand, track, and improve your soil conditions over time.
-
-### Understanding Soil Health
-
-Healthy soil is the foundation of successful organic farming. It's a living ecosystem containing billions of beneficial microorganisms that:
-
-- **Convert organic matter** into plant-available nutrients through natural decomposition processes
-- **Form symbiotic relationships** with plant roots (mycorrhizae) to improve nutrient uptake
-- **Improve soil structure** by creating aggregates that enhance water infiltration and root penetration
-- **Suppress plant diseases** naturally by maintaining beneficial microbial diversity
-- **Cycle nutrients** efficiently, reducing the need for external inputs
-
-### Taking Soil Samples
-
-Following USDA guidelines for accurate soil testing:
-
-#### When to Sample
-- **Every 2-3 years** for established fields under consistent management
-- **Before planting** new crops or changing field management
-- **When problems occur** such as poor growth, yellowing, or disease issues
-- **After major amendments** to monitor changes in soil chemistry
-
-#### Sampling Procedure
-1. **Timing**: Sample when soil is at field moisture capacity (not too wet or dry)
-2. **Distribution**: Take 15-20 random samples across each field or management zone
-3. **Depth**: Sample to 6-8 inches for most crops (3-4 inches for pasture)
-4. **Equipment**: Use clean, stainless steel tools; avoid brass or galvanized equipment
-5. **Mixing**: Thoroughly combine samples in a clean plastic bucket
-6. **Submission**: Submit 1-2 cups of mixed soil to a certified laboratory
-
-#### Avoiding Contamination
-- Don't sample near roads, fence lines, or areas where animals congregate
-- Avoid recently fertilized or limed areas
-- Keep samples separate for different fields or soil types
-- Label samples clearly with field identification and date
-
-### Understanding Soil Test Results
-
-#### pH Level (Soil Acidity/Alkalinity)
-- **Range**: 0-14 scale, with 7.0 being neutral
-- **Optimal for most crops**: 6.0-7.0
-- **Below 6.0**: Acidic conditions; nutrients like phosphorus become less available
-- **Above 7.5**: Alkaline conditions; iron and manganese may become unavailable
-- **Impact on microbes**: Most beneficial soil organisms prefer near-neutral pH
-
-#### Organic Matter Content
-- **Target range**: 3-5% for healthy agricultural soils
-- **Below 2%**: Low biological activity, poor nutrient cycling
-- **Above 3%**: Good soil biology, improved water retention and structure
-- **Benefits**: Higher organic matter supports more diverse microbial communities
-
-#### Phosphorus (P)
-- **Role**: Essential for root development, flowering, and seed formation
-- **Measurement**: Parts per million (ppm) in soil
-- **Low**: <15 ppm - may need supplementation
-- **Adequate**: 15-30 ppm - sufficient for most crops
-- **High**: >30 ppm - adequate reserves
-
-#### Potassium (K)
-- **Role**: Water regulation, disease resistance, winter hardiness
-- **Measurement**: Parts per million (ppm) in soil
-- **Low**: <100 ppm - deficiency likely
-- **Adequate**: 100-200 ppm - sufficient for most crops
-- **High**: >200 ppm - good reserves
-
-#### Cation Exchange Capacity (CEC)
-- **Definition**: Soil's ability to hold and exchange nutrients
-- **Sandy soils**: CEC 5-15 (lower nutrient holding capacity)
-- **Clay soils**: CEC 15-40 (higher nutrient holding capacity)
-- **Improving CEC**: Add organic matter and clay amendments
-
-### Managing Soil Tests in the App
-
-#### Adding a Soil Test
-1. Navigate to **Settings** → **Soil Testing** → **Add Soil Test**
-2. **Select Field**: Choose the field from the tile view
-3. **Choose Laboratory**: Select existing lab or create new one
-4. **Enter Results**: Input pH, organic matter, nutrients, and CEC values
-5. **Add Notes**: Include any lab recommendations or observations
-6. **Save**: Test results are immediately available for analysis
-
-#### Laboratory Management
-- **Add Labs**: Store contact information for testing laboratories
-- **Track History**: View all tests performed by each laboratory
-- **Compare Services**: Maintain notes about lab quality and turnaround times
-
-#### Visual Analysis Tools
-- **pH Spectrum**: Color-coded visualization showing optimal pH ranges
-- **Nutrient Indicators**: Bar charts displaying nutrient levels with interpretations
-- **Trend Analysis**: Track changes in soil health over time
-- **Field Comparison**: Compare soil conditions across different fields
-
-### Interpreting Results for Plant Health
-
-#### Signs Your Plants Need Soil Changes
-
-**Nitrogen Deficiency**:
-- Yellowing of lower leaves first
-- Stunted growth and pale green coloration
-- Solution: Increase organic matter, add compost or blood meal
-
-**Phosphorus Deficiency**:
-- Purple or reddish coloration on leaves
-- Delayed flowering and poor root development
-- Solution: Add bone meal or rock phosphate; check pH
-
-**Potassium Deficiency**:
-- Brown or scorched leaf edges
-- Weak stems susceptible to lodging
-- Increased disease problems
-- Solution: Add wood ash, granite meal, or greensand
-
-**Iron Deficiency** (often pH-related):
-- Yellow leaves with green veins (interveinal chlorosis)
-- Most visible on new growth
-- Solution: Lower pH if above 7.5; improve drainage
-
-#### Soil pH Adjustments
-
-**Raising pH** (reducing acidity):
-- Apply agricultural limestone (calcium carbonate)
-- Use dolomitic lime if magnesium is also low
-- Wood ash provides quick but temporary pH increase
-- Apply lime in fall for spring crops
-
-**Lowering pH** (reducing alkalinity):
-- Add sulfur (slow acting, long-lasting)
-- Use acidic organic matter like pine needles or peat
-- Apply iron sulfate for quick but temporary reduction
-- Improve drainage to reduce sodium accumulation
-
-### Soil Microbes and Chemical Fertilizers
-
-#### The Importance of Soil Microorganisms
-
-Healthy soil contains **billions of microorganisms per gram**, including:
-- **Bacteria**: Break down organic matter, fix nitrogen, cycle nutrients
-- **Fungi**: Form mycorrhizal networks, improve nutrient uptake
-- **Protozoa**: Release nutrients by consuming bacteria and fungi
-- **Beneficial insects**: Aerate soil and transport beneficial microbes
-
-#### Impact of Chemical Fertilizers on Soil Biology
-
-**Negative Effects**:
-- **Kill beneficial microorganisms** through salt concentration and pH changes
-- **Reduce microbial diversity** by favoring only certain species
-- **Disrupt nutrient cycling** by bypassing natural biological processes
-- **Increase soil compaction** over time due to reduced organic matter
-- **Create dependency** on external inputs as natural systems break down
-
-**Soil Health Decline Indicators**:
-- Reduced organic matter content over time
-- Increased need for fertilizer applications
-- Greater susceptibility to drought and disease
-- Poor soil structure and water infiltration
-- Loss of earthworms and beneficial insects
-
-#### Organic Alternatives for Soil Health
-
-**Building Soil Biology**:
-- **Compost applications**: Introduce diverse microbial communities
-- **Cover crops**: Feed soil organisms year-round with living roots
-- **Minimal tillage**: Preserve fungal networks and soil structure
-- **Diverse rotations**: Support different microbial populations
-- **Organic amendments**: Use materials that feed rather than bypass soil biology
-
-**Beneficial Practices**:
-- Apply mycorrhizal inoculants when transplanting
-- Use compost tea to introduce beneficial microorganisms
-- Maintain permanent soil cover to protect microbial communities
-- Integrate livestock for natural fertilization when possible
-
-### Organic Certification and Soil Testing
-
-#### Documentation Requirements
-- **Maintain records** of all soil test results for certification inspections
-- **Track amendments** applied based on soil test recommendations
-- **Document improvements** in soil health over time
-- **Show compliance** with organic standards for soil building
-
-#### USDA Organic Standards
-- Soil tests support evidence of soil health improvement
-- Results guide organic amendment programs
-- Help demonstrate sustainable farming practices
-- Required for transitioning conventional fields to organic
-
-### Troubleshooting Common Soil Issues
-
-#### Problem: Low Organic Matter
-**Symptoms**: Poor water retention, quick nutrient loss, compaction
-**Solutions**: 
-- Increase compost applications to 2-4 inches annually
-- Plant cover crops on all unused fields
-- Reduce tillage intensity and frequency
-- Add aged manure or other organic amendments
-
-#### Problem: pH Too High (Alkaline)
-**Symptoms**: Iron deficiency, poor phosphorus availability
-**Solutions**:
-- Apply elemental sulfur at 10-20 lbs per 1000 sq ft
-- Use acidic organic matter like pine needles
-- Improve drainage to reduce sodium buildup
-- Consider acid-tolerant crop varieties
-
-#### Problem: pH Too Low (Acidic)
-**Symptoms**: Aluminum toxicity, poor bacterial activity
-**Solutions**:
-- Apply agricultural lime based on soil test recommendations
-- Use dolomitic lime if magnesium is also low
-- Add wood ash for quick pH adjustment
-- Ensure adequate calcium and magnesium levels
-
-#### Problem: Nutrient Imbalances
-**Symptoms**: Deficiency signs despite adequate soil levels
-**Solutions**:
-- Check pH - most nutrients unavailable outside 6.0-7.0 range
-- Improve soil biology with compost and cover crops
-- Reduce tillage to preserve nutrient cycling
-- Consider foliar feeding for immediate correction
-
-### Best Practices for Soil Health
-
-1. **Test Regularly**: Every 2-3 years or when problems occur
-2. **Build Organic Matter**: Target 3-5% through compost and cover crops
-3. **Maintain pH**: Keep in optimal range for your crops (usually 6.0-7.0)
-4. **Feed the Soil Biology**: Use organic amendments that support microbial life
-5. **Minimize Disturbance**: Reduce tillage to preserve soil structure
-6. **Diversify**: Use crop rotations and polycultures to support soil health
-7. **Monitor Changes**: Track trends in soil health over time
-8. **Integrate Practices**: Combine soil testing with other sustainable practices
+The app helps you stay organized and professional with all your land rental agreements.
 
 ## Materials Management
 
-Materials in the system refer to all inputs used in farming and all products produced by your farm.
+Materials are anything you use on your farm (inputs) or produce from your farm (outputs). The app helps you track everything from seeds to harvest.
 
-### Input Materials
-1. Navigate to "Materials" → "Inputs"
-2. Categories include:
-   - Seeds and transplants
-   - Fertilizers
-   - Pest management products
-   - Soil amendments
-   - Processing aids
+### Farm Inputs (Things You Buy)
 
-### Adding New Input Materials
-1. Click "+ Add Material"
-2. Complete the material profile:
-   - Material name and supplier
-   - Organic certification status
-   - OMRI or WSDA listing information
-   - Upload certificates and documentation
-   - Set inventory tracking parameters
+**What are inputs?**
+- Seeds and plants
+- Fertilizers and compost
+- Pest control products  
+- Soil amendments like lime
+- Tools and supplies
 
-### Output Products
-1. Navigate to "Materials" → "Products"
-2. Add your farm products with:
+**Adding New Inputs:**
+1. Go to **Materials** → **Inputs**
+2. Tap **Add Material**
+3. Enter the material information:
+   - Name of the product
+   - Company you bought it from
+   - Whether it's organic approved (OMRI listed)
+   - Upload photos of labels or receipts
+   - Set up inventory tracking
+
+**Why track inputs?**
+- Required for organic certification
+- Helps manage inventory and reordering  
+- Tracks costs for different crops
+- Proves you used approved materials
+
+### Farm Outputs (Things You Grow)
+
+**What are outputs?**
+- Vegetables, fruits, grains you harvest
+- Products you process (like dried herbs)
+- Items you sell at market
+
+**Adding Your Products:**
+1. Go to **Materials** → **Products**  
+2. Enter product details:
    - Product name and varieties
-   - Packaging information
-   - Storage requirements
-   - Pricing tiers
+   - How you package it (boxes, bags, bunches)
+   - Storage needs (cool, dry, refrigerated)
+   - Selling prices
 
-### Inventory Management
-1. Track real-time inventory levels
-2. Set low-stock alerts
-3. Generate purchase orders for inputs
-4. Record material usage by field, date, and purpose
+### Managing Inventory
+
+**Track Your Supplies:**
+- See how much you have left of each input
+- Get alerts when supplies run low
+- Know when to reorder before you run out
+- Track how much you spend on each crop
+
+**Recording Usage:**
+- When you use an input, record:
+  - What you used
+  - How much
+  - Which field
+  - What date
+  - What crop it was for
+
+This helps you know the true cost of growing each crop and proves to inspectors what you applied where.
 
 ## Worker Tracking
 
-The worker tracking system allows you to maintain comprehensive records of all personnel working on your farm—a critical component for organic certification and food safety compliance.
+The app helps you keep track of everyone who works on your farm. This is required for food safety rules and organic certification.
 
 ### Adding Workers
-1. Navigate to "Workers" → "Add Worker"
-2. Enter personal information and contact details
-3. Upload required identification documents
-4. Assign worker roles and permissions in the system
 
-### Worker Certifications
-1. Access "Workers" → "Certifications"
-2. Record required certifications for each worker:
-   - Pesticide applicator licenses
-   - Equipment operation certifications
+1. Go to **Workers** → **Add Worker**
+2. Enter their information:
+   - Full name and contact details
+   - Job title (field worker, manager, etc.)
+   - When they were hired
+   - Emergency contact person and phone
+   - Upload a photo (optional)
+
+### Worker Certifications and Training
+
+**Why track certifications?**
+- Some jobs require special licenses
+- Organic certification requires training records
+- Food safety rules require documentation
+
+**What to record:**
+1. Go to **Workers** → **Certifications**
+2. For each worker, add:
+   - Pesticide applicator license (if they apply materials)
+   - Equipment operation training
    - Food safety training
-3. Set expiration notifications for certification renewals
+   - First aid certification
+3. Set reminders for when certifications expire
 
 ### Time and Activity Tracking
-1. Workers can log in to record their daily activities
-2. For each task, document:
-   - Fields worked
-   - Tasks performed
-   - Materials applied or harvested
-   - Equipment used
-   - Hours worked
-3. Supervisors can approve and modify time entries
 
-### Worker Performance Analytics
-1. View productivity metrics by worker, task type, or field
-2. Identify training needs based on performance data
-3. Generate worker activity reports for payroll and compliance
+**Daily Time Recording:**
+Workers can use the app to:
+- Clock in when they start work
+- Clock out when they finish
+- Take breaks during the day
+- Record which tasks they worked on
+
+**What gets tracked:**
+- Which fields they worked in
+- What work they did (planting, weeding, harvesting)
+- What materials they used
+- Which equipment they operated
+- Total hours worked each day
+
+**Supervisor Review:**
+- Managers can check and approve time entries
+- Fix any mistakes in the records
+- Add notes about the work completed
+
+### Understanding Worker Reports
+
+The app automatically calculates:
+- **Regular hours** (up to 40 per week)
+- **Overtime hours** (over 40 per week) 
+- **Weekly totals** for payroll
+- **Productivity by worker** and task type
+
+**Overtime Warning:**
+- App highlights workers with more than 40 hours
+- Helps you manage labor costs
+- Required for proper wage calculations
+
+### Safety and Compliance
+
+**Training Documentation:**
+- Schedule safety training sessions
+- Record completed training
+- Store certificates of completion  
+- Set automatic reminders for refresher training
+
+**Incident Reporting:**
+- Document any workplace accidents
+- Track what happened and why
+- Record corrective actions taken
+- Analyze patterns to prevent future incidents
+
+**Food Safety Requirements:**
+Workers handling food must have:
+- Current food safety training
+- Understanding of proper hygiene
+- Knowledge of contamination prevention
+- Records of all training completed
+
+The app keeps all these records organized and ready for inspections.
 
 ## Health and Safety Training
 
-Maintaining comprehensive health and safety training records protects both your workers and your certification status.
+Keeping good safety training records protects your workers and helps you meet certification requirements.
 
-### Training Management
-1. Navigate to "Workers" → "Training"
-2. Schedule training sessions for:
-   - Equipment operation
-   - First aid
-   - Proper handling of materials
-   - Food safety protocols
-   - Emergency procedures
+### Planning Training Sessions
 
-### Training Documentation
-1. Record completed training for each worker
-2. Upload certificates of completion
-3. Set automatic reminders for refresher courses
-4. Generate training compliance reports for inspections
+1. Go to **Workers** → **Training**
+2. Schedule training for:
+   - **Equipment use**: How to safely operate tractors, tillers, etc.
+   - **First aid**: Basic medical emergency response  
+   - **Material handling**: Safe use of fertilizers and pest control
+   - **Food safety**: Proper hygiene and contamination prevention
+   - **Emergency procedures**: What to do in case of accidents
 
-### Safety Incident Reporting
-1. Document any workplace incidents or near-misses
-2. Track incident investigations and corrective actions
-3. Analyze incident patterns to improve safety protocols
+### Recording Completed Training
+
+**For each training session:**
+- Date of training
+- Who attended  
+- What was covered
+- Who taught it
+- Upload certificates or photos
+
+**Setting Reminders:**
+- Most certifications expire after 1-3 years
+- App can remind you when refresher training is due
+- Helps ensure workers stay current
+
+### Safety Incident Reports
+
+**If someone gets hurt:**
+1. Get medical help first
+2. Document the incident in the app:
+   - What happened
+   - When and where it occurred  
+   - Who was involved
+   - What caused it
+   - What you did to fix the problem
+
+**Why this matters:**
+- Required by workplace safety laws
+- Helps prevent similar accidents
+- Shows inspectors you take safety seriously
+- May be needed for insurance claims
+
+### Best Practices
+
+- Train workers before they start new tasks
+- Keep training records for at least 3 years
+- Update training when you get new equipment
+- Review safety procedures at least once a year
+- Make sure all workers understand the training
 
 ## Organic Certification Compliance
 
-Materials and Practices simplifies the complex process of maintaining organic certification by tracking all required documentation in real-time.
+The app makes it easier to keep your organic certification by tracking all the required paperwork automatically.
 
-### Certification Management
-1. Store current organic certificates
-2. Track certification renewal dates
-3. Maintain inspector contact information
-4. Store previous inspection reports
+### Managing Your Certification
 
-### Compliance Monitoring
-1. Real-time alerts for potential compliance issues:
-   - Buffer zone violations
-   - Non-approved material usage
-   - Missing documentation
-   - Incomplete records
+**Store Important Documents:**
+- Current organic certificate
+- Inspection reports
+- Inspector contact information
+- Certification renewal dates
 
-### Preparing for Inspection
-1. Generate comprehensive inspection preparation reports:
-   - Materials list with all input documentation
-   - Field activity logs
-   - Harvest and sales records
-   - Worker training documentation
-   - Equipment cleaning logs
+**The app reminds you:**
+- When your certification expires
+- When annual updates are due
+- If any records are missing
+
+### Staying in Compliance
+
+**Real-time Monitoring:**
+The app watches for potential problems:
+- **Buffer zones**: Warns if you're too close to non-organic fields
+- **Prohibited materials**: Alerts if you try to use non-approved inputs  
+- **Missing records**: Shows what documentation you still need
+- **Incomplete tracking**: Highlights gaps in your record-keeping
+
+**Quick Problem Solving:**
+- Red warnings mean immediate attention needed
+- Orange warnings mean you should address soon
+- Green indicators mean everything is on track
+
+### Preparing for Inspections
+
+**When the inspector comes**, the app can instantly generate:
+- Complete list of all materials used with documentation
+- Field-by-field activity logs showing what was applied when
+- Harvest records with full traceability
+- Worker training documentation  
+- Equipment cleaning logs
+- All supporting receipts and certificates
+
+**Inspection Tips:**
+- Run the inspection preparation report a few days early
+- Fix any missing information before the inspector arrives
+- Have both digital and printed copies ready
+- Know where to find supporting documents quickly
 
 ### Organic System Plan (OSP)
-1. Digital maintenance of your Organic System Plan
-2. Track changes and updates to your OSP
-3. Export OSP sections for submission to certifiers
+
+**What it is**: Your written plan describing how you farm organically
+
+**How the app helps:**
+- Stores your current OSP digitally
+- Tracks any changes you make over time
+- Generates updated sections for your certifier
+- Reminds you when updates are due
+
+**Common OSP sections the app supports:**
+- Field history and rotation plans
+- Materials list with documentation
+- Pest and disease management strategies
+- Soil building practices
+- Harvest and post-harvest handling
+
+### Record-Keeping Requirements
+
+**The app automatically tracks:**
+- **Seeds**: Source, variety, organic status
+- **Inputs**: What you applied, where, when, and how much
+- **Harvest**: When picked, by whom, quantities, lot numbers
+- **Storage**: Where products are kept and for how long
+- **Sales**: Who you sold to and when
+
+**Three-Year Rule**: 
+Organic regulations require 3 years of records. The app keeps everything organized and won't delete old records you might need.
+
+### Common Compliance Issues and Solutions
+
+**Problem**: Can't find receipt for organic seed
+**Solution**: App links purchases to scanned receipts automatically
+
+**Problem**: Forgot to record compost application  
+**Solution**: App reminds you to log activities as you do them
+
+**Problem**: Mixed up application dates
+**Solution**: App timestamps all entries and shows field history
+
+**Problem**: Missing worker training records
+**Solution**: App tracks all training with automated reminders
+
+The app is designed to make organic certification easier, not harder. It keeps track of everything so you can focus on farming.
 
 ## Lot Tracking & Traceability
 
-The system's lot tracking capabilities meet and exceed USDA standards for organic produce traceability—a key feature for food safety and organic integrity.
+The app helps you track your produce from seed to sale. This is required for food safety and organic certification.
 
-### Harvest Lot Creation
-1. When recording harvests, create uniquely identified lots
-2. For each lot, document:
-   - Harvest date and time
-   - Field source
-   - Crop and variety
-   - Quantity harvested
-   - Workers involved
-   - Equipment used
-   - Storage location
+### Creating Harvest Lots
 
-### Complete Traceability Chain
-Materials and Practices creates a comprehensive traceability record for each product:
-1. Seed source and planting date
-2. All inputs applied to the field (with dates and rates)
-3. Workers who handled the crop during growth and harvest
-4. Processing steps and handling
-5. Storage conditions and duration
-6. Distribution channels
+**What is a lot?**
+A lot is a specific harvest from a specific field on a specific day. Each lot gets a unique number so you can track it.
 
-### Mock Recall Testing
-1. Conduct simulated recall exercises
-2. Test the system's ability to trace products forward and backward
-3. Generate recall reports within minutes
-4. Document mock recall results for certification
+**When you harvest:**
+1. Create a new lot in the app
+2. Record:
+   - **Date and time** of harvest
+   - **Which field** it came from
+   - **Crop and variety** 
+   - **How much** you harvested
+   - **Who** did the harvesting
+   - **Equipment** used for harvest
+   - **Where** you're storing it
+
+### Complete Traceability
+
+For each product, the app tracks the complete story:
+
+**From Planting:**
+- Where you got the seeds
+- When and where you planted
+- What variety you used
+
+**During Growing:**
+- All fertilizers or compost applied
+- Any pest control materials used
+- Workers who tended the crop
+- Equipment used in the field
+
+**At Harvest:**
+- Harvest date and weather conditions
+- Who picked the crop
+- Equipment used for harvest
+- Initial quality observations
+
+**After Harvest:**
+- Where it's stored and at what temperature
+- Any processing or packing done  
+- When and where it was sold
+- Customer information
+
+### Why Traceability Matters
+
+**Food Safety**: If there's ever a problem with your produce, you can quickly find:
+- Which field it came from
+- What was applied to that field
+- Who handled the product
+- Where the rest of that lot went
+
+**Organic Certification**: Inspectors need to see the complete chain showing:
+- Organic inputs were used
+- No prohibited materials were applied
+- Buffer zones were maintained
+- Proper record-keeping was followed
+
+### Mock Recall Practice
+
+**Test your system** by doing practice recalls:
+1. Pick a random product you sold
+2. See how quickly you can trace it back to the field
+3. Find all other products from that same lot
+4. Check if you can contact customers who bought it
+
+**Good traceability means:**
+- Finding the information in under 4 hours
+- Having all supporting documents
+- Being able to contact customers quickly
+
+The app makes this much easier than paper records by linking everything automatically.
 
 ## Reports and Documentation
 
+The app creates reports to help you manage your farm and meet regulatory requirements.
+
 ### Standard Reports
-1. Navigate to "Reports" to access pre-built report templates:
-   - Material usage by field
-   - Worker activities
-   - Harvest yields
-   - Compliance documentation
-   - Inventory status
 
-### Custom Reports
-1. Use the report builder to create custom reports
-2. Select data fields to include
-3. Apply filters and sorting
-4. Save report templates for future use
+Go to **Reports** to find ready-made reports:
+- **Material usage**: What inputs you used on each field
+- **Worker activities**: Hours worked and tasks completed
+- **Harvest yields**: How much you harvested from each field
+- **Compliance documentation**: Everything needed for inspections
+- **Inventory status**: What supplies you have on hand
 
-### Exporting Data
-1. Export reports in multiple formats:
-   - PDF for printing
-   - CSV for data analysis
-   - JSON for system integration
+### Creating Custom Reports
 
-### Document Management
-1. Store all farm documentation digitally:
-   - Organic certificates
-   - Field maps
-   - Water tests
-   - Soil analyses
-   - Training records
+1. Use the report builder to make your own reports
+2. Choose what information to include
+3. Set filters for specific date ranges or fields
+4. Save report templates to use again later
+
+### Exporting Your Data
+
+**File formats available:**
+- **PDF**: For printing or emailing
+- **CSV**: For spreadsheets and data analysis
+- **JSON**: For connecting to other software
+
+### Document Storage
+
+**Store all farm documents digitally:**
+- Organic certificates and inspection reports
+- Field maps and soil test results
+- Water quality tests
+- Training certificates and safety records
+- Receipts and invoices
+
+**Benefits of digital storage:**
+- Never lose important documents
+- Search for documents quickly
+- Share documents easily with inspectors
+- Backup automatically to the cloud
+- Access from anywhere with internet
 
 ## Troubleshooting
 
-### Common Issues and Solutions
-- **Data Not Saving**: Ensure you have a stable internet connection and click "Save" before navigating away
-- **Missing Materials**: Check filter settings in the materials view
-- **Report Generation Errors**: Verify all required fields have data for the selected date range
-- **Login Problems**: Try clearing browser cache or resetting your password
+### Common Problems and Solutions
+
+**Problem: Can't save my work**
+- Check your internet connection
+- Make sure to tap "Save" before leaving the screen
+- Try closing and reopening the app
+
+**Problem: Can't find materials I added**
+- Check the filter settings at the top of the screen
+- Make sure you're looking in the right category
+- Use the search function to find specific items
+
+**Problem: Reports won't generate**
+- Make sure you have data for the date range selected
+- Check that all required fields have information
+- Try a shorter date range if the report is very large
+
+**Problem: App is running slowly**
+- Close other apps running in the background
+- Restart your device if needed
+- Make sure you have the latest app update
+
+**Problem: Can't log in**
+- Double-check your username and password
+- Make sure you have internet connection
+- Contact your farm administrator if problems continue
+
+### Getting Help
+
+- Use the built-in help system (if enabled in Settings)
+- Contact your farm manager or IT support
+- Check for app updates in the App Store
+- Restart the app if it's acting strange
 
 ### System Status
-Check the status dashboard for any known issues or scheduled maintenance.
+
+The app will show you if there are any known problems or if maintenance is scheduled.
 
 ## FAQ
 
-**Q: How often should I update my materials inventory?**  
-A: For best results, update your inventory in real-time as materials are received or used. At minimum, perform a weekly reconciliation.
+**Q: How often should I update my inventory?**  
+A: Update it every time you use materials or receive new supplies. At least check it once a week.
 
-**Q: Can I use the system offline?**  
-A: The mobile app has limited offline functionality, but will sync data when connectivity is restored.
+**Q: Can I use the app without internet?**  
+A: You can enter some information offline, but it will sync when you get internet again.
 
-**Q: How does the system help with organic certification?**  
-A: The system automatically organizes all documentation required for certification, tracks compliance issues in real-time, and can generate complete reports for inspectors.
+**Q: How does this help with organic certification?**  
+A: The app keeps all the records you need for inspections and organizes them automatically.
 
-**Q: Who can see worker health and safety records?**  
-A: Access to sensitive worker information is restricted by permission level. Farm administrators and designated safety officers typically have access.
+**Q: Who can see worker information?**  
+A: Only farm managers and people with the right permissions can see sensitive worker data.
+
+**Q: How long are records kept?**  
+A: The app keeps records for as long as needed for certification (usually 3-5 years).
+
+**Q: What if I make a mistake in my records?**  
+A: You can edit most information, and the app keeps track of changes for audit purposes.
+
+**Q: Can multiple people use the app at the same time?**  
+A: Yes, the app syncs changes between devices so your team can work together.
+
+**Q: What happens to my data if I stop using the app?**  
+A: You can export all your data before canceling, and you own all your farm records.
 ials and Practices - Empowering Organic Farmers with Comprehensive Management Tools
