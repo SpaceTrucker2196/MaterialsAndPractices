@@ -533,6 +533,14 @@ struct CultivarListView: View {
         }
         .searchable(text: $searchText, prompt: "Search cultivars...")
         .navigationTitle("Cultivars")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(destination: CultivarCatalogView()) {
+                    Image(systemName: "book.fill")
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+            }
+        }
     }
     
     // MARK: - Fallback List View
@@ -551,6 +559,14 @@ struct CultivarListView: View {
             }
         }
         .navigationTitle("Cultivars")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(destination: CultivarCatalogView()) {
+                    Image(systemName: "book.fill")
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+            }
+        }
     }
     
     // MARK: - Supporting Methods

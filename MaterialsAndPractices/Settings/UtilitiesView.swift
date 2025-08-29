@@ -333,6 +333,31 @@ struct UtilitiesView: View {
                         .font(.caption)
                 }
             }
+            
+            // Amendment Catalog Utility
+            NavigationLink(destination: AmendmentCatalogView()) {
+                HStack {
+                    Image(systemName: "flask.fill")
+                        .foregroundColor(AppTheme.Colors.organicPractice)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Manage Amendments")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Track crop amendments, OMRI listing, and inventory levels")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
+            }
         }
     }
     
