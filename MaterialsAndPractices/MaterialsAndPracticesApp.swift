@@ -153,6 +153,9 @@ struct ContentView: View {
         let trainingSeeder = TrainingCourseSeeder()
         trainingSeeder.seedCoursesIfNeeded()
         
+        // Initialize farm practices
+        FarmPracticeSeeder.seedDefaultPracticesIfNeeded(context: viewContext)
+        
         print("✅ System components initialized")
     }
 }
