@@ -284,6 +284,31 @@ struct UtilitiesView: View {
                 }
             }
             
+            // Certification Utility
+            NavigationLink(destination: CertificationOverviewView()) {
+                HStack {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundColor(AppTheme.Colors.organicPractice)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Certification")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Manage organic certification and compliance tracking by farm")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
+            }
+            
             // General Ledger Utility
             NavigationLink(destination: LedgerView()) {
                 HStack {

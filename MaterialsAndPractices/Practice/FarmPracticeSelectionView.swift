@@ -77,7 +77,14 @@ struct FarmPracticeSelectionView: View {
             }
         }
         .sheet(item: $showingPracticeDetail) { practice in
-            FarmPracticeDetailView(practice: practice)
+            if let goodPractice = practice.goodFarmingPractice {
+                PracticeInstructionDetailView(
+                    practice: goodPractice, 
+                    farm: Farm() // TODO: Pass actual farm context
+                )
+            } else {
+                FarmPracticeDetailView(practice: practice)
+            }
         }
     }
     
@@ -100,53 +107,56 @@ struct FarmPracticeRow: View {
     let onShowDetail: () -> Void
     
     var body: some View {
-        HStack(spacing: AppTheme.Spacing.medium) {
-            // Selection checkbox
-            Button(action: onToggle) {
+        Button(action: onToggle) {
+            HStack(spacing: AppTheme.Spacing.medium) {
+                // Selection checkbox
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(.title2)
                     .foregroundColor(isSelected ? AppTheme.Colors.primary : AppTheme.Colors.textSecondary)
-            }
-            
-            // Practice content
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                Text(practice.name)
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                    .lineLimit(2)
                 
-                Text(practice.frequency)
-                    .font(AppTheme.Typography.labelSmall)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
+                // Practice content
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text(practice.name)
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                    
+                    Text(practice.frequency)
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Text(practice.certification)
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.secondary)
+                }
                 
-                Text(practice.certification)
-                    .font(AppTheme.Typography.labelSmall)
-                    .foregroundColor(AppTheme.Colors.secondary)
+                Spacer()
+                
+                // Detail button
+                Button(action: onShowDetail) {
+                    Image(systemName: "info.circle")
+                        .font(.title2)
+                        .foregroundColor(AppTheme.Colors.info)
+                }
+                .buttonStyle(PlainButtonStyle())
             }
-            
-            Spacer()
-            
-            // Detail button
-            Button(action: onShowDetail) {
-                Image(systemName: "info.circle")
-                    .font(.title2)
-                    .foregroundColor(AppTheme.Colors.primary)
-            }
+            .padding(AppTheme.Spacing.medium)
+            .background(
+                isSelected 
+                    ? AppTheme.Colors.primary.opacity(0.1)
+                    : AppTheme.Colors.backgroundSecondary
+            )
+            .cornerRadius(AppTheme.CornerRadius.medium)
+            .overlay(
+                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                    .stroke(
+                        isSelected ? AppTheme.Colors.primary : Color.clear,
+                        lineWidth: 2
+                    )
+            )
         }
-        .padding(AppTheme.Spacing.medium)
-        .background(
-            isSelected 
-                ? AppTheme.Colors.primary.opacity(0.1)
-                : AppTheme.Colors.backgroundSecondary
-        )
-        .cornerRadius(AppTheme.CornerRadius.medium)
-        .overlay(
-            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
-                .stroke(
-                    isSelected ? AppTheme.Colors.primary : Color.clear,
-                    lineWidth: 2
-                )
-        )
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
