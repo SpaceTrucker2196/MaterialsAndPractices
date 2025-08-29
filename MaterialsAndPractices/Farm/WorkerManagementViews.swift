@@ -179,6 +179,7 @@ struct WorkerDetailView: View {
     @State private var currentWeekHours: Double = 0
     @State private var isClockedIn = false
     @State private var todayEntry: TimeClock?
+    @State private var showingOffboardAlert = false
     
     // Calculate today's hours worked
     private var todayHoursWorked: Double {
@@ -208,11 +209,17 @@ struct WorkerDetailView: View {
                 // Weekly Hours Section
                 weeklyHoursSection
                 
+                // This Week Time Blocks Section
+                thisWeekTimeBlocksSection
+                
                 // Health & Safety Training Section
                 healthSafetySection
                 
                 // Work Order History Section
                 workOrderHistorySection
+                
+                // Off-board Worker Section
+                offboardWorkerSection
             }
             .padding()
         }
@@ -237,78 +244,89 @@ struct WorkerDetailView: View {
     
     private var workerInformationSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            // Profile Image Section - Large display
-            VStack(spacing: AppTheme.Spacing.medium) {
-                Text(worker.name ?? "Worker")
-                    .font(AppTheme.Typography.headlineLarge)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                
-                // Large worker photo
-                if let imagePath = worker.imagePath,
-                   let image = ZappaProfile.loadImage(from: imagePath) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(maxWidth: 1024, maxHeight: 400)
-                        .clipped()
-                        .cornerRadius(AppTheme.CornerRadius.large)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
-                                .stroke(AppTheme.Colors.primary, lineWidth: 3)
-                        )
-                }
-                // Fallback to profilePhotoData
-                else if let photoData = worker.profilePhotoData,
-                   let uiImage = UIImage(data: photoData) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(maxWidth: 1024, maxHeight: 400)
-                        .clipped()
-                        .cornerRadius(AppTheme.CornerRadius.large)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
-                                .stroke(AppTheme.Colors.primary, lineWidth: 3)
-                        )
-                } else {
-                    RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
-                        .fill(AppTheme.Colors.backgroundSecondary)
-                        .frame(maxWidth: 1024, maxHeight: 400)
-                        .overlay(
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 80))
-                                .foregroundColor(AppTheme.Colors.primary)
-                        )
-                }
-            }
+            // Worker name header
+            Text(worker.name ?? "Worker")
+                .font(AppTheme.Typography.headlineLarge)
+                .foregroundColor(AppTheme.Colors.textPrimary)
             
-            // Worker Information Details
-            SectionHeader(title: "Worker Information")
-            
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                if let position = worker.position {
-                    CommonInfoRow(label: "Position:") {
-                        Text(position)
+            // Split layout: Profile image and worker information side by side
+            HStack(alignment: .top, spacing: AppTheme.Spacing.large) {
+                // Left side - Profile image
+                VStack {
+                    if let imagePath = worker.imagePath,
+                       let image = ZappaProfile.loadImage(from: imagePath) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 200, height: 200)
+                            .clipped()
+                            .cornerRadius(AppTheme.CornerRadius.large)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                                    .stroke(AppTheme.Colors.primary, lineWidth: 3)
+                            )
+                    }
+                    // Fallback to profilePhotoData
+                    else if let photoData = worker.profilePhotoData,
+                       let uiImage = UIImage(data: photoData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 200, height: 200)
+                            .clipped()
+                            .cornerRadius(AppTheme.CornerRadius.large)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                                    .stroke(AppTheme.Colors.primary, lineWidth: 3)
+                            )
+                    } else {
+                        RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                            .fill(AppTheme.Colors.backgroundSecondary)
+                            .frame(width: 200, height: 200)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 60))
+                                    .foregroundColor(AppTheme.Colors.primary)
+                            )
                     }
                 }
                 
-                if let email = worker.email {
-                    CommonInfoRow(label: "Email:") {
-                        Text(email)
+                // Right side - Worker information
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+                    if let position = worker.position {
+                        CommonInfoRow(label: "Position:") {
+                            Text(position)
+                        }
                     }
-                }
-                
-                if let phone = worker.phone {
-                    CommonInfoRow(label: "Phone:") {
-                        Text(phone)
+                    
+                    if let email = worker.email {
+                        CommonInfoRow(label: "Email:") {
+                            Text(email)
+                        }
                     }
-                }
-                
-                if let hireDate = worker.hireDate {
-                    CommonInfoRow(label: "Hire Date:") {
-                        Text(hireDate, style: .date)
+                    
+                    if let phone = worker.phone {
+                        CommonInfoRow(label: "Phone:") {
+                            Text(phone)
+                        }
                     }
+                    
+                    if let hireDate = worker.hireDate {
+                        CommonInfoRow(label: "Hire Date:") {
+                            VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                                Text(hireDate, style: .date)
+                                    .font(AppTheme.Typography.bodyMedium)
+                                Text(hireDateWithDayName(hireDate))
+                                    .font(AppTheme.Typography.bodySmall)
+                                    .foregroundColor(AppTheme.Colors.textSecondary)
+                            }
+                        }
+                    }
+                    
+                    // Add spacer to push content to top
+                    Spacer()
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
@@ -357,18 +375,18 @@ struct WorkerDetailView: View {
                                 VStack(spacing: AppTheme.Spacing.small) {
                                     Image(systemName: "clock")
                                         .font(.system(size: 40))
-                                        .foregroundColor(AppTheme.Colors.success)
+                                        .foregroundColor(AppTheme.Colors.clockIn)
                                     
-                                    Text("Clock In")
+                                    Text("Start Work")
                                         .font(AppTheme.Typography.bodyMedium)
-                                        .foregroundColor(AppTheme.Colors.success)
+                                        .foregroundColor(AppTheme.Colors.clockIn)
                                         .fontWeight(.semibold)
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .overlay(
                                     RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
-                                        .stroke(AppTheme.Colors.success, lineWidth: 2)
+                                        .stroke(AppTheme.Colors.clockIn, lineWidth: 2)
                                 )
                             }
                         } else {
@@ -376,18 +394,18 @@ struct WorkerDetailView: View {
                                 VStack(spacing: AppTheme.Spacing.small) {
                                     Image(systemName: "clock.fill")
                                         .font(.system(size: 40))
-                                        .foregroundColor(AppTheme.Colors.error)
+                                        .foregroundColor(AppTheme.Colors.clockOut)
                                     
-                                    Text("Clock Out")
+                                    Text("Stop Work")
                                         .font(AppTheme.Typography.bodyMedium)
-                                        .foregroundColor(AppTheme.Colors.error)
+                                        .foregroundColor(AppTheme.Colors.clockOut)
                                         .fontWeight(.semibold)
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .overlay(
                                     RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
-                                        .stroke(AppTheme.Colors.error, lineWidth: 2)
+                                        .stroke(AppTheme.Colors.clockOut, lineWidth: 2)
                                 )
                             }
                         }
@@ -448,6 +466,38 @@ struct WorkerDetailView: View {
         }
     }
     
+    private var thisWeekTimeBlocksSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "This Week - Daily Time Blocks")
+            
+            LazyVStack(spacing: AppTheme.Spacing.small) {
+                ForEach(daysInCurrentWeek, id: \.self) { day in
+                    DailyTimeBlocksRow(
+                        date: day,
+                        worker: worker,
+                        timeClockService: MultiBlockTimeClockService(context: viewContext)
+                    )
+                }
+            }
+        }
+    }
+    
+    // MARK: - Computed Properties for This Week
+    
+    private var daysInCurrentWeek: [Date] {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        // Get Monday of current week
+        let weekday = calendar.component(.weekday, from: now)
+        let daysFromMonday = (weekday + 5) % 7 // Convert Sunday=1 to Monday=0
+        let monday = calendar.date(byAdding: .day, value: -daysFromMonday, to: calendar.startOfDay(for: now))!
+        
+        return (0..<7).compactMap { dayOffset in
+            calendar.date(byAdding: .day, value: dayOffset, to: monday)
+        }
+    }
+    
     private var healthSafetySection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             HStack {
@@ -455,20 +505,23 @@ struct WorkerDetailView: View {
                 
                 Spacer()
                 
-                NavigationLink(destination: HealthSafetyTrainingView(worker: worker)) {
+                NavigationLink(destination: WorkerTrainingRecordsView(worker: worker)) {
                     Image(systemName: "plus.circle.fill")
                         .foregroundColor(AppTheme.Colors.primary)
                 }
             }
             
-            if let trainings = worker.healthSafetyTrainings?.allObjects as? [HealthSafetyTraining],
-               !trainings.isEmpty {
+            // Show TrainingRecord entities instead of HealthSafetyTraining
+            if let trainingRecords = worker.trainingRecords?.allObjects as? [TrainingRecord],
+               !trainingRecords.isEmpty {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
                 ], spacing: AppTheme.Spacing.medium) {
-                    ForEach(trainings.sorted(by: { ($0.completedDate ?? Date.distantPast) > ($1.completedDate ?? Date.distantPast) }), id: \.id) { training in
-                        TrainingTile(training: training)
+                    ForEach(trainingRecords.sorted(by: { ($0.trainingDate ?? Date.distantPast) > ($1.trainingDate ?? Date.distantPast) }), id: \.trainingID) { record in
+                        NavigationLink(destination: TrainingRecordDetailView(record: record)) {
+                            TrainingRecordTile(record: record)
+                        }
                     }
                 }
             } else {
@@ -506,7 +559,52 @@ struct WorkerDetailView: View {
         }
     }
     
+    private var offboardWorkerSection: some View {
+        VStack(spacing: AppTheme.Spacing.large) {
+            // Spacer rows as requested
+            Rectangle()
+                .fill(Color.clear)
+                .frame(height: AppTheme.Spacing.medium)
+            
+            Rectangle()
+                .fill(Color.clear)
+                .frame(height: AppTheme.Spacing.medium)
+            
+            // Off-board button
+            Button(action: offboardWorker) {
+                HStack {
+                    Image(systemName: "person.slash.fill")
+                        .font(.title2)
+                    
+                    Text("Off-board Worker")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .foregroundColor(.white)
+                .background(AppTheme.Colors.error)
+                .cornerRadius(AppTheme.CornerRadius.medium)
+            }
+            .alert("Off-board Worker", isPresented: $showingOffboardAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Off-board", role: .destructive) {
+                    confirmOffboardWorker()
+                }
+            } message: {
+                Text("This will set \(worker.name ?? "this worker") as inactive and hide them from the app. This action can be reversed later.")
+            }
+        }
+    }
+    
     // MARK: - Methods
+    
+    /// Format hire date with full day name
+    private func hireDateWithDayName(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMMM d, yyyy"
+        return formatter.string(from: date)
+    }
     
     private func loadWorkerData() {
         // Set default imagePath if blank
@@ -553,30 +651,31 @@ struct WorkerDetailView: View {
         }
     }
     
-    /// Clock in worker - SHOULD BE MOVED to TimeClockInteractor use case
-    /// Business logic for time tracking should not be in the view layer
+    /// Clock in worker using multi-block time clock service
     private func clockIn() {
-        if todayEntry == nil {
-            todayEntry = TimeClock(context: viewContext)
-            todayEntry?.id = UUID()
-            todayEntry?.date = Calendar.current.startOfDay(for: Date())
-            todayEntry?.worker = worker
-            
-            // Set week and year for tracking
-            let calendar = Calendar.current
-            let now = Date()
-            todayEntry?.year = Int16(calendar.component(.yearForWeekOfYear, from: now))
-            todayEntry?.weekNumber = Int16(calendar.component(.weekOfYear, from: now))
-        }
-        
-        todayEntry?.clockInTime = Date()
-        todayEntry?.isActive = true
+        let timeClockService = MultiBlockTimeClockService(context: viewContext)
         
         do {
-            try viewContext.save()
+            try timeClockService.clockIn(worker: worker)
             isClockedIn = true
+            checkTodayClockStatus() // Refresh status
+            calculateCurrentWeekHours() // Refresh weekly totals
         } catch {
             print("Error clocking in: \(error)")
+        }
+    }
+    
+    /// Clock out worker using multi-block time clock service
+    private func clockOut() {
+        let timeClockService = MultiBlockTimeClockService(context: viewContext)
+        
+        do {
+            try timeClockService.clockOut(worker: worker)
+            isClockedIn = false
+            checkTodayClockStatus() // Refresh status
+            calculateCurrentWeekHours() // Refresh weekly totals
+        } catch {
+            print("Error clocking out: \(error)")
         }
     }
     
@@ -588,27 +687,21 @@ struct WorkerDetailView: View {
         return []
     }
     
-    /// Clock out worker - SHOULD BE MOVED to TimeClockInteractor use case  
-    /// Hours calculation and data persistence should be in application layer
-    private func clockOut() {
-        guard let entry = todayEntry else { return }
-        
-        let clockOutTime = Date()
-        entry.clockOutTime = clockOutTime
-        entry.isActive = false
-        
-        // Calculate hours worked
-        if let clockInTime = entry.clockInTime {
-            let interval = clockOutTime.timeIntervalSince(clockInTime)
-            entry.hoursWorked = interval / 3600 // Convert to hours
-        }
+    // MARK: - Off-boarding Methods
+    
+    private func offboardWorker() {
+        showingOffboardAlert = true
+    }
+    
+    private func confirmOffboardWorker() {
+        worker.isActive = false
         
         do {
             try viewContext.save()
-            isClockedIn = false
-            calculateCurrentWeekHours() // Refresh weekly totals
+            // Note: Navigation back would typically be handled by a coordinator
+            // For now, we'll just update the worker status
         } catch {
-            print("Error clocking out: \(error)")
+            print("Error off-boarding worker: \(error)")
         }
     }
 }
@@ -1075,22 +1168,329 @@ struct CreateWorkerView: View {
     }
 }
 
-/// Placeholder for edit worker view
+/// Enhanced edit worker view with comprehensive profile editing
 struct EditWorkerView: View {
     let worker: Worker
     @Binding var isPresented: Bool
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    // MARK: - Form State
+    @State private var name: String
+    @State private var position: String
+    @State private var email: String
+    @State private var phone: String
+    @State private var emergencyContact: String
+    @State private var emergencyPhone: String
+    @State private var hireDate: Date
+    @State private var notes: String
+    @State private var isActive: Bool
+    
+    // MARK: - Photo Management
+    @State private var profileImage: UIImage?
+    @State private var showingImagePicker = false
+    @State private var showingImageOptions = false
+    @StateObject private var photoManager = PhotoManager()
+    
+    // MARK: - UI State
+    @State private var isSaving = false
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
+    
+    init(worker: Worker, isPresented: Binding<Bool>) {
+        self.worker = worker
+        self._isPresented = isPresented
+        
+        // Initialize form state with worker data
+        self._name = State(initialValue: worker.name ?? "")
+        self._position = State(initialValue: worker.position ?? "")
+        self._email = State(initialValue: worker.email ?? "")
+        self._phone = State(initialValue: worker.phone ?? "")
+        self._emergencyContact = State(initialValue: worker.emergencyContact ?? "")
+        self._emergencyPhone = State(initialValue: worker.emergencyPhone ?? "")
+        self._hireDate = State(initialValue: worker.hireDate ?? Date())
+        self._notes = State(initialValue: worker.notes ?? "")
+        self._isActive = State(initialValue: worker.isActive)
+        
+        // Initialize profile image if available
+        if let photoData = worker.profilePhotoData,
+           let uiImage = UIImage(data: photoData) {
+            self._profileImage = State(initialValue: uiImage)
+        }
+    }
     
     var body: some View {
         NavigationView {
-            Text("Edit Worker - Coming Soon")
-                .navigationTitle("Edit Worker")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel") {
-                            isPresented = false
+            Form {
+                // Profile Photo Section
+                profilePhotoSection
+                
+                // Basic Information Section
+                basicInformationSection
+                
+                // Contact Information Section
+                contactInformationSection
+                
+                // Emergency Contact Section
+                emergencyContactSection
+                
+                // Employment Information Section
+                employmentInformationSection
+                
+                // Notes Section
+                notesSection
+            }
+            .navigationTitle("Edit Worker")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Save") {
+                        saveWorker()
+                    }
+                    .disabled(name.isEmpty || isSaving)
+                }
+            }
+            .sheet(isPresented: $showingImagePicker) {
+                //GenericPhotoCaptureView(selectedImage: $profileImage)
+            }
+            .actionSheet(isPresented: $showingImageOptions) {
+                ActionSheet(
+                    title: Text("Profile Photo"),
+                    buttons: [
+                        .default(Text("Take Photo")) {
+                            if photoManager.isCameraAuthorized {
+                                showingImagePicker = true
+                            } else {
+                                photoManager.requestCameraPermission { granted in
+                                    if granted {
+                                        showingImagePicker = true
+                                    }
+                                }
+                            }
+                        },
+                        .default(Text("Choose from Library")) {
+                            showingImagePicker = true
+                        },
+                        .cancel()
+                    ]
+                )
+            }
+            .alert("Error", isPresented: $showingErrorAlert) {
+                Button("OK") { }
+            } message: {
+                Text(errorMessage)
+            }
+            .disabled(isSaving)
+        }
+    }
+    
+    // MARK: - Section Views (Reusing from CreateWorkerView)
+    
+    private var profilePhotoSection: some View {
+        Section("Profile Photo") {
+            HStack {
+                Spacer()
+                
+                VStack(spacing: AppTheme.Spacing.medium) {
+                    // Photo display
+                    if let profileImage = profileImage {
+                        Image(uiImage: profileImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 120, height: 120)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(AppTheme.Colors.primary, lineWidth: 2)
+                            )
+                    } else {
+                        Circle()
+                            .fill(AppTheme.Colors.backgroundSecondary)
+                            .frame(width: 120, height: 120)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 48))
+                                    .foregroundColor(AppTheme.Colors.primary)
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(AppTheme.Colors.primary, lineWidth: 2)
+                            )
+                    }
+                    
+                    // Photo action buttons
+                    HStack(spacing: AppTheme.Spacing.medium) {
+                        if profileImage != nil {
+                            Button("Change Photo") {
+                                showingImageOptions = true
+                            }
+                            .font(AppTheme.Typography.bodySmall)
+                            
+                            Button("Remove") {
+                                profileImage = nil
+                            }
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.error)
+                        } else {
+                            Button("Add Photo") {
+                                showingImageOptions = true
+                            }
+                            .font(AppTheme.Typography.bodyMedium)
                         }
                     }
                 }
+                
+                Spacer()
+            }
+            .padding(.vertical, AppTheme.Spacing.medium)
+        }
+    }
+    
+    private var basicInformationSection: some View {
+        Section("Basic Information") {
+            HStack {
+                Image(systemName: "person")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                TextField("Full Name", text: $name)
+                    .textContentType(.name)
+            }
+            
+            HStack {
+                Image(systemName: "briefcase")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                TextField("Position/Title", text: $position)
+                    .textContentType(.jobTitle)
+            }
+            
+            HStack {
+                Image(systemName: "person.crop.circle.badge.checkmark")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                Toggle("Active Employee", isOn: $isActive)
+            }
+        }
+    }
+    
+    private var contactInformationSection: some View {
+        Section("Contact Information") {
+            HStack {
+                Image(systemName: "envelope")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                TextField("Email Address", text: $email)
+                    .textContentType(.emailAddress)
+                    .keyboardType(.emailAddress)
+                    .autocapitalization(.none)
+            }
+            
+            HStack {
+                Image(systemName: "phone")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                TextField("Phone Number", text: $phone)
+                    .textContentType(.telephoneNumber)
+                    .keyboardType(.phonePad)
+            }
+        }
+    }
+    
+    private var emergencyContactSection: some View {
+        Section("Emergency Contact") {
+            HStack {
+                Image(systemName: "person.2")
+                    .foregroundColor(AppTheme.Colors.error)
+                    .frame(width: 20)
+                
+                TextField("Emergency Contact Name", text: $emergencyContact)
+                    .textContentType(.name)
+            }
+            
+            HStack {
+                Image(systemName: "phone.badge.plus")
+                    .foregroundColor(AppTheme.Colors.error)
+                    .frame(width: 20)
+                
+                TextField("Emergency Phone Number", text: $emergencyPhone)
+                    .textContentType(.telephoneNumber)
+                    .keyboardType(.phonePad)
+            }
+        }
+    }
+    
+    private var employmentInformationSection: some View {
+        Section("Employment Information") {
+            HStack {
+                Image(systemName: "calendar.badge.plus")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                
+                DatePicker("Hire Date", selection: $hireDate, displayedComponents: .date)
+            }
+        }
+    }
+    
+    private var notesSection: some View {
+        Section("Notes") {
+            HStack(alignment: .top) {
+                Image(systemName: "note.text")
+                    .foregroundColor(AppTheme.Colors.primary)
+                    .frame(width: 20)
+                    .padding(.top, 4)
+                
+                TextField("Additional notes or comments", text: $notes, axis: .vertical)
+                    .lineLimit(3...6)
+            }
+        }
+    }
+    
+    // MARK: - Actions
+    
+    private func saveWorker() {
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            errorMessage = "Worker name is required"
+            showingErrorAlert = true
+            return
+        }
+        
+        isSaving = true
+        
+        // Update worker properties
+        worker.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.position = position.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : position.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.email = email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : email.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.phone = phone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : phone.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.emergencyContact = emergencyContact.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : emergencyContact.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.emergencyPhone = emergencyPhone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : emergencyPhone.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.hireDate = hireDate
+        worker.notes = notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : notes.trimmingCharacters(in: .whitespacesAndNewlines)
+        worker.isActive = isActive
+        
+        // Update profile photo if changed
+        if let profileImage = profileImage {
+            worker.profilePhotoData = profileImage.jpegData(compressionQuality: 0.7)
+        } else {
+            worker.profilePhotoData = nil
+        }
+        
+        do {
+            try viewContext.save()
+            isPresented = false
+        } catch {
+            isSaving = false
+            errorMessage = "Failed to save worker: \(error.localizedDescription)"
+            showingErrorAlert = true
         }
     }
 }
@@ -1367,6 +1767,248 @@ struct WorkerDailyTimeEntryRow: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d"
         return formatter.string(from: date)
+    }
+}
+
+// MARK: - Training Record Tile
+
+/// Tile view for training record with expiration status
+struct TrainingRecordTile: View {
+    let record: TrainingRecord
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            HStack {
+                // Training icon
+                Image(systemName: record.isExpired ? "exclamationmark.triangle.fill" : 
+                     record.passStatus ? "checkmark.circle.fill" : "xmark.circle.fill")
+                    .foregroundColor(record.isExpired ? AppTheme.Colors.error : 
+                                   record.passStatus ? AppTheme.Colors.success : AppTheme.Colors.error)
+                    .font(.title2)
+                
+                Spacer()
+                
+                // Status indicator
+                if record.isExpired {
+                    Text("EXPIRED")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.error)
+                        .fontWeight(.bold)
+                } else if record.expiresWithin30Days {
+                    Text("EXPIRING")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.warning)
+                        .fontWeight(.bold)
+                } else if record.passStatus {
+                    Text("PASSED")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.success)
+                        .fontWeight(.bold)
+                } else {
+                    Text("FAILED")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.error)
+                        .fontWeight(.bold)
+                }
+            }
+            
+            Text(record.trainingCourse?.courseName ?? "Unknown Training")
+                .font(AppTheme.Typography.bodyMedium)
+                .foregroundColor(AppTheme.Colors.textPrimary)
+                .fontWeight(.semibold)
+                .lineLimit(2)
+            
+            if let trainingDate = record.trainingDate {
+                Text("Completed: \(trainingDate, style: .date)")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            if let complianceCategory = record.complianceCategoryEnum {
+                Text(complianceCategory.rawValue)
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+        }
+        .padding(AppTheme.Spacing.medium)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .overlay(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .stroke(record.isExpired ? AppTheme.Colors.error : 
+                       record.expiresWithin30Days ? AppTheme.Colors.warning : 
+                       record.passStatus ? AppTheme.Colors.success : AppTheme.Colors.error, lineWidth: 1)
+        )
+    }
+}
+
+/// Placeholder for worker training records view
+struct WorkerTrainingRecordsView: View {
+    let worker: Worker
+    
+    var body: some View {
+        Text("Training Records - Coming Soon")
+            .navigationTitle("Training Records")
+    }
+}
+
+// MARK: - Daily Time Blocks Row
+
+/// Row showing all time blocks for a worker on a specific day
+struct DailyTimeBlocksRow: View {
+    let date: Date
+    let worker: Worker
+    let timeClockService: MultiBlockTimeClockService
+    
+    @State private var timeBlocks: [TimeClock] = []
+    
+    private let calendar = Calendar.current
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            // Date header
+            HStack {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    Text(dayOfWeekString)
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                        .fontWeight(.semibold)
+                    
+                    Text(dateString)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                Spacer()
+                
+                // Total hours for the day
+                if !timeBlocks.isEmpty {
+                    VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                        Text("Total")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                        
+                        Text("\(totalHoursForDay, specifier: "%.1f") hrs")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.primary)
+                            .fontWeight(.semibold)
+                    }
+                }
+            }
+            
+            // Time blocks for this day
+            if timeBlocks.isEmpty {
+                Text("No time recorded")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .italic()
+                    .padding(.vertical, AppTheme.Spacing.small)
+            } else {
+                ForEach(timeBlocks.sorted(by: { $0.blockNumber < $1.blockNumber }), id: \.id) { block in
+                    TimeBlockRow(timeBlock: block)
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.medium)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .onAppear {
+            loadTimeBlocks()
+        }
+        .onChange(of: date) { _ in
+            loadTimeBlocks()
+        }
+    }
+    
+    // MARK: - Computed Properties
+    
+    private var dayOfWeekString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE"
+        return formatter.string(from: date)
+    }
+    
+    private var dateString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        return formatter.string(from: date)
+    }
+    
+    private var totalHoursForDay: Double {
+        return timeBlocks.reduce(0) { total, block in
+            if block.isActive {
+                // Calculate current hours for active block
+                if let clockInTime = block.clockInTime {
+                    let currentHours = Date().timeIntervalSince(clockInTime) / 3600.0
+                    return total + currentHours
+                }
+            }
+            return total + block.hoursWorked
+        }
+    }
+    
+    // MARK: - Methods
+    
+    private func loadTimeBlocks() {
+        timeBlocks = timeClockService.getTimeBlocks(for: worker, on: date)
+    }
+}
+
+// MARK: - Time Block Row
+
+/// Individual time block display (e.g., "Block 1: 7:00 AM - 10:00 AM")
+struct TimeBlockRow: View {
+    let timeBlock: TimeClock
+    
+    var body: some View {
+        HStack {
+            // Block number
+            Text("Block \(timeBlock.blockNumber)")
+                .font(AppTheme.Typography.labelSmall)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+                .frame(width: 50, alignment: .leading)
+            
+            // Time range
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                HStack {
+                    if let clockInTime = timeBlock.clockInTime {
+                        Text("In: \(clockInTime, style: .time)")
+                            .font(AppTheme.Typography.bodySmall)
+                    } else {
+                        Text("In: --")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    if let clockOutTime = timeBlock.clockOutTime {
+                        Text("Out: \(clockOutTime, style: .time)")
+                            .font(AppTheme.Typography.bodySmall)
+                    } else if timeBlock.isActive {
+                        Text("Out: Active")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.success)
+                    } else {
+                        Text("Out: --")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
+            }
+            
+            Spacer()
+            
+            // Duration
+            Text(timeBlock.formattedDuration)
+                .font(AppTheme.Typography.bodySmall)
+                .foregroundColor(AppTheme.Colors.primary)
+                .fontWeight(.medium)
+        }
+        .padding(.vertical, AppTheme.Spacing.tiny)
+        .padding(.horizontal, AppTheme.Spacing.small)
+        .background(AppTheme.Colors.backgroundPrimary)
+        .cornerRadius(AppTheme.CornerRadius.small)
     }
 }
 

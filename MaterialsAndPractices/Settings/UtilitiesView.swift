@@ -125,6 +125,62 @@ struct UtilitiesView: View {
                 showingWorkerCreation = true
             }
             
+            // Assign Training Utility
+            NavigationLink(destination: AssignTrainingUtilityView()) {
+                HStack {
+                    Image(systemName: "doc.badge.plus")
+                        .foregroundColor(AppTheme.Colors.warning)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Assign Training")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Assign training courses to workers for compliance")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .font(.caption)
+                }
+                .padding()
+                .background(AppTheme.Colors.backgroundSecondary)
+                .cornerRadius(AppTheme.CornerRadius.medium)
+            }
+            
+            // Manage Training Utility
+            NavigationLink(destination: TrainingCourseListView()) {
+                HStack {
+                    Image(systemName: "book.fill")
+                        .foregroundColor(AppTheme.Colors.organicPractice)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Manage Training")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("View and manage all training courses and records")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .font(.caption)
+                }
+                .padding()
+                .background(AppTheme.Colors.backgroundSecondary)
+                .cornerRadius(AppTheme.CornerRadius.medium)
+            }
+            
             // Manage Infrastructure Utility
             NavigationLink(destination: InfrastructureManagementView()) {
                 HStack {
@@ -770,5 +826,69 @@ struct LoadTestLedgerRow: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Assign Training Utility View
+
+/// Utility view for assigning training courses to workers
+struct AssignTrainingUtilityView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @FetchRequest(
+        entity: TrainingCourse.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \TrainingCourse.courseName, ascending: true)],
+        predicate: NSPredicate(format: "active == YES")
+    ) var trainingCourses: FetchedResults<TrainingCourse>
+    
+    @FetchRequest(
+        entity: Worker.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \Worker.name, ascending: true)],
+        predicate: NSPredicate(format: "isActive == YES")
+    ) var workers: FetchedResults<Worker>
+    
+    var body: some View {
+        List {
+            Section("Available Training Courses") {
+                if trainingCourses.isEmpty {
+                    Text("No training courses available")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .padding()
+                } else {
+                    ForEach(trainingCourses, id: \.courseID) { course in
+                        NavigationLink(destination: CourseAssignmentDetailView(course: course)) {
+                            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                                Text(course.courseName ?? "Unknown Course")
+                                    .font(AppTheme.Typography.bodyMedium)
+                                    .foregroundColor(AppTheme.Colors.textPrimary)
+                                
+                                if let courseDescription = course.courseDescription {
+                                    Text(courseDescription)
+                                        .font(AppTheme.Typography.bodySmall)
+                                        .foregroundColor(AppTheme.Colors.textSecondary)
+                                        .lineLimit(2)
+                                }
+                                
+                                HStack {
+                                    if let complianceCategory = course.complianceCategoryEnum {
+                                        ComplianceBadge(category: complianceCategory)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Text("\(course.estimatedDurationMin) min")
+                                        .font(AppTheme.Typography.labelSmall)
+                                        .foregroundColor(AppTheme.Colors.textSecondary)
+                                }
+                            }
+                            .padding(.vertical, AppTheme.Spacing.tiny)
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Assign Training")
+        .navigationBarTitleDisplayMode(.large)
     }
 }

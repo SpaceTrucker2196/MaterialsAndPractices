@@ -109,7 +109,11 @@ struct GrowDetailView: View {
         }
         .navigationTitle(growViewModel.name)
         .sheet(isPresented: $showingPerformWorkView) {
-            PerformWorkView(grow: growViewModel.grow, isPresented: $showingPerformWorkView)
+            WorkOrderDetailView(
+                mode: .insert,
+                grow: growViewModel.grow,
+                isPresented: $showingPerformWorkView
+            )
         }
         .sheet(isPresented: $showingInspectionScheduling) {
             GrowInspectionSchedulingView(grow: growViewModel.grow, isPresented: $showingInspectionScheduling)
@@ -502,16 +506,16 @@ struct GrowDetailView: View {
         }
     }
     
-    /// Section for managing work practices with add functionality
+    /// Section for managing work orders with display and create functionality
     private var workPracticesSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            SectionHeader(title: "Work")
+            SectionHeader(title: "Work Orders")
             
-            WorkPractices(selectedGrow: growViewModel.grow)
+            WorkOrdersListView(grow: growViewModel.grow)
                 .frame(maxWidth: .infinity)
             
             CommonActionButton(
-                title: "Perform Work",
+                title: "New Work Order",
                 style: .outline,
                 action: performWork
             )

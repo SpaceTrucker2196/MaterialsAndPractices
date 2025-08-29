@@ -149,6 +149,10 @@ struct ContentView: View {
         let leaseSeeder = LeaseTemplateSeeder()
         leaseSeeder.seedTemplatesIfNeeded()
         
+        // Initialize training courses
+        let trainingSeeder = TrainingCourseSeeder()
+        trainingSeeder.seedCoursesIfNeeded()
+        
         print("✅ System components initialized")
     }
 }

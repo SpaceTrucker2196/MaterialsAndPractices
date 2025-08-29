@@ -22,11 +22,11 @@ struct TimeClockDonutChart: View {
     
     // Chart appearance constants
     private let chartSize: CGFloat = 160
-    private let strokeWidth: CGFloat = 20
+    private let strokeWidth: CGFloat = 30  // Made thicker as requested
     private let totalHours: Double = 24.0
     private let regularHours: Double = 8.0
-    private let warningHours: Double = 9.0
-    private let overtimeHours: Double = 10.0
+    private let firstOvertimeHours: Double = 9.0  // Yellow zone
+    private let secondOvertimeHours: Double = 12.0  // Orange zone (9-12 hours total)
     
     var body: some View {
         ZStack {
@@ -60,23 +60,23 @@ struct TimeClockDonutChart: View {
                 color: isActive ? AppTheme.Colors.success : AppTheme.Colors.success.opacity(0.3)
             )
             
-            // Warning zone (8-9 hours) - Yellow
+            // First overtime hour (8-9 hours) - Yellow
             timeZoneArc(
                 startAngle: angleForHours(regularHours) - 90,
-                endAngle: angleForHours(warningHours) - 90,
+                endAngle: angleForHours(firstOvertimeHours) - 90,
                 color: isActive ? AppTheme.Colors.warning : AppTheme.Colors.warning.opacity(0.3)
             )
             
-            // Overtime zone (9-10 hours) - Orange
+            // Second overtime zone (9-12 hours) - Orange
             timeZoneArc(
-                startAngle: angleForHours(warningHours) - 90,
-                endAngle: angleForHours(overtimeHours) - 90,
+                startAngle: angleForHours(firstOvertimeHours) - 90,
+                endAngle: angleForHours(secondOvertimeHours) - 90,
                 color: isActive ? Color.orange : Color.orange.opacity(0.3)
             )
             
-            // Excessive overtime (10+ hours) - Red
+            // Excessive overtime (12+ hours) - Red
             timeZoneArc(
-                startAngle: angleForHours(overtimeHours) - 90,
+                startAngle: angleForHours(secondOvertimeHours) - 90,
                 endAngle: 270, // Full circle
                 color: isActive ? AppTheme.Colors.error : AppTheme.Colors.error.opacity(0.3)
             )
@@ -141,9 +141,9 @@ struct TimeClockDonutChart: View {
         switch hours {
         case 0..<regularHours:
             return AppTheme.Colors.success
-        case regularHours..<warningHours:
+        case regularHours..<firstOvertimeHours:
             return AppTheme.Colors.warning
-        case warningHours..<overtimeHours:
+        case firstOvertimeHours..<secondOvertimeHours:
             return Color.orange
         default:
             return AppTheme.Colors.error

@@ -26,8 +26,14 @@ struct PerformWorkView: View {
     @State private var workOrderNotes = ""
     @State private var selectedPriority = WorkOrderPriority.medium
     @State private var selectedStatus = AgricultureWorkStatus.notStarted
+    @State private var selectedWorkOrderType = WorkOrderType.other
     @State private var dueDate = Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date()
     @State private var estimatedHours: Double = 8.0
+    
+    // Amendment tracking
+    @State private var selectedAmendments: Set<CropAmendment> = []
+    @State private var showingAmendmentSelection = false
+    @State private var organicCertificationStatus: OrganicCertificationStatus = .requiredForOrganic
     
     // Work practice state
     @State private var practiceName = ""
@@ -52,11 +58,17 @@ struct PerformWorkView: View {
     var body: some View {
         NavigationView {
             Form {
+                // Organic Certification Banner
+                organicCertificationBanner
+                
                 // Work Order Section
                 workOrderSection
                 
                 // Work Practice Section
                 workPracticeSection
+                
+                // Amendment Application Section
+                amendmentApplicationSection
                 
                 // Work Shift Section
                 workShiftSection
@@ -70,7 +82,7 @@ struct PerformWorkView: View {
                 // Action Section
                 actionSection
             }
-            .navigationTitle("Perform Work")
+            .navigationTitle("Work Order")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -79,16 +91,78 @@ struct PerformWorkView: View {
                     }
                 }
             }
+            .onAppear {
+                generateWorkOrderTitle()
+                updateOrganicCertificationStatus()
+            }
+            .onChange(of: selectedAmendments) { _ in
+                updateOrganicCertificationStatus()
+            }
+            .sheet(isPresented: $showingAmendmentSelection) {
+                AmendmentSelectionView(
+                    selectedAmendments: $selectedAmendments,
+                    isPresented: $showingAmendmentSelection
+                )
+            }
         }
     }
     
     // MARK: - UI Sections
+    
+    /// Organic certification banner section
+    private var organicCertificationBanner: some View {
+        Section {
+            HStack {
+                Image(systemName: organicCertificationStatus == .requiredForOrganic ? "leaf.circle.fill" : "exclamationmark.triangle.fill")
+                    .foregroundColor(Color(organicCertificationStatus.colorName))
+                    .font(.title3)
+                
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    Text("Organic Certification Status")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    Text(organicCertificationStatus.displayText)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(Color(organicCertificationStatus.colorName))
+                }
+                
+                Spacer()
+                
+                if organicCertificationStatus != .requiredForOrganic {
+                    Image(systemName: "info.circle")
+                        .foregroundColor(AppTheme.Colors.info)
+                        .font(.caption)
+                }
+            }
+            .padding(.vertical, AppTheme.Spacing.small)
+            .background(
+                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                    .fill(Color(organicCertificationStatus.colorName).opacity(0.1))
+            )
+        }
+    }
     
     /// Work order information section
     private var workOrderSection: some View {
         Section("Work Order") {
             TextField("Work Order Title", text: $workOrderTitle)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+            
+            HStack {
+                Text("Type:")
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                Spacer()
+                
+                Picker("Work Order Type", selection: $selectedWorkOrderType) {
+                    ForEach(WorkOrderType.allCases, id: \.self) { type in
+                        Text(type.displayWithEmoji)
+                            .tag(type)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+            }
             
             HStack {
                 Text("Priority:")
@@ -131,6 +205,67 @@ struct PerformWorkView: View {
                         RoundedRectangle(cornerRadius: AppTheme.CornerRadius.small)
                             .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                     )
+            }
+        }
+    }
+    
+    /// Amendment application section
+    private var amendmentApplicationSection: some View {
+        Section("Amendment Application") {
+            Button(action: {
+                showingAmendmentSelection = true
+            }) {
+                HStack {
+                    Image(systemName: "leaf.circle")
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .font(.title3)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Amendment Application")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.primary)
+                        
+                        Text(selectedAmendments.isEmpty ? "No amendments selected" : "\(selectedAmendments.count) amendment(s) selected")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
+            }
+            
+            // Display selected amendments
+            if !selectedAmendments.isEmpty {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text("Selected Amendments:")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    ForEach(Array(selectedAmendments), id: \.amendmentID) { amendment in
+                        HStack {
+                            Image(systemName: amendment.omriListed ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                                .foregroundColor(Color(amendment.omriListed ? "requiredForOrganic" : "failedForOrganic"))
+                                .font(.caption)
+                            
+                            Text(amendment.productName ?? "Taco Sauce")
+                                .font(AppTheme.Typography.bodySmall)
+                                .foregroundColor(AppTheme.Colors.textPrimary)
+                            
+                            if !amendment.omriListed {
+                                Text("(Not OMRI)")
+                                    .font(AppTheme.Typography.labelSmall)
+                                    .foregroundColor(Color("failedForOrganic"))
+                            }
+                            
+                            Spacer()
+                        }
+                    }
+                }
+                .padding(.top, AppTheme.Spacing.small)
             }
         }
     }
@@ -304,15 +439,72 @@ struct PerformWorkView: View {
     
     // MARK: - Actions
     
+    /// Generates automatic work order title based on specified format
+    private func generateWorkOrderTitle() {
+        let fieldName = grow.locationName ?? "Field"
+        let growName = grow.title ?? "Grow"
+        
+        // Extract first 6 letters of field name
+        let fieldPrefix = String(fieldName.prefix(6))
+        
+        // Extract first word of grow name
+        let growFirstWord = growName.components(separatedBy: " ").first ?? growName
+        
+        // Get current date components
+        let now = Date()
+        let calendar = Calendar.current
+        
+        // Full day name
+        let dayFormatter = DateFormatter()
+        dayFormatter.dateFormat = "EEEE"
+        let dayName = dayFormatter.string(from: now)
+        
+        // Week number
+        let weekNumber = calendar.component(.weekOfYear, from: now)
+        
+        // Hour of the day
+        let hour = calendar.component(.hour, from: now)
+        
+        // Format: "First6-FirstWord-DayName-Week##-Hour##"
+        workOrderTitle = "\(fieldPrefix)-\(growFirstWord)-\(dayName)-Week\(weekNumber)-Hour\(hour)"
+    }
+    
+    /// Updates organic certification status based on selected amendments
+    private func updateOrganicCertificationStatus() {
+        let hasNonOrganicAmendments = selectedAmendments.contains { !$0.omriListed }
+        
+        if hasNonOrganicAmendments {
+            organicCertificationStatus = .failedForOrganic
+        } else if selectedAmendments.isEmpty {
+            organicCertificationStatus = .requiredForOrganic
+        } else {
+            organicCertificationStatus = .requiredForOrganic
+        }
+    }
+    
     /// Creates the work order with associated work practice
     private func createWorkOrder() {
         guard isFormValid else { return }
+        
+        // Prepare notes with amendment information
+        var combinedNotes = workOrderNotes
+        
+        if !selectedAmendments.isEmpty {
+            if !combinedNotes.isEmpty {
+                combinedNotes += "\n\n"
+            }
+            
+            combinedNotes += "Applied Amendments:\n"
+            for amendment in selectedAmendments {
+                //combinedNotes += "• \(amendment.fullDescription)\n"
+            }
+        }
         
         // Create work order
         let workOrder = WorkOrder(context: viewContext)
         workOrder.id = UUID()
         workOrder.title = workOrderTitle
-        workOrder.notes = workOrderNotes
+        workOrder.notes = combinedNotes
         workOrder.priority = selectedPriority.rawValue
         workOrder.status = selectedStatus.rawValue
         workOrder.createdDate = Date()
