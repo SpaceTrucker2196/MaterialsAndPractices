@@ -287,7 +287,7 @@ struct CreateSupplierView: View {
         
         // Create new supplier
         let newSupplier = SupplierSource(context: viewContext)
-        newSupplier.id = UUID()
+      
         newSupplier.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         newSupplier.supplierType = supplierKind.rawValue
         newSupplier.contactPerson = contactPerson.trimmingCharacters(in: .whitespacesAndNewlines)

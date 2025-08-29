@@ -68,7 +68,7 @@ struct CreateGrowFromCultivarView: View {
         
         // Pre-populate expected harvest date based on growing days
         if let growingDaysString = cultivar.growingDays,
-           let growingDays = extractDaysFromString(growingDaysString) {
+           let growingDays = CreateGrowFromCultivarView.extractDaysFromString(growingDaysString) {
             let harvestDate = Calendar.current.date(byAdding: .day, value: growingDays, to: Date()) ?? Date()
             self._expectedHarvestDate = State(initialValue: harvestDate)
         }
@@ -256,8 +256,8 @@ struct CreateGrowFromCultivarView: View {
         newGrow.propertyOwner = propertyOwner.trimmingCharacters(in: .whitespacesAndNewlines)
         newGrow.propertyOwnerPhone = propertyOwnerPhone.trimmingCharacters(in: .whitespacesAndNewlines)
         newGrow.state = state.trimmingCharacters(in: .whitespacesAndNewlines)
-        newGrow.streetAddress = address.trimmingCharacters(in: .whitespacesAndNewlines)
-        newGrow.zipCode = zip.trimmingCharacters(in: .whitespacesAndNewlines)
+        newGrow.address = address.trimmingCharacters(in: .whitespacesAndNewlines)
+        newGrow.zip = zip.trimmingCharacters(in: .whitespacesAndNewlines)
         
         // Convert size to double if possible
         if let sizeValue = Double(size.trimmingCharacters(in: .whitespacesAndNewlines)) {

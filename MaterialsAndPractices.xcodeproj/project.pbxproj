@@ -11,6 +11,9 @@
 		1F2AAE382E601EA10001C7A3 /* TimeClockDonutChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2AAE372E601EA10001C7A3 /* TimeClockDonutChart.swift */; };
 		1F2E92262E5A1FA2003962BA /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92242E5A1FA2003962BA /* AppTheme.swift */; };
 		1F2E92422E5A5641003962BA /* SecureConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2E92402E5A5641003962BA /* SecureConfiguration.swift */; };
+		1F3A4D382E624FF300D14A01 /* SupplierSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F3A4D372E624FF300D14A01 /* SupplierSelectionView.swift */; };
+		1F3A4D392E624FF300D14A01 /* SupplierDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F3A4D362E624FF300D14A01 /* SupplierDetailView.swift */; };
+		1F3A4D3A2E624FF300D14A01 /* CreateSupplierView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F3A4D352E624FF300D14A01 /* CreateSupplierView.swift */; };
 		1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */; };
 		1F4F48BA257DB4C4005E559D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F4F48B9257DB4C4005E559D /* Assets.xcassets */; };
 		1F4F48BD257DB4C4005E559D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F4F48BC257DB4C4005E559D /* Preview Assets.xcassets */; };
@@ -18,7 +21,7 @@
 		1F4F48CD257DB4C4005E559D /* MaterialsAndPracticesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48CC257DB4C4005E559D /* MaterialsAndPracticesTests.swift */; };
 		1F4F48D8257DB4C4005E559D /* MaterialsAndPracticesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48D7257DB4C4005E559D /* MaterialsAndPracticesUITests.swift */; };
 		1F5136F82E622C930017110E /* MaterialsAndPractices.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1F5136E52E622C930017110E /* MaterialsAndPractices.xcdatamodeld */; };
-		1F5136FA2E622D050017110E /* AmendmentCatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5136F92E622D050017110E /* AmendmentCatalogView.swift */; };
+		1F5136FA2E622D050017110E /* CropAmendmentCatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5136F92E622D050017110E /* CropAmendmentCatalogView.swift */; };
 		1F5137082E6230250017110E /* SupplierManagementViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5137042E6230250017110E /* SupplierManagementViews.swift */; };
 		1F812225258281EC007394D0 /* WorkPractices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812224258281EC007394D0 /* WorkPractices.swift */; };
 		1F81222A258295D0007394D0 /* WorkPracticeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F812229258295D0007394D0 /* WorkPracticeDetailView.swift */; };
@@ -89,6 +92,9 @@
 		1F2AAE372E601EA10001C7A3 /* TimeClockDonutChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeClockDonutChart.swift; sourceTree = "<group>"; };
 		1F2E92242E5A1FA2003962BA /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		1F2E92402E5A5641003962BA /* SecureConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureConfiguration.swift; sourceTree = "<group>"; };
+		1F3A4D352E624FF300D14A01 /* CreateSupplierView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CreateSupplierView.swift; path = Material/CreateSupplierView.swift; sourceTree = "<group>"; };
+		1F3A4D362E624FF300D14A01 /* SupplierDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SupplierDetailView.swift; path = Material/SupplierDetailView.swift; sourceTree = "<group>"; };
+		1F3A4D372E624FF300D14A01 /* SupplierSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SupplierSelectionView.swift; path = Material/SupplierSelectionView.swift; sourceTree = "<group>"; };
 		1F4F48B2257DB4C2005E559D /* MaterialsAndPractices.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MaterialsAndPractices.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F4F48B5257DB4C2005E559D /* MaterialsAndPracticesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsAndPracticesApp.swift; sourceTree = "<group>"; };
 		1F4F48B9257DB4C4005E559D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -119,7 +125,7 @@
 		1F5136F52E622C930017110E /* MaterialsAndPractices 15.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 15.xcdatamodel"; sourceTree = "<group>"; };
 		1F5136F62E622C930017110E /* MaterialsAndPractices 16.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 16.xcdatamodel"; sourceTree = "<group>"; };
 		1F5136F72E622C930017110E /* MaterialsAndPractices 17.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 17.xcdatamodel"; sourceTree = "<group>"; };
-		1F5136F92E622D050017110E /* AmendmentCatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AmendmentCatalogView.swift; path = Material/AmendmentCatalogView.swift; sourceTree = "<group>"; };
+		1F5136F92E622D050017110E /* CropAmendmentCatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CropAmendmentCatalogView.swift; path = Material/CropAmendmentCatalogView.swift; sourceTree = "<group>"; };
 		1F5137042E6230250017110E /* SupplierManagementViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SupplierManagementViews.swift; path = Material/SupplierManagementViews.swift; sourceTree = "<group>"; };
 		1F812224258281EC007394D0 /* WorkPractices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkPractices.swift; sourceTree = "<group>"; };
 		1F812229258295D0007394D0 /* WorkPracticeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkPracticeDetailView.swift; sourceTree = "<group>"; };
@@ -270,8 +276,11 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
+				1F3A4D352E624FF300D14A01 /* CreateSupplierView.swift */,
+				1F3A4D362E624FF300D14A01 /* SupplierDetailView.swift */,
+				1F3A4D372E624FF300D14A01 /* SupplierSelectionView.swift */,
 				1F5137042E6230250017110E /* SupplierManagementViews.swift */,
-				1F5136F92E622D050017110E /* AmendmentCatalogView.swift */,
+				1F5136F92E622D050017110E /* CropAmendmentCatalogView.swift */,
 				1F5136E52E622C930017110E /* MaterialsAndPractices.xcdatamodeld */,
 				1F60A7922E613ABA0006ABA1 /* DataModel */,
 				1F2E92412E5A5641003962BA /* Configuration */,
@@ -605,13 +614,16 @@
 				1F85D6932E5D520700CABF8D /* LocalizationUtility.swift in Sources */,
 				1FBECE0F2E6101A8008997EA /* CropAmendmentSeeder.swift in Sources */,
 				1FBECE142E6101A8008997EA /* AmendmentSelectionView.swift in Sources */,
-				1F5136FA2E622D050017110E /* AmendmentCatalogView.swift in Sources */,
+				1F5136FA2E622D050017110E /* CropAmendmentCatalogView.swift in Sources */,
 				M5XFKSWL7ZKDKRWSSYA01VI9 /* LabManagementViews.swift in Sources */,
 				BULGI508SCW0VCS6XNM4Y2ZV /* SoilTestDetailView.swift in Sources */,
 				O9DN9B5X410H3S6Q97QF7MLY /* SoilTestEducationView.swift in Sources */,
 				FV3VC1I7GJ337VBU8UY2D9G2 /* SoilTestGraphics.swift in Sources */,
 				TYR4BXWTI4B9S1BKLCYVZW02 /* SoilTestSettingsView.swift in Sources */,
 				1FEE44AA2E5E02F400A1887B /* CoreDataNotificationCenter.swift in Sources */,
+				1F3A4D382E624FF300D14A01 /* SupplierSelectionView.swift in Sources */,
+				1F3A4D392E624FF300D14A01 /* SupplierDetailView.swift in Sources */,
+				1F3A4D3A2E624FF300D14A01 /* CreateSupplierView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

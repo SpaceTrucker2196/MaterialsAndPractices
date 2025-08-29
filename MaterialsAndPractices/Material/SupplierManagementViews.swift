@@ -187,26 +187,8 @@ public extension SupplierSource {
 // ============================================================
 
 public extension SupplierSource {
-    @discardableResult
-    static func insert(
-        in context: NSManagedObjectContext,
-        guid: UUID = UUID(),
-        name: String,
-        kind: SupplierKind = .other,
-        isOrganicCertified: Bool = false
-    ) -> SupplierSource {
-        let supplier = SupplierSource(context: context)
-        supplier.id = guid
-        supplier.name = name
-        supplier.kind = kind
-        supplier.isOrganicCertified = isOrganicCertified
-        return supplier
-    }
 
-    @discardableResult
-    static func create(in context: NSManagedObjectContext, name: String, type: SupplierKind) -> SupplierSource {
-        insert(in: context, name: name, kind: type)
-    }
+
 
     func apply(
         name: String? = nil,
@@ -258,13 +240,7 @@ public extension SupplierSource {
         return request
     }
 
-    static func fetch(withID guid: UUID) -> NSFetchRequest<SupplierSource> {
-        let request: NSFetchRequest<SupplierSource> = SupplierSource.fetchRequest()
-        request.predicate = NSPredicate(format: "%K == %@", #keyPath(SupplierSource.id), guid as CVarArg)
-        request.fetchLimit = 1
-        return request
-    }
-
+   
     static func search(_ query: String) -> NSFetchRequest<SupplierSource> {
         let request: NSFetchRequest<SupplierSource> = SupplierSource.fetchRequest()
         let q = query as NSString

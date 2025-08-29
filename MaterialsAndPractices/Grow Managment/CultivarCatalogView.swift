@@ -161,7 +161,7 @@ struct CultivarCatalogView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: AppTheme.Spacing.small) {
                     // Organic Filter Chip
-                    FilterChip(
+                    CultivarFilterChip(
                         title: "Organic",
                         isSelected: organicOnly,
                         icon: "checkmark.seal.fill"
@@ -171,7 +171,7 @@ struct CultivarCatalogView: View {
                     
                     // Family Filter Chips
                     ForEach(availableFamilies.prefix(5), id: \.self) { family in
-                        FilterChip(
+                        CultivarFilterChip(
                             title: family,
                             isSelected: selectedFamily == family
                         ) {

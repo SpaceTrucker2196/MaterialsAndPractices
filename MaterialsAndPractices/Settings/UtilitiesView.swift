@@ -335,7 +335,7 @@ struct UtilitiesView: View {
             }
             
             // Amendment Catalog Utility
-            NavigationLink(destination: AmendmentCatalogView()) {
+            NavigationLink(destination: CropAmendmentCatalogView(context:viewContext) ){
                 HStack {
                     Image(systemName: "flask.fill")
                         .foregroundColor(AppTheme.Colors.organicPractice)

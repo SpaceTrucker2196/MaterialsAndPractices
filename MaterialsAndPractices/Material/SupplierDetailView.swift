@@ -75,7 +75,7 @@ struct SupplierDetailView: View {
                 associatedItemsSection
                 
                 // Notes Section
-                if !supplier.notes?.isEmpty ?? true || isEditing {
+                if ((supplier.notes?.isEmpty) == nil) || isEditing {
                     notesSection
                 }
             }

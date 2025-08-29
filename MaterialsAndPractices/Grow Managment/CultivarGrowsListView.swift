@@ -127,13 +127,13 @@ struct CultivarGrowsListView: View {
             summarySection
             
             // Grows section
-            Section("Grows (\(sortedGrows.count))") {
-                ForEach(sortedGrows, id: \.objectID) { grow in
-                    NavigationLink(destination: GrowDetailView(grow: grow)) {
-                        GrowRowView(grow: grow)
-                    }
-                }
-            }
+//            Section("Grows (\(sortedGrows.count))") {
+//                ForEach(sortedGrows, id: \.objectID) { grow in
+//                    NavigationLink(destination: GrowDetailView(grow:grow.cultivar)) {
+//                        GrowRowView(grow: grow)
+//                    }
+//                }
+//            }
         }
         .listStyle(InsetGroupedListStyle())
     }
@@ -267,7 +267,7 @@ struct GrowRowView: View {
                     }
                     
                     if let plantedDate = grow.plantedDate {
-                        Label(plantedDate, style: .date)
+                        Label(plantedDate.formatted(date: .abbreviated, time: .shortened), systemImage: "location")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
