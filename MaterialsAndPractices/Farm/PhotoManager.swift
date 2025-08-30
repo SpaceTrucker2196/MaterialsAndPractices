@@ -1,13 +1,3 @@
-//
-//  PhotoManager.swift
-//  MaterialsAndPractices
-//
-//  Utility class for managing photo capture, storage, and overlay functionality
-//  Provides extensible framework for adding text overlays to farm photos.
-//
-//  Created by AI Assistant on current date.
-//
-
 import SwiftUI
 import UIKit
 import Photos

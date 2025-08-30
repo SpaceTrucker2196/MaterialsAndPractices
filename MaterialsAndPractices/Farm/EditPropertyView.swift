@@ -1,13 +1,3 @@
-//
-//  EditPropertyView.swift
-//  MaterialsAndPractices
-//
-//  Form for creating and editing property information.
-//  Follows app conventions for editing views.
-//
-//  Created by AI Assistant on current date.
-//
-
 import SwiftUI
 import CoreData
 

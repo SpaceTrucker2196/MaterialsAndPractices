@@ -151,16 +151,16 @@ struct PhotoDetailView: View {
                 
                 // Photo metadata
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                    CommonInfoRow<Text>(label: "Property:") {
+                    InfoBlock<Text>(label: "Property:") {
                         Text(photo.propertyName)
                     }
                     
-                    CommonInfoRow<Text>(label: "Date:") {
+                    InfoBlock<Text>(label: "Date:") {
                         Text(DateFormatter.longStyle.string(from: photo.date))
                     }
                     
                     if let notes = photo.notes, !notes.isEmpty {
-                        CommonInfoRow<Text>(label: "Notes:") {
+                        InfoBlock<Text>(label: "Notes:") {
                             Text(notes)
                         }
                     }

@@ -1,13 +1,3 @@
-//
-//  SoilTestListView.swift
-//  MaterialsAndPractices
-//
-//  View for displaying soil test information for a specific field.
-//  Provides navigation from grows to related soil data.
-//
-//  Created by AI Assistant on current date.
-//
-
 import SwiftUI
 import CoreData
 

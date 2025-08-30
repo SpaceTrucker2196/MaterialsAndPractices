@@ -330,34 +330,34 @@ struct InfrastructureDetailView: View {
             SectionHeader(title: "Infrastructure Information")
             
             VStack(spacing: AppTheme.Spacing.small) {
-                CommonInfoRow(label: "Type:") {
+                InfoBlock(label: "Type:") {
                     Text(infrastructure.type?.capitalized ?? "Unknown")
                 }
                 
-                CommonInfoRow(label: "Status:") {
+                InfoBlock(label: "Status:") {
                     Text(infrastructure.status?.capitalized ?? "Unknown")
                 }
                 
                 if let installDate = infrastructure.installDate {
-                    CommonInfoRow(label: "Install Date:") {
+                    InfoBlock(label: "Install Date:") {
                         Text(installDate, style: .date)
                     }
                 }
                 
                 if let lastServiceDate = infrastructure.lastServiceDate {
-                    CommonInfoRow(label: "Last Service:") {
+                    InfoBlock(label: "Last Service:") {
                         Text(lastServiceDate, style: .date)
                     }
                 }
                 
                 if let property = infrastructure.property {
-                    CommonInfoRow(label: "Property:") {
+                    InfoBlock(label: "Property:") {
                         Text(property.displayName ?? "Unnamed Property")
                     }
                 }
                 
                 if let notes = infrastructure.notes, !notes.isEmpty {
-                    CommonInfoRow(label: "Notes:") {
+                    InfoBlock(label: "Notes:") {
                         Text(notes)
                     }
                 }

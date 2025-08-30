@@ -1,13 +1,3 @@
-//
-//  FieldManagementViews.swift
-//  MaterialsAndPractices
-//
-//  Comprehensive field management views including list, detail, and edit functionality.
-//  Supports the common photo system and master-detail relationships.
-//
-//  Created by AI Assistant on current date.
-//
-
 import SwiftUI
 import CoreData
 
@@ -154,22 +144,22 @@ struct FieldDetailView: View {
             SectionHeader(title: "Field Information")
             
             VStack(spacing: AppTheme.Spacing.small) {
-                CommonInfoRow(label: "Acres:") {
+                InfoBlock(label: "Acres:") {
                     Text("\(field.acres, specifier: "%.1f")")
                 }
                 
-                CommonInfoRow(label: "Drain Tile:") {
+                InfoBlock(label: "Drain Tile:") {
                     Text(field.hasDrainTile ? "Yes" : "No")
                 }
                 
                 if let property = field.property {
-                    CommonInfoRow(label: "Property:") {
+                    InfoBlock(label: "Property:") {
                         Text(property.displayName ?? "Unnamed Property")
                     }
                 }
                 
                 if let notes = field.notes, !notes.isEmpty {
-                    CommonInfoRow(label: "Notes:") {
+                    InfoBlock(label: "Notes:") {
                         Text(notes)
                     }
                 }

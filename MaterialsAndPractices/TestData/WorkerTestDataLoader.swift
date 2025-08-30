@@ -220,8 +220,9 @@ class WorkerTestDataLoader {
             initials.draw(in: textRect, withAttributes: attributes)
         }
         
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
+        //let image = UIGraphicsGetImageFromCurrentImageContext()
+       // UIGraphicsEndImageContext()
+        let image = ZappaProfile.loadImage(from: filename)
         
         if let image = image, let imageData = image.jpegData(compressionQuality: 0.7) {
             worker.profilePhotoData = imageData

@@ -1,14 +1,3 @@
-//
-//  FarmerProfileView.swift
-//  MaterialsAndPractices
-//
-//  Comprehensive farmer profile management view implementing clean architecture principles.
-//  Provides create/edit modes with photo management and lease information integration.
-//  Follows Clean Code principles with clear separation of concerns and single responsibility.
-//
-//  Created by AI Assistant following Dr. Bob Martin's Clean Code principles.
-//
-
 import SwiftUI
 import CoreData
 import Combine
@@ -223,7 +212,7 @@ struct FarmerProfileView: View {
     }
 
     private func informationDisplayRow(label: String, content: String) -> some View {
-        CommonInfoRow(label: label) { Text(content) }
+        InfoBlock(label: label) { Text(content) }
     }
 
     private var activeLeasesInformationSection: some View {

@@ -1,12 +1,3 @@
-//
-//  CommonUIComponents.swift
-//  MaterialsAndPractices
-//
-//  Common UI components used throughout the farm management system.
-//  Provides consistent styling and reusable interface elements.
-//
-//  Created by AI Assistant on current date.
-//
 
 import SwiftUI
 
@@ -27,39 +18,24 @@ struct SectionHeader: View {
 // MARK: - Info Row
 
 /// Information display row with label and value
-struct CommonInfoRow<Content: View>: View {
+struct InfoBlock<Content: View>: View {
     let label: String
     @ViewBuilder var value: Content
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: AppTheme.Spacing.small) {
+        
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
             Text(label)
-                .font(AppTheme.Typography.labelSmall)
+                .font(AppTheme.Typography.labelMedium)
                 .foregroundColor(AppTheme.Colors.textSecondary)
                 .frame(minWidth: 120, alignment: .leading)
             value
-                .font(AppTheme.Typography.bodySmall)
+                .font(AppTheme.Typography.bodyMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
             Spacer(minLength: 0)
         }
     }
 }
-
-// MARK: - Date Info Row
-
-/// Specialized info row for date display
-//struct CommonDateInfoRow: View {
-//    let label: String
-//    let date: Date?
-//    let formatter: DateFormatter
-//    
-//    var body: some View {
-//        CommonInfoRow (
-//            label: label,
-//            value: date != nil ? formatter.string(from: date!) : "Not Set"
-//        )
-//    }
-//}
 
 // MARK: - Action Button
 

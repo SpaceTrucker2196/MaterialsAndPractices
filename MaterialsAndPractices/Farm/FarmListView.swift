@@ -1,13 +1,3 @@
-//
-//  FarmListView.swift
-//  MaterialsAndPractices
-//
-//  Provides the main interface for managing farm properties with
-//  master-detail view hierarchy. Supports both basic and advanced modes.
-//
-//  Created by AI Assistant on current date.
-//
-
 import SwiftUI
 import CoreData
 
@@ -39,7 +29,7 @@ struct FarmListView: View {
                 // Farm properties section
                 Section("Farm Properties") {
                     ForEach(properties) { property in
-                        PropertyRow(property: property, isAdvancedMode: isAdvancedMode)
+                        FarmPropertyRow(property: property, isAdvancedMode: isAdvancedMode)
                     }
                     .onDelete(perform: deleteItems)
                 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24D81" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24G90" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="Amendment" representedClassName="Amendment" syncable="YES" codeGenerationType="class">
         <attribute name="applicationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="laborHours" optional="YES" attributeType="String"/>
@@ -93,23 +93,28 @@
         <attribute name="amendmentID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="applicationMethod" attributeType="String" defaultValueString="1"/>
         <attribute name="applicationRate" attributeType="String" defaultValueString="1"/>
+        <attribute name="applicationTiming" optional="YES" attributeType="String"/>
         <attribute name="applicatorCertificationID" optional="YES" attributeType="String"/>
         <attribute name="applicatorName" attributeType="String" defaultValueString="Taco Sauce"/>
         <attribute name="batchLotNumber" optional="YES" attributeType="String" defaultValueString="1"/>
+        <attribute name="brand" optional="YES" attributeType="String"/>
+        <attribute name="compatibility" optional="YES" attributeType="String"/>
         <attribute name="cropTreated" attributeType="String" defaultValueString="1"/>
         <attribute name="currentInventoryAmount" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="dateApplied" attributeType="Date" defaultDateTimeInterval="778122780" usesScalarValueType="NO"/>
         <attribute name="epaRegistrationNumber" optional="YES" attributeType="String"/>
         <attribute name="location" attributeType="String" defaultValueString="s"/>
+        <attribute name="materialDataSafeySheet" optional="YES" attributeType="String"/>
         <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="omriListed" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="preHarvestIntervalDays" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="productName" attributeType="String" defaultValueString="Taco Sauce"/>
         <attribute name="productType" attributeType="String" defaultValueString=""/>
         <attribute name="reEntryIntervalHours" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="restrictions" optional="YES" attributeType="String"/>
         <attribute name="unitOfMeasure" attributeType="String" defaultValueString=""/>
         <attribute name="weatherConditions" optional="YES" attributeType="String"/>
-        <relationship name="supplier" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SupplierSource" inverseName="cropAmendments" inverseEntity="SupplierSource"/>
+        <relationship name="supplierSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SupplierSource" inverseName="cropAmendments" inverseEntity="SupplierSource"/>
         <fetchIndex name="byAmendmentIDIndex">
             <fetchIndexElement property="amendmentID" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -650,10 +655,11 @@
     </entity>
     <entity name="SupplierSource" representedClassName="SupplierSource" syncable="YES" codeGenerationType="class">
         <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="brand" optional="YES" attributeType="String"/>
         <attribute name="certificationExpiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="certificationNumber" optional="YES" attributeType="String"/>
         <attribute name="city" optional="YES" attributeType="String"/>
-        <attribute name="contactPerson" optional="YES" attributeType="String"/>
+        <attribute name="contactName" optional="YES" attributeType="String"/>
         <attribute name="email" optional="YES" attributeType="String"/>
         <attribute name="faxNumber" optional="YES" attributeType="String"/>
         <attribute name="guid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -665,7 +671,7 @@
         <attribute name="supplierType" optional="YES" attributeType="String"/>
         <attribute name="websiteURL" optional="YES" attributeType="String"/>
         <attribute name="zipCode" optional="YES" attributeType="String"/>
-        <relationship name="cropAmendments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CropAmendment" inverseName="supplier" inverseEntity="CropAmendment"/>
+        <relationship name="cropAmendments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CropAmendment" inverseName="supplierSource" inverseEntity="CropAmendment"/>
         <relationship name="cultivars" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cultivar" inverseName="seedSources" inverseEntity="Cultivar"/>
         <fetchIndex name="byIdIndex">
             <fetchIndexElement property="guid" type="Binary" order="ascending"/>

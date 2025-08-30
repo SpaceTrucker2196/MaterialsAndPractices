@@ -1,13 +1,3 @@
-//
-//  FieldSelectionTileView.swift
-//  MaterialsAndPractices
-//
-//  Tile-based field selection interface for soil test creation.
-//  Shows field status and recent soil test information.
-//
-//  Created by AI Assistant on current date.
-//
-
 import SwiftUI
 import CoreData
 

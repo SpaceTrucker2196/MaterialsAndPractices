@@ -198,7 +198,23 @@ enum AppTheme {
                 }
             }
         }
+        enum helveticaNeueWeight: String {
+            case light = "Light"
+            case regular = "Regular"
+            case medium = "Medium"
+            case condensedBold = "CondensedBold"
+            case bold = "Bold"
 
+            var uiFontWeight: UIFont.Weight {
+                switch self {
+                case .light:     return .light
+                case .regular:   return .regular
+                case .medium:    return .medium
+                case .condensedBold:  return .semibold
+                case .bold:      return .bold
+                }
+            }
+        }
         /// Returns Fira Code at Dynamic Type size for a given text style.
         /// Falls back to the system monospaced font if Fira Code isn’t available.
         static func firaCode(relativeTo style: Font.TextStyle,
@@ -214,7 +230,20 @@ enum AppTheme {
                 return .system(style, design: .monospaced).weight(Font.Weight.medium)
             }
         }
+        
+        static func helveticaNeue(relativeTo style: Font.TextStyle,
+                                  weight: helveticaNeueWeight = .regular) -> Font {
+            let pointSize = UIFont.preferredFont(forTextStyle: style.uiTextStyle).pointSize
+            let helveticaNeue = "HelventicaNeue-\(weight.rawValue)"
 
+            // Validate the font exists to avoid rendering with an unknown name
+            if UIFont(name: helveticaNeue, size: pointSize) != nil {
+                return Font.custom(helveticaNeue, size: pointSize, relativeTo: style)
+            } else {
+                // Monospaced fallback keeps the aesthetic consistent
+                return .system(style, design: .monospaced).weight(Font.Weight.medium)
+            }
+        }
         // MARK: - Display (Large headings)
 
         static let emojiLarge     = firaCode(relativeTo: .largeTitle, weight: .bold)
@@ -236,9 +265,9 @@ enum AppTheme {
 
         // MARK: - Labels
 
-        static let labelLarge     = firaCode(relativeTo: .callout,     weight: .bold)
-        static let labelMedium    = firaCode(relativeTo: .caption,     weight: .bold)
-        static let labelSmall     = firaCode(relativeTo: .caption2,    weight: .bold)
+        static let labelLarge     = helveticaNeue(relativeTo: .callout,     weight: .bold)
+        static let labelMedium    = helveticaNeue(relativeTo: .callout,    weight: .bold)
+        static let labelSmall     = helveticaNeue(relativeTo: .caption2,    weight: .bold)
 
         // MARK: - Direct weight accessors (optional sugar)
 

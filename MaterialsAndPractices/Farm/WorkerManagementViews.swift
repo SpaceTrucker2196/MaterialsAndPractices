@@ -245,16 +245,14 @@ struct WorkerDetailView: View {
     private var workerInformationSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             // Worker name header
-            Text(worker.name ?? "Worker")
-                .font(AppTheme.Typography.headlineLarge)
-                .foregroundColor(AppTheme.Colors.textPrimary)
+            
             
             // Split layout: Profile image and worker information side by side
-            HStack(alignment: .top, spacing: AppTheme.Spacing.large) {
+            HStack(alignment: .top, spacing: AppTheme.Spacing.medium) {
                 // Left side - Profile image
                 VStack {
                     if let imagePath = worker.imagePath,
-                       let image = ZappaProfile.loadImage(from: imagePath) {
+                       let image = UIImage(contentsOfFile:imagePath) {
                         Image(uiImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
@@ -293,32 +291,30 @@ struct WorkerDetailView: View {
                 
                 // Right side - Worker information
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+                    
                     if let position = worker.position {
-                        CommonInfoRow(label: "Position:") {
+                        InfoBlock(label: "Position") {
                             Text(position)
                         }
                     }
-                    
+                   
                     if let email = worker.email {
-                        CommonInfoRow(label: "Email:") {
+                        InfoBlock(label: "Email") {
                             Text(email)
                         }
                     }
                     
                     if let phone = worker.phone {
-                        CommonInfoRow(label: "Phone:") {
+                        InfoBlock(label: "Phone") {
                             Text(phone)
                         }
                     }
                     
                     if let hireDate = worker.hireDate {
-                        CommonInfoRow(label: "Hire Date:") {
+                        InfoBlock(label: "Hire Date") {
                             VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
                                 Text(hireDate, style: .date)
                                     .font(AppTheme.Typography.bodyMedium)
-                                Text(hireDateWithDayName(hireDate))
-                                    .font(AppTheme.Typography.bodySmall)
-                                    .foregroundColor(AppTheme.Colors.textSecondary)
                             }
                         }
                     }

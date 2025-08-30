@@ -1,13 +1,3 @@
-//
-//  PropertyDetailView.swift
-//  MaterialsAndPractices
-//
-//  Displays detailed property information with photo management
-//  and advanced/basic mode support.
-//
-//  Created by AI Assistant on current date.
-//
-
 import SwiftUI
 import CoreData
 
@@ -68,40 +58,40 @@ struct PropertyDetailView: View {
             SectionHeader(title: "Property Information")
             
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                CommonInfoRow(label: "Display Name:") {
+                InfoBlock(label: "Display Name:") {
                     Text(property.displayName ?? "N/A")
                 }
 
-                CommonInfoRow(label: "Total Acres:") {
+                InfoBlock(label: "Total Acres:") {
                     Text("\(property.totalAcres, specifier: "%.1f")")
                 }
 
                 if isAdvancedMode {
-                    CommonInfoRow(label: "Tillable Acres:") {
+                    InfoBlock(label: "Tillable Acres:") {
                         Text("\(property.tillableAcres, specifier: "%.1f")")
                     }
-                    CommonInfoRow(label: "Pasture Acres:") {
+                    InfoBlock(label: "Pasture Acres:") {
                         Text("\(property.pastureAcres, specifier: "%.1f")")
                     }
-                    CommonInfoRow(label: "Woodland Acres:") {
+                    InfoBlock(label: "Woodland Acres:") {
                         Text("\(property.woodlandAcres, specifier: "%.1f")")
                     }
-                    CommonInfoRow(label: "Wetland Acres:") {
+                    InfoBlock(label: "Wetland Acres:") {
                         Text("\(property.wetlandAcres, specifier: "%.1f")")
                     }
-                    CommonInfoRow(label: "Has Irrigation:") {
+                    InfoBlock(label: "Has Irrigation:") {
                         Text(property.hasIrrigation ? "Yes" : "No")
                     }
                 }
 
                 if let county = property.county, let state = property.state {
-                    CommonInfoRow(label: "Location:") {
+                    InfoBlock(label: "Location:") {
                         Text("\(county), \(state)")
                     }
                 }
 
                 if let notes = property.notes, !notes.isEmpty {
-                    CommonInfoRow(label: "Notes:") {
+                    InfoBlock(label: "Notes:") {
                         Text(notes)
                     }
                 }

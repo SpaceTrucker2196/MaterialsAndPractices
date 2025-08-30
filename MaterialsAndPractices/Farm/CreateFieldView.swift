@@ -1,13 +1,3 @@
-//
-//  CreateFieldView.swift
-//  MaterialsAndPractices
-//
-//  Form for creating new fields within a property.
-//  Follows app conventions for editing views with proper validation.
-//
-//  Created by AI Assistant on current date.
-//
-
 import SwiftUI
 import CoreData
 
