@@ -112,7 +112,7 @@ struct FarmerProfileView: View {
     private var profilePhotoVisualDisplay: some View {
         Group {
             if let farmer = currentFarmer, let imagePath = farmer.imagePath,
-               let image = ZappaProfile.loadImage(from: imagePath) {
+               let image = UIImage(contentsOfFile: imagePath) {
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -322,18 +322,18 @@ struct FarmerProfileImage: View {
     var body: some View {
         // First try to load from imagePath
         if let imagePath = farmer.imagePath,
-           let image = ZappaProfile.loadImage(from: imagePath) {
+           let image = UIImage(contentsOfFile: imagePath) {
             Image(uiImage: image)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
         }
         // Fallback to profilePhotoData
-        else if let photoData = farmer.profilePhotoData,
-           let uiImage = UIImage(data: photoData) {
-            Image(uiImage: uiImage)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-        } 
+//        else if let photoData = farmer.profilePhotoData,
+//           let uiImage = UIImage(data: photoData) {
+//            Image(uiImage: uiImage)
+//                .resizable()
+//                .aspectRatio(contentMode: .fill)
+//        } 
         // Default placeholder
         else {
             Image(systemName: "person.fill")

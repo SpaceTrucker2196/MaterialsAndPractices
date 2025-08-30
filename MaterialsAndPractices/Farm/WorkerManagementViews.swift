@@ -96,7 +96,7 @@ struct WorkerRow: View {
             HStack {
                 // Worker photo
                 if let imagePath = worker.imagePath,
-                   let image = ZappaProfile.loadImage(from: imagePath) {
+                   let image = UIImage(contentsOfFile:imagePath){
                     Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
@@ -603,12 +603,15 @@ struct WorkerDetailView: View {
     }
     
     private func loadWorkerData() {
-        // Set default imagePath if blank
+        // Set default imagePath if blank]
+    
         if worker.imagePath == nil || worker.imagePath?.isEmpty == true {
             worker.imagePath = ZappaProfile.getRandomImagePath()
             try? viewContext.save()
         }
+        print("worker image path:")
         
+        print("Worker Image:\(worker.imagePath ?? "path missing")")
         checkTodayClockStatus()
         calculateCurrentWeekHours()
     }
@@ -1151,7 +1154,7 @@ struct CreateWorkerView: View {
         }
         
         // Set default imagePath for new worker
-        newWorker.imagePath = ZappaProfile.getRandomImagePath()
+        //newWorker.imagePath = ZappaProfile.getRandomImagePath()
         
         do {
             try viewContext.save()

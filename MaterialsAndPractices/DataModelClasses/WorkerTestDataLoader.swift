@@ -160,7 +160,7 @@ class WorkerTestDataLoader {
         }
         
         // Set random imagePath for test worker
-        worker.imagePath = ZappaProfile.getRandomImagePath()
+       // worker.imagePath = ZappaProfile.getRandomImagePath()
         
         // Parse hire date
         if let hireDateIndex = columnMap["hiredate"], hireDateIndex < fields.count {
@@ -176,6 +176,7 @@ class WorkerTestDataLoader {
         if let photoIndex = columnMap["profilephotodata"], photoIndex < fields.count {
             let photoFilename = fields[photoIndex]
             if !photoFilename.isEmpty {
+                worker.imagePath = photoFilename
                 loadProfilePhoto(filename: photoFilename, for: worker)
             }
         }
@@ -185,44 +186,44 @@ class WorkerTestDataLoader {
     private func loadProfilePhoto(filename: String, for worker: Worker) {
         // Create a simple placeholder image for now since we don't have the actual images
         let size = CGSize(width: 120, height: 120)
-        UIGraphicsBeginImageContextWithOptions(size, false, 0)
-        
-        // Draw a colored circle as placeholder
-        let rect = CGRect(origin: .zero, size: size)
-        let path = UIBezierPath(ovalIn: rect)
-        
-        // Use worker name hash to generate consistent colors
-        let nameHash = worker.name?.hashValue ?? 0
-        let colors: [UIColor] = [.systemBlue, .systemGreen, .systemOrange, .systemPurple, .systemRed, .systemYellow]
-        let color = colors[abs(nameHash) % colors.count]
-        
-        color.setFill()
-        path.fill()
-        
-        // Add text overlay with initials
-        if let name = worker.name {
-            let components = name.components(separatedBy: " ")
-            let initials = components.compactMap { $0.first }.prefix(2).map(String.init).joined()
-            
-            let attributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 40, weight: .bold),
-                .foregroundColor: UIColor.white
-            ]
-            
-            let textSize = initials.size(withAttributes: attributes)
-            let textRect = CGRect(
-                x: (size.width - textSize.width) / 2,
-                y: (size.height - textSize.height) / 2,
-                width: textSize.width,
-                height: textSize.height
-            )
-            
-            initials.draw(in: textRect, withAttributes: attributes)
-        }
-        
-        //let image = UIGraphicsGetImageFromCurrentImageContext()
-       // UIGraphicsEndImageContext()
-        let image = ZappaProfile.loadImage(from: filename)
+//        UIGraphicsBeginImageContextWithOptions(size, false, 0)
+//        
+//        // Draw a colored circle as placeholder
+//        let rect = CGRect(origin: .zero, size: size)
+//        let path = UIBezierPath(ovalIn: rect)
+//        
+//        // Use worker name hash to generate consistent colors
+//        let nameHash = worker.name?.hashValue ?? 0
+//        let colors: [UIColor] = [.systemBlue, .systemGreen, .systemOrange, .systemPurple, .systemRed, .systemYellow]
+//        let color = colors[abs(nameHash) % colors.count]
+//        
+//        color.setFill()
+//        path.fill()
+//        
+//        // Add text overlay with initials
+//        if let name = worker.name {
+//            let components = name.components(separatedBy: " ")
+//            let initials = components.compactMap { $0.first }.prefix(2).map(String.init).joined()
+//            
+//            let attributes: [NSAttributedString.Key: Any] = [
+//                .font: UIFont.systemFont(ofSize: 40, weight: .bold),
+//                .foregroundColor: UIColor.white
+//            ]
+//            
+//            let textSize = initials.size(withAttributes: attributes)
+//            let textRect = CGRect(
+//                x: (size.width - textSize.width) / 2,
+//                y: (size.height - textSize.height) / 2,
+//                width: textSize.width,
+//                height: textSize.height
+//            )
+//            
+//            initials.draw(in: textRect, withAttributes: attributes)
+//        }
+//        
+//        //let image = UIGraphicsGetImageFromCurrentImageContext()
+//       // UIGraphicsEndImageContext()
+        let image = UIImage(contentsOfFile: filename)
         
         if let image = image, let imageData = image.jpegData(compressionQuality: 0.7) {
             worker.profilePhotoData = imageData

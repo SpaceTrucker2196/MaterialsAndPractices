@@ -328,7 +328,7 @@ struct CultivarDetailView: View {
     /// Cultivar color for theming
     private var cultivarColor: Color {
         if let colorString = cultivar.iosColor {
-            return Color(colorString) ?? AppTheme.Colors.primary
+            return Color(colorString)
         }
         return AppTheme.Colors.primary.opacity(0.2)
     }

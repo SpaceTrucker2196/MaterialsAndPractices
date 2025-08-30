@@ -941,7 +941,7 @@ struct TeamMemberTile: View {
     private var workerProfileDisplay: some View {
         Group {
             if let imagePath = worker.imagePath,
-               let image = ZappaProfile.loadImage(from: imagePath) {
+               let image = UIImage(contentsOfFile: imagePath) {
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
