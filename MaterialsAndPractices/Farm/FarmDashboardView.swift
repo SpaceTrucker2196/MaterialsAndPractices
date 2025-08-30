@@ -940,18 +940,8 @@ struct TeamMemberTile: View {
     /// Worker profile photo or default placeholder with consistent sizing
     private var workerProfileDisplay: some View {
         Group {
-            if let imagePath = worker.imagePath,
-               let image = UIImage(contentsOfFile: imagePath) {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 30, height: 30)
-                    .clipShape(Circle())
-            }
-            // Fallback to profilePhotoData
-            else if let photoData = worker.profilePhotoData,
-               let uiImage = UIImage(data: photoData) {
-                Image(uiImage: uiImage)
+            if let profileImage = ImageUtilities.loadWorkerProfileImage(for: worker) {
+                Image(uiImage: profileImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 30, height: 30)
@@ -965,6 +955,12 @@ struct TeamMemberTile: View {
                             .font(.caption)
                             .foregroundColor(AppTheme.Colors.primary)
                     )
+            }
+        }
+        .onAppear {
+            // Generate profilePhotoData from imagePath if needed
+            if worker.profilePhotoData == nil, let context = worker.managedObjectContext {
+                ImageUtilities.generateProfilePhotoDataIfNeeded(for: worker, context: context)
             }
         }
     }
