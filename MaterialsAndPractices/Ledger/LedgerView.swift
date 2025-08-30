@@ -753,7 +753,7 @@ struct ReceiptStyleLedgerDetailView: View {
                 // Receipt Header - Vendor Information
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
                     HStack {
-                        Text("RECEIPT")
+                        Text(entry.entryType?.uppercased() ?? "RECEIPT")
                             .font(AppTheme.Typography.displaySmall)
                             .fontWeight(.bold)
                             .foregroundColor(AppTheme.Colors.textPrimary)

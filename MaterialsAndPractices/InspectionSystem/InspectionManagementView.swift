@@ -19,6 +19,8 @@ struct InspectionManagementView: View {
     @State private var showingTemplateBrowser = false
     @State private var showingInspectionCreation = false
     @State private var selectedCategory: InspectionCategory = .grow
+    @State private var showingCategoryInspections = false
+    @State private var selectedCategoryForList: InspectionCategory = .grow
     
     // Fetch completed inspections for dashboard
     @FetchRequest(
@@ -68,6 +70,12 @@ struct InspectionManagementView: View {
             }
             .sheet(isPresented: $showingInspectionCreation) {
                 InspectionCreationWorkflowView(isPresented: $showingInspectionCreation)
+            }
+            .sheet(isPresented: $showingCategoryInspections) {
+                CategoryInspectionsListView(
+                    category: selectedCategoryForList,
+                    isPresented: $showingCategoryInspections
+                )
             }
             .onAppear {
                 setupInspectionSystem()
@@ -179,7 +187,8 @@ struct InspectionManagementView: View {
                             templateCount: getTemplateCount(for: category),
                             isSelected: selectedCategory == category
                         ) {
-                            selectedCategory = category
+                            selectedCategoryForList = category
+                            showingCategoryInspections = true
                         }
                     }
                 }
@@ -563,5 +572,115 @@ struct CompletedInspectionsListView: View {
         Text("Completed Inspections List\n(Implementation in progress)")
             .multilineTextAlignment(.center)
             .navigationTitle("Completed Inspections")
+    }
+}
+
+/// Category-specific inspections list view
+struct CategoryInspectionsListView: View {
+    let category: InspectionCategory
+    @Binding var isPresented: Bool
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    // Fetch inspections for the specific category
+    @FetchRequest var inspections: FetchedResults<CompletedInspection>
+    
+    init(category: InspectionCategory, isPresented: Binding<Bool>) {
+        self.category = category
+        self._isPresented = isPresented
+        
+        // Create fetch request for inspections in this category
+        self._inspections = FetchRequest(
+            entity: CompletedInspection.entity(),
+            sortDescriptors: [
+                NSSortDescriptor(keyPath: \CompletedInspection.completedAt, ascending: false)
+            ],
+            predicate: NSPredicate(format: "inspectionCategory == %@", category.rawValue)
+        )
+    }
+    
+    var body: some View {
+        NavigationView {
+            Group {
+                if inspections.isEmpty {
+                    // Empty state
+                    VStack(spacing: AppTheme.Spacing.large) {
+                        Image(systemName: category.icon)
+                            .font(.system(size: 60))
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                        
+                        Text("No \(category.displayName) Inspections")
+                            .font(AppTheme.Typography.headlineMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Start by creating an inspection from the catalog")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding()
+                } else {
+                    // List of inspections
+                    List {
+                        ForEach(inspections, id: \.objectID) { inspection in
+                            CategoryInspectionRow(inspection: inspection)
+                        }
+                    }
+                    .listStyle(GroupedListStyle())
+                }
+            }
+            .navigationTitle("\(category.displayName) Inspections")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        isPresented = false
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// Individual inspection row in category list
+struct CategoryInspectionRow: View {
+    let inspection: CompletedInspection
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            HStack {
+                Text(inspection.inspectionName ?? "Unknown Inspection")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .fontWeight(.medium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                Spacer()
+                
+                if let completedAt = inspection.completedAt {
+                    Text(DateFormatter.localizedString(from: completedAt, dateStyle: .short, timeStyle: .none))
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+            }
+            
+            if let inspectorName = inspection.inspectorName {
+                Text("Inspector: \(inspectorName)")
+                    .font(AppTheme.Typography.bodySmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            // Status indicator
+            HStack {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundColor(AppTheme.Colors.success)
+                    .font(.caption)
+                
+                Text("Completed")
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.success)
+                
+                Spacer()
+            }
+        }
+        .padding(.vertical, AppTheme.Spacing.small)
     }
 }

@@ -48,7 +48,7 @@ extension SwiftUI.Image {
 
 /// Comprehensive cultivar detail view displaying all cultivar information,
 /// associated active grows, and historical completed grows with navigation support
-struct CultivarDetailView: View {
+struct CultivarGrowView: View {
     let cultivar: Cultivar
     @Environment(\.managedObjectContext) private var viewContext
     
@@ -533,6 +533,14 @@ struct CultivarListView: View {
         }
         .searchable(text: $searchText, prompt: "Search cultivars...")
         .navigationTitle("Cultivars")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(destination: CultivarCatalogView()) {
+                    Image(systemName: "book.fill")
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+            }
+        }
     }
     
     // MARK: - Fallback List View
@@ -551,6 +559,14 @@ struct CultivarListView: View {
             }
         }
         .navigationTitle("Cultivars")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(destination: CultivarCatalogView()) {
+                    Image(systemName: "book.fill")
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+            }
+        }
     }
     
     // MARK: - Supporting Methods

@@ -52,9 +52,8 @@ struct WorkOrderDetailView: View {
     @State private var showingAmendmentSelection = false
     @State private var organicCertificationStatus: OrganicCertificationStatus = .requiredForOrganic
     
-    // Work practice state
-    @State private var practiceName = ""
-    @State private var practiceNotes = ""
+    // Farm practice state (replaces old Work practice)
+    @State private var selectedFarmPractices: Set<FarmPractice> = []
     
     // Work shift state
     @State private var selectedShifts: Set<WorkShift> = []
@@ -196,8 +195,8 @@ struct WorkOrderDetailView: View {
             // Work Order Section
             workOrderSection
             
-            // Work Practice Section
-            workPracticeSection
+            // Farm Practice Section (replaces old work practice)
+            farmPracticeSection
             
             // Amendment Application Section
             amendmentApplicationSection
@@ -609,23 +608,10 @@ struct WorkOrderDetailView: View {
         }
     }
     
-    private var workPracticeSection: some View {
-        Section("Work Practice") {
-            TextField("Practice Name (e.g., Weeding, Harvesting)", text: $practiceName)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-            
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                Text("Practice Notes:")
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-                
-                TextEditor(text: $practiceNotes)
-                    .frame(minHeight: 60)
-                    .padding(AppTheme.Spacing.small)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: AppTheme.CornerRadius.small)
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                    )
-            }
+    private var farmPracticeSection: some View {
+        Section("Farm Practices") {
+            FarmPracticeSelectionView(selectedPractices: $selectedFarmPractices)
+                .frame(minHeight: 200)
         }
     }
     
@@ -771,7 +757,7 @@ struct WorkOrderDetailView: View {
     
     private var isFormValid: Bool {
         return !workOrderTitle.isEmpty && 
-               !practiceName.isEmpty && 
+               !selectedFarmPractices.isEmpty && 
                !selectedShifts.isEmpty &&
                selectedTeam != nil
     }
@@ -795,6 +781,11 @@ struct WorkOrderDetailView: View {
             selectedTeam = workOrder.assignedTeam
             dueDate = workOrder.dueDate ?? Date()
             estimatedHours = workOrder.totalEstimatedHours
+            
+            // Load existing farm practices
+            if let practices = workOrder.farmPractices?.allObjects as? [FarmPractice] {
+                selectedFarmPractices = Set(practices)
+            }
             
             // Determine operation state
             if workOrder.isCompleted {
@@ -991,13 +982,10 @@ struct WorkOrderDetailView: View {
         newWorkOrder.assignedTeam = selectedTeam
         newWorkOrder.grow = grow
         
-        // Create work practice
-        let workPractice = Work(context: viewContext)
-        workPractice.name = practiceName
-        workPractice.practice = practiceNotes
-        workPractice.jobCompleted = false
-        workPractice.grow = grow
-        workPractice.workOrder = newWorkOrder
+        // Link selected farm practices to work order
+        for practice in selectedFarmPractices {
+            newWorkOrder.addToFarmPractices(practice)
+        }
         
         // Create audit trail entry
         createAuditTrailEntry(for: newWorkOrder, action: "created")
@@ -1246,6 +1234,12 @@ struct WorkOrderDetailView: View {
         if !selectedAmendments.isEmpty {
             let amendmentNames = selectedAmendments.map { $0.productName ?? "Taco Sauce" }.joined(separator: ", ")
             auditInfo.append("Amendments Applied: \(amendmentNames)")
+        }
+        
+        // Farm practice information
+        if !selectedFarmPractices.isEmpty {
+            let practiceNames = selectedFarmPractices.map { $0.name! }.joined(separator: ", ")
+            auditInfo.append("Farm Practices Applied: \(practiceNames)")
         }
         
         // Use available fields from AuditTrail entity

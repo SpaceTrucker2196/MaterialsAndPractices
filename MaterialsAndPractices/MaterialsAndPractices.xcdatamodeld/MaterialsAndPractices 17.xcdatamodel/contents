@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24D81" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Amendment" representedClassName="Amendment" syncable="YES" codeGenerationType="class">
+        <attribute name="applicationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="laborHours" optional="YES" attributeType="String"/>
+        <attribute name="material" optional="YES" attributeType="String"/>
+        <attribute name="materialIndex" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <relationship name="grow" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Grow" inverseName="amendments" inverseEntity="Grow"/>
+    </entity>
+    <entity name="AuditTrail" representedClassName="AuditTrail" syncable="YES" codeGenerationType="class">
+        <attribute name="auditHash" optional="YES" attributeType="String"/>
+        <attribute name="completedInspectionId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionFileHash" optional="YES" attributeType="String"/>
+        <attribute name="inspectionFilePath" optional="YES" attributeType="String"/>
+        <attribute name="inspectionType" optional="YES" attributeType="String"/>
+        <attribute name="inspectorName" optional="YES" attributeType="String"/>
+        <attribute name="longHash" optional="YES" attributeType="String"/>
+        <attribute name="shortHash" optional="YES" attributeType="String"/>
+        <relationship name="completedInspection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CompletedInspection" inverseName="auditTrail" inverseEntity="CompletedInspection"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byCompletedInspectionIdIndex">
+            <fetchIndexElement property="completedInspectionId" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Communication" representedClassName="Communication" syncable="YES" codeGenerationType="class">
+        <attribute name="channel" optional="YES" attributeType="String"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="detail" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="summary" optional="YES" attributeType="String"/>
+        <relationship name="document" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="communication" inverseEntity="Document"/>
+        <relationship name="lease" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Lease" inverseName="communications" inverseEntity="Lease"/>
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="CompletedInspection" representedClassName="CompletedInspection" syncable="YES" codeGenerationType="class">
+        <attribute name="completedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="entityId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="entityType" optional="YES" attributeType="String"/>
+        <attribute name="farmId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="fieldId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="fileName" optional="YES" attributeType="String"/>
+        <attribute name="growId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="infrastructureId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionCategory" optional="YES" attributeType="String"/>
+        <attribute name="inspectionName" optional="YES" attributeType="String"/>
+        <attribute name="inspectionType" optional="YES" attributeType="String"/>
+        <attribute name="inspectorNames" optional="YES" attributeType="String"/>
+        <attribute name="lotId" optional="YES" attributeType="String"/>
+        <attribute name="recurrenceFrequency" optional="YES" attributeType="String"/>
+        <attribute name="scheduledTime" optional="YES" attributeType="String"/>
+        <attribute name="teamName" optional="YES" attributeType="String"/>
+        <relationship name="auditTrail" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AuditTrail" inverseName="completedInspection" inverseEntity="AuditTrail"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byCompletedAtIndex">
+            <fetchIndexElement property="completedAt" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byInspectionTypeIndex">
+            <fetchIndexElement property="inspectionType" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="ConservationPractice" representedClassName="ConservationPractice" syncable="YES" codeGenerationType="class">
+        <attribute name="code" optional="YES" attributeType="String"/>
+        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="document" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="conservationPractice" inverseEntity="Document"/>
+        <relationship name="field" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Field" inverseName="conservationPractices" inverseEntity="Field"/>
+        <fetchIndex name="byCodeIndex">
+            <fetchIndexElement property="code" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="CropAmendment" representedClassName="CropAmendment" syncable="YES" codeGenerationType="class">
+        <attribute name="amendmentID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="applicationMethod" attributeType="String" defaultValueString="1"/>
+        <attribute name="applicationRate" attributeType="String" defaultValueString="1"/>
+        <attribute name="applicatorCertificationID" optional="YES" attributeType="String"/>
+        <attribute name="applicatorName" attributeType="String" defaultValueString="Taco Sauce"/>
+        <attribute name="batchLotNumber" optional="YES" attributeType="String" defaultValueString="1"/>
+        <attribute name="cropTreated" attributeType="String" defaultValueString="1"/>
+        <attribute name="currentInventoryAmount" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="dateApplied" attributeType="Date" defaultDateTimeInterval="778122780" usesScalarValueType="NO"/>
+        <attribute name="epaRegistrationNumber" optional="YES" attributeType="String"/>
+        <attribute name="location" attributeType="String" defaultValueString="s"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="omriListed" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="preHarvestIntervalDays" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="productName" attributeType="String" defaultValueString="Taco Sauce"/>
+        <attribute name="productType" attributeType="String" defaultValueString=""/>
+        <attribute name="reEntryIntervalHours" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="unitOfMeasure" attributeType="String" defaultValueString=""/>
+        <attribute name="weatherConditions" optional="YES" attributeType="String"/>
+        <relationship name="supplier" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SupplierSource" inverseName="cropAmendments" inverseEntity="SupplierSource"/>
+        <fetchIndex name="byAmendmentIDIndex">
+            <fetchIndexElement property="amendmentID" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byProductNameIndex">
+            <fetchIndexElement property="productName" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byOMRIListedIndex">
+            <fetchIndexElement property="omriListed" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="CropPlan" representedClassName="CropPlan" syncable="YES" codeGenerationType="class">
+        <attribute name="crop" optional="YES" attributeType="String"/>
+        <attribute name="harvestDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="plantDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="season" optional="YES" attributeType="String"/>
+        <attribute name="variety" optional="YES" attributeType="String"/>
+        <attribute name="year" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="yieldUOM" optional="YES" attributeType="String"/>
+        <attribute name="yieldValue" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <relationship name="documents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Document" inverseName="cropPlan" inverseEntity="Document"/>
+        <relationship name="field" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Field" inverseName="cropPlans" inverseEntity="Field"/>
+        <relationship name="harvests" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Harvest" inverseName="cropPlan" inverseEntity="Harvest"/>
+        <relationship name="inputs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="InputApplication" inverseName="cropPlan" inverseEntity="InputApplication"/>
+        <fetchIndex name="byCropIndex">
+            <fetchIndexElement property="crop" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byYearIndex">
+            <fetchIndexElement property="year" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Cultivar" representedClassName="Cultivar" syncable="YES" codeGenerationType="class">
+        <attribute name="amendments" optional="YES" attributeType="String"/>
+        <attribute name="approvedCommonName" optional="YES" attributeType="String"/>
+        <attribute name="bestHarvest" optional="YES" attributeType="String"/>
+        <attribute name="bestPlantingDates" optional="YES" attributeType="String"/>
+        <attribute name="colorRGB" optional="YES" attributeType="String"/>
+        <attribute name="commonName" optional="YES" attributeType="String"/>
+        <attribute name="cultivarDescription" optional="YES" attributeType="String"/>
+        <attribute name="cultivarName" optional="YES" attributeType="String"/>
+        <attribute name="emoji" optional="YES" attributeType="String"/>
+        <attribute name="family" optional="YES" attributeType="String"/>
+        <attribute name="fruitName" optional="YES" attributeType="String"/>
+        <attribute name="genus" optional="YES" attributeType="String"/>
+        <attribute name="greenhouseInstructions" optional="YES" attributeType="String"/>
+        <attribute name="growingAdvice" optional="YES" attributeType="String"/>
+        <attribute name="growingDays" optional="YES" attributeType="String"/>
+        <attribute name="hardyZone" optional="YES" attributeType="String"/>
+        <attribute name="harvestInstructions" optional="YES" attributeType="String"/>
+        <attribute name="iosColor" optional="YES" attributeType="String"/>
+        <attribute name="isOrganicCertified" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="optimalZones" optional="YES" attributeType="String"/>
+        <attribute name="pests" optional="YES" attributeType="String"/>
+        <attribute name="plantingWeek" optional="YES" attributeType="String"/>
+        <attribute name="ripenessIndicators" optional="YES" attributeType="String"/>
+        <attribute name="season" optional="YES" attributeType="String"/>
+        <attribute name="soilConditions" optional="YES" attributeType="String"/>
+        <attribute name="soilInfo" optional="YES" attributeType="String"/>
+        <attribute name="transplantAge" optional="YES" attributeType="String"/>
+        <attribute name="usdaZoneList" optional="YES" attributeType="String"/>
+        <attribute name="weatherTolerance" optional="YES" attributeType="String"/>
+        <relationship name="grows" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Grow" inverseName="cultivar" inverseEntity="Grow"/>
+        <relationship name="seedSources" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SupplierSource" inverseName="cultivars" inverseEntity="SupplierSource"/>
+    </entity>
+    <entity name="Document" representedClassName="Document" syncable="YES" codeGenerationType="class">
+        <attribute name="attachedAt" optional="YES" attributeType="Date" defaultDateTimeInterval="0" usesScalarValueType="NO"/>
+        <attribute name="fileURL" optional="YES" attributeType="URI"/>
+        <attribute name="hashd" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="kind" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="communication" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Communication" inverseName="document" inverseEntity="Communication"/>
+        <relationship name="conservationPractice" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ConservationPractice" inverseName="document" inverseEntity="ConservationPractice"/>
+        <relationship name="cropPlan" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CropPlan" inverseName="documents" inverseEntity="CropPlan"/>
+        <relationship name="harvest" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Harvest" inverseName="document" inverseEntity="Harvest"/>
+        <relationship name="infrastructure" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Infrastructure" inverseName="documents" inverseEntity="Infrastructure"/>
+        <relationship name="inputApplication" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="InputApplication" inverseName="document" inverseEntity="InputApplication"/>
+        <relationship name="lease" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Lease" inverseName="documents" inverseEntity="Lease"/>
+        <relationship name="programEnrollment" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProgramEnrollment" inverseName="documents" inverseEntity="ProgramEnrollment"/>
+        <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="documents" inverseEntity="Property"/>
+        <relationship name="soilTest" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SoilTest" inverseName="document" inverseEntity="SoilTest"/>
+        <relationship name="waterTest" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WaterTest" inverseName="document" inverseEntity="WaterTest"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byTitleIndex">
+            <fetchIndexElement property="title" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="ExpenseShare" representedClassName="ExpenseShare" syncable="YES" codeGenerationType="class">
+        <attribute name="amount" attributeType="Decimal" defaultValueString="1"/>
+        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="descriptionText" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="paidBy" optional="YES" attributeType="String"/>
+        <attribute name="splitPctFarmer" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <relationship name="lease" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Lease" inverseName="expenseShares" inverseEntity="Lease"/>
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Farmer" representedClassName="Farmer" syncable="YES" codeGenerationType="class">
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="imagePath" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="orgName" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="profilePhotoData" optional="YES" attributeType="Binary"/>
+        <relationship name="healthSafetyTrainings" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="HealthSafetyTraining" inverseName="farmer" inverseEntity="HealthSafetyTraining"/>
+        <relationship name="leases" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Lease" inverseName="farmer" inverseEntity="Lease"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="FarmPractice" representedClassName="FarmPractice" syncable="YES" codeGenerationType="class">
+        <attribute name="certification" attributeType="String" defaultValueString=""/>
+        <attribute name="descriptionText" attributeType="String" defaultValueString=""/>
+        <attribute name="frequency" attributeType="String" defaultValueString=""/>
+        <attribute name="lastUpdated" attributeType="Date" defaultDateTimeInterval="778170900" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="practiceID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="trainingRequired" attributeType="String" defaultValueString=""/>
+        <relationship name="workOrders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkOrder" inverseName="farmPractices" inverseEntity="WorkOrder"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="practiceID" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Field" representedClassName="Field" syncable="YES" codeGenerationType="class">
+        <attribute name="acres" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="hasDrainTile" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionStatus" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="nextInspectionDue" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="photoData" optional="YES" attributeType="Binary"/>
+        <attribute name="polygonWKB" optional="YES" attributeType="Binary"/>
+        <attribute name="soilMapUnits" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
+        <relationship name="conservationPractices" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ConservationPractice" inverseName="field" inverseEntity="ConservationPractice"/>
+        <relationship name="cropPlans" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CropPlan" inverseName="field" inverseEntity="CropPlan"/>
+        <relationship name="grows" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Grow" inverseName="field" inverseEntity="Grow"/>
+        <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="fields" inverseEntity="Property"/>
+        <relationship name="soilTests" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SoilTest" inverseName="field" inverseEntity="SoilTest"/>
+        <relationship name="wells" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Well" inverseName="field" inverseEntity="Well"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Grow" representedClassName="Grow" syncable="YES" codeGenerationType="class">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="city" optional="YES" attributeType="String"/>
+        <attribute name="county" optional="YES" attributeType="String"/>
+        <attribute name="drivingDirections" optional="YES" attributeType="String"/>
+        <attribute name="expectedHavestDate" optional="YES" attributeType="String"/>
+        <attribute name="growType" optional="YES" attributeType="String"/>
+        <attribute name="harvestDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="inspectionStatus" optional="YES" attributeType="String"/>
+        <attribute name="locationName" optional="YES" attributeType="String"/>
+        <attribute name="lotId" optional="YES" attributeType="String"/>
+        <attribute name="manager" optional="YES" attributeType="String"/>
+        <attribute name="managerPhone" optional="YES" attributeType="String"/>
+        <attribute name="nextInspectionDue" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="plantedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="propertyOwner" optional="YES" attributeType="String"/>
+        <attribute name="propertyOwnerPhone" optional="YES" attributeType="String"/>
+        <attribute name="propertyType" optional="YES" attributeType="String"/>
+        <attribute name="size" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="state" optional="YES" attributeType="String"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="zip" optional="YES" attributeType="String"/>
+        <relationship name="amendments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Amendment" inverseName="grow" inverseEntity="Amendment"/>
+        <relationship name="cultivar" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cultivar" inverseName="grows" inverseEntity="Cultivar"/>
+        <relationship name="field" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Field" inverseName="grows" inverseEntity="Field"/>
+        <relationship name="work" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Work" inverseName="grow" inverseEntity="Work"/>
+        <relationship name="workOrders" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WorkOrder" inverseName="grow" inverseEntity="WorkOrder"/>
+    </entity>
+    <entity name="Harvest" representedClassName="Harvest" syncable="YES" codeGenerationType="class">
+        <attribute name="buyer" optional="YES" attributeType="String"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="destination" optional="YES" attributeType="String"/>
+        <attribute name="dryQty" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="moisturePct" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="pricePerUOM" optional="YES" attributeType="Decimal"/>
+        <attribute name="uom" optional="YES" attributeType="String"/>
+        <attribute name="wetQty" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <relationship name="cropPlan" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CropPlan" inverseName="harvests" inverseEntity="CropPlan"/>
+        <relationship name="document" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="harvest" inverseEntity="Document"/>
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="HealthSafetyTraining" representedClassName="HealthSafetyTraining" syncable="YES" codeGenerationType="class">
+        <attribute name="completedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="trainingName" optional="YES" attributeType="String"/>
+        <attribute name="trainingType" optional="YES" attributeType="String"/>
+        <relationship name="farmer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Farmer" inverseName="healthSafetyTrainings" inverseEntity="Farmer"/>
+        <relationship name="worker" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Worker" inverseName="healthSafetyTrainings" inverseEntity="Worker"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byTrainingNameIndex">
+            <fetchIndexElement property="trainingName" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Infrastructure" representedClassName="Infrastructure" syncable="YES" codeGenerationType="class">
+        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionStatus" optional="YES" attributeType="String"/>
+        <attribute name="installDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastServiceDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="maintenanceProcedures" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="nextInspectionDue" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="rodentInspectionProcedure" optional="YES" attributeType="String"/>
+        <attribute name="safetyTraining" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="documents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Document" inverseName="infrastructure" inverseEntity="Document"/>
+        <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="infrastructure" inverseEntity="Property"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byTypeIndex">
+            <fetchIndexElement property="type" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="InfrastructureCatalog" representedClassName="InfrastructureCatalog" syncable="YES" codeGenerationType="class">
+        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="maintenanceProcedures" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="rodentInspectionProcedure" optional="YES" attributeType="String"/>
+        <attribute name="safetyTraining" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <fetchIndex name="byCategoryIndex">
+            <fetchIndexElement property="category" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byTypeIndex">
+            <fetchIndexElement property="type" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="InputApplication" representedClassName="InputApplication" syncable="YES" codeGenerationType="class">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="productName" optional="YES" attributeType="String"/>
+        <attribute name="ratePerAcre" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="uom" optional="YES" attributeType="String"/>
+        <relationship name="cropPlan" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CropPlan" inverseName="inputs" inverseEntity="CropPlan"/>
+        <relationship name="document" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="inputApplication" inverseEntity="Document"/>
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byTypeIndex">
+            <fetchIndexElement property="type" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Inspection" representedClassName="Inspection" syncable="YES" codeGenerationType="class">
+        <attribute name="completedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionType" optional="YES" attributeType="String"/>
+        <attribute name="inspectorName" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="scheduledDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <relationship name="checklistItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="InspectionChecklistItem" inverseName="inspection" inverseEntity="InspectionChecklistItem"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byScheduledDateIndex">
+            <fetchIndexElement property="scheduledDate" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byTypeIndex">
+            <fetchIndexElement property="inspectionType" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="InspectionChecklistItem" representedClassName="InspectionChecklistItem" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isCompleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="itemDescription" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="requirementLevel" optional="YES" attributeType="String"/>
+        <relationship name="inspection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Inspection" inverseName="checklistItems" inverseEntity="Inspection"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Lab" representedClassName="Lab" syncable="YES" codeGenerationType="class">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="website" optional="YES" attributeType="String"/>
+        <relationship name="soilTests" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SoilTest" inverseName="lab" inverseEntity="SoilTest"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Lease" representedClassName="Lease" syncable="YES" codeGenerationType="class">
+        <attribute name="cropSharePct" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="insuranceResponsibility" optional="YES" attributeType="String"/>
+        <attribute name="landOwnerNotification" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="leaseDocumentPath" optional="YES" attributeType="String"/>
+        <attribute name="leaseType" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="propertyTaxResponsibility" optional="YES" attributeType="String"/>
+        <attribute name="renewalTerms" optional="YES" attributeType="String"/>
+        <attribute name="rentAmount" optional="YES" attributeType="Decimal"/>
+        <attribute name="rentFrequency" optional="YES" attributeType="String"/>
+        <attribute name="restrictions" optional="YES" attributeType="String"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="status" attributeType="String" defaultValueString="active"/>
+        <attribute name="terminationTerms" optional="YES" attributeType="String"/>
+        <relationship name="communications" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Communication" inverseName="lease" inverseEntity="Communication"/>
+        <relationship name="documents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Document" inverseName="lease" inverseEntity="Document"/>
+        <relationship name="expenseShares" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ExpenseShare" inverseName="lease" inverseEntity="ExpenseShare"/>
+        <relationship name="farmer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Farmer" inverseName="leases" inverseEntity="Farmer"/>
+        <relationship name="ledgerEntries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="LedgerEntry" inverseName="lease" inverseEntity="LedgerEntry"/>
+        <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Owner" inverseName="leases" inverseEntity="Owner"/>
+        <relationship name="payments" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Payment" inverseName="lease" inverseEntity="Payment"/>
+        <relationship name="programEnrollments" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ProgramEnrollment" inverseName="lease" inverseEntity="ProgramEnrollment"/>
+        <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="leases" inverseEntity="Property"/>
+        <fetchIndex name="byEndDateIndex">
+            <fetchIndexElement property="endDate" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byStartDateIndex">
+            <fetchIndexElement property="startDate" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byStatusIndex">
+            <fetchIndexElement property="status" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="LedgerEntry" representedClassName="LedgerEntry" syncable="YES" codeGenerationType="class">
+        <attribute name="accountCode" optional="YES" attributeType="String"/>
+        <attribute name="accountName" optional="YES" attributeType="String"/>
+        <attribute name="amount" attributeType="Decimal" defaultValueString="0"/>
+        <attribute name="balance" optional="YES" attributeType="Decimal"/>
+        <attribute name="checkNumber" optional="YES" attributeType="String"/>
+        <attribute name="creditAmount" optional="YES" attributeType="Decimal"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="debitAmount" optional="YES" attributeType="Decimal"/>
+        <attribute name="emoji" optional="YES" attributeType="String"/>
+        <attribute name="entryType" optional="YES" attributeType="String"/>
+        <attribute name="expenseApproval" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="iosSymbol" optional="YES" attributeType="String"/>
+        <attribute name="ledgerDescription" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="reconciled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="referenceNumber" optional="YES" attributeType="String"/>
+        <attribute name="taxCategory" optional="YES" attributeType="String"/>
+        <attribute name="vendorName" optional="YES" attributeType="String"/>
+        <relationship name="lease" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Lease" inverseName="ledgerEntries" inverseEntity="Lease"/>
+        <relationship name="payment" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Payment" inverseName="ledgerEntry" inverseEntity="Payment"/>
+        <relationship name="vendorContact" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="VendorContact" inverseName="ledgerEntries" inverseEntity="VendorContact"/>
+        <fetchIndex name="byAccountCodeIndex">
+            <fetchIndexElement property="accountCode" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byEntryTypeIndex">
+            <fetchIndexElement property="entryType" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Owner" representedClassName="Owner" syncable="YES" codeGenerationType="class">
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <relationship name="leases" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Lease" inverseName="owner" inverseEntity="Lease"/>
+        <relationship name="properties" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Property" inverseName="owner" inverseEntity="Property"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Payment" representedClassName="Payment" syncable="YES" codeGenerationType="class">
+        <attribute name="amount" attributeType="Decimal" defaultValueString="0"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="dueDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isPaid" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="memo" optional="YES" attributeType="String"/>
+        <attribute name="method" optional="YES" attributeType="String"/>
+        <attribute name="paidDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="paymentStatus" optional="YES" attributeType="String"/>
+        <attribute name="referenceNumber" optional="YES" attributeType="String"/>
+        <attribute name="sequence" optional="YES" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES"/>
+        <relationship name="lease" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Lease" inverseName="payments" inverseEntity="Lease"/>
+        <relationship name="ledgerEntry" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LedgerEntry" inverseName="payment" inverseEntity="LedgerEntry"/>
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byDueDateIndex">
+            <fetchIndexElement property="dueDate" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byStatusIndex">
+            <fetchIndexElement property="paymentStatus" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="ProgramEnrollment" representedClassName="ProgramEnrollment" syncable="YES" codeGenerationType="class">
+        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="paymentTerms" optional="YES" attributeType="String"/>
+        <attribute name="programName" optional="YES" attributeType="String"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <relationship name="documents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Document" inverseName="programEnrollment" inverseEntity="Document"/>
+        <relationship name="lease" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Lease" inverseName="programEnrollments" inverseEntity="Lease"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byProgramNameIndex">
+            <fetchIndexElement property="programName" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Property" representedClassName="Property" syncable="YES" codeGenerationType="class">
+        <attribute name="centerLat" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="centerLon" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="certificationStatus" optional="YES" attributeType="String"/>
+        <attribute name="certificationValidUntil" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="county" optional="YES" attributeType="String"/>
+        <attribute name="displayName" optional="YES" attributeType="String"/>
+        <attribute name="hasIrrigation" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionStatus" optional="YES" attributeType="String"/>
+        <attribute name="nextInspectionDue" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="parcelNumbers" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
+        <attribute name="pastureAcres" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="state" optional="YES" attributeType="String"/>
+        <attribute name="tillableAcres" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="totalAcres" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="wetlandAcres" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="woodlandAcres" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="documents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Document" inverseName="property" inverseEntity="Document"/>
+        <relationship name="fields" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Field" inverseName="property" inverseEntity="Field"/>
+        <relationship name="infrastructure" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Infrastructure" inverseName="property" inverseEntity="Infrastructure"/>
+        <relationship name="leases" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Lease" inverseName="property" inverseEntity="Lease"/>
+        <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Owner" inverseName="properties" inverseEntity="Owner"/>
+        <relationship name="waterTests" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WaterTest" inverseName="property" inverseEntity="WaterTest"/>
+        <relationship name="wells" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Well" inverseName="property" inverseEntity="Well"/>
+        <fetchIndex name="byDisplayNameIndex">
+            <fetchIndexElement property="displayName" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="SoilTest" representedClassName="SoilTest" syncable="YES" codeGenerationType="class">
+        <attribute name="cec" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="k_ppm" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="labName" optional="YES" attributeType="String"/>
+        <attribute name="omPct" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="p_ppm" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="ph" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="recNotes" optional="YES" attributeType="String"/>
+        <relationship name="document" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="soilTest" inverseEntity="Document"/>
+        <relationship name="field" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Field" inverseName="soilTests" inverseEntity="Field"/>
+        <relationship name="lab" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Lab" inverseName="soilTests" inverseEntity="Lab"/>
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="SupplierSource" representedClassName="SupplierSource" syncable="YES" codeGenerationType="class">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="certificationExpiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="certificationNumber" optional="YES" attributeType="String"/>
+        <attribute name="city" optional="YES" attributeType="String"/>
+        <attribute name="contactPerson" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="faxNumber" optional="YES" attributeType="String"/>
+        <attribute name="guid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isOrganicCertified" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="phoneNumber" optional="YES" attributeType="String"/>
+        <attribute name="state" optional="YES" attributeType="String"/>
+        <attribute name="supplierType" optional="YES" attributeType="String"/>
+        <attribute name="websiteURL" optional="YES" attributeType="String"/>
+        <attribute name="zipCode" optional="YES" attributeType="String"/>
+        <relationship name="cropAmendments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CropAmendment" inverseName="supplier" inverseEntity="CropAmendment"/>
+        <relationship name="cultivars" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Cultivar" inverseName="seedSources" inverseEntity="Cultivar"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="guid" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="bySupplierTypeIndex">
+            <fetchIndexElement property="supplierType" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byOrganicCertifiedIndex">
+            <fetchIndexElement property="isOrganicCertified" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="TimeClock" representedClassName="TimeClock" syncable="YES" codeGenerationType="class">
+        <attribute name="blockNumber" optional="YES" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES"/>
+        <attribute name="clockInTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="clockOutTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="hoursWorked" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isActive" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="weekNumber" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="year" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <relationship name="worker" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Worker" inverseName="timeClockEntries" inverseEntity="Worker"/>
+        <relationship name="workOrder" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WorkOrder" inverseName="timeClockEntries" inverseEntity="WorkOrder"/>
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byWeekYearIndex">
+            <fetchIndexElement property="year" type="Binary" order="ascending"/>
+            <fetchIndexElement property="weekNumber" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="TrainingCourse" representedClassName="TrainingCourse" syncable="YES" codeGenerationType="class">
+        <attribute name="active" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="assessmentMethod" optional="YES" attributeType="String"/>
+        <attribute name="complianceCategory" optional="YES" attributeType="String"/>
+        <attribute name="courseDescription" optional="YES" attributeType="String"/>
+        <attribute name="courseID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="courseName" optional="YES" attributeType="String"/>
+        <attribute name="deliveryMethod" optional="YES" attributeType="String"/>
+        <attribute name="estimatedDurationMin" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="languageOptions" optional="YES" attributeType="String"/>
+        <attribute name="lastUpdated" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="passingScore" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="recertificationInterval" optional="YES" attributeType="String"/>
+        <attribute name="regulatoryReferences" optional="YES" attributeType="String"/>
+        <attribute name="requiredForRoles" optional="YES" attributeType="String"/>
+        <attribute name="trainerQualification" optional="YES" attributeType="String"/>
+        <relationship name="trainingRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TrainingRecord" inverseName="trainingCourse" inverseEntity="TrainingRecord"/>
+        <fetchIndex name="byCourseIDIndex">
+            <fetchIndexElement property="courseID" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byCourseNameIndex">
+            <fetchIndexElement property="courseName" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="TrainingRecord" representedClassName="TrainingRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="associatedPolicyID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="complianceCategory" optional="YES" attributeType="String"/>
+        <attribute name="comprehensionCheckMethod" optional="YES" attributeType="String"/>
+        <attribute name="employeeSignatureData" optional="YES" attributeType="Binary"/>
+        <attribute name="followUpDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="languageProvided" optional="YES" attributeType="String"/>
+        <attribute name="nextScheduledReview" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="passStatus" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="requiresAnnualReview" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="trainerName" optional="YES" attributeType="String"/>
+        <attribute name="trainerSignatureData" optional="YES" attributeType="Binary"/>
+        <attribute name="trainingDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="trainingDurationMinutes" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="trainingID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="trainingMethod" optional="YES" attributeType="String"/>
+        <relationship name="trainingCourse" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrainingCourse" inverseName="trainingRecords" inverseEntity="TrainingCourse"/>
+        <relationship name="worker" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Worker" inverseName="trainingRecords" inverseEntity="Worker"/>
+        <fetchIndex name="byTrainingIDIndex">
+            <fetchIndexElement property="trainingID" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byWorkerIndex">
+            <fetchIndexElement property="worker" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="VendorContact" representedClassName="VendorContact" syncable="YES" codeGenerationType="class">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="contactPerson" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="taxId" optional="YES" attributeType="String"/>
+        <attribute name="vendorCode" optional="YES" attributeType="String"/>
+        <attribute name="website" optional="YES" attributeType="String"/>
+        <relationship name="ledgerEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LedgerEntry" inverseName="vendorContact" inverseEntity="LedgerEntry"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byVendorCodeIndex">
+            <fetchIndexElement property="vendorCode" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="WaterTest" representedClassName="WaterTest" syncable="YES" codeGenerationType="class">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="ec_dSPerM" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="nitrate_ppm" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="sodiumPct" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="source" optional="YES" attributeType="String"/>
+        <relationship name="document" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="waterTest" inverseEntity="Document"/>
+        <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="waterTests" inverseEntity="Property"/>
+        <relationship name="well" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Well" inverseName="waterTests" inverseEntity="Well"/>
+        <fetchIndex name="byDateIndex">
+            <fetchIndexElement property="date" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Well" representedClassName="Well" syncable="YES" codeGenerationType="class">
+        <attribute name="depth" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="drillDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="wellType" optional="YES" attributeType="String"/>
+        <relationship name="field" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Field" inverseName="wells" inverseEntity="Field"/>
+        <relationship name="property" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Property" inverseName="wells" inverseEntity="Property"/>
+        <relationship name="waterTests" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WaterTest" inverseName="well" inverseEntity="WaterTest"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="Work" representedClassName="Work" syncable="YES" codeGenerationType="class">
+        <attribute name="jobCompleted" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="jobCompleteTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="practice" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="practiceIndex" optional="YES" attributeType="Integer 32" defaultValueString="0" allowsCloudEncryption="YES" usesScalarValueType="YES"/>
+        <relationship name="grow" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Grow" inverseName="work" inverseEntity="Grow"/>
+        <relationship name="workOrder" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WorkOrder" inverseName="workItems" inverseEntity="WorkOrder"/>
+    </entity>
+    <entity name="Worker" representedClassName="Worker" syncable="YES" codeGenerationType="class">
+        <attribute name="canInspect" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="emergencyContact" optional="YES" attributeType="String"/>
+        <attribute name="emergencyPhone" optional="YES" attributeType="String"/>
+        <attribute name="emoji" optional="YES" attributeType="String"/>
+        <attribute name="hireDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="imagePath" optional="YES" attributeType="String"/>
+        <attribute name="iosSymbol" optional="YES" attributeType="String"/>
+        <attribute name="isActive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="position" optional="YES" attributeType="String"/>
+        <attribute name="profilePhotoData" optional="YES" attributeType="Binary"/>
+        <relationship name="healthSafetyTrainings" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="HealthSafetyTraining" inverseName="worker" inverseEntity="HealthSafetyTraining"/>
+        <relationship name="teams" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkTeam" inverseName="members" inverseEntity="WorkTeam"/>
+        <relationship name="timeClockEntries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TimeClock" inverseName="worker" inverseEntity="TimeClock"/>
+        <relationship name="trainingRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TrainingRecord" inverseName="worker" inverseEntity="TrainingRecord"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="WorkOrder" representedClassName="WorkOrder" syncable="YES" codeGenerationType="class">
+        <attribute name="completedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="dueDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isCompleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="priority" optional="YES" attributeType="String"/>
+        <attribute name="shifts" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="totalEstimatedHours" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <relationship name="assignedTeam" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WorkTeam" inverseName="workOrders" inverseEntity="WorkTeam"/>
+        <relationship name="farmPractices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="FarmPractice" inverseName="workOrders" inverseEntity="FarmPractice"/>
+        <relationship name="grow" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Grow" inverseName="workOrders" inverseEntity="Grow"/>
+        <relationship name="timeClockEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TimeClock" inverseName="workOrder" inverseEntity="TimeClock"/>
+        <relationship name="workItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Work" inverseName="workOrder" inverseEntity="Work"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byStatusIndex">
+            <fetchIndexElement property="status" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byCreatedDateIndex">
+            <fetchIndexElement property="createdDate" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="WorkTeam" representedClassName="WorkTeam" syncable="YES" codeGenerationType="class">
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isActive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <relationship name="members" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Worker" inverseName="teams" inverseEntity="Worker"/>
+        <relationship name="workOrders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkOrder" inverseName="assignedTeam" inverseEntity="WorkOrder"/>
+        <fetchIndex name="byIdIndex">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byNameIndex">
+            <fetchIndexElement property="name" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+</model>

@@ -181,6 +181,34 @@ struct UtilitiesView: View {
                 .cornerRadius(AppTheme.CornerRadius.medium)
             }
             
+            // Practice Management Utility
+            NavigationLink(destination: PracticeManagementView()) {
+                HStack {
+                    Image(systemName: "doc.text.below.ecg")
+                        .foregroundColor(AppTheme.Colors.organicPractice)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Practice Management")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Manage farm practices and view work orders by practice")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .font(.caption)
+                }
+                .padding()
+                .background(AppTheme.Colors.backgroundSecondary)
+                .cornerRadius(AppTheme.CornerRadius.medium)
+            }
+            
             // Manage Infrastructure Utility
             NavigationLink(destination: InfrastructureManagementView()) {
                 HStack {
@@ -256,6 +284,31 @@ struct UtilitiesView: View {
                 }
             }
             
+            // Certification Utility
+            NavigationLink(destination: CertificationOverviewView()) {
+                HStack {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundColor(AppTheme.Colors.organicPractice)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Certification")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Manage organic certification and compliance tracking by farm")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
+            }
+            
             // General Ledger Utility
             NavigationLink(destination: LedgerView()) {
                 HStack {
@@ -269,6 +322,31 @@ struct UtilitiesView: View {
                             .foregroundColor(AppTheme.Colors.textPrimary)
                         
                         Text("GAAP-compliant accounting ledger for agricultural business")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
+            }
+            
+            // Amendment Catalog Utility
+            NavigationLink(destination: CropAmendmentCatalogView(context:viewContext) ){
+                HStack {
+                    Image(systemName: "flask.fill")
+                        .foregroundColor(AppTheme.Colors.organicPractice)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Manage Amendments")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Track crop amendments, OMRI listing, and inventory levels")
                             .font(AppTheme.Typography.bodySmall)
                             .foregroundColor(AppTheme.Colors.textSecondary)
                     }
