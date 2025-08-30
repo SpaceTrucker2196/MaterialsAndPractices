@@ -56,6 +56,7 @@
         <attribute name="inspectionCategory" optional="YES" attributeType="String"/>
         <attribute name="inspectionName" optional="YES" attributeType="String"/>
         <attribute name="inspectionType" optional="YES" attributeType="String"/>
+        <attribute name="inspectorName" optional="YES" attributeType="String"/>
         <attribute name="inspectorNames" optional="YES" attributeType="String"/>
         <attribute name="lotId" optional="YES" attributeType="String"/>
         <attribute name="recurrenceFrequency" optional="YES" attributeType="String"/>
@@ -263,7 +264,9 @@
         <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="photoData" optional="YES" attributeType="Binary"/>
         <attribute name="polygonWKB" optional="YES" attributeType="Binary"/>
+        <attribute name="slope" optional="YES" attributeType="String"/>
         <attribute name="soilMapUnits" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
+        <attribute name="soilType" optional="YES" attributeType="String"/>
         <relationship name="conservationPractices" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ConservationPractice" inverseName="field" inverseEntity="ConservationPractice"/>
         <relationship name="cropPlans" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CropPlan" inverseName="field" inverseEntity="CropPlan"/>
         <relationship name="grows" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Grow" inverseName="field" inverseEntity="Grow"/>
@@ -585,24 +588,32 @@
         </fetchIndex>
     </entity>
     <entity name="Property" representedClassName="Property" syncable="YES" codeGenerationType="class">
+        <attribute name="address" optional="YES" attributeType="String"/>
         <attribute name="centerLat" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
         <attribute name="centerLon" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
         <attribute name="certificationStatus" optional="YES" attributeType="String"/>
         <attribute name="certificationValidUntil" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="city" optional="YES" attributeType="String"/>
         <attribute name="county" optional="YES" attributeType="String"/>
         <attribute name="displayName" optional="YES" attributeType="String"/>
         <attribute name="hasIrrigation" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="inspectionStatus" optional="YES" attributeType="String"/>
+        <attribute name="managerName" optional="YES" attributeType="String"/>
+        <attribute name="managerPhone" optional="YES" attributeType="String"/>
         <attribute name="nextInspectionDue" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="ownerName" optional="YES" attributeType="String"/>
+        <attribute name="ownerPhone" optional="YES" attributeType="String"/>
         <attribute name="parcelNumbers" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <attribute name="pastureAcres" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="state" optional="YES" attributeType="String"/>
         <attribute name="tillableAcres" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="totalAcres" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="wetlandAcres" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="wonerPhone" optional="YES" attributeType="String"/>
         <attribute name="woodlandAcres" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="zip" optional="YES" attributeType="String"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Document" inverseName="property" inverseEntity="Document"/>
         <relationship name="fields" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Field" inverseName="property" inverseEntity="Field"/>
         <relationship name="infrastructure" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Infrastructure" inverseName="property" inverseEntity="Infrastructure"/>

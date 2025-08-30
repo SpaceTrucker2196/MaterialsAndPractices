@@ -201,9 +201,9 @@ struct PaymentDetailView: View {
                !fields.isEmpty {
                 
                 VStack(spacing: AppTheme.Spacing.small) {
-                    ForEach(fields.sorted(by: { ($0.name ?? "") < ($1.name ?? "") }), id: \.objectID) { field in
-                        FieldRowView(field: field)
-                    }
+//                    ForEach(fields.sorted(by: { ($0.name ?? "") < ($1.name ?? "") }), id: \.objectID) { field in
+//                        FieldRowView(field: field)
+//                    }
                 }
             } else {
                 Text("No fields information available")
@@ -365,7 +365,7 @@ struct PaymentDetailStatusCard: View {
 }
 
 /// Field row view
-struct FieldRowView: View {
+struct PaymentFieldRowView: View {
     let field: Field
     
     var body: some View {

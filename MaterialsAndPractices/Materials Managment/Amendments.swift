@@ -33,7 +33,7 @@ struct Amendments: View {
                         NavigationLink(
                             destination: AmendmentDetail(amendment:amendment),
                             label: {
-                                Amendment.Image(amendmentTitle:amendment.name ?? "")
+                                //Amendment.Image(amendmentTitle:amendment.name ?? "")
                             })
                     }
                   }).frame(maxWidth: .infinity,maxHeight: .infinity )

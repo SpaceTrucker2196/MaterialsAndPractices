@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension Amendment {
+extension CropAmendment {
     struct Image: View {
        let amendmentTitle: String
        
@@ -52,7 +52,7 @@ extension Image {
 struct Material_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            Amendment.Image(amendmentTitle:"test")
+            CropAmendment.Image(amendmentTitle:"test")
         }
     }
 }

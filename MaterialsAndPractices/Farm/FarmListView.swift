@@ -81,7 +81,7 @@ struct FarmListView: View {
 
 /// Individual row component for displaying property information in list format
 /// Provides comprehensive property details with navigation to detail view
-struct PropertyRow: View {
+struct FarmPropertyRow: View {
     // MARK: - Properties
     
     let property: Property
