@@ -89,24 +89,15 @@ struct WorkerListView: View {
 /// Row component for displaying worker information
 struct WorkerRow: View {
     let worker: Worker
+    @Environment(\.managedObjectContext) private var viewContext
     @State private var isClockedIn = false
     
     var body: some View {
         NavigationLink(destination: WorkerDetailView(worker: worker)) {
             HStack {
-                // Worker photo
-                if let imagePath = worker.imagePath,
-                   let image = UIImage(contentsOfFile:imagePath){
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 40, height: 40)
-                        .clipShape(Circle())
-                }
-                // Fallback to profilePhotoData
-                else if let photoData = worker.profilePhotoData,
-                   let uiImage = UIImage(data: photoData) {
-                    Image(uiImage: uiImage)
+                // Worker photo using ImageUtilities
+                if let profileImage = ImageUtilities.loadWorkerProfileImage(for: worker) {
+                    Image(uiImage: profileImage)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 40, height: 40)
@@ -152,6 +143,10 @@ struct WorkerRow: View {
         }
         .onAppear {
             checkClockStatus()
+            // Generate profilePhotoData from imagePath if needed
+            if worker.profilePhotoData == nil {
+                ImageUtilities.generateProfilePhotoDataIfNeeded(for: worker, context: viewContext)
+            }
         }
     }
     
@@ -370,11 +365,11 @@ struct WorkerDetailView: View {
                             Button(action: clockIn) {
                                 VStack(spacing: AppTheme.Spacing.small) {
                                     Image(systemName: "clock")
-                                        .font(.system(size: 40))
+                                        .font(.system(size: 24))
                                         .foregroundColor(AppTheme.Colors.clockIn)
                                     
                                     Text("Start Work")
-                                        .font(AppTheme.Typography.bodyMedium)
+                                        .font(AppTheme.Typography.labelMedium)
                                         .foregroundColor(AppTheme.Colors.clockIn)
                                         .fontWeight(.semibold)
                                 }
@@ -389,11 +384,11 @@ struct WorkerDetailView: View {
                             Button(action: clockOut) {
                                 VStack(spacing: AppTheme.Spacing.small) {
                                     Image(systemName: "clock.fill")
-                                        .font(.system(size: 40))
+                                        .font(.system(size: 24))
                                         .foregroundColor(AppTheme.Colors.clockOut)
                                     
                                     Text("Stop Work")
-                                        .font(AppTheme.Typography.bodyMedium)
+                                        .font(AppTheme.Typography.labelMedium)
                                         .foregroundColor(AppTheme.Colors.clockOut)
                                         .fontWeight(.semibold)
                                 }
@@ -409,10 +404,20 @@ struct WorkerDetailView: View {
                         Spacer()
                     }
                 }
-                .frame(height: 200)
+                .frame(height: 70)
             }
             .padding(AppTheme.Spacing.medium)
-            .background(AppTheme.Colors.backgroundSecondary)
+            .background(
+                // Transparent background with clock colors
+                ZStack {
+                    // Base background
+                    AppTheme.Colors.backgroundSecondary
+                    
+                    // Overlay with clock status color
+                    (isClockedIn ? AppTheme.Colors.clockIn : AppTheme.Colors.clockOut)
+                        .opacity(0.1)
+                }
+            )
             .cornerRadius(AppTheme.CornerRadius.medium)
         }
     }
