@@ -390,13 +390,53 @@ struct FarmDashboardView: View {
 
     /// Grid layout for team member tiles with status indicators
     private var teamMembersGrid: some View {
-        LazyVGrid(columns: responsiveGridColumns, spacing: AppTheme.Spacing.medium) {
-            ForEach(activeTeamMembers, id: \.id) { teamMember in
-                TeamMemberTile(
-                    worker: teamMember,
-                    isClockedIn: currentlyActiveworkers.contains(teamMember),
-                    isAssignedToPractice: isWorkerAssignedToPractice(teamMember)
-                )
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            LazyVGrid(columns: responsiveGridColumns, spacing: AppTheme.Spacing.medium) {
+                ForEach(Array(activeTeamMembers.prefix(6)), id: \.id) { teamMember in
+                    TeamMemberTile(
+                        worker: teamMember,
+                        isClockedIn: currentlyActiveworkers.contains(teamMember),
+                        isAssignedToPractice: isWorkerAssignedToPractice(teamMember)
+                    )
+                    .onLongPressGesture(minimumDuration: 0.5) {
+                        // Haptic feedback
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                        impactFeedback.prepare()
+                        impactFeedback.impactOccurred()
+                        
+                        // Toggle clock status
+                        toggleWorkerClockStatus(teamMember)
+                    }
+                }
+            }
+            
+            // "More" button if there are more than 6 workers
+            if activeTeamMembers.count > 6 {
+                NavigationLink(destination: FarmStaffView()) {
+                    HStack {
+                        Image(systemName: "person.3.fill")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.primary)
+                        
+                        Text("View All \(activeTeamMembers.count) Workers")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.primary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    .padding(AppTheme.Spacing.medium)
+                    .background(AppTheme.Colors.primary.opacity(0.05))
+                    .cornerRadius(AppTheme.CornerRadius.medium)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                            .stroke(AppTheme.Colors.primary.opacity(0.2), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
             }
         }
     }
@@ -599,6 +639,63 @@ struct FarmDashboardView: View {
         // In a full implementation, this would check if the worker is assigned
         // to any practice that is not yet completed
         return false
+    }
+    
+    /// Toggles worker clock status with haptic feedback
+    /// - Parameter worker: Worker to clock in or out
+    private func toggleWorkerClockStatus(_ worker: Worker) {
+        let today = Calendar.current.startOfDay(for: Date())
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+        
+        // Check if worker is currently clocked in
+        let isClockedIn = currentlyActiveworkers.contains(worker)
+        
+        if isClockedIn {
+            // Clock out
+            if let timeEntries = worker.timeClockEntries?.allObjects as? [TimeClock],
+               let activeEntry = timeEntries.first(where: { entry in
+                   guard let entryDate = entry.date,
+                         entryDate >= today && entryDate < tomorrow else { return false }
+                   return entry.isActive
+               }) {
+                
+                activeEntry.clockOutTime = Date()
+                activeEntry.isActive = false
+                
+                // Calculate hours worked
+                if let clockInTime = activeEntry.clockInTime,
+                   let clockOutTime = activeEntry.clockOutTime {
+                    let hoursWorked = clockOutTime.timeIntervalSince(clockInTime) / 3600
+                    activeEntry.hoursWorked = hoursWorked
+                }
+                
+                do {
+                    try viewContext.save()
+                } catch {
+                    print("Error clocking out worker: \(error)")
+                }
+            }
+        } else {
+            // Clock in
+            let newEntry = TimeClock(context: viewContext)
+            newEntry.id = UUID()
+            newEntry.worker = worker
+            newEntry.date = Date()
+            newEntry.clockInTime = Date()
+            newEntry.isActive = true
+            
+            // Set week and year for reporting
+            let calendar = Calendar.current
+            let components = calendar.dateComponents([.weekOfYear, .year], from: Date())
+            newEntry.weekNumber = Int16(components.weekOfYear ?? 1)
+            newEntry.year = Int16(components.year ?? Calendar.current.component(.year, from: Date()))
+            
+            do {
+                try viewContext.save()
+            } catch {
+                print("Error clocking in worker: \(error)")
+            }
+        }
     }
 
     // MARK: - Computed Properties for Business Logic
