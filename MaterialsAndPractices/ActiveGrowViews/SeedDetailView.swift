@@ -184,6 +184,7 @@ struct SeedDetailView: View {
     
     // MARK: - View Section Components
     
+    @ViewBuilder
     private var basicInfoViewSection: some View {
         Section("Seed Information") {
             HStack {
@@ -245,6 +246,7 @@ struct SeedDetailView: View {
         }
     }
     
+    @ViewBuilder
     private var cultivarInfoSection: some View {
         Section("Cultivar") {
             if let cultivar = seed.cultivar {
@@ -273,6 +275,7 @@ struct SeedDetailView: View {
         }
     }
     
+    @ViewBuilder
     private var supplierInfoSection: some View {
         Section("Supplier") {
             if let supplier = seed.supplierSource {
@@ -301,6 +304,7 @@ struct SeedDetailView: View {
         }
     }
     
+    @ViewBuilder
     private var certificationViewSection: some View {
         Section("Certification Status") {
             HStack {
@@ -335,6 +339,7 @@ struct SeedDetailView: View {
         }
     }
     
+    @ViewBuilder
     private var qualityViewSection: some View {
         Section("Quality Information") {
             if seed.germinationRate > 0 {
@@ -372,6 +377,7 @@ struct SeedDetailView: View {
         }
     }
     
+    @ViewBuilder
     private var storageViewSection: some View {
         Section("Storage & Notes") {
             if let storageLocation = seed.storageLocation {
@@ -397,6 +403,7 @@ struct SeedDetailView: View {
         }
     }
     
+    @ViewBuilder
     private var relatedGrowsSection: some View {
         Section("Related Grows") {
             if seed.growsArray.isEmpty {
@@ -434,6 +441,7 @@ struct SeedDetailView: View {
         }
     }
     
+    @ViewBuilder
     private var actionsSection: some View {
         Section {
             Button("Create Grow from This Seed") {
@@ -450,6 +458,7 @@ struct SeedDetailView: View {
     
     // MARK: - Edit Section Components
     
+    @ViewBuilder
     private var basicInfoEditSection: some View {
         Section("Seed Information") {
             TextField("Seed Name", text: $editedSeedName)
@@ -482,6 +491,7 @@ struct SeedDetailView: View {
         }
     }
     
+    @ViewBuilder
     private var certificationEditSection: some View {
         Section("Certification & Compliance") {
             Toggle("Certified Organic", isOn: $editedIsCertifiedOrganic)
@@ -490,6 +500,7 @@ struct SeedDetailView: View {
         }
     }
     
+    @ViewBuilder
     private var qualityEditSection: some View {
         Section("Quality Tracking") {
             Toggle("Germination Test Performed", isOn: $hasGerminationTest)
@@ -511,6 +522,7 @@ struct SeedDetailView: View {
         }
     }
     
+    @ViewBuilder
     private var storageEditSection: some View {
         Section("Storage & Notes") {
             TextField("Storage Location", text: $editedStorageLocation)
