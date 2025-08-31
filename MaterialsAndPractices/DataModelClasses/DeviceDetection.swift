@@ -1,13 +1,3 @@
-//
-//  DeviceDetection.swift
-//  MaterialsAndPractices
-//
-//  Device detection utility for creating hybrid iOS/iPadOS experiences.
-//  Follows Apple's Human Interface Guidelines for adaptive design.
-//  Implements proper size class detection and device-specific UI patterns.
-//
-//  Created by AI Assistant following Apple's best practices.
-//
 
 import SwiftUI
 import UIKit

@@ -1,13 +1,3 @@
-//
-//  WeeklyWorkerSummaryViews.swift
-//  MaterialsAndPractices
-//
-//  Provides weekly worker summary components for dashboard display
-//  and detailed view for comprehensive work order and time tracking.
-//  Supports farm management system worker oversight.
-//
-//  Created by GitHub Copilot on 12/18/24.
-//
 
 import SwiftUI
 import CoreData
@@ -111,8 +101,8 @@ struct WeeklyWorkerSummaryDetailView: View {
                         .foregroundColor(AppTheme.Colors.textPrimary)
                     
                     Text(currentWeekDateRange)
-                        .font(AppTheme.Typography.bodyMedium)
-                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .font(AppTheme.Typography.dataMedium)
+                        .foregroundColor(AppTheme.Colors.textDataFieldNormal)
                 }
                 
                 Spacer()
@@ -153,7 +143,7 @@ struct WeeklyWorkerSummaryDetailView: View {
             
             NavigationLink(destination: OvertimeReportView()) {
                 StatCard(
-                    title: "Overtime",
+                    title: "Over Time",
                     value: "\(overtimeWorkers)",
                     subtitle: "Workers"
                 )
@@ -222,15 +212,15 @@ struct StatCard: View {
     var body: some View {
         VStack(spacing: AppTheme.Spacing.small) {
             Text(value)
-                .font(AppTheme.Typography.headlineLarge)
-                .foregroundColor(AppTheme.Colors.primary)
+                .font(AppTheme.Typography.dataLarge)
+                .foregroundColor(AppTheme.Colors.textDataFieldNormal)
             
             Text(title)
                 .font(AppTheme.Typography.labelMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
             
             Text(subtitle)
-                .font(AppTheme.Typography.bodySmall)
+                .font(AppTheme.Typography.labelSmall)
                 .foregroundColor(AppTheme.Colors.textSecondary)
         }
         .frame(maxWidth: .infinity)
@@ -264,12 +254,12 @@ struct DetailedWorkerSummaryCard: View {
                     
                     VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
                         Text("\(summary.totalHours, specifier: "%.1f")h")
-                            .font(AppTheme.Typography.headlineLarge)
+                            .font(AppTheme.Typography.dataMedium)
                             .foregroundColor(summary.isOvertime ? AppTheme.Colors.warning : AppTheme.Colors.primary)
                         
                         if summary.isOvertime {
                             Text("+\(summary.overtimeHours, specifier: "%.1f")h OT")
-                                .font(AppTheme.Typography.labelSmall)
+                                .font(AppTheme.Typography.dataSmall)
                                 .foregroundColor(AppTheme.Colors.warning)
                         }
                     }

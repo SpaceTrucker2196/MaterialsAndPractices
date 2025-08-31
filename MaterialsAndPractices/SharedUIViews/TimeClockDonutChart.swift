@@ -20,9 +20,9 @@ struct TimeClockDonutChart: View {
     let clockInTime: Date?
     let isActive: Bool
     
-    // Chart appearance constants
-    private let chartSize: CGFloat = 160
-    private let strokeWidth: CGFloat = 20
+    // Chart appearance constants - optimized for button height matching
+    private let chartSize: CGFloat = 100
+    private let strokeWidth: CGFloat = 10
     private let totalHours: Double = 24.0
     private let regularHours: Double = 8.0
     private let warningHours: Double = 9.0
@@ -100,24 +100,15 @@ struct TimeClockDonutChart: View {
     // MARK: - Center Information Display
     
     private var centerInformation: some View {
-        VStack(spacing: AppTheme.Spacing.tiny) {
+        VStack(spacing: 0) {
             // Hours worked
             Text("\(hoursWorked, specifier: "%.1f")")
-                .font(AppTheme.Typography.headlineLarge)
+                .font(AppTheme.Typography.dataMedium)
                 .foregroundColor(colorForHours(hoursWorked))
-                .fontWeight(.bold)
             
-            Text("hours")
-                .font(AppTheme.Typography.bodySmall)
+            Text("hrs")
+                .font(AppTheme.Typography.dataMedium)
                 .foregroundColor(AppTheme.Colors.textSecondary)
-            
-            // Status indicator
-            if isActive {
-                Text("ACTIVE")
-                    .font(AppTheme.Typography.labelSmall)
-                    .foregroundColor(AppTheme.Colors.success)
-                    .fontWeight(.semibold)
-            }
         }
     }
     

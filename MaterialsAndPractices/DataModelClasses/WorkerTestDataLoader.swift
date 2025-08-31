@@ -176,8 +176,15 @@ class WorkerTestDataLoader {
         if let photoIndex = columnMap["profilephotodata"], photoIndex < fields.count {
             let photoFilename = fields[photoIndex]
             if !photoFilename.isEmpty {
-                worker.imagePath = photoFilename
-                loadProfilePhoto(filename: photoFilename, for: worker)
+                
+                if let url = Bundle.main.url(forResource: "profilephotodata", withExtension: "png", subdirectory: "PhotoLibrary") {
+                    worker.imagePath = url.absoluteString
+                } else if  let url = Bundle.main.url(forResource: "profilephotodata", withExtension: "jpeg", subdirectory: "PhotoLibrary") {
+                    worker.imagePath = url.absoluteString
+                } else if let url = Bundle.main.url(forResource: "profilephotodata", withExtension: "jpg", subdirectory: "PhotoLibrary") {
+                    worker.imagePath = url.absoluteString
+                }
+                loadProfilePhoto(filename: worker.imagePath ?? "profile.jpg", for: worker)
             }
         }
     }
