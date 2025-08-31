@@ -40,6 +40,16 @@ public class Grow: NSManagedObject {
         return seedArray.first
     }
     
+    /// Get the effective cultivar for this grow (from seed or direct relationship)
+    var effectiveCultivar: Cultivar? {
+        // First try to get cultivar from primary seed
+        if let primarySeed = primarySeed {
+            return primarySeed.cultivar
+        }
+        // Fall back to direct cultivar relationship for backward compatibility
+        return cultivar
+    }
+    
     /// Check if grow is currently active (not harvested)
     var isActive: Bool {
         return harvestDate == nil

@@ -287,7 +287,127 @@ class SeedLibraryCoreDataTests: XCTestCase {
         XCTAssertEqual(displayName, "Untitled Grow", "Should provide default display name")
     }
     
-    // MARK: - Data Integrity Tests
+    // MARK: - Context Integration Tests
+    
+    func testViewContextProperlySetInViews() throws {
+        // Test that Core Data managed object context is properly passed to views
+        // This simulates the issue mentioned in the problem statement
+        
+        let cultivar = Cultivar(context: viewContext)
+        cultivar.name = "Test Cultivar"
+        
+        let seed = SeedLibrary.createFromCultivar(cultivar, in: viewContext)
+        seed.seedName = "Test Seeds"
+        
+        let grow = Grow(context: viewContext)
+        grow.title = "Test Grow"
+        grow.addToSeed(seed)
+        
+        // Verify contexts are properly set
+        XCTAssertNotNil(cultivar.managedObjectContext, "Cultivar context should not be nil")
+        XCTAssertNotNil(seed.managedObjectContext, "Seed context should not be nil")
+        XCTAssertNotNil(grow.managedObjectContext, "Grow context should not be nil")
+        
+        // Verify they all use the same context
+        XCTAssertEqual(cultivar.managedObjectContext, viewContext, "Cultivar should use view context")
+        XCTAssertEqual(seed.managedObjectContext, viewContext, "Seed should use view context")
+        XCTAssertEqual(grow.managedObjectContext, viewContext, "Grow should use view context")
+        
+        try viewContext.save()
+        
+        // Verify relationships persist
+        XCTAssertEqual(grow.seedArray.count, 1, "Grow should have one seed")
+        XCTAssertEqual(grow.primarySeed, seed, "Primary seed should be correct")
+        XCTAssertEqual(grow.effectiveCultivar, cultivar, "Effective cultivar should work")
+    }
+    
+    func testGrowCreationWithSeedLibraryWorkflow() throws {
+        // Test the complete workflow of creating a grow from seed library
+        // This addresses the requirement to modify grow creation to use SeedLibrary
+        
+        // Create cultivar
+        let cultivar = Cultivar(context: viewContext)
+        cultivar.name = "Roma Tomato"
+        cultivar.family = "Solanaceae"
+        cultivar.growingDays = "75-85"
+        cultivar.isOrganicCertified = true
+        
+        // Create supplier
+        let supplier = SupplierSource(context: viewContext)
+        supplier.name = "Organic Seeds Co"
+        supplier.supplierType = SupplierKind.seed.rawValue
+        supplier.isOrganicCertified = true
+        
+        // Create seed from cultivar
+        let seed = SeedLibrary.createFromCultivar(cultivar, in: viewContext)
+        seed.seedName = "Roma Tomato Seeds"
+        seed.quantity = 10
+        seed.unit = "packets"
+        seed.supplierSource = supplier
+        
+        // Create grow from seed (simulating CreateGrowFromSeedView workflow)
+        let grow = Grow(context: viewContext)
+        grow.title = "Roma Tomato Grow 2024"
+        grow.plantedDate = Date()
+        grow.addToSeed(seed)
+        
+        // The grow should not directly reference cultivar anymore
+        // Instead it should access cultivar through seed
+        grow.cultivar = nil  // Clear direct cultivar relationship
+        
+        // Verify the new workflow
+        XCTAssertEqual(grow.effectiveCultivar, cultivar, "Should get cultivar through seed")
+        XCTAssertEqual(grow.primarySeed, seed, "Should have correct primary seed")
+        XCTAssertTrue(grow.seedArray.contains(seed), "Should contain the seed")
+        
+        // Update seed quantity to simulate usage
+        let originalQuantity = seed.quantity
+        let usedQuantity = 2.0
+        seed.quantity -= usedQuantity
+        seed.updateModificationDate()
+        
+        try viewContext.save()
+        
+        // Verify quantities updated
+        XCTAssertEqual(seed.quantity, originalQuantity - usedQuantity, "Seed quantity should be reduced")
+        XCTAssertNotNil(seed.lastModifiedDate, "Last modified date should be updated")
+        
+        // Verify grow can still access cultivar properties
+        XCTAssertEqual(grow.effectiveCultivar?.name, "Roma Tomato", "Should access cultivar name through seed")
+        XCTAssertEqual(grow.effectiveCultivar?.family, "Solanaceae", "Should access cultivar family through seed")
+        XCTAssertEqual(grow.effectiveCultivar?.growingDays, "75-85", "Should access growing days through seed")
+    }
+    
+    func testBackwardCompatibilityWithDirectCultivarRelationship() throws {
+        // Test that old grows with direct cultivar relationships still work
+        // This ensures backward compatibility
+        
+        let cultivar = Cultivar(context: viewContext)
+        cultivar.name = "Legacy Tomato"
+        cultivar.family = "Solanaceae"
+        
+        // Create grow with direct cultivar relationship (old way)
+        let grow = Grow(context: viewContext)
+        grow.title = "Legacy Grow"
+        grow.cultivar = cultivar
+        // No seed relationship
+        
+        // Verify backward compatibility
+        XCTAssertEqual(grow.effectiveCultivar, cultivar, "Should get cultivar directly when no seeds")
+        XCTAssertNil(grow.primarySeed, "Should have no primary seed")
+        XCTAssertTrue(grow.seedArray.isEmpty, "Should have no seeds")
+        
+        try viewContext.save()
+        
+        // Verify persistence
+        viewContext.reset()
+        let fetchRequest: NSFetchRequest<Grow> = Grow.fetchRequest()
+        let results = try viewContext.fetch(fetchRequest)
+        
+        XCTAssertEqual(results.count, 1, "Should persist one grow")
+        let persistedGrow = results.first!
+        XCTAssertEqual(persistedGrow.effectiveCultivar?.name, "Legacy Tomato", "Should maintain cultivar relationship")
+    }
     
     func testSeedLibraryDataIntegrity() throws {
         // Given

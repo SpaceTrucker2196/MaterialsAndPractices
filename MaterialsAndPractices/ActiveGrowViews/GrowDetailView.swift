@@ -37,11 +37,12 @@ struct GrowDetailViewModel  {
     /// - Parameter grow: The Core Data grow entity
     init(grow: Grow) {
         self.grow = grow
-        cultivar = grow.cultivar?.name ?? "No Cultivar Selected"
-        cultivarFamily = grow.cultivar?.family ?? ""
-        hardyZone = grow.cultivar?.hardyZone ?? ""
-        season = grow.cultivar?.season ?? ""
-        plantingWeek = grow.cultivar?.plantingWeek ?? ""
+        let effectiveCultivar = grow.effectiveCultivar
+        cultivar = effectiveCultivar?.name ?? "No Cultivar Selected"
+        cultivarFamily = effectiveCultivar?.family ?? ""
+        hardyZone = effectiveCultivar?.hardyZone ?? ""
+        season = effectiveCultivar?.season ?? ""
+        plantingWeek = effectiveCultivar?.plantingWeek ?? ""
         name = grow.title ?? ""
         plantedDate = grow.plantedDate ?? Date()
         harvestDate = grow.harvestDate ?? Date()
@@ -189,7 +190,7 @@ struct GrowDetailView: View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             SectionHeader(title: "Cultivar Growing Suggestions")
             
-            if let cultivar = growViewModel.grow.cultivar {
+            if let cultivar = growViewModel.grow.effectiveCultivar {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
@@ -491,7 +492,7 @@ struct GrowDetailView: View {
     private var harvestCalendarSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
 
-            if let cultivar = growViewModel.grow.cultivar,
+            if let cultivar = growViewModel.grow.effectiveCultivar,
                let plantedDate = growViewModel.grow.plantedDate {
                 let harvestData = HarvestCalculator.calculateHarvestCalendarData(
                     cultivar: cultivar,
@@ -657,7 +658,7 @@ struct GrowDetailView: View {
     
     /// Current harvest estimate for the grow
     private var currentHarvestEstimate: HarvestEstimate? {
-        guard let cultivar = growViewModel.grow.cultivar,
+        guard let cultivar = growViewModel.grow.effectiveCultivar,
               let plantedDate = growViewModel.grow.plantedDate else {
             return nil
         }
@@ -671,7 +672,7 @@ struct GrowDetailView: View {
     
     /// Formatted days to harvest text
     private var daysToHarvestText: String {
-        guard let cultivar = growViewModel.grow.cultivar,
+        guard let cultivar = growViewModel.grow.effectiveCultivar,
               let plantedDate = growViewModel.grow.plantedDate else {
             return "Unknown"
         }
@@ -1067,7 +1068,7 @@ struct GrowInspectionSchedulingView: View {
                     HStack {
                         Text("Cultivar:")
                         Spacer()
-                        Text(grow.cultivar?.name ?? "Unknown")
+                        Text(grow.effectiveCultivar?.name ?? "Unknown")
                             .foregroundColor(.secondary)
                     }
                     
@@ -1130,7 +1131,7 @@ struct GrowInspectionSchedulingView: View {
     /// Updates suggested inspection name based on category and grow context
     private func updateSuggestedName(for category: InspectionCategory) {
         if inspectionName.isEmpty {
-            let cultivarName = grow.cultivar?.name ?? "Crop"
+            let cultivarName = grow.effectiveCultivar?.name ?? "Crop"
             switch category {
             case .grow:
                 inspectionName = "Pre-Harvest Inspection - \(cultivarName)"
