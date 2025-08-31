@@ -358,6 +358,56 @@ struct UtilitiesView: View {
                         .font(.caption)
                 }
             }
+            
+            // Create New Seed Utility
+            NavigationLink(destination: CreateSeedFromCultivarView()) {
+                HStack {
+                    Image(systemName: "leaf.circle.fill")
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Create New Seed")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Add purchased seeds to library for organic compliance tracking")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
+            }
+            
+            // Manage Seed Library Utility
+            NavigationLink(destination: SeedLibraryManagementView()) {
+                HStack {
+                    Image(systemName: "archivebox.fill")
+                        .foregroundColor(AppTheme.Colors.secondary)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Manage Seed Library")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("View and manage all seeds in your library inventory")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                        .font(.caption)
+                }
+            }
         }
     }
     
