@@ -95,13 +95,13 @@ struct HarvestCalendarHeatMap: View {
                 Text(harvestData.cultivar.emoji ?? "🌱")
                     .font(.title2)
                 Text("\(harvestData.cultivar.name ?? "Unknown")")
-                    .font(AppTheme.Typography.headlineSmall)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
+                    .font(AppTheme.Typography.dataLarge)
+                    .foregroundColor(AppTheme.Colors.textDataFieldNormal)
             }
             if let plantedDate = harvestData.plantedDate {
                 Text("Planted: \(plantedDate, style: .date)")
-                    .font(AppTheme.Typography.bodySmall)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .font(AppTheme.Typography.dataSmall)
+                    .foregroundColor(AppTheme.Colors.textDataFieldNormal)
             }
         }
     }
@@ -144,7 +144,7 @@ struct HarvestCalendarHeatMap: View {
         HStack {
             ForEach(monthsInYear, id: \.self) { month in
                 Text(month)
-                    .font(AppTheme.Typography.bodySmall)
+                    .font(AppTheme.Typography.dataSmall)
                     .foregroundColor(AppTheme.Colors.textTertiary)
                     .frame(maxWidth: .infinity)
             }
@@ -166,7 +166,7 @@ struct HarvestCalendarHeatMap: View {
                             .cornerRadius(2)
                         
                         Text(quality.description)
-                            .font(AppTheme.Typography.bodySmall)
+                            .font(AppTheme.Typography.labelSmall)
                             .foregroundColor(AppTheme.Colors.textSecondary)
                         
                         Spacer()
@@ -182,7 +182,7 @@ struct HarvestCalendarHeatMap: View {
     
     private var monthsInYear: [String] {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMM"
+        formatter.dateFormat = "MM"
         return (1...12).compactMap {
             Calendar.current.date(from: DateComponents(year: 2024, month: $0, day: 1)).map {
                 formatter.string(from: $0)

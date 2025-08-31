@@ -133,8 +133,8 @@ struct CultivarGrowView: View {
                     DetailCard(
                         title: "Season",
                         value: season,
-                        backgroundColor: AppTheme.Colors.seasonIndicator.opacity(0.1),
-                        titleColor: AppTheme.Colors.seasonIndicator
+                        backgroundColor: AppTheme.Colors.textSecondary,
+                        titleColor: AppTheme.Colors.textSecondary
                     )
                 }
 
@@ -143,7 +143,7 @@ struct CultivarGrowView: View {
                         title: "Hardy Zone",
                         value: hardyZone,
                         backgroundColor: AppTheme.ColorCoding.colorForUSDAZone(hardyZone).opacity(0.1),
-                        titleColor: AppTheme.ColorCoding.colorForUSDAZone(hardyZone)
+                        titleColor: AppTheme.Colors.textSecondary
                     )
                 }
 
@@ -152,7 +152,7 @@ struct CultivarGrowView: View {
                         title: "Weather Tolerance",
                         value: weatherTolerance,
                         backgroundColor: AppTheme.ColorCoding.colorForWeatherTolerance(weatherTolerance).opacity(0.1),
-                        titleColor: AppTheme.ColorCoding.colorForWeatherTolerance(weatherTolerance)
+                        titleColor: AppTheme.Colors.textSecondary
                     )
                 }
 
@@ -161,7 +161,7 @@ struct CultivarGrowView: View {
                         title: "Growing Days",
                         value: growingDays,
                         backgroundColor: AppTheme.ColorCoding.colorForGrowingDays(growingDays).opacity(0.1),
-                        titleColor: AppTheme.ColorCoding.colorForGrowingDays(growingDays)
+                        titleColor:AppTheme.Colors.textSecondary
                     )
                 }
 
@@ -170,7 +170,7 @@ struct CultivarGrowView: View {
                         title: "Planting Week",
                         value: plantingWeek,
                         backgroundColor: AppTheme.Colors.organicPractice.opacity(0.1),
-                        titleColor: AppTheme.Colors.organicPractice
+                        titleColor: AppTheme.Colors.textSecondary
                     )
                 }
 
@@ -179,7 +179,7 @@ struct CultivarGrowView: View {
                         title: "Optimal Zones",
                         value: optimalZones,
                         backgroundColor: AppTheme.Colors.zoneIndicator.opacity(0.1),
-                        titleColor: AppTheme.Colors.zoneIndicator
+                        titleColor:AppTheme.Colors.textSecondary
                     )
                 }
             }
@@ -222,7 +222,7 @@ struct CultivarGrowView: View {
                         title: "Growing Advice",
                         value: growingAdvice,
                         backgroundColor: AppTheme.Colors.success.opacity(0.1),
-                        titleColor: AppTheme.Colors.success
+                        titleColor:  AppTheme.Colors.textSecondary
                     )
                 }
                 
@@ -231,7 +231,7 @@ struct CultivarGrowView: View {
                         title: "Soil Requirements",
                         value: soilInfo,
                         backgroundColor: AppTheme.Colors.organicMaterial.opacity(0.1),
-                        titleColor: AppTheme.Colors.organicMaterial
+                        titleColor:  AppTheme.Colors.textSecondary
                     )
                 }
                 
@@ -240,7 +240,7 @@ struct CultivarGrowView: View {
                         title: "Common Pests",
                         value: pests,
                         backgroundColor: AppTheme.Colors.warning.opacity(0.1),
-                        titleColor: AppTheme.Colors.warning
+                        titleColor:  AppTheme.Colors.textSecondary
                     )
                 }
                 
@@ -249,7 +249,7 @@ struct CultivarGrowView: View {
                         title: "Recommended Amendments",
                         value: amendments,
                         backgroundColor: AppTheme.Colors.organicPractice.opacity(0.1),
-                        titleColor: AppTheme.Colors.organicPractice
+                        titleColor:  AppTheme.Colors.textSecondary
                     )
                 }
             }
@@ -350,9 +350,12 @@ private struct DetailCard: View {
             Text(value)
                 .font(AppTheme.Typography.bodyMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                .multilineTextAlignment(.leading)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: 70)
         .background(backgroundColor)
         .cornerRadius(AppTheme.CornerRadius.medium)
     }
@@ -383,7 +386,7 @@ private struct ExpandableDetailCard: View {
             HStack {
                 Text(title)
                     .font(AppTheme.Typography.labelMedium)
-                    .foregroundColor(titleColor)
+                    .foregroundColor(.primary)
                 
                 Spacer()
                 
@@ -408,7 +411,7 @@ private struct ExpandableDetailCard: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(backgroundColor)
+        .background(titleColor)
         .cornerRadius(AppTheme.CornerRadius.medium)
     }
 }

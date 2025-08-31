@@ -9,7 +9,7 @@ struct SectionHeader: View {
     
     var body: some View {
         Text(title)
-            .font(AppTheme.Typography.headlineSmall)
+            .font(AppTheme.Typography.labelMedium)
             .foregroundColor(AppTheme.Colors.primary)
             .padding(.bottom, AppTheme.Spacing.small)
     }
@@ -30,8 +30,8 @@ struct InfoBlock<Content: View>: View {
                 .foregroundColor(AppTheme.Colors.textSecondary)
                 .frame(minWidth: 120, alignment: .leading)
             value
-                .font(AppTheme.Typography.bodyMedium)
-                .foregroundColor(AppTheme.Colors.textPrimary)
+                .font(AppTheme.Typography.dataMedium)
+                .foregroundColor(AppTheme.Colors.textDataFieldNormal)
             Spacer(minLength: 0)
         }
     }
@@ -89,7 +89,7 @@ struct CommonActionButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(AppTheme.Typography.bodyMedium)
+                .font(AppTheme.Typography.labelLarge)
                 .foregroundColor(style.foregroundColor)
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -119,7 +119,7 @@ struct MetadataTag: View {
     
     var body: some View {
         Text(text)
-            .font(AppTheme.Typography.labelSmall)
+            .font(AppTheme.Typography.bodySmall)
             .foregroundColor(textColor)
             .padding(.horizontal, AppTheme.Spacing.small)
             .padding(.vertical, AppTheme.Spacing.tiny)
@@ -171,7 +171,7 @@ struct ErrorView: View {
                 .foregroundColor(AppTheme.Colors.error)
             
             Text("Error")
-                .font(AppTheme.Typography.headlineMedium)
+                .font(AppTheme.Typography.labelMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
             
             Text(message)

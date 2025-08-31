@@ -1,14 +1,3 @@
-//
-//  CurrentGrowsView.swift
-//  MaterialsAndPractices
-//
-//  Provides comprehensive tile-based overview of all active grows with
-//  worker assignments, harvest estimates, and farm categorization.
-//  Implements farm management system grow tracking functionality.
-//
-//  Created by Jeffrey Kunzelman on 12/6/20.
-//  Enhanced with tile view by GitHub Copilot on 12/18/24.
-//
 
 import SwiftUI
 import CoreData
@@ -177,7 +166,7 @@ struct GrowTileView: View {
             
             // Grow title
             Text(grow.title ?? "Untitled Grow")
-                .font(AppTheme.Typography.headlineSmall)
+                .font(AppTheme.Typography.dataMedium)
                 .foregroundColor(AppTheme.Colors.textPrimary)
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
@@ -190,7 +179,7 @@ struct GrowTileView: View {
                         .font(.caption)
                     
                     Text(field.name ?? "Unknown Field")
-                        .font(AppTheme.Typography.bodySmall)
+                        .font(AppTheme.Typography.dataMedium)
                         .foregroundColor(AppTheme.Colors.textSecondary)
                         .lineLimit(1)
                 }
@@ -235,8 +224,8 @@ struct GrowTileView: View {
                 .font(.caption)
             
             Text(daysToHarvestText)
-                .font(AppTheme.Typography.bodySmall)
-                .foregroundColor(AppTheme.Colors.primary)
+                .font(AppTheme.Typography.dataSmall)
+                .foregroundColor(AppTheme.Colors.textPrimary)
         }
     }
     
@@ -244,13 +233,13 @@ struct GrowTileView: View {
     private var harvestEstimateView: some View {
         HStack {
             Image(systemName: "scissors")
-                .foregroundColor(AppTheme.Colors.organicPractice)
+                .foregroundColor(AppTheme.Colors.textDataFieldNormal)
                 .font(.caption)
             
             Text(harvestEstimateText)
-                .font(AppTheme.Typography.bodySmall)
-                .foregroundColor(AppTheme.Colors.organicPractice)
-                .lineLimit(1)
+                .font(AppTheme.Typography.dataSmall)
+                .foregroundColor(AppTheme.Colors.textDataFieldNormal)
+                .lineLimit(2)
         }
     }
     

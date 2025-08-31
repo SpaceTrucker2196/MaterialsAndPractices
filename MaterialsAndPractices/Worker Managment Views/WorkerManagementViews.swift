@@ -239,9 +239,8 @@ struct WorkerDetailView: View {
     
     private var workerInformationSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            // Worker name header
             
-            
+        
             // Split layout: Profile image and worker information side by side
             HStack(alignment: .top, spacing: AppTheme.Spacing.medium) {
                 // Left side - Profile image
@@ -251,7 +250,7 @@ struct WorkerDetailView: View {
                         Image(uiImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: 200, height: 200)
+                            .frame(width: 100, height: 100)
                             .clipped()
                             .cornerRadius(AppTheme.CornerRadius.large)
                             .overlay(
@@ -265,7 +264,7 @@ struct WorkerDetailView: View {
                         Image(uiImage: uiImage)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: 200, height: 200)
+                            .frame(width: 100, height: 100)
                             .clipped()
                             .cornerRadius(AppTheme.CornerRadius.large)
                             .overlay(
@@ -275,7 +274,7 @@ struct WorkerDetailView: View {
                     } else {
                         RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
                             .fill(AppTheme.Colors.backgroundSecondary)
-                            .frame(width: 200, height: 200)
+                            .frame(width: 100, height: 100)
                             .overlay(
                                 Image(systemName: "person.fill")
                                     .font(.system(size: 60))
@@ -326,18 +325,20 @@ struct WorkerDetailView: View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             SectionHeader(title: "Time Clock")
             
-            VStack(spacing: AppTheme.Spacing.medium) {
+            VStack(spacing: AppTheme.Spacing.small) {
                 // Top banner showing clock status
+                // Worker name header
                 HStack {
                     Spacer()
                     Text(isClockedIn ? "CLOCKED IN" : "CLOCKED OUT")
                         .font(AppTheme.Typography.labelMedium)
                         .foregroundColor(isClockedIn ? AppTheme.Colors.textPrimary : AppTheme.Colors.textSecondary)
                         .fontWeight(.semibold)
+                        .frame(height: 44)
                     Spacer()
                 }
-                .padding(.vertical, AppTheme.Spacing.small)
-                .background(isClockedIn ? AppTheme.Colors.success : AppTheme.Colors.backgroundSecondary)
+                .padding(.vertical, AppTheme.Spacing.tiny)
+                .background(isClockedIn ? AppTheme.Colors.clockIn : AppTheme.Colors.backgroundSecondary)
                 .cornerRadius(AppTheme.CornerRadius.small)
                 
                 // Main time clock interface
@@ -348,14 +349,20 @@ struct WorkerDetailView: View {
                             hoursWorked: todayHoursWorked,
                             clockInTime: todayEntry?.clockInTime,
                             isActive: isClockedIn
-                        )
+                        ) .frame(width: 120 ,height: 120)
                         
                         if let todayEntry = todayEntry, let clockInTime = todayEntry.clockInTime {
-                            Text("Since: \(clockInTime, style: .time)")
-                                .font(AppTheme.Typography.bodySmall)
-                                .foregroundColor(AppTheme.Colors.textSecondary)
+                            Text("Started: \(clockInTime, style: .time)")
+                                .font(AppTheme.Typography.dataSmall)
+                                .foregroundColor(AppTheme.Colors.textDataFieldNormal)
+                        } else {
+                            Text("Not Started")
+                                .font(AppTheme.Typography.dataSmall)
+                                .foregroundColor(AppTheme.Colors.textDataFieldNormal)
                         }
                     }
+                    
+                    Spacer()
                     
                     // Right side - Clock button
                     VStack {
@@ -365,11 +372,11 @@ struct WorkerDetailView: View {
                             Button(action: clockIn) {
                                 VStack(spacing: AppTheme.Spacing.small) {
                                     Image(systemName: "clock")
-                                        .font(.system(size: 24))
+                                        .font(AppTheme.Typography.headlineMedium)
                                         .foregroundColor(AppTheme.Colors.clockIn)
                                     
                                     Text("Start Work")
-                                        .font(AppTheme.Typography.labelMedium)
+                                        .font(AppTheme.Typography.headlineSmall)
                                         .foregroundColor(AppTheme.Colors.clockIn)
                                         .fontWeight(.semibold)
                                 }
@@ -384,15 +391,15 @@ struct WorkerDetailView: View {
                             Button(action: clockOut) {
                                 VStack(spacing: AppTheme.Spacing.small) {
                                     Image(systemName: "clock.fill")
-                                        .font(.system(size: 24))
+                                        .font(AppTheme.Typography.headlineMedium)
                                         .foregroundColor(AppTheme.Colors.clockOut)
                                     
                                     Text("Stop Work")
-                                        .font(AppTheme.Typography.labelMedium)
+                                        .font(AppTheme.Typography.headlineSmall)
                                         .foregroundColor(AppTheme.Colors.clockOut)
                                         .fontWeight(.semibold)
                                 }
-                                .frame(maxWidth: .infinity)
+                                .frame(maxWidth:.infinity)
                                 .padding()
                                 .overlay(
                                     RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
@@ -401,10 +408,10 @@ struct WorkerDetailView: View {
                             }
                         }
                         
-                        Spacer()
+                        Spacer().frame(width: 20)
                     }
                 }
-                .frame(height: 70)
+                .frame(height: 180)
             }
             .padding(AppTheme.Spacing.medium)
             .background(
@@ -439,13 +446,14 @@ struct WorkerDetailView: View {
             VStack(spacing: AppTheme.Spacing.small) {
                 HStack {
                     Text("Total Hours:")
-                        .font(AppTheme.Typography.bodyMedium)
+                        .font(AppTheme.Typography.headlineLarge)
+                        .foregroundColor(AppTheme.Colors.primary)
                     
                     Spacer()
                     
                     Text("\(currentWeekHours, specifier: "%.1f") hrs")
-                        .font(AppTheme.Typography.headlineMedium)
-                        .foregroundColor(AppTheme.Colors.primary)
+                        .font(AppTheme.Typography.dataLarge)
+                        .foregroundColor(AppTheme.Colors.textDataFieldNormal)
                 }
                 
                 if currentWeekHours >= 40 {
@@ -1869,7 +1877,7 @@ struct DailyTimeBlocksRow: View {
     private let calendar = Calendar.current
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
             // Date header
             HStack {
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
@@ -1879,7 +1887,7 @@ struct DailyTimeBlocksRow: View {
                         .fontWeight(.semibold)
                     
                     Text(dateString)
-                        .font(AppTheme.Typography.bodySmall)
+                        .font(AppTheme.Typography.dataSmall)
                         .foregroundColor(AppTheme.Colors.textSecondary)
                 }
                 
@@ -1893,8 +1901,8 @@ struct DailyTimeBlocksRow: View {
                             .foregroundColor(AppTheme.Colors.textSecondary)
                         
                         Text("\(totalHoursForDay, specifier: "%.1f") hrs")
-                            .font(AppTheme.Typography.bodyMedium)
-                            .foregroundColor(AppTheme.Colors.primary)
+                            .font(AppTheme.Typography.dataSmall)
+                            .foregroundColor(AppTheme.Colors.textDataFieldNormal)
                             .fontWeight(.semibold)
                     }
                 }
@@ -1903,10 +1911,10 @@ struct DailyTimeBlocksRow: View {
             // Time blocks for this day
             if timeBlocks.isEmpty {
                 Text("No time recorded")
-                    .font(AppTheme.Typography.bodySmall)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .font(AppTheme.Typography.dataSmall)
+                    .foregroundColor(AppTheme.Colors.textDataFieldNormal)
                     .italic()
-                    .padding(.vertical, AppTheme.Spacing.small)
+                    .padding(.vertical, AppTheme.Spacing.tiny)
             } else {
                 ForEach(timeBlocks.sorted(by: { $0.blockNumber < $1.blockNumber }), id: \.id) { block in
                     TimeBlockRow(timeBlock: block)
@@ -1967,35 +1975,37 @@ struct TimeBlockRow: View {
     var body: some View {
         HStack {
             // Block number
-            Text("Block \(timeBlock.blockNumber)")
-                .font(AppTheme.Typography.labelSmall)
-                .foregroundColor(AppTheme.Colors.textSecondary)
-                .frame(width: 50, alignment: .leading)
+            Text("\(timeBlock.blockNumber)")
+                .font(AppTheme.Typography.dataSmall)
+                .foregroundColor(AppTheme.Colors.textDataFieldNormal)
+                .frame(width:15, alignment: .leading)
             
             // Time range
             VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
                 HStack {
                     if let clockInTime = timeBlock.clockInTime {
-                        Text("In: \(clockInTime, style: .time)")
-                            .font(AppTheme.Typography.bodySmall)
+                        Text("\(clockInTime, style: .time)")
+                            .font(AppTheme.Typography.dataSmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
                     } else {
                         Text("In: --")
-                            .font(AppTheme.Typography.bodySmall)
+                            .font(AppTheme.Typography.dataSmall)
                             .foregroundColor(AppTheme.Colors.textSecondary)
                     }
                     
                     Spacer()
                     
                     if let clockOutTime = timeBlock.clockOutTime {
-                        Text("Out: \(clockOutTime, style: .time)")
-                            .font(AppTheme.Typography.bodySmall)
+                        Text("\(clockOutTime, style: .time)")
+                            .font(AppTheme.Typography.dataSmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
                     } else if timeBlock.isActive {
-                        Text("Out: Active")
-                            .font(AppTheme.Typography.bodySmall)
-                            .foregroundColor(AppTheme.Colors.success)
+                        Text("Active")
+                            .font(AppTheme.Typography.dataSmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
                     } else {
-                        Text("Out: --")
-                            .font(AppTheme.Typography.bodySmall)
+                        Text("--")
+                            .font(AppTheme.Typography.dataSmall)
                             .foregroundColor(AppTheme.Colors.textSecondary)
                     }
                 }
@@ -2005,9 +2015,8 @@ struct TimeBlockRow: View {
             
             // Duration
             Text(timeBlock.formattedDuration)
-                .font(AppTheme.Typography.bodySmall)
-                .foregroundColor(AppTheme.Colors.primary)
-                .fontWeight(.medium)
+                .font(AppTheme.Typography.dataSmall)
+                .foregroundColor(AppTheme.Colors.textDataFieldNormal)
         }
         .padding(.vertical, AppTheme.Spacing.tiny)
         .padding(.horizontal, AppTheme.Spacing.small)

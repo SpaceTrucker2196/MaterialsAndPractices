@@ -76,34 +76,14 @@ struct GrowDetailView: View {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
                 locationInformationSection
                 harvestCalendarSection
-               // cultivarInformationSection
-
+                growQuickActionsToolbar
                 timelineInformationSection
-               
-                    //
-                
-             
-                fieldAndFarmInformationSection
-                
-     
-                
-
-                
-              
-                locationInformationSection
-                
-               
-                workPracticesSection
-                
-              
-               // amendmentsSection
-                
-                // MARK: - Harvest Safety Section
-               // harvestSafetySection
-                
-                // MARK: - Inspection Section
-                inspectionSection
                 cultivarGrowingDetailsSection
+                fieldAndFarmInformationSection
+        
+                workPracticesSection
+                inspectionSection
+                
             }
             .padding()
         }
@@ -121,7 +101,36 @@ struct GrowDetailView: View {
     }
     
     // MARK: - Section Components
-    
+    private var growQuickActionsToolbar: some View{
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Assign Work Orders")
+            HStack {
+                CommonActionButton(
+                    title: "New Work Order",
+                    style: .outline,
+                    action: performWork
+                )
+                .frame(maxWidth: .infinity)
+                
+                Spacer(minLength: AppTheme.Spacing.large)
+                
+                CommonActionButton(
+                    title: "Apply Amentment",
+                    style: .outline,
+                    action: addAmendment
+                )
+                .frame(maxWidth: .infinity)
+                
+                Spacer(minLength: AppTheme.Spacing.large)
+                
+                CommonActionButton(
+                    title: "Schedule Inspection",
+                    style: .outline,
+                    action: scheduleGrowInspection
+                ) .frame(maxWidth: .infinity)
+            }
+        }
+    }
     /// Section displaying comprehensive cultivar information with metadata tags
     private var cultivarInformationSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
@@ -178,7 +187,7 @@ struct GrowDetailView: View {
     /// Section displaying detailed cultivar growing information
     private var cultivarGrowingDetailsSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            SectionHeader(title: "Growing Information")
+            SectionHeader(title: "Cultivar Growing Suggestions")
             
             if let cultivar = growViewModel.grow.cultivar {
                 LazyVGrid(columns: [
@@ -192,7 +201,7 @@ struct GrowDetailView: View {
                             value: growingDays,
                             subtitle: "Days to maturity",
                             backgroundColor: AppTheme.ColorCoding.colorForGrowingDays(growingDays).opacity(0.1),
-                            titleColor: AppTheme.ColorCoding.colorForGrowingDays(growingDays)
+                            titleColor: AppTheme.Colors.textSecondary
                         )
                     }
                     
@@ -203,7 +212,7 @@ struct GrowDetailView: View {
                             value: transplantAge,
                             subtitle: "Weeks for transplant",
                             backgroundColor: AppTheme.Colors.info.opacity(0.1),
-                            titleColor: AppTheme.Colors.info
+                            titleColor: AppTheme.Colors.textSecondary
                         )
                     }
                     
@@ -214,7 +223,7 @@ struct GrowDetailView: View {
                             value: weatherTolerance,
                             subtitle: "Climate conditions",
                             backgroundColor: AppTheme.Colors.secondary.opacity(0.1),
-                            titleColor: AppTheme.Colors.secondary
+                            titleColor: AppTheme.Colors.textSecondary
                         )
                     }
                     
@@ -225,7 +234,7 @@ struct GrowDetailView: View {
                             value: soilConditions,
                             subtitle: "Preferred soil type",
                             backgroundColor: AppTheme.Colors.organicMaterial.opacity(0.1),
-                            titleColor: AppTheme.Colors.organicMaterial
+                            titleColor: AppTheme.Colors.textSecondary
                         )
                     }
                 }
@@ -290,7 +299,7 @@ struct GrowDetailView: View {
     /// Section displaying field and farm information with navigation links
     private var fieldAndFarmInformationSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            SectionHeader(title: "Location")
+            SectionHeader(title: "Field and Soil")
             
             if let field = growViewModel.grow.field {
                 // Field information
@@ -303,12 +312,12 @@ struct GrowDetailView: View {
                             
                             VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
                                 Text("Field: \(field.name ?? "Unnamed Field")")
-                                    .font(AppTheme.Typography.bodyLarge)
+                                    .font(AppTheme.Typography.headlineMedium)
                                     .foregroundColor(AppTheme.Colors.textPrimary)
                                 
                                 Text("\(field.acres, specifier: "%.1f") acres")
-                                    .font(AppTheme.Typography.bodyMedium)
-                                    .foregroundColor(AppTheme.Colors.textSecondary)
+                                    .font(AppTheme.Typography.dataMedium)
+                                    .foregroundColor(AppTheme.Colors.textDataFieldNormal)
                                 
                                 if field.hasDrainTile {
                                     MetadataTag(
@@ -440,28 +449,39 @@ struct GrowDetailView: View {
             SectionHeader(title: "Timeline")
             
             VStack(alignment: .leading, spacing: AppTheme.Spacing.extraSmall) {
-                GrowDateInfoRow(
-                    label: "Planted Date:",
-                    date: growViewModel.plantedDate,
-                    formatter: itemFormatter
-                )
                 
-                GrowDateInfoRow(
-                    label: "Expected Harvest:",
-                    date: growViewModel.harvestDate,
-                    formatter: itemFormatter
-                )
-                
-                GrowInfoRow(
-                    label: "Remaining:",
-                    value: daysToHarvestText
-                )
-                
-                if let harvestEstimate = currentHarvestEstimate {
-                    GrowInfoRow(
-                        label: "Harvest Timing:",
-                        value: harvestEstimate.estimatedRange
+                HStack(spacing: AppTheme.Spacing.large) {
+                    GrowDateInfoRow(
+                        label: "Planted Date:",
+                        date: growViewModel.plantedDate,
+                        formatter: itemFormatter
                     )
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    GrowDateInfoRow(
+                        label: "Expected Harvest:",
+                        date: growViewModel.harvestDate,
+                        formatter: itemFormatter
+                    )
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                
+                HStack(spacing: AppTheme.Spacing.large) {
+                    GrowInfoRow(
+                        label: "Remaining:",
+                        value: daysToHarvestText
+                    )
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    if let harvestEstimate = currentHarvestEstimate {
+                        GrowInfoRow(
+                            label: "Harvest Timing:",
+                            value: harvestEstimate.estimatedRange
+                        )
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        Spacer()
+                    }
                 }
             }
         }
@@ -501,8 +521,8 @@ struct GrowDetailView: View {
             SectionHeader(title: "Location")
             
             Text(growViewModel.locationName)
-                .font(AppTheme.Typography.bodyMedium)
-                .foregroundColor(AppTheme.Colors.textPrimary)
+                .font(AppTheme.Typography.dataMedium)
+                .foregroundColor(AppTheme.Colors.textDataFieldNormal)
         }
     }
     
@@ -586,25 +606,25 @@ struct GrowDetailView: View {
                     action: scheduleGrowInspection
                 )
                 
-                NavigationLink(destination: InspectionManagementView()) {
-                    HStack {
-                        Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(AppTheme.Colors.compliance)
-                        
-                        Text("Manage All Inspections")
-                            .font(AppTheme.Typography.bodyMedium)
-                            .foregroundColor(AppTheme.Colors.primary)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(AppTheme.Colors.textTertiary)
-                            .font(.caption)
-                    }
-                    .padding()
-                    .background(AppTheme.Colors.backgroundSecondary)
-                    .cornerRadius(AppTheme.CornerRadius.medium)
-                }
+//                NavigationLink(destination: InspectionManagementView()) {
+//                    HStack {
+//                        Image(systemName: "checkmark.seal.fill")
+//                            .foregroundColor(AppTheme.Colors.compliance)
+//                        
+//                        Text("Manage All Inspections")
+//                            .font(AppTheme.Typography.bodyMedium)
+//                            .foregroundColor(AppTheme.Colors.primary)
+//                        
+//                        Spacer()
+//                        
+//                        Image(systemName: "chevron.right")
+//                            .foregroundColor(AppTheme.Colors.textTertiary)
+//                            .font(.caption)
+//                    }
+//                    .padding()
+//                    .background(AppTheme.Colors.backgroundSecondary)
+//                    .cornerRadius(AppTheme.CornerRadius.medium)
+//                }
             }
         }
     }
@@ -727,14 +747,9 @@ private struct GrowInfoRow: View {
     let value: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-            Text(label)
-                .font(AppTheme.Typography.labelMedium)
-                .foregroundColor(AppTheme.Colors.primary)
-            
+        
+        InfoBlock(label: label) {
             Text(value)
-                .font(AppTheme.Typography.bodyMedium)
-                .foregroundColor(AppTheme.Colors.textPrimary)
         }
     }
 }
@@ -746,6 +761,7 @@ private struct GrowDateInfoRow: View {
     let formatter: DateFormatter
     
     var body: some View {
+        
         GrowInfoRow(label: label, value: formatter.string(from: date))
     }
 }
@@ -797,22 +813,34 @@ private struct DetailCard: View {
     let titleColor: Color
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+        VStack {
+            // Top-aligned title
             Text(title)
                 .font(AppTheme.Typography.labelMedium)
                 .foregroundColor(titleColor)
-            
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            // Middle: word-wrapping, non-editable text styled like a textfield
             Text(value)
-                .font(AppTheme.Typography.headlineSmall)
-                .foregroundColor(AppTheme.Colors.textPrimary)
-                .lineLimit(2)
-            
+                .font(AppTheme.Typography.dataMedium)
+                .foregroundColor(AppTheme.Colors.textDataFieldNormal)
+                .multilineTextAlignment(.leading)
+                .lineLimit(nil)
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+                .padding(.top, AppTheme.Spacing.small)
+                .padding(.bottom, AppTheme.Spacing.small)
+                .layoutPriority(1)
+
+            Spacer(minLength: 0)
+
+            // Bottom-aligned subtitle
             Text(subtitle)
-                .font(AppTheme.Typography.bodySmall)
+                .font(AppTheme.Typography.labelMedium)
                 .foregroundColor(AppTheme.Colors.textSecondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(AppTheme.Spacing.medium)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: 130, alignment: .top)
         .background(backgroundColor)
         .cornerRadius(AppTheme.CornerRadius.medium)
     }
@@ -856,8 +884,8 @@ private struct ExpandableDetailCard: View {
             }
             
             Text(displayValue)
-                .font(AppTheme.Typography.bodyMedium)
-                .foregroundColor(AppTheme.Colors.textPrimary)
+                .font(AppTheme.Typography.dataMedium)
+                .foregroundColor(AppTheme.Colors.textDataFieldNormal)
                 .lineLimit(isExpanded ? nil : 3)
                 .animation(.easeInOut(duration: 0.2), value: isExpanded)
         }

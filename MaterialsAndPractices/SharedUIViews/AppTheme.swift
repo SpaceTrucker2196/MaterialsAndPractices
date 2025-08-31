@@ -42,6 +42,10 @@ enum AppTheme {
         static let textPrimary = Color("TextPrimary")
         static let textSecondary = Color("TextSecondary")
         static let textTertiary = Color("TextTertiary")
+        static let textDataFieldNormal = Color("TextDataNormal")
+        static let textDataFieldWaring = Color("TextDataWarning")
+        static let textDataFieldAlert = Color("TextDataAlert")
+
         
         /// Status colors for different states
         static let success = Color("SuccessColor")
@@ -179,6 +183,7 @@ enum AppTheme {
     /// Provides semantic naming for consistent text styling across the application
     enum Typography {
 
+       
         // MARK: - Fira Code wiring
 
         enum FiraWeight: String {
@@ -234,7 +239,7 @@ enum AppTheme {
         static func helveticaNeue(relativeTo style: Font.TextStyle,
                                   weight: helveticaNeueWeight = .regular) -> Font {
             let pointSize = UIFont.preferredFont(forTextStyle: style.uiTextStyle).pointSize
-            let helveticaNeue = "HelventicaNeue-\(weight.rawValue)"
+            let helveticaNeue = "HelveticaNeue-\(weight.rawValue)"
 
             // Validate the font exists to avoid rendering with an unknown name
             if UIFont(name: helveticaNeue, size: pointSize) != nil {
@@ -244,30 +249,37 @@ enum AppTheme {
                 return .system(style, design: .monospaced).weight(Font.Weight.medium)
             }
         }
+        
+        // MARK: -App Wide font setings start here.
         // MARK: - Display (Large headings)
 
         static let emojiLarge     = firaCode(relativeTo: .largeTitle, weight: .bold)
-        static let displayLarge   = firaCode(relativeTo: .largeTitle,  weight: .bold)
-        static let displayMedium  = firaCode(relativeTo: .title,       weight: .semibold)
-        static let displaySmall   = firaCode(relativeTo: .title2,      weight: .medium)
+        static let displayLarge   = helveticaNeue(relativeTo: .largeTitle,  weight: .bold)
+        static let displayMedium  = helveticaNeue(relativeTo: .title,       weight: .medium)
+        static let displaySmall   = helveticaNeue(relativeTo: .title2,      weight: .regular)
 
         // MARK: - Headlines
 
-        static let headlineLarge  = firaCode(relativeTo: .headline,    weight: .bold)
-        static let headlineMedium = firaCode(relativeTo: .headline,    weight: .semibold)
-        static let headlineSmall  = firaCode(relativeTo: .subheadline, weight: .medium)
+        static let headlineLarge  = helveticaNeue(relativeTo: .headline,    weight: .bold)
+        static let headlineMedium = helveticaNeue(relativeTo: .headline,    weight: .medium)
+        static let headlineSmall  = helveticaNeue(relativeTo: .subheadline, weight: .medium)
 
         // MARK: - Body
 
-        static let bodyLarge      = firaCode(relativeTo: .body,        weight: .medium)
-        static let bodyMedium     = firaCode(relativeTo: .callout,     weight: .regular)
-        static let bodySmall      = firaCode(relativeTo: .caption,     weight: .regular)
+        static let bodyLarge      = helveticaNeue(relativeTo: .body,        weight: .medium)
+        static let bodyMedium     = helveticaNeue(relativeTo: .callout,     weight: .regular)
+        static let bodySmall      = helveticaNeue(relativeTo: .caption,     weight: .regular)
 
         // MARK: - Labels
+        // Titles for data entry fields and properties.
+        static let labelLarge     = helveticaNeue(relativeTo: .headline,     weight: .bold)
+        static let labelMedium    = helveticaNeue(relativeTo: .callout,  weight: .medium)
+        static let labelSmall     = helveticaNeue(relativeTo: .caption2, weight: .bold)
+        //DataValues
+        static let dataLarge  = firaCode(relativeTo: .title,    weight: .bold)
+        static let dataMedium = firaCode(relativeTo: .body, weight: .medium)
+        static let dataSmall  = firaCode(relativeTo: .caption, weight: .medium)
 
-        static let labelLarge     = helveticaNeue(relativeTo: .callout,     weight: .bold)
-        static let labelMedium    = helveticaNeue(relativeTo: .callout,    weight: .bold)
-        static let labelSmall     = helveticaNeue(relativeTo: .caption2,    weight: .bold)
 
         // MARK: - Direct weight accessors (optional sugar)
 
