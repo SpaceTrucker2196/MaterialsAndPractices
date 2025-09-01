@@ -296,6 +296,7 @@
         <attribute name="growType" optional="YES" attributeType="String"/>
         <attribute name="harvestDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="inspectionStatus" optional="YES" attributeType="String"/>
+        <attribute name="isActive" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="locationName" optional="YES" attributeType="String"/>
         <attribute name="lotId" optional="YES" attributeType="String"/>
         <attribute name="manager" optional="YES" attributeType="String"/>

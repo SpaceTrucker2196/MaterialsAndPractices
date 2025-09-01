@@ -16,6 +16,13 @@ struct FarmerProfileView: View {
     @State private var currentFarmer: Farmer?
     @State private var isCurrentlyEditing = false
     @State private var isPresentingPhotoPicker = false
+    
+    // MARK: - Zappa Farms Import State
+    
+    @State private var showingZappaFarmsAlert = false
+    @State private var isImportingZappaFarms = false
+    @State private var showingImportErrorAlert = false
+    @State private var importErrorMessage = ""
 
     // MARK: - Form Data State
 
@@ -40,6 +47,9 @@ struct FarmerProfileView: View {
                     // Additional information sections (shown when not editing and farmer exists)
                     if !isCurrentlyEditing && currentFarmer != nil {
                         activeLeasesInformationSection
+                        
+                        // Zappa Farms import section
+                        zappaFarmsImportSection
                     }
                 }
                 .padding()
@@ -232,6 +242,64 @@ struct FarmerProfileView: View {
             }
         }
     }
+    
+    private var zappaFarmsImportSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Farm Test Data")
+            
+            Button(action: {
+                showingZappaFarmsAlert = true
+            }) {
+                HStack(spacing: AppTheme.Spacing.medium) {
+                    // Icon
+                    Image(systemName: "building.2.circle.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(AppTheme.Colors.primary)
+                    
+                    // Content
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        Text("Own Zappa Farms Today!")
+                            .font(AppTheme.Typography.headlineMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Import comprehensive farm dataset with properties, fields, and ledger entries")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                            .multilineTextAlignment(.leading)
+                    }
+                    
+                    Spacer()
+                    
+                    // Action indicator
+                    Image(systemName: "arrow.right.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(AppTheme.Colors.primary)
+                }
+                .padding()
+                .background(AppTheme.Colors.backgroundSecondary)
+                .cornerRadius(AppTheme.CornerRadius.large)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                        .stroke(AppTheme.Colors.primary.opacity(0.3), lineWidth: 1)
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
+            .disabled(isImportingZappaFarms)
+            .alert("Import Zappa Farms Dataset", isPresented: $showingZappaFarmsAlert) {
+                Button("Import Dataset", role: .destructive) {
+                    importZappaFarmsData()
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("This will import properties, fields, and ledger data from the Zappa Farms dataset. Existing data will be replaced.")
+            }
+            .alert("Import Error", isPresented: $showingImportErrorAlert) {
+                Button("OK") { }
+            } message: {
+                Text(importErrorMessage)
+            }
+        }
+    }
 
     // MARK: - Profile Management Methods
 
@@ -311,6 +379,31 @@ struct FarmerProfileView: View {
         farmer.phone = phoneNumber.isEmpty ? nil : phoneNumber
         farmer.orgName = organizationName.isEmpty ? nil : organizationName
         farmer.notes = additionalNotes.isEmpty ? nil : additionalNotes
+    }
+    
+    /// Imports Zappa Farms test dataset
+    private func importZappaFarmsData() {
+        isImportingZappaFarms = true
+        
+        let loader = ZappaFarmsDataLoader(viewContext: viewContext)
+        
+        Task {
+            do {
+                try loader.loadZappaFarmsData()
+                
+                await MainActor.run {
+                    isImportingZappaFarms = false
+                    // Show success feedback
+                    print("✅ Successfully imported Zappa Farms dataset")
+                }
+            } catch {
+                await MainActor.run {
+                    isImportingZappaFarms = false
+                    importErrorMessage = error.localizedDescription
+                    showingImportErrorAlert = true
+                }
+            }
+        }
     }
 }
 

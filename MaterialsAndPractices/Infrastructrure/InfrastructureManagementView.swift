@@ -115,21 +115,25 @@ struct InfrastructureManagementView: View {
 
     private var quickActionsSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            SectionHeader(title: "Quick Actions")
+           
             HStack(spacing: AppTheme.Spacing.medium) {
                 InfastructureQuickActionButton(
                     title: "Browse Catalog",
                     subtitle: "Common farm equipment",
                     icon: "books.vertical.fill",
                     color: AppTheme.Colors.primary
-                ) { showingCatalogBrowser = true }
+                ) {
+                    showingCatalogBrowser = true
+                }
 
                 InfastructureQuickActionButton(
                     title: "Add Custom",
                     subtitle: "Create new infrastructure",
                     icon: "plus.circle.fill",
                     color: AppTheme.Colors.secondary
-                ) { showingInfrastructureCreation = true }
+                ) {
+                    showingInfrastructureCreation = true
+                }
             }
         }
     }

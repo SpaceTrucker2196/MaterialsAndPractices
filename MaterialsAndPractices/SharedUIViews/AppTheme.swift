@@ -175,6 +175,23 @@ enum AppTheme {
         
         /// Off season - Brown color for times when harvest is not recommended
         static let offSeason = Color(red: 0.6, green: 0.4, blue: 0.2)
+        
+        // MARK: - Amendment Application Time Colors
+        
+        /// Recent amendments (0-7 days) - Bright green
+        static let amendmentRecent = Color(red: 0.2, green: 0.8, blue: 0.2)
+        
+        /// Weekly amendments (1-4 weeks) - Medium green
+        static let amendmentWeekly = Color(red: 0.4, green: 0.7, blue: 0.3)
+        
+        /// Monthly amendments (1-12 months) - Orange
+        static let amendmentMonthly = Color(red: 0.9, green: 0.6, blue: 0.2)
+        
+        /// Yearly amendments (1-3 years) - Red
+        static let amendmentYearly = Color(red: 0.8, green: 0.3, blue: 0.2)
+        
+        /// Old amendments (3+ years) - Gray
+        static let amendmentOld = Color(red: 0.5, green: 0.5, blue: 0.5)
     }
     
     // MARK: - Typography System
@@ -397,6 +414,26 @@ enum AppTheme {
             let cleaned = days.replacingOccurrences(of: "[^0-9-]", with: "", options: .regularExpression)
             let parts = cleaned.components(separatedBy: "-")
             return Int(parts.first ?? "0") ?? 0
+        }
+        
+        /// Returns color for amendment application timing
+        /// - Parameter applicationDate: Date when amendment was applied
+        /// - Returns: Color representing how recent the application was
+        static func colorForAmendmentTiming(_ applicationDate: Date) -> Color {
+            let daysSince = Calendar.current.dateComponents([.day], from: applicationDate, to: Date()).day ?? 0
+            
+            switch daysSince {
+            case 0...7:
+                return Colors.amendmentRecent
+            case 8...28:
+                return Colors.amendmentWeekly
+            case 29...365:
+                return Colors.amendmentMonthly
+            case 366...1095:
+                return Colors.amendmentYearly
+            default:
+                return Colors.amendmentOld
+            }
         }
     }
 }

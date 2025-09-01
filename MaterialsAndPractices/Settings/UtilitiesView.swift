@@ -334,6 +334,9 @@ struct UtilitiesView: View {
                 }
             }
             
+            // Load Crop Amendments Utility
+            LoadCropAmendmentsRow()
+            
             // Amendment Catalog Utility
             NavigationLink(destination: CropAmendmentCatalogView(context:viewContext) ){
                 HStack {
@@ -1018,5 +1021,104 @@ struct AssignTrainingUtilityView: View {
         }
         .navigationTitle("Assign Training")
         .navigationBarTitleDisplayMode(.large)
+    }
+}
+
+// MARK: - Load Crop Amendments Component
+
+/// Load Crop Amendments row for loading amendment catalog
+struct LoadCropAmendmentsRow: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @State private var showingResetAlert = false
+    @State private var isLoading = false
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
+    
+    var body: some View {
+        Button(action: {
+            showingResetAlert = true
+        }) {
+            HStack(spacing: AppTheme.Spacing.medium) {
+                // Icon container with amendment feature styling
+                Image(systemName: "flask.circle.fill")
+                    .font(.title2)
+                    .foregroundColor(.white)
+                    .frame(width: 30, height: 30)
+                
+                // Content container
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    Text("Load Crop Amendments")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(.white)
+                    
+                    Text("Load amendment catalog from master CSV file")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(.white.opacity(0.8))
+                        .multilineTextAlignment(.leading)
+                }
+                
+                Spacer()
+                
+                // Amendment Feature badge
+                Text("Amendment Catalog")
+                    .font(AppTheme.Typography.labelSmall)
+                    .fontWeight(.medium)
+                    .foregroundColor(.green)
+                    .padding(.horizontal, AppTheme.Spacing.small)
+                    .padding(.vertical, AppTheme.Spacing.tiny)
+                    .background(.white)
+                    .cornerRadius(AppTheme.CornerRadius.small)
+                
+                // Navigation indicator
+                Image(systemName: "chevron.right")
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding(.vertical, AppTheme.Spacing.small)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(PlainButtonStyle())
+        .listRowBackground(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .fill(.green)
+                .padding(.vertical, 2)
+        )
+        .disabled(isLoading)
+        .alert("Load Amendment Catalog", isPresented: $showingResetAlert) {
+            Button("Load Amendments", role: .destructive) {
+                loadCropAmendments()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This will add crop amendments from the amendment-master.csv file to your catalog. Existing amendments will be cleared.")
+        }
+        .alert("Error", isPresented: $showingErrorAlert) {
+            Button("OK") { }
+        } message: {
+            Text(errorMessage)
+        }
+    }
+    
+    private func loadCropAmendments() {
+        isLoading = true
+        
+        let loader = AmendmentCatalogLoader(viewContext: viewContext)
+        
+        Task {
+            do {
+                try loader.loadAmendmentCatalog()
+                
+                await MainActor.run {
+                    isLoading = false
+                    // Show success feedback
+                }
+            } catch {
+                await MainActor.run {
+                    isLoading = false
+                    errorMessage = error.localizedDescription
+                    showingErrorAlert = true
+                }
+            }
+        }
     }
 }
