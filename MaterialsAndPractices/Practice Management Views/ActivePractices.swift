@@ -62,17 +62,20 @@ struct ActivePracticesView: View {
 
     // UI state
     @State private var searchText: String = ""
+    @State private var selectedSeed: ActiveSeed?
+    @State private var selectedAmendment: ActiveAmendment?
+    @State private var selectedHarvest: ActiveHarvest?
+    @State private var selectedUpcomingHarvest: UpcomingHarvest?
+    @State private var showingSeedDetail = false
+    @State private var showingAmendmentDetail = false
+    @State private var showingHarvestDetail = false
+    @State private var showingCreateHarvest = false
 
     // Actions (stubs) you can hook to navigation or creation flows
-    var onTapSeed: (ActiveSeed) -> Void = { _ in }
-    var onTapAmendment: (ActiveAmendment) -> Void = { _ in }
-    var onTapHarvest: (ActiveHarvest) -> Void = { _ in }
-    var onTapUpcomingHarvest: (UpcomingHarvest) -> Void = { _ in }
     var onSeeAllSeeds: () -> Void = {}
     var onSeeAllAmendments: () -> Void = {}
     var onSeeAllHarvests: () -> Void = {}
     var onSeeAllUpcomingHarvests: () -> Void = {}
-    var onCreateHarvest: (UpcomingHarvest) -> Void = { _ in }
 
     var body: some View {
         ScrollView {
@@ -101,6 +104,32 @@ struct ActivePracticesView: View {
         .background(AppTheme.Colors.backgroundPrimary.ignoresSafeArea())
         .navigationTitle("Active Practices")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showingSeedDetail) {
+            if let seed = selectedSeed {
+                NavigationView {
+                    SeedDetailView(seed: seed)
+                }
+            }
+        }
+        .sheet(isPresented: $showingAmendmentDetail) {
+            if let amendment = selectedAmendment {
+                NavigationView {
+                    AmendmentDetailView(amendment: amendment)
+                }
+            }
+        }
+        .sheet(isPresented: $showingHarvestDetail) {
+            if let harvest = selectedHarvest {
+                NavigationView {
+                    HarvestDetailView(harvest: harvest)
+                }
+            }
+        }
+        .sheet(isPresented: $showingCreateHarvest) {
+            if let upcomingHarvest = selectedUpcomingHarvest {
+                CreateHarvestWorkflowView(upcomingHarvest: upcomingHarvest, isPresented: $showingCreateHarvest)
+            }
+        }
     }
 
     // MARK: - Filtering
@@ -159,7 +188,10 @@ struct ActivePracticesView: View {
                 LazyVGrid(columns: tileGridColumns, spacing: AppTheme.Spacing.medium) {
                     ForEach(filteredSeeds.prefix(6)) { seed in
                         SeedTile(seed: seed)
-                            .onTapGesture { onTapSeed(seed) }
+                            .onTapGesture { 
+                                selectedSeed = seed
+                                showingSeedDetail = true
+                            }
                     }
                 }
             }
@@ -176,7 +208,10 @@ struct ActivePracticesView: View {
                 LazyVGrid(columns: tileGridColumns, spacing: AppTheme.Spacing.medium) {
                     ForEach(filteredAmendments.prefix(6)) { amendment in
                         AmendmentTile(amendment: amendment)
-                            .onTapGesture { onTapAmendment(amendment) }
+                            .onTapGesture { 
+                                selectedAmendment = amendment
+                                showingAmendmentDetail = true
+                            }
                     }
                 }
             }
@@ -193,7 +228,10 @@ struct ActivePracticesView: View {
                 LazyVGrid(columns: tileGridColumns, spacing: AppTheme.Spacing.medium) {
                     ForEach(filteredHarvests.prefix(6)) { harvest in
                         HarvestTile(harvest: harvest)
-                            .onTapGesture { onTapHarvest(harvest) }
+                            .onTapGesture { 
+                                selectedHarvest = harvest
+                                showingHarvestDetail = true
+                            }
                     }
                 }
             }
@@ -210,7 +248,10 @@ struct ActivePracticesView: View {
                 VStack(spacing: AppTheme.Spacing.small) {
                     ForEach(filteredUpcomingHarvests.prefix(5)) { upcomingHarvest in
                         UpcomingHarvestRow(harvest: upcomingHarvest)
-                            .onTapGesture { onCreateHarvest(upcomingHarvest) }
+                            .onTapGesture { 
+                                selectedUpcomingHarvest = upcomingHarvest
+                                showingCreateHarvest = true
+                            }
                     }
                 }
             }
@@ -621,5 +662,869 @@ struct ActivePracticesView_Previews: PreviewProvider {
             )
         }
         .preferredColorScheme(.dark)
+    }
+}
+
+// MARK: - Detail Views
+
+/// Seed detail view showing seed information and active grows
+struct SeedDetailView: View {
+    let seed: ActiveSeed
+    @State private var showingGrowCreation = false
+    
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                // Seed Header
+                seedHeaderSection
+                
+                // Seed Information
+                seedInfoSection
+                
+                // Active Grows Section
+                activeGrowsSection
+                
+                Spacer()
+            }
+            .padding()
+        }
+        .navigationTitle(seed.name)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("New Grow") {
+                    showingGrowCreation = true
+                }
+            }
+        }
+        .sheet(isPresented: $showingGrowCreation) {
+            CreateGrowView(seed: seed, isPresented: $showingGrowCreation)
+        }
+    }
+    
+    private var seedHeaderSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            HStack {
+                Text(seed.emoji)
+                    .font(.largeTitle)
+                
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text(seed.name)
+                        .font(AppTheme.Typography.headlineLarge)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    if let cultivar = seed.cultivar {
+                        Text(cultivar)
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                            .italic()
+                    }
+                }
+                
+                Spacer()
+                
+                if seed.isOrganic {
+                    Text("ORGANIC")
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(AppTheme.Colors.success)
+                        .padding(.vertical, AppTheme.Spacing.small)
+                        .padding(.horizontal, AppTheme.Spacing.medium)
+                        .background(AppTheme.Colors.success.opacity(0.12))
+                        .cornerRadius(AppTheme.CornerRadius.medium)
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+    
+    private var seedInfoSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            Text("Seed Information")
+                .font(AppTheme.Typography.labelLarge)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+            
+            VStack(spacing: AppTheme.Spacing.small) {
+                HStack {
+                    Text("Available Quantity:")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    Text(seed.quantity ?? "Unknown")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                        .fontWeight(.medium)
+                }
+                
+                HStack {
+                    Text("Active Grows:")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    Text("\(seed.activeGrowCount)")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .fontWeight(.medium)
+                }
+                
+                HStack {
+                    Text("Total Grows:")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    Text("\(seed.totalGrowCount)")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                        .fontWeight(.medium)
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+    
+    private var activeGrowsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            HStack {
+                Text("Active Grows")
+                    .font(AppTheme.Typography.labelLarge)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                Spacer()
+                
+                Button("View All") {
+                    // Navigate to all grows
+                }
+                .font(AppTheme.Typography.labelSmall)
+                .foregroundColor(AppTheme.Colors.accent)
+            }
+            
+            // Mock grow data for demonstration
+            VStack(spacing: AppTheme.Spacing.small) {
+                ForEach(0..<seed.activeGrowCount, id: \.self) { index in
+                    GrowRowView(
+                        growName: "Grow \(index + 1)",
+                        fieldName: "Field \(Character(UnicodeScalar(65 + index % 3)!))",
+                        plantedDate: Calendar.current.date(byAdding: .day, value: -(30 + index * 10), to: Date()) ?? Date(),
+                        status: ["Active", "Growing", "Flowering"][index % 3]
+                    )
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+}
+
+/// Amendment detail view showing amendment information and work orders
+struct AmendmentDetailView: View {
+    let amendment: ActiveAmendment
+    @State private var showingWorkOrderCreation = false
+    
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                // Amendment Header
+                amendmentHeaderSection
+                
+                // Amendment Information
+                amendmentInfoSection
+                
+                // Work Orders Section
+                workOrdersSection
+                
+                Spacer()
+            }
+            .padding()
+        }
+        .navigationTitle(amendment.productName)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("New Work Order") {
+                    showingWorkOrderCreation = true
+                }
+            }
+        }
+        .sheet(isPresented: $showingWorkOrderCreation) {
+            CreateWorkOrderView(amendment: amendment, isPresented: $showingWorkOrderCreation)
+        }
+    }
+    
+    private var amendmentHeaderSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            HStack {
+                Image(systemName: amendment.isOMRI ? "leaf.fill" : "leaf")
+                    .foregroundColor(amendment.isOMRI ? AppTheme.Colors.success : AppTheme.Colors.textTertiary)
+                    .font(.largeTitle)
+                
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text(amendment.productName)
+                        .font(AppTheme.Typography.headlineLarge)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    if let rate = amendment.rateDisplay {
+                        Text(rate)
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: AppTheme.Spacing.small) {
+                    if amendment.isOMRI {
+                        Text("OMRI")
+                            .font(AppTheme.Typography.labelMedium)
+                            .foregroundColor(AppTheme.Colors.success)
+                            .padding(.vertical, AppTheme.Spacing.small)
+                            .padding(.horizontal, AppTheme.Spacing.medium)
+                            .background(AppTheme.Colors.success.opacity(0.12))
+                            .cornerRadius(AppTheme.CornerRadius.medium)
+                    }
+                    
+                    Circle()
+                        .fill(AppTheme.ColorCoding.colorForAmendmentAge(amendment.daysSinceApplication))
+                        .frame(width: 20, height: 20)
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .overlay(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .stroke(AppTheme.ColorCoding.colorForAmendmentAge(amendment.daysSinceApplication), lineWidth: 2)
+        )
+    }
+    
+    private var amendmentInfoSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            Text("Amendment Information")
+                .font(AppTheme.Typography.labelLarge)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+            
+            VStack(spacing: AppTheme.Spacing.small) {
+                HStack {
+                    Text("Last Application:")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    if let lastDate = amendment.lastApplicationDate {
+                        Text(lastDate, style: .date)
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                            .fontWeight(.medium)
+                    }
+                }
+                
+                HStack {
+                    Text("Days Since Application:")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    Text("\(amendment.daysSinceApplication) days")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.ColorCoding.colorForAmendmentAge(amendment.daysSinceApplication))
+                        .fontWeight(.medium)
+                }
+                
+                HStack {
+                    Text("Work Orders:")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    Text("\(amendment.workOrderCount)")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .fontWeight(.medium)
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+    
+    private var workOrdersSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            HStack {
+                Text("Work Orders")
+                    .font(AppTheme.Typography.labelLarge)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                Spacer()
+                
+                Button("View All") {
+                    // Navigate to all work orders
+                }
+                .font(AppTheme.Typography.labelSmall)
+                .foregroundColor(AppTheme.Colors.accent)
+            }
+            
+            // Mock work order data for demonstration
+            VStack(spacing: AppTheme.Spacing.small) {
+                ForEach(0..<min(amendment.workOrderCount, 5), id: \.self) { index in
+                    WorkOrderRowView(
+                        title: "Apply \(amendment.productName)",
+                        fieldName: "Field \(Character(UnicodeScalar(65 + index % 3)!))",
+                        applicationDate: Calendar.current.date(byAdding: .day, value: -(index * 30 + 15), to: Date()) ?? Date(),
+                        ageColor: AppTheme.ColorCoding.colorForAmendmentAge(index * 30 + 15)
+                    )
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+}
+
+/// Harvest detail view showing grow information and harvests
+struct HarvestDetailView: View {
+    let harvest: ActiveHarvest
+    @State private var showingHarvestCreation = false
+    
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                // Harvest Header
+                harvestHeaderSection
+                
+                // Grow Information
+                growInfoSection
+                
+                // Harvests Section
+                harvestsSection
+                
+                Spacer()
+            }
+            .padding()
+        }
+        .navigationTitle(harvest.cropName)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Record Harvest") {
+                    showingHarvestCreation = true
+                }
+            }
+        }
+        .sheet(isPresented: $showingHarvestCreation) {
+            CreateHarvestView(harvest: harvest, isPresented: $showingHarvestCreation)
+        }
+    }
+    
+    private var harvestHeaderSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            HStack {
+                Text(harvest.emoji)
+                    .font(.largeTitle)
+                
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text(harvest.cropName)
+                        .font(AppTheme.Typography.headlineLarge)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    if let window = harvest.windowDisplay {
+                        Text(window)
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
+                
+                Spacer()
+                
+                if let status = harvest.status {
+                    Text(status.uppercased())
+                        .font(AppTheme.Typography.labelMedium)
+                        .foregroundColor(statusColor(for: status))
+                        .padding(.vertical, AppTheme.Spacing.small)
+                        .padding(.horizontal, AppTheme.Spacing.medium)
+                        .background(statusColor(for: status).opacity(0.12))
+                        .cornerRadius(AppTheme.CornerRadius.medium)
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+    
+    private var growInfoSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            Text("Grow Information")
+                .font(AppTheme.Typography.labelLarge)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+            
+            VStack(spacing: AppTheme.Spacing.small) {
+                HStack {
+                    Text("Grow ID:")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    Text(harvest.growId)
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                        .fontWeight(.medium)
+                }
+                
+                HStack {
+                    Text("Estimated Yield:")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    Text(harvest.estimatedYield ?? "Not specified")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .fontWeight(.medium)
+                }
+                
+                HStack {
+                    Text("Harvest Count:")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    Text("\(harvest.harvestCount)")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                        .fontWeight(.medium)
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+    
+    private var harvestsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            HStack {
+                Text("Harvest History")
+                    .font(AppTheme.Typography.labelLarge)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                
+                Spacer()
+                
+                Button("View All") {
+                    // Navigate to all harvests
+                }
+                .font(AppTheme.Typography.labelSmall)
+                .foregroundColor(AppTheme.Colors.accent)
+            }
+            
+            // Mock harvest data for demonstration
+            VStack(spacing: AppTheme.Spacing.small) {
+                ForEach(0..<harvest.harvestCount, id: \.self) { index in
+                    HarvestEntryRowView(
+                        harvestDate: Calendar.current.date(byAdding: .day, value: -(index * 7), to: Date()) ?? Date(),
+                        quantity: "\(15 + index * 5) lbs",
+                        quality: ["Premium", "Standard", "Processing"][index % 3],
+                        worker: "Worker \(index + 1)"
+                    )
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+    
+    private func statusColor(for status: String) -> Color {
+        switch status.lowercased() {
+        case "best":
+            return AppTheme.Colors.success
+        case "good":
+            return AppTheme.Colors.info
+        case "fair":
+            return AppTheme.Colors.warning
+        default:
+            return AppTheme.Colors.textSecondary
+        }
+    }
+}
+
+// MARK: - Row Components for Detail Views
+
+private struct GrowRowView: View {
+    let growName: String
+    let fieldName: String
+    let plantedDate: Date
+    let status: String
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                Text(growName)
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                Text("\(fieldName) • \(plantedDate, style: .date)")
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            Spacer()
+            
+            Text(status)
+                .font(AppTheme.Typography.labelSmall)
+                .foregroundColor(AppTheme.Colors.success)
+                .padding(.vertical, 2)
+                .padding(.horizontal, 6)
+                .background(AppTheme.Colors.success.opacity(0.12))
+                .cornerRadius(4)
+        }
+        .padding(.vertical, AppTheme.Spacing.small)
+    }
+}
+
+private struct WorkOrderRowView: View {
+    let title: String
+    let fieldName: String
+    let applicationDate: Date
+    let ageColor: Color
+    
+    var body: some View {
+        HStack {
+            Circle()
+                .fill(ageColor)
+                .frame(width: 8, height: 8)
+            
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                Text(title)
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                
+                Text("\(fieldName) • \(applicationDate, style: .date)")
+                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+            
+            Spacer()
+            
+            Text("Completed")
+                .font(AppTheme.Typography.labelSmall)
+                .foregroundColor(AppTheme.Colors.success)
+                .padding(.vertical, 2)
+                .padding(.horizontal, 6)
+                .background(AppTheme.Colors.success.opacity(0.12))
+                .cornerRadius(4)
+        }
+        .padding(.vertical, AppTheme.Spacing.small)
+    }
+}
+
+private struct HarvestEntryRowView: View {
+    let harvestDate: Date
+    let quantity: String
+    let quality: String
+    let worker: String
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                HStack {
+                    Text(harvestDate, style: .date)
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    Spacer()
+                    
+                    Text(quantity)
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .fontWeight(.medium)
+                }
+                
+                HStack {
+                    Text("Quality: \(quality)")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                    
+                    Spacer()
+                    
+                    Text("By: \(worker)")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+            }
+        }
+        .padding(.vertical, AppTheme.Spacing.small)
+    }
+}
+
+// MARK: - Placeholder Creation Views
+
+private struct CreateGrowView: View {
+    let seed: ActiveSeed
+    @Binding var isPresented: Bool
+    
+    var body: some View {
+        NavigationView {
+            Text("Create New Grow for \(seed.name)")
+                .navigationTitle("New Grow")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Cancel") {
+                            isPresented = false
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Save") {
+                            isPresented = false
+                        }
+                    }
+                }
+        }
+    }
+}
+
+private struct CreateWorkOrderView: View {
+    let amendment: ActiveAmendment
+    @Binding var isPresented: Bool
+    
+    var body: some View {
+        NavigationView {
+            Text("Create Work Order for \(amendment.productName)")
+                .navigationTitle("New Work Order")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Cancel") {
+                            isPresented = false
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Save") {
+                            isPresented = false
+                        }
+                    }
+                }
+        }
+    }
+}
+
+private struct CreateHarvestView: View {
+    let harvest: ActiveHarvest
+    @Binding var isPresented: Bool
+    
+    var body: some View {
+        NavigationView {
+            Text("Record Harvest for \(harvest.cropName)")
+                .navigationTitle("Record Harvest")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Cancel") {
+                            isPresented = false
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Save") {
+                            isPresented = false
+                        }
+                    }
+                }
+        }
+    }
+}
+
+/// Enhanced harvest creation workflow for upcoming harvests
+private struct CreateHarvestWorkflowView: View {
+    let upcomingHarvest: UpcomingHarvest
+    @Binding var isPresented: Bool
+    @State private var harvestQuantity: String = ""
+    @State private var qualityGrade: String = "Premium"
+    @State private var notes: String = ""
+    @State private var createWorkOrder: Bool = false
+    @State private var assignedTeam: String = ""
+    @State private var workOrderNotes: String = ""
+    
+    private let qualityOptions = ["Premium", "Standard", "Processing", "Seconds"]
+    
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                    // Harvest Header
+                    harvestHeaderSection
+                    
+                    // Harvest Details Form
+                    harvestDetailsForm
+                    
+                    // Work Order Section
+                    workOrderSection
+                    
+                    Spacer()
+                }
+                .padding()
+            }
+            .navigationTitle("Record Harvest")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Save") {
+                        // Save harvest and work order
+                        isPresented = false
+                    }
+                    .disabled(harvestQuantity.isEmpty)
+                }
+            }
+        }
+    }
+    
+    private var harvestHeaderSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            HStack {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text(upcomingHarvest.cropName)
+                        .font(AppTheme.Typography.headlineLarge)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    HStack {
+                        if let fieldName = upcomingHarvest.fieldName {
+                            Text(fieldName)
+                                .font(AppTheme.Typography.bodyMedium)
+                                .foregroundColor(AppTheme.Colors.textSecondary)
+                        }
+                        
+                        Text("•")
+                            .foregroundColor(AppTheme.Colors.textTertiary)
+                        
+                        Text(upcomingHarvest.estimatedHarvestDate, style: .date)
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing) {
+                    Circle()
+                        .fill(upcomingHarvest.readyToHarvest ? AppTheme.Colors.success : AppTheme.Colors.warning)
+                        .frame(width: 12, height: 12)
+                    
+                    Text(upcomingHarvest.readyToHarvest ? "Ready" : "\(upcomingHarvest.daysUntilHarvest) days")
+                        .font(AppTheme.Typography.labelSmall)
+                        .foregroundColor(upcomingHarvest.readyToHarvest ? AppTheme.Colors.success : AppTheme.Colors.warning)
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+    
+    private var harvestDetailsForm: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            Text("Harvest Details")
+                .font(AppTheme.Typography.labelLarge)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+            
+            VStack(spacing: AppTheme.Spacing.medium) {
+                // Quantity field
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text("Quantity Harvested")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    TextField("Enter quantity (e.g., 45 lbs, 20 kg)", text: $harvestQuantity)
+                        .textFieldStyle(.roundedBorder)
+                }
+                
+                // Quality grade picker
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text("Quality Grade")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    Picker("Quality Grade", selection: $qualityGrade) {
+                        ForEach(qualityOptions, id: \.self) { quality in
+                            Text(quality).tag(quality)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                
+                // Notes field
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                    Text("Notes")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    TextField("Harvest notes, weather conditions, etc.", text: $notes, axis: .vertical)
+                        .textFieldStyle(.roundedBorder)
+                        .lineLimit(3, reservesSpace: true)
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+    
+    private var workOrderSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            Toggle("Create Work Order", isOn: $createWorkOrder)
+                .font(AppTheme.Typography.labelLarge)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+            
+            if createWorkOrder {
+                VStack(spacing: AppTheme.Spacing.medium) {
+                    // Team assignment field
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        Text("Assign Team/Worker")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        TextField("Team or worker name", text: $assignedTeam)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    
+                    // Work order notes field
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                        Text("Work Order Notes")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        TextField("Special instructions for the harvest work", text: $workOrderNotes, axis: .vertical)
+                            .textFieldStyle(.roundedBorder)
+                            .lineLimit(3, reservesSpace: true)
+                    }
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
+        .animation(.easeInOut(duration: 0.3), value: createWorkOrder)
     }
 }
