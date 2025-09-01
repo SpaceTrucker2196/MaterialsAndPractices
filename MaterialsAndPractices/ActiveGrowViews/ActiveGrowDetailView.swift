@@ -70,6 +70,7 @@ struct ActiveGrowDetailView: View {
     @State private var showingHarvestChecklist = false
     @State private var showingPerformWorkView = false
     @State private var showingInspectionScheduling = false
+    @State private var showingHarvestCreation = false
     
     // MARK: - Body
     
@@ -100,12 +101,17 @@ struct ActiveGrowDetailView: View {
         .sheet(isPresented: $showingInspectionScheduling) {
             GrowInspectionSchedulingView(grow: growViewModel.grow, isPresented: $showingInspectionScheduling)
         }
+        .sheet(isPresented: $showingHarvestCreation) {
+            HarvestCreationView(grow: growViewModel.grow, isPresented: $showingHarvestCreation)
+        }
     }
     
     // MARK: - Section Components
     private var growQuickActionsToolbar: some View{
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            SectionHeader(title: "Assign Work Orders")
+            SectionHeader(title: "Quick Actions")
+            
+            // First row of buttons
             HStack {
                 CommonActionButton(
                     title: "New Work Order",
@@ -122,14 +128,25 @@ struct ActiveGrowDetailView: View {
                     action: addAmendment
                 )
                 .frame(maxWidth: .infinity)
-                
-                Spacer(minLength: AppTheme.Spacing.large)
-                
+            }
+            
+            // Second row of buttons
+            HStack {
                 CommonActionButton(
                     title: "Schedule Inspection",
                     style: .outline,
                     action: scheduleGrowInspection
-                ) .frame(maxWidth: .infinity)
+                )
+                .frame(maxWidth: .infinity)
+                
+                Spacer(minLength: AppTheme.Spacing.large)
+                
+                CommonActionButton(
+                    title: "Harvest",
+                    style: .primary,
+                    action: createHarvest
+                )
+                .frame(maxWidth: .infinity)
             }
         }
     }
@@ -652,6 +669,11 @@ struct ActiveGrowDetailView: View {
     /// Opens the inspection scheduling view for this grow
     private func scheduleGrowInspection() {
         showingInspectionScheduling = true
+    }
+    
+    /// Opens the harvest creation view for this grow
+    private func createHarvest() {
+        showingHarvestCreation = true
     }
     
     // MARK: - Helper Methods
