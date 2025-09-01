@@ -6,136 +6,190 @@
 //
 
 import SwiftUI
-
-// MARK: - Lightweight placeholder models you can replace later
-
-struct ActiveSeed: Identifiable, Hashable {
-    let id = UUID()
-    var name: String
-    var cultivar: String?
-    var quantity: String?
-    var emoji: String = "🌱"
-}
-
-struct ActiveAmendment: Identifiable, Hashable {
-    let id = UUID()
-    var productName: String
-    var rateDisplay: String?
-    var isOMRI: Bool = false
-}
-
-struct ActiveHarvest: Identifiable, Hashable {
-    let id = UUID()
-    var cropName: String
-    var windowDisplay: String?   // e.g., "Weeks 31–34"
-    var status: String?          // e.g., "Best", "Good"
-    var emoji: String = "🧺"
-}
+import CoreData
 
 // MARK: - Main View
 
 struct ActivePracticesView: View {
-    // Injection points so you can plug in Core Data later
-    var seeds: [ActiveSeed] = []
-    var amendments: [ActiveAmendment] = []
-    var harvests: [ActiveHarvest] = []
-
-    // UI state
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    // MARK: - Core Data Fetch Requests
+    
+    @FetchRequest(
+        entity: SeedLibrary.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \SeedLibrary.seedName, ascending: true)]
+    ) private var allSeeds: FetchedResults<SeedLibrary>
+    
+    @FetchRequest(
+        entity: CropAmendment.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \CropAmendment.productName, ascending: true)]
+    ) private var allAmendments: FetchedResults<CropAmendment>
+    
+    @FetchRequest(
+        entity: Harvest.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \Harvest.harvestDate, ascending: false)]
+    ) private var allHarvests: FetchedResults<Harvest>
+    
+    @FetchRequest(
+        entity: Grow.entity(),
+        sortDescriptors: [
+            NSSortDescriptor(keyPath: \Grow.plantedDate, ascending: false)
+        ]
+    ) private var allGrows: FetchedResults<Grow>
+    
+    // MARK: - State
+    
     @State private var searchText: String = ""
-
-    // Actions (stubs) you can hook to navigation or creation flows
-    var onTapSeed: (ActiveSeed) -> Void = { _ in }
-    var onTapAmendment: (ActiveAmendment) -> Void = { _ in }
-    var onTapHarvest: (ActiveHarvest) -> Void = { _ in }
-    var onSeeAllSeeds: () -> Void = {}
-    var onSeeAllAmendments: () -> Void = {}
-    var onSeeAllHarvests: () -> Void = {}
+    @State private var selectedSeed: SeedLibrary?
+    @State private var selectedAmendment: CropAmendment?
+    @State private var selectedHarvest: Harvest?
+    @State private var selectedGrow: Grow?
+    @State private var showingSeedDetail = false
+    @State private var showingAmendmentDetail = false
+    @State private var showingHarvestDetail = false
+    @State private var showingUpcomingHarvests = false
 
     var body: some View {
         VStack(spacing: AppTheme.Spacing.medium) {
             header
             searchField
 
-            List {
-                Section {
-                    if filteredSeeds.isEmpty {
-                        emptyRow(title: "No active seeds", subtitle: "Add seed lots or import from suppliers.")
-                    } else {
-                        ForEach(filteredSeeds.prefix(5)) { seed in
-                            SeedRow(seed: seed)
-                                .contentShape(Rectangle())
-                                .onTapGesture { onTapSeed(seed) }
-                        }
-                    }
-                } header: {
-                    sectionHeader(title: "Active Seeds", actionTitle: "See all", action: onSeeAllSeeds)
+            ScrollView {
+                LazyVStack(spacing: AppTheme.Spacing.large) {
+                    // Active Seeds Section
+                    activeSeedsSection
+                    
+                    // Active Amendments Section  
+                    activeAmendmentsSection
+                    
+                    // Active Harvests Section
+                    activeHarvestsSection
+                    
+                    // Upcoming Harvests Section
+                    upcomingHarvestsSection
                 }
-
-                Section {
-                    if filteredAmendments.isEmpty {
-                        emptyRow(title: "No active amendments", subtitle: "Track nutrients and applications here.")
-                    } else {
-                        ForEach(filteredAmendments.prefix(5)) { item in
-                            AmendmentRow(amendment: item)
-                                .contentShape(Rectangle())
-                                .onTapGesture { onTapAmendment(item) }
-                        }
-                    }
-                } header: {
-                    sectionHeader(title: "Active Amendments", actionTitle: "See all", action: onSeeAllAmendments)
-                }
-
-                Section {
-                    if filteredHarvests.isEmpty {
-                        emptyRow(title: "No active harvests", subtitle: "Harvest windows will appear as they open.")
-                    } else {
-                        ForEach(filteredHarvests.prefix(5)) { hv in
-                            HarvestRow(harvest: hv)
-                                .contentShape(Rectangle())
-                                .onTapGesture { onTapHarvest(hv) }
-                        }
-                    }
-                } header: {
-                    sectionHeader(title: "Active Harvests", actionTitle: "See all", action: onSeeAllHarvests)
-                }
+                .padding(.horizontal, AppTheme.Spacing.medium)
             }
-            .listStyle(.insetGrouped)
         }
         .padding(.horizontal, AppTheme.Spacing.medium)
         .padding(.top, AppTheme.Spacing.medium)
         .background(AppTheme.Colors.backgroundPrimary.ignoresSafeArea())
         .navigationTitle("Active Practices")
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    // MARK: - Filtering
-
-    private var filteredSeeds: [ActiveSeed] {
-        guard !searchText.isEmpty else { return seeds }
-        return seeds.filter {
-            $0.name.localizedCaseInsensitiveContains(searchText)
-            || ($0.cultivar?.localizedCaseInsensitiveContains(searchText) ?? false)
+        .sheet(isPresented: $showingSeedDetail) {
+            if let seed = selectedSeed {
+                SeedDetailView(seed: seed)
+            }
+        }
+        .sheet(isPresented: $showingAmendmentDetail) {
+            if let amendment = selectedAmendment {
+                AmendmentDetailView(amendment: amendment)
+            }
+        }
+        .sheet(isPresented: $showingHarvestDetail) {
+            if let harvest = selectedHarvest {
+                HarvestDetailView(harvest: harvest)
+            }
+        }
+        .sheet(isPresented: $showingUpcomingHarvests) {
+            UpcomingHarvestsView(grows: upcomingGrows)
         }
     }
 
-    private var filteredAmendments: [ActiveAmendment] {
-        guard !searchText.isEmpty else { return amendments }
-        return amendments.filter {
-            $0.productName.localizedCaseInsensitiveContains(searchText)
-            || ($0.rateDisplay?.localizedCaseInsensitiveContains(searchText) ?? false)
+    // MARK: - Computed Properties
+    
+    /// Seeds that have active grows
+    private var activeSeedsWithGrows: [SeedLibrary] {
+        let activeSeedsSet = Set(allGrows.compactMap { $0.primarySeed }.filter { _ in true })
+        return Array(activeSeedsSet).filter { seed in
+            let hasActiveGrows = allGrows.contains { grow in
+                grow.isActive && grow.primarySeed == seed
+            }
+            
+            if searchText.isEmpty {
+                return hasActiveGrows
+            } else {
+                let matchesSearch = (seed.seedName?.localizedCaseInsensitiveContains(searchText) ?? false) ||
+                                  (seed.cultivar?.name?.localizedCaseInsensitiveContains(searchText) ?? false)
+                return hasActiveGrows && matchesSearch
+            }
+        }.sorted { ($0.seedName ?? "") < ($1.seedName ?? "") }
+    }
+    
+    /// Amendments that have work orders in the last 3 years
+    private var activeAmendments: [CropAmendment] {
+        let threeYearsAgo = Calendar.current.date(byAdding: .year, value: -3, to: Date()) ?? Date()
+        
+        return allAmendments.filter { amendment in
+            guard let workOrders = amendment.workOrders?.allObjects as? [WorkOrder] else { return false }
+            
+            let hasRecentWorkOrders = workOrders.contains { workOrder in
+                guard let createdDate = workOrder.createdDate else { return false }
+                return createdDate >= threeYearsAgo
+            }
+            
+            if searchText.isEmpty {
+                return hasRecentWorkOrders
+            } else {
+                let matchesSearch = amendment.productName?.localizedCaseInsensitiveContains(searchText) ?? false
+                return hasRecentWorkOrders && matchesSearch
+            }
+        }.sorted { ($0.productName ?? "") < ($1.productName ?? "") }
+    }
+    
+    /// Active harvests deduped by grow
+    private var activeHarvestsByGrow: [Harvest] {
+        let activeHarvests = allHarvests.filter { harvest in
+            // Only include harvests from active grows
+            guard let cropPlan = harvest.cropPlan,
+                  let grows = cropPlan.grows?.allObjects as? [Grow] else { return false }
+            
+            let hasActiveGrow = grows.contains { $0.isActive }
+            
+            if searchText.isEmpty {
+                return hasActiveGrow
+            } else {
+                let matchesSearch = (harvest.notes?.localizedCaseInsensitiveContains(searchText) ?? false) ||
+                                  grows.contains { grow in
+                                      grow.title?.localizedCaseInsensitiveContains(searchText) ?? false
+                                  }
+                return hasActiveGrow && matchesSearch
+            }
+        }
+        
+        // Dedupe by grow
+        var seenGrows = Set<NSManagedObjectID>()
+        var deduped: [Harvest] = []
+        
+        for harvest in activeHarvests {
+            if let cropPlan = harvest.cropPlan,
+               let grows = cropPlan.grows?.allObjects as? [Grow] {
+                let activeGrows = grows.filter { $0.isActive }
+                for grow in activeGrows {
+                    if !seenGrows.contains(grow.objectID) {
+                        seenGrows.insert(grow.objectID)
+                        deduped.append(harvest)
+                        break
+                    }
+                }
+            }
+        }
+        
+        return deduped
+    }
+    
+    /// Grows for upcoming harvests sorted by harvest date
+    private var upcomingGrows: [Grow] {
+        return allGrows.filter { grow in
+            grow.isActive && grow.estimatedHarvestDate != nil
+        }.sorted { grow1, grow2 in
+            guard let date1 = grow1.estimatedHarvestDate,
+                  let date2 = grow2.estimatedHarvestDate else { return false }
+            return date1 < date2
         }
     }
 
-    private var filteredHarvests: [ActiveHarvest] {
-        guard !searchText.isEmpty else { return harvests }
-        return harvests.filter {
-            $0.cropName.localizedCaseInsensitiveContains(searchText)
-            || ($0.windowDisplay?.localizedCaseInsensitiveContains(searchText) ?? false)
-            || ($0.status?.localizedCaseInsensitiveContains(searchText) ?? false)
-        }
-    }
-
-    // MARK: - Pieces
+    // MARK: - UI Components
 
     private var header: some View {
         HStack {
@@ -162,6 +216,123 @@ struct ActivePracticesView: View {
                 .stroke(AppTheme.Colors.border, lineWidth: 1)
         )
     }
+    
+    // MARK: - Section Views
+    
+    private var activeSeedsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            sectionHeader(title: "Active Seeds", actionTitle: "See all") {
+                // Handle see all action
+            }
+            
+            if activeSeedsWithGrows.isEmpty {
+                emptyStateCard(
+                    title: "No active seeds",
+                    subtitle: "Add seed lots or start new grows.",
+                    icon: "leaf"
+                )
+            } else {
+                LazyVGrid(columns: tileColumns, spacing: AppTheme.Spacing.medium) {
+                    ForEach(activeSeedsWithGrows.prefix(6), id: \.objectID) { seed in
+                        ActiveSeedTile(seed: seed, activeGrows: activeGrowsForSeed(seed)) {
+                            selectedSeed = seed
+                            showingSeedDetail = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private var activeAmendmentsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            sectionHeader(title: "Active Amendments", actionTitle: "See all") {
+                // Handle see all action
+            }
+            
+            if activeAmendments.isEmpty {
+                emptyStateCard(
+                    title: "No active amendments",
+                    subtitle: "Track nutrients and applications here.",
+                    icon: "leaf.fill"
+                )
+            } else {
+                LazyVGrid(columns: tileColumns, spacing: AppTheme.Spacing.medium) {
+                    ForEach(activeAmendments.prefix(6), id: \.objectID) { amendment in
+                        ActiveAmendmentTile(amendment: amendment) {
+                            selectedAmendment = amendment
+                            showingAmendmentDetail = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private var activeHarvestsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            sectionHeader(title: "Active Harvests", actionTitle: "See all") {
+                // Handle see all action
+            }
+            
+            if activeHarvestsByGrow.isEmpty {
+                emptyStateCard(
+                    title: "No active harvests",
+                    subtitle: "Harvest windows will appear as they open.",
+                    icon: "basket"
+                )
+            } else {
+                LazyVGrid(columns: tileColumns, spacing: AppTheme.Spacing.medium) {
+                    ForEach(activeHarvestsByGrow.prefix(6), id: \.objectID) { harvest in
+                        ActiveHarvestTile(harvest: harvest) {
+                            selectedHarvest = harvest
+                            showingHarvestDetail = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private var upcomingHarvestsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            sectionHeader(title: "Upcoming Harvests", actionTitle: "See all") {
+                showingUpcomingHarvests = true
+            }
+            
+            if upcomingGrows.isEmpty {
+                emptyStateCard(
+                    title: "No upcoming harvests",
+                    subtitle: "Plant some grows to see harvest predictions.",
+                    icon: "calendar"
+                )
+            } else {
+                LazyVGrid(columns: tileColumns, spacing: AppTheme.Spacing.medium) {
+                    ForEach(upcomingGrows.prefix(4), id: \.objectID) { grow in
+                        UpcomingHarvestTile(grow: grow) {
+                            selectedGrow = grow
+                            // Navigate to harvest creation flow
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Helper Methods
+    
+    private func activeGrowsForSeed(_ seed: SeedLibrary) -> [Grow] {
+        return allGrows.filter { grow in
+            grow.isActive && grow.primarySeed == seed
+        }
+    }
+    
+    private var tileColumns: [GridItem] {
+        [
+            GridItem(.flexible()),
+            GridItem(.flexible())
+        ]
+    }
 
     private func sectionHeader(title: String, actionTitle: String, action: @escaping () -> Void) -> some View {
         HStack(alignment: .firstTextBaseline) {
@@ -177,169 +348,413 @@ struct ActivePracticesView: View {
         .padding(.top, AppTheme.Spacing.small)
     }
 
-    private func emptyRow(title: String, subtitle: String) -> some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-            Text(title)
-                .font(AppTheme.Typography.bodyMedium)
-                .foregroundColor(AppTheme.Colors.textSecondary)
-            Text(subtitle)
-                .font(AppTheme.Typography.bodySmall)
+    private func emptyStateCard(title: String, subtitle: String, icon: String) -> some View {
+        VStack(spacing: AppTheme.Spacing.medium) {
+            Image(systemName: icon)
+                .font(.system(size: 32))
                 .foregroundColor(AppTheme.Colors.textTertiary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, AppTheme.Spacing.small)
-    }
-}
-
-// MARK: - Row Views
-
-private struct SeedRow: View {
-    var seed: ActiveSeed
-
-    var body: some View {
-        HStack(spacing: AppTheme.Spacing.medium) {
-            Text(seed.emoji)
-                .font(.title3)
-                .frame(width: 28, height: 28)
-                .background(AppTheme.Colors.surface)
-                .cornerRadius(6)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(seed.name)
+            
+            VStack(spacing: AppTheme.Spacing.tiny) {
+                Text(title)
                     .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                    .lineLimit(1)
-                if let cultivar = seed.cultivar, !cultivar.isEmpty {
-                    Text(cultivar)
-                        .font(AppTheme.Typography.labelSmall)
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                        .lineLimit(1)
-                }
-            }
-            Spacer()
-            if let qty = seed.quantity {
-                Text(qty)
-                    .font(AppTheme.Typography.labelSmall)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+                Text(subtitle)
+                    .font(AppTheme.Typography.bodySmall)
                     .foregroundColor(AppTheme.Colors.textTertiary)
+                    .multilineTextAlignment(.center)
             }
         }
-        .padding(.vertical, 6)
+        .frame(maxWidth: .infinity)
+        .padding(AppTheme.Spacing.large)
+        .background(AppTheme.Colors.backgroundSecondary)
+        .cornerRadius(AppTheme.CornerRadius.medium)
     }
 }
 
-private struct AmendmentRow: View {
-    var amendment: ActiveAmendment
+// MARK: - Tile Components
 
+struct ActiveSeedTile: View {
+    let seed: SeedLibrary
+    let activeGrows: [Grow]
+    let action: () -> Void
+    
     var body: some View {
-        HStack(spacing: AppTheme.Spacing.medium) {
-            Image(systemName: amendment.isOMRI ? "leaf.fill" : "leaf")
-                .foregroundColor(amendment.isOMRI ? AppTheme.Colors.success : AppTheme.Colors.textTertiary)
-                .frame(width: 28, height: 28)
-                .background(AppTheme.Colors.surface)
-                .cornerRadius(6)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(amendment.productName)
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                // Header with emoji and organic status
+                HStack {
+                    Text(seed.cultivar?.emoji ?? "🌱")
+                        .font(.system(size: 28))
+                    
+                    Spacer()
+                    
+                    if seed.isCertifiedOrganic {
+                        Image(systemName: "leaf.fill")
+                            .foregroundColor(AppTheme.Colors.organicPractice)
+                            .font(.caption)
+                    }
+                }
+                
+                // Seed name
+                Text(seed.displayName)
                     .font(AppTheme.Typography.bodyMedium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
-                    .lineLimit(1)
-                if let rate = amendment.rateDisplay {
-                    Text(rate)
-                        .font(AppTheme.Typography.labelSmall)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                
+                // Cultivar name if available
+                if let cultivarName = seed.cultivar?.name {
+                    Text(cultivarName)
+                        .font(AppTheme.Typography.bodySmall)
                         .foregroundColor(AppTheme.Colors.textSecondary)
                         .lineLimit(1)
                 }
-            }
-            Spacer()
-            if amendment.isOMRI {
-                Text("OMRI")
-                    .font(AppTheme.Typography.labelSmall)
-                    .foregroundColor(AppTheme.Colors.success)
-                    .padding(.vertical, 2)
-                    .padding(.horizontal, 6)
-                    .background(AppTheme.Colors.success.opacity(0.12))
-                    .cornerRadius(6)
-            }
-        }
-        .padding(.vertical, 6)
-    }
-}
-
-private struct HarvestRow: View {
-    var harvest: ActiveHarvest
-
-    var body: some View {
-        HStack(spacing: AppTheme.Spacing.medium) {
-            Text(harvest.emoji)
-                .font(.title3)
-                .frame(width: 28, height: 28)
-                .background(AppTheme.Colors.surface)
-                .cornerRadius(6)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(harvest.cropName)
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                    .lineLimit(1)
-                HStack(spacing: 6) {
-                    if let window = harvest.windowDisplay {
-                        Text(window)
-                            .font(AppTheme.Typography.labelSmall)
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                            .lineLimit(1)
-                    }
-                    if let status = harvest.status, !status.isEmpty {
-                        Text(status)
-                            .font(AppTheme.Typography.labelSmall)
-                            .foregroundColor(AppTheme.Colors.accent)
-                            .lineLimit(1)
+                
+                Spacer()
+                
+                // Active grows dots
+                HStack {
+                    Text("\(activeGrows.count) grow\(activeGrows.count == 1 ? "" : "s")")
+                        .font(AppTheme.Typography.dataSmall)
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                    
+                    Spacer()
+                    
+                    HStack(spacing: 4) {
+                        ForEach(0..<min(activeGrows.count, 5), id: \.self) { _ in
+                            Circle()
+                                .fill(AppTheme.Colors.success)
+                                .frame(width: 6, height: 6)
+                        }
+                        
+                        if activeGrows.count > 5 {
+                            Text("+\(activeGrows.count - 5)")
+                                .font(AppTheme.Typography.dataSmall)
+                                .foregroundColor(AppTheme.Colors.textTertiary)
+                        }
                     }
                 }
             }
-            Spacer()
+            .padding(AppTheme.Spacing.medium)
+            .frame(height: 120)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(AppTheme.Colors.backgroundSecondary)
+            .cornerRadius(AppTheme.CornerRadius.medium)
+            .overlay(
+                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                    .stroke(seed.isCertifiedOrganic ? AppTheme.Colors.organicPractice.opacity(0.3) : AppTheme.Colors.border, lineWidth: 1)
+            )
         }
-        .padding(.vertical, 6)
+        .buttonStyle(.plain)
     }
 }
 
-// MARK: - Preview with sample data
+struct ActiveAmendmentTile: View {
+    let amendment: CropAmendment
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                // Header with icon and OMRI status
+                HStack {
+                    Image(systemName: amendment.omriListed ? "leaf.fill" : "leaf")
+                        .foregroundColor(amendment.omriListed ? AppTheme.Colors.organicPractice : AppTheme.Colors.textTertiary)
+                        .font(.title3)
+                    
+                    Spacer()
+                    
+                    // Time-based color indicator
+                    Circle()
+                        .fill(timingColor)
+                        .frame(width: 12, height: 12)
+                }
+                
+                // Amendment name
+                Text(amendment.productName ?? "Unknown Amendment")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                
+                // Application rate if available
+                if let rate = amendment.unitOfMeasure {
+                    Text(rate)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .lineLimit(1)
+                }
+                
+                Spacer()
+                
+                // Last application info
+                HStack {
+                    Text(lastApplicationText)
+                        .font(AppTheme.Typography.dataSmall)
+                        .foregroundColor(AppTheme.Colors.textTertiary)
+                    
+                    Spacer()
+                    
+                    if amendment.omriListed {
+                        Text("OMRI")
+                            .font(AppTheme.Typography.labelSmall)
+                            .foregroundColor(AppTheme.Colors.organicPractice)
+                            .padding(.vertical, 2)
+                            .padding(.horizontal, 6)
+                            .background(AppTheme.Colors.organicPractice.opacity(0.12))
+                            .cornerRadius(6)
+                    }
+                }
+            }
+            .padding(AppTheme.Spacing.medium)
+            .frame(height: 120)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(AppTheme.Colors.backgroundSecondary)
+            .cornerRadius(AppTheme.CornerRadius.medium)
+            .overlay(
+                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                    .stroke(timingColor.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+    
+    private var timingColor: Color {
+        guard let workOrders = amendment.workOrders?.allObjects as? [WorkOrder],
+              let latestWorkOrder = workOrders.max(by: { ($0.createdDate ?? Date.distantPast) < ($1.createdDate ?? Date.distantPast) }),
+              let createdDate = latestWorkOrder.createdDate else {
+            return AppTheme.Colors.amendmentOld
+        }
+        
+        return AppTheme.ColorCoding.colorForAmendmentTiming(createdDate)
+    }
+    
+    private var lastApplicationText: String {
+        guard let workOrders = amendment.workOrders?.allObjects as? [WorkOrder],
+              let latestWorkOrder = workOrders.max(by: { ($0.createdDate ?? Date.distantPast) < ($1.createdDate ?? Date.distantPast) }),
+              let createdDate = latestWorkOrder.createdDate else {
+            return "No applications"
+        }
+        
+        let daysSince = Calendar.current.dateComponents([.day], from: createdDate, to: Date()).day ?? 0
+        
+        switch daysSince {
+        case 0...7:
+            return "\(daysSince) day\(daysSince == 1 ? "" : "s") ago"
+        case 8...28:
+            let weeks = daysSince / 7
+            return "\(weeks) week\(weeks == 1 ? "" : "s") ago"
+        case 29...365:
+            let months = daysSince / 30
+            return "\(months) month\(months == 1 ? "" : "s") ago"
+        default:
+            let years = daysSince / 365
+            return "\(years) year\(years == 1 ? "" : "s") ago"
+        }
+    }
+}
+
+struct ActiveHarvestTile: View {
+    let harvest: Harvest
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                // Header with harvest icon
+                HStack {
+                    Image(systemName: "basket.fill")
+                        .foregroundColor(AppTheme.Colors.success)
+                        .font(.title3)
+                    
+                    Spacer()
+                    
+                    if harvest.isCertifiedOrganic {
+                        Image(systemName: "leaf.fill")
+                            .foregroundColor(AppTheme.Colors.organicPractice)
+                            .font(.caption)
+                    }
+                }
+                
+                // Harvest info
+                Text(harvestDisplayName)
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                
+                // Harvest date if available
+                if let harvestDate = harvest.harvestDate {
+                    Text(harvestDate, style: .date)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                Spacer()
+                
+                // Quantity and compliance
+                HStack {
+                    if harvest.netQuantityValue > 0 {
+                        Text(harvest.netQuantityDisplay)
+                            .font(AppTheme.Typography.dataSmall)
+                            .foregroundColor(AppTheme.Colors.textTertiary)
+                    }
+                    
+                    Spacer()
+                    
+                    if harvest.isCompliant {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(AppTheme.Colors.success)
+                            .font(.caption)
+                    }
+                }
+            }
+            .padding(AppTheme.Spacing.medium)
+            .frame(height: 120)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(AppTheme.Colors.backgroundSecondary)
+            .cornerRadius(AppTheme.CornerRadius.medium)
+            .overlay(
+                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                    .stroke(harvest.isCompliant ? AppTheme.Colors.success.opacity(0.3) : AppTheme.Colors.warning.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+    
+    private var harvestDisplayName: String {
+        if let notes = harvest.notes, !notes.isEmpty {
+            return notes
+        }
+        if let cropPlan = harvest.cropPlan,
+           let grows = cropPlan.grows?.allObjects as? [Grow],
+           let firstGrow = grows.first {
+            return firstGrow.displayName
+        }
+        return "Harvest"
+    }
+}
+
+struct UpcomingHarvestTile: View {
+    let grow: Grow
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                // Header with cultivar emoji
+                HStack {
+                    Text(grow.effectiveCultivar?.emoji ?? "🌱")
+                        .font(.system(size: 28))
+                    
+                    Spacer()
+                    
+                    if grow.isOverdueForHarvest {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(AppTheme.Colors.warning)
+                            .font(.caption)
+                    }
+                }
+                
+                // Grow name
+                Text(grow.displayName)
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textPrimary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                
+                // Estimated harvest date
+                if let estimatedDate = grow.estimatedHarvestDate {
+                    Text("Est. \(estimatedDate, style: .date)")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(grow.isOverdueForHarvest ? AppTheme.Colors.warning : AppTheme.Colors.textSecondary)
+                }
+                
+                Spacer()
+                
+                // Days info
+                HStack {
+                    if let daysSince = grow.daysSincePlanting {
+                        Text("\(daysSince) days planted")
+                            .font(AppTheme.Typography.dataSmall)
+                            .foregroundColor(AppTheme.Colors.textTertiary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .font(.caption)
+                }
+            }
+            .padding(AppTheme.Spacing.medium)
+            .frame(height: 120)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(AppTheme.Colors.backgroundSecondary)
+            .cornerRadius(AppTheme.CornerRadius.medium)
+            .overlay(
+                RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                    .stroke(grow.isOverdueForHarvest ? AppTheme.Colors.warning.opacity(0.3) : AppTheme.Colors.primary.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Detail Views (Placeholders)
+
+struct AmendmentDetailView: View {
+    let amendment: CropAmendment
+    
+    var body: some View {
+        NavigationView {
+            Text("Amendment Detail - Coming Soon")
+                .navigationTitle(amendment.productName ?? "Amendment")
+                .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+
+struct HarvestDetailView: View {
+    let harvest: Harvest
+    
+    var body: some View {
+        NavigationView {
+            Text("Harvest Detail - Coming Soon")
+                .navigationTitle("Harvest Details")
+                .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+
+struct UpcomingHarvestsView: View {
+    let grows: [Grow]
+    
+    var body: some View {
+        NavigationView {
+            List(grows, id: \.objectID) { grow in
+                Text(grow.displayName)
+            }
+            .navigationTitle("Upcoming Harvests")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+
+// MARK: - Preview
 
 struct ActivePracticesView_Previews: PreviewProvider {
     static var previews: some View {
-        let demoSeeds: [ActiveSeed] = [
-            .init(name: "Tomato – Cherry Sweet 100", cultivar: "Solanum lycopersicum", quantity: "120 g", emoji: "🍅"),
-            .init(name: "Carrot – Nantes", cultivar: "Daucus carota", quantity: "2.0 kg", emoji: "🥕"),
-            .init(name: "Basil – Genovese", cultivar: "Ocimum basilicum", quantity: "400 g", emoji: "🌿"),
-        ]
-
-        let demoAmendments: [ActiveAmendment] = [
-            .init(productName: "Down To Earth – Kelp Meal", rateDisplay: "50 lb/acre", isOMRI: true),
-            .init(productName: "Gypsum (Calcium Sulfate)", rateDisplay: "300 lb/acre", isOMRI: false),
-            .init(productName: "Compost (Windrowed)", rateDisplay: "5 ton/acre", isOMRI: true),
-        ]
-
-        let demoHarvests: [ActiveHarvest] = [
-            .init(cropName: "Tomato – Sungold", windowDisplay: "Weeks 30–33", status: "Best", emoji: "🧺"),
-            .init(cropName: "Cucumber – Marketmore", windowDisplay: "Weeks 27–31", status: "Good", emoji: "🥒"),
-            .init(cropName: "Lettuce – Butterhead", windowDisplay: "Weeks 20–22", status: "Fair", emoji: "🥬"),
-        ]
-
         NavigationView {
-            ActivePracticesView(
-                seeds: demoSeeds,
-                amendments: demoAmendments,
-                harvests: demoHarvests
-            )
+            ActivePracticesView()
         }
+        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         .preferredColorScheme(.light)
 
         NavigationView {
-            ActivePracticesView(
-                seeds: demoSeeds,
-                amendments: demoAmendments,
-                harvests: demoHarvests
-            )
+            ActivePracticesView()
         }
+        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         .preferredColorScheme(.dark)
     }
 }
