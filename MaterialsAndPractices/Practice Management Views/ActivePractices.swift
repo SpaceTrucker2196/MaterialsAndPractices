@@ -48,18 +48,18 @@ struct ActivePracticesView: View {
     @State private var showingAmendmentDetail = false
     @State private var showingHarvestDetail = false
     @State private var showingUpcomingHarvests = false
-
+    
     var body: some View {
         VStack(spacing: AppTheme.Spacing.medium) {
             header
             searchField
-
+            
             ScrollView {
                 LazyVStack(spacing: AppTheme.Spacing.large) {
                     // Active Seeds Section
                     activeSeedsSection
                     
-                    // Active Amendments Section  
+                    // Active Amendments Section
                     activeAmendmentsSection
                     
                     // Active Harvests Section
@@ -78,7 +78,7 @@ struct ActivePracticesView: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingSeedDetail) {
             if let seed = selectedSeed {
-                SeedDetailView(seed: seed)
+                //  SeedDetailView(seed: seed, isPresented:false)
             }
         }
         .sheet(isPresented: $showingAmendmentDetail) {
@@ -95,22 +95,22 @@ struct ActivePracticesView: View {
             UpcomingHarvestsView(grows: upcomingGrows)
         }
     }
-
+    
     // MARK: - Computed Properties
     
     /// Seeds that have active grows
     private var activeSeedsWithGrows: [SeedLibrary] {
-        let activeSeedsSet = Set(allGrows.compactMap { $0.primarySeed }.filter { _ in true })
+        let activeSeedsSet = Set(allGrows.compactMap { $0.seed }.filter { _ in true })
         return Array(activeSeedsSet).filter { seed in
             let hasActiveGrows = allGrows.contains { grow in
-                grow.isActive && grow.primarySeed == seed
+                grow.isActive && grow.seed == seed
             }
             
             if searchText.isEmpty {
                 return hasActiveGrows
             } else {
                 let matchesSearch = (seed.seedName?.localizedCaseInsensitiveContains(searchText) ?? false) ||
-                                  (seed.cultivar?.name?.localizedCaseInsensitiveContains(searchText) ?? false)
+                (seed.cultivar?.name?.localizedCaseInsensitiveContains(searchText) ?? false)
                 return hasActiveGrows && matchesSearch
             }
         }.sorted { ($0.seedName ?? "") < ($1.seedName ?? "") }
@@ -141,56 +141,33 @@ struct ActivePracticesView: View {
     private var activeHarvestsByGrow: [Harvest] {
         let activeHarvests = allHarvests.filter { harvest in
             // Only include harvests from active grows
-            guard let cropPlan = harvest.cropPlan,
-                  let grows = cropPlan.grows?.allObjects as? [Grow] else { return false }
-            
-            let hasActiveGrow = grows.contains { $0.isActive }
+            let hasActiveGrow = harvest.grow?.isActive == true
             
             if searchText.isEmpty {
                 return hasActiveGrow
             } else {
-                let matchesSearch = (harvest.notes?.localizedCaseInsensitiveContains(searchText) ?? false) ||
-                                  grows.contains { grow in
-                                      grow.title?.localizedCaseInsensitiveContains(searchText) ?? false
-                                  }
+                let matchesSearch =
+                (harvest.notes?.localizedCaseInsensitiveContains(searchText) ?? false) ||
+                (harvest.grow?.title?.localizedCaseInsensitiveContains(searchText) ?? false)
+                
                 return hasActiveGrow && matchesSearch
             }
         }
-        
-        // Dedupe by grow
-        var seenGrows = Set<NSManagedObjectID>()
-        var deduped: [Harvest] = []
-        
-        for harvest in activeHarvests {
-            if let cropPlan = harvest.cropPlan,
-               let grows = cropPlan.grows?.allObjects as? [Grow] {
-                let activeGrows = grows.filter { $0.isActive }
-                for grow in activeGrows {
-                    if !seenGrows.contains(grow.objectID) {
-                        seenGrows.insert(grow.objectID)
-                        deduped.append(harvest)
-                        break
-                    }
-                }
-            }
-        }
-        
-        return deduped
+        return activeHarvests
     }
     
     /// Grows for upcoming harvests sorted by harvest date
     private var upcomingGrows: [Grow] {
-        return allGrows.filter { grow in
-            grow.isActive && grow.estimatedHarvestDate != nil
+        return allGrows.filter { grow in grow.harvestDate != nil
         }.sorted { grow1, grow2 in
-            guard let date1 = grow1.estimatedHarvestDate,
-                  let date2 = grow2.estimatedHarvestDate else { return false }
+            guard let date1 = grow1.harvestDate,
+                  let date2 = grow2.harvestDate  else { return false }
             return date1 < date2
         }
     }
-
+    
     // MARK: - UI Components
-
+    
     private var header: some View {
         HStack {
             Text("Overview")
@@ -199,7 +176,7 @@ struct ActivePracticesView: View {
             Spacer()
         }
     }
-
+    
     private var searchField: some View {
         HStack(spacing: AppTheme.Spacing.small) {
             Image(systemName: "magnifyingglass")
@@ -286,7 +263,7 @@ struct ActivePracticesView: View {
                     ForEach(activeHarvestsByGrow.prefix(6), id: \.objectID) { harvest in
                         ActiveHarvestTile(harvest: harvest) {
                             selectedHarvest = harvest
-                            showingHarvestDetail = true
+                            //  showingHarvestDetail = true
                         }
                     }
                 }
@@ -297,7 +274,7 @@ struct ActivePracticesView: View {
     private var upcomingHarvestsSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             sectionHeader(title: "Upcoming Harvests", actionTitle: "See all") {
-                showingUpcomingHarvests = true
+                //    showingUpcomingHarvests = true
             }
             
             if upcomingGrows.isEmpty {
@@ -310,7 +287,7 @@ struct ActivePracticesView: View {
                 LazyVGrid(columns: tileColumns, spacing: AppTheme.Spacing.medium) {
                     ForEach(upcomingGrows.prefix(4), id: \.objectID) { grow in
                         UpcomingHarvestTile(grow: grow) {
-                            selectedGrow = grow
+                            //  selectedGrow = grow
                             // Navigate to harvest creation flow
                         }
                     }
@@ -318,12 +295,12 @@ struct ActivePracticesView: View {
             }
         }
     }
-
+    
     // MARK: - Helper Methods
     
     private func activeGrowsForSeed(_ seed: SeedLibrary) -> [Grow] {
         return allGrows.filter { grow in
-            grow.isActive && grow.primarySeed == seed
+            (grow.isActive != nil) && grow.seed == seed
         }
     }
     
@@ -333,7 +310,7 @@ struct ActivePracticesView: View {
             GridItem(.flexible())
         ]
     }
-
+    
     private func sectionHeader(title: String, actionTitle: String, action: @escaping () -> Void) -> some View {
         HStack(alignment: .firstTextBaseline) {
             Text(title)
@@ -347,7 +324,7 @@ struct ActivePracticesView: View {
         }
         .padding(.top, AppTheme.Spacing.small)
     }
-
+    
     private func emptyStateCard(title: String, subtitle: String, icon: String) -> some View {
         VStack(spacing: AppTheme.Spacing.medium) {
             Image(systemName: icon)
@@ -626,11 +603,11 @@ struct ActiveHarvestTile: View {
         if let notes = harvest.notes, !notes.isEmpty {
             return notes
         }
-        if let cropPlan = harvest.cropPlan,
-           let grows = cropPlan.grows?.allObjects as? [Grow],
-           let firstGrow = grows.first {
-            return firstGrow.displayName
-        }
+//        if let cropPlan = harvest.cropPlan,
+//           let grows = grows?.allObjects as? [Grow],
+//           let firstGrow = grows.first {
+//            return firstGrow.displayName
+//        }
         return "Harvest"
     }
 }
@@ -644,30 +621,31 @@ struct UpcomingHarvestTile: View {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
                 // Header with cultivar emoji
                 HStack {
-                    Text(grow.effectiveCultivar?.emoji ?? "🌱")
+                    Text(grow.cultivar?.emoji ?? "🌱")
                         .font(.system(size: 28))
                     
                     Spacer()
-                    
-                    if grow.isOverdueForHarvest {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(AppTheme.Colors.warning)
-                            .font(.caption)
+                    if let harvestDate = grow.harvestDate {
+                        if Calendar.current.isDateInToday(harvestDate) || harvestDate < Date() {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(AppTheme.Colors.warning)
+                                .font(.caption)
+                        }
                     }
                 }
                 
                 // Grow name
-                Text(grow.displayName)
+                Text(grow.title ?? "Taco Harvest")
                     .font(AppTheme.Typography.bodyMedium)
                     .foregroundColor(AppTheme.Colors.textPrimary)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 
                 // Estimated harvest date
-                if let estimatedDate = grow.estimatedHarvestDate {
+                if let estimatedDate = grow.harvestDate {
                     Text("Est. \(estimatedDate, style: .date)")
                         .font(AppTheme.Typography.bodySmall)
-                        .foregroundColor(grow.isOverdueForHarvest ? AppTheme.Colors.warning : AppTheme.Colors.textSecondary)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
                 }
                 
                 Spacer()
@@ -694,7 +672,7 @@ struct UpcomingHarvestTile: View {
             .cornerRadius(AppTheme.CornerRadius.medium)
             .overlay(
                 RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
-                    .stroke(grow.isOverdueForHarvest ? AppTheme.Colors.warning.opacity(0.3) : AppTheme.Colors.primary.opacity(0.3), lineWidth: 1)
+                    .stroke(AppTheme.Colors.primary.opacity(0.3), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -731,13 +709,13 @@ struct UpcomingHarvestsView: View {
     let grows: [Grow]
     
     var body: some View {
-        NavigationView {
-            List(grows, id: \.objectID) { grow in
-                Text(grow.displayName)
-            }
-            .navigationTitle("Upcoming Harvests")
-            .navigationBarTitleDisplayMode(.inline)
-        }
+//        NavigationView {
+//            List(grows, id: \.objectID) { grow in
+//                Text(grow.title)
+//            }
+//            .navigationTitle("Upcoming Harvests")
+//            .navigationBarTitleDisplayMode(.inline)
+//        }
     }
 }
 

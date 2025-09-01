@@ -102,7 +102,7 @@ struct ActiveGrowDetailView: View {
             GrowInspectionSchedulingView(grow: growViewModel.grow, isPresented: $showingInspectionScheduling)
         }
         .sheet(isPresented: $showingHarvestCreation) {
-            HarvestCreationView(grow: growViewModel.grow, isPresented: $showingHarvestCreation)
+            HarvestCreationView(isPresented: $showingHarvestCreation, grow: growViewModel.grow)
         }
     }
     

@@ -1,12 +1,3 @@
-//
-//  HarvestCreationView.swift
-//  MaterialsAndPractices
-//
-//  Provides comprehensive harvest creation and work order generation functionality
-//  including data entry, team assignment, and compliance tracking.
-//
-//  Created by AI Assistant on current date.
-//
 
 import SwiftUI
 import CoreData
@@ -49,7 +40,7 @@ struct HarvestCreationView: View {
     @State private var workOrderNotes = ""
     @State private var estimatedHours: Double = 4.0
     @State private var selectedTeam: WorkTeam?
-    @State private var workOrderPriority: WorkOrder.Priority = .high
+    @State private var priorty  = "" 
     
     // UI State
     @State private var isCreatingHarvest = false
@@ -117,15 +108,15 @@ struct HarvestCreationView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             HStack {
-                Text(grow.effectiveCultivar?.emoji ?? "🌱")
+                Text(grow.cultivar?.emoji ?? "🌱")
                     .font(.system(size: 32))
                 
                 VStack(alignment: .leading) {
-                    Text(grow.displayName)
+                    Text(grow.title ?? "Taco Field")
                         .font(AppTheme.Typography.headlineMedium)
                         .foregroundColor(AppTheme.Colors.textPrimary)
                     
-                    if let cultivarName = grow.effectiveCultivar?.name {
+                    if let cultivarName = grow.seed!.cultivar!.name {
                         Text(cultivarName)
                             .font(AppTheme.Typography.bodyMedium)
                             .foregroundColor(AppTheme.Colors.textSecondary)
@@ -329,11 +320,11 @@ struct HarvestCreationView: View {
                         VStack(alignment: .leading) {
                             Text("Priority")
                                 .font(AppTheme.Typography.labelMedium)
-                            Picker("Priority", selection: $workOrderPriority) {
-                                ForEach(WorkOrder.Priority.allCases, id: \.self) { priority in
-                                    Text(priority.rawValue).tag(priority)
-                                }
-                            }
+//                            Picker("Priority", selection: $workOrderPriority) {
+//                                ForEach(WorkOrder.Priority.allCases, id: \.self) { priority in
+//                                    Text(priority.rawValue).tag(priority)
+//                                }
+//                            }
                             .pickerStyle(.menu)
                         }
                     }
@@ -384,13 +375,13 @@ struct HarvestCreationView: View {
     
     private func setupDefaultValues() {
         // Set default harvest title
-        workOrderTitle = "Harvest \(grow.displayName)"
+        workOrderTitle = "Harvest \(grow.title)"
         
         // Set default notes
-        workOrderNotes = "Harvest operations for \(grow.displayName). Follow all safety protocols and quality standards."
+        workOrderNotes = "Harvest operations for \(grow.title). Follow all safety protocols and quality standards."
         
         // Set organic status from grow if available
-        if let seed = grow.primarySeed {
+        if let seed = grow.seed {
             isCertifiedOrganic = seed.isCertifiedOrganic
         }
         
@@ -410,7 +401,7 @@ struct HarvestCreationView: View {
         harvest.netQuantityValue = netQuantity
         harvest.quantityUnit = quantityUnit
         harvest.containerCount = containerCount
-        harvest.harvestDestination = destination
+        harvest.harvestDestinationRaw =  1
         harvest.notes = notes
         harvest.buyer = buyer
         harvest.lotCdoe = lotCode.isEmpty ? generateLotCode() : lotCode
@@ -426,13 +417,13 @@ struct HarvestCreationView: View {
         
         // Create work order if requested
         if createWorkOrder {
-            let workOrder = WorkOrder.createForHarvest(grow, in: viewContext)
-            workOrder.title = workOrderTitle
-            workOrder.notes = workOrderNotes
-            workOrder.totalEstimatedHours = estimatedHours
-            workOrder.priorityLevel = workOrderPriority
-            workOrder.assignedTeam = selectedTeam
-            workOrder.dueDate = harvestDate
+//            let workOrder = WorkOrder.createForHarvest(grow, in: viewContext)
+//            workOrder.title = workOrderTitle
+//            workOrder.notes = workOrderNotes
+//            workOrder.totalEstimatedHours = estimatedHours
+//            workOrder.priorityLevel = workOrderPriority
+//            workOrder.assignedTeam = selectedTeam
+//            workOrder.dueDate = harvestDate
             
             // Link harvest to work order (if relationship exists)
             // Note: You may need to add this relationship to the data model
@@ -458,24 +449,14 @@ struct HarvestCreationView: View {
         
         // Generate format: YYYY-FARM-CROP-####
         let farmCode = "FARM" // TODO: Get from farm configuration
-        let cropCode = String(grow.effectiveCultivar?.name?.prefix(3).uppercased() ?? "UNK")
+        let cropCode = String(grow.cultivar?.name?.prefix(3).uppercased() ?? "UNK")
         let sequence = String(format: "%04d", Int.random(in: 1...9999))
         
         return "\(year)-\(farmCode)-\(cropCode)-\(sequence)"
     }
 }
 
-// MARK: - Supporting Views
 
-struct SectionHeader: View {
-    let title: String
-    
-    var body: some View {
-        Text(title)
-            .font(AppTheme.Typography.labelLarge)
-            .foregroundColor(AppTheme.Colors.textSecondary)
-    }
-}
 
 struct TeamSelectionView: View {
     @Binding var selectedTeam: WorkTeam?
