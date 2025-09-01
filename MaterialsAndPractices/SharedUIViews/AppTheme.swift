@@ -175,6 +175,23 @@ enum AppTheme {
         
         /// Off season - Brown color for times when harvest is not recommended
         static let offSeason = Color(red: 0.6, green: 0.4, blue: 0.2)
+        
+        // MARK: - Amendment Age Color Coding
+        
+        /// Days since application (0-7 days) - Bright green for recent applications
+        static let amendmentDays = Color(red: 0.2, green: 0.9, blue: 0.3)
+        
+        /// Weeks since application (8-30 days) - Medium green
+        static let amendmentWeeks = Color(red: 0.4, green: 0.8, blue: 0.4)
+        
+        /// Months since application (31-365 days) - Yellow-green
+        static let amendmentMonths = Color(red: 0.8, green: 0.8, blue: 0.2)
+        
+        /// Years since application (1-3 years) - Orange
+        static let amendmentYears = Color(red: 0.9, green: 0.6, blue: 0.2)
+        
+        /// Over 3 years since application - Red for very old applications
+        static let amendmentOld = Color(red: 0.9, green: 0.3, blue: 0.2)
     }
     
     // MARK: - Typography System
@@ -397,6 +414,24 @@ enum AppTheme {
             let cleaned = days.replacingOccurrences(of: "[^0-9-]", with: "", options: .regularExpression)
             let parts = cleaned.components(separatedBy: "-")
             return Int(parts.first ?? "0") ?? 0
+        }
+        
+        /// Returns color for amendment age based on days since application
+        /// - Parameter daysSinceApplication: Number of days since the amendment was applied
+        /// - Returns: Color representing the age category
+        static func colorForAmendmentAge(_ daysSinceApplication: Int) -> Color {
+            switch daysSinceApplication {
+            case 0...7:
+                return Colors.amendmentDays
+            case 8...30:
+                return Colors.amendmentWeeks
+            case 31...365:
+                return Colors.amendmentMonths
+            case 366...(3 * 365):
+                return Colors.amendmentYears
+            default:
+                return Colors.amendmentOld
+            }
         }
     }
 }
