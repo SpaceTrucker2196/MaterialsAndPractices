@@ -80,7 +80,7 @@ struct CultivarDetailView: View {
         .navigationTitle(cultivar.displayName)
         .navigationBarTitleDisplayMode(.large)
         .sheet(isPresented: $showingGrowCreation) {
-            CreateGrowFromCultivarView(cultivar: cultivar, isPresented: $showingGrowCreation)
+            CreateGrowFromSeedLibrary(seed: nil, cultivar: cultivar, isPresented: $showingSupplierSelection, context: viewContext)
         }
         .sheet(isPresented: $showingSupplierSelection) {
             SupplierSelectionView(

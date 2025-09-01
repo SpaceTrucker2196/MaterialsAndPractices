@@ -290,7 +290,7 @@ struct CultivarGrowView: View {
                 GridItem(.flexible())
             ], spacing: AppTheme.Spacing.small) {
                 ForEach(activeGrows, id: \.self) { grow in
-                    NavigationLink(destination: GrowDetailView(growViewModel: GrowDetailViewModel(grow: grow))) {
+                    NavigationLink(destination: ActiveGrowDetailView(growViewModel: ActiveGrowViewModel(grow: grow))) {
                         GrowTile(grow: grow, isActive: true)
                     }
                     .buttonStyle(PlainButtonStyle())
@@ -322,7 +322,7 @@ struct CultivarGrowView: View {
                 GridItem(.flexible())
             ], spacing: AppTheme.Spacing.small) {
                 ForEach(completedGrows, id: \.self) { grow in
-                    NavigationLink(destination: GrowDetailView(growViewModel: GrowDetailViewModel(grow: grow))) {
+                    NavigationLink(destination: ActiveGrowDetailView(growViewModel: ActiveGrowViewModel(grow: grow))) {
                         GrowTile(grow: grow, isActive: false)
                     }
                     .buttonStyle(PlainButtonStyle())

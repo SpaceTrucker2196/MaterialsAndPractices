@@ -458,7 +458,7 @@ struct GrowSummaryRow: View {
     let grow: Grow
     
     var body: some View {
-        NavigationLink(destination: GrowDetailView(growViewModel: GrowDetailViewModel(grow: grow))) {
+        NavigationLink(destination: ActiveGrowDetailView(growViewModel: ActiveGrowViewModel(grow: grow))) {
             HStack {
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
                     Text(grow.title ?? "Unnamed Grow")

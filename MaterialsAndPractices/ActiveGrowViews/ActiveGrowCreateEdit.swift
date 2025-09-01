@@ -12,14 +12,14 @@ import SwiftUI
 import CoreData
 
 /// Enhanced form for creating and editing grows with field integration
-struct EnhancedEditGrowView: View {
+struct ActiveGrowCreateEdit: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) var presentationMode
     @Binding var isPresented: Bool
     
     // Grow data
     @State private var name: String = ""
-    @State private var selectedCultivar: Cultivar?
+    @State private var selectedSeed: SeedLibrary?
     @State private var selectedField: Field?
     @State private var plantedDate: Date = Date()
     @State private var expectedHarvestDate: Date = Date()
@@ -32,9 +32,9 @@ struct EnhancedEditGrowView: View {
     
     // Fetch requests
     @FetchRequest(
-        entity: Cultivar.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \Cultivar.name, ascending: true)]
-    ) var cultivars: FetchedResults<Cultivar>
+        entity: SeedLibrary.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \SeedLibrary.seedName, ascending: true)]
+    ) var seeds: FetchedResults<SeedLibrary>
     
     @FetchRequest(
         entity: Field.entity(),
@@ -51,7 +51,7 @@ struct EnhancedEditGrowView: View {
     
     var isFormValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        selectedCultivar != nil &&
+        selectedSeed != nil &&
         selectedField != nil
     }
     
@@ -100,19 +100,19 @@ struct EnhancedEditGrowView: View {
         Section("Grow Details") {
             TextField("Grow Name", text: $name)
             
-            Picker("Cultivar", selection: $selectedCultivar) {
-                Text("Select Cultivar").tag(nil as Cultivar?)
-                ForEach(cultivars, id: \.self) { cultivar in
+            Picker("Seed Library", selection: $selectedSeed) {
+                Text("Select Cultivar").tag(nil as SeedLibrary?)
+                ForEach(seeds, id: \.self) { seed in
                     VStack(alignment: .leading) {
-                        Text(cultivar.name ?? "Unknown")
+                        Text(seed.seedName ?? "Unknown")
                             .font(AppTheme.Typography.bodyMedium)
-                        if let family = cultivar.family, !family.isEmpty {
+                        if let family = seed.cultivar!.family, !family.isEmpty {
                             Text(family)
                                 .font(AppTheme.Typography.bodySmall)
                                 .foregroundColor(AppTheme.Colors.textSecondary)
                         }
                     }
-                    .tag(cultivar as Cultivar?)
+                    .tag(seed as SeedLibrary?)
                 }
             }
             .pickerStyle(MenuPickerStyle())
@@ -205,7 +205,7 @@ struct EnhancedEditGrowView: View {
     private func saveGrow() {
         let newGrow = Grow(context: viewContext)
         newGrow.title = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        newGrow.cultivar = selectedCultivar
+        newGrow.seed = selectedSeed
         newGrow.field = selectedField
         newGrow.plantedDate = plantedDate
         newGrow.harvestDate = expectedHarvestDate
@@ -372,7 +372,7 @@ struct CreateFieldForGrowView: View {
 
 struct EnhancedEditGrowView_Previews: PreviewProvider {
     static var previews: some View {
-        EnhancedEditGrowView(isPresented: .constant(true))
+        ActiveGrowCreateEdit(isPresented: .constant(true))
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

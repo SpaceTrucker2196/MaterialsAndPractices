@@ -105,7 +105,7 @@
 		1F1BD3AE2E63BF4C002E2E85 /* Worker Managment Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Worker Managment Views"; sourceTree = "<group>"; };
 		1F60A83B2E61E78A0006ABA1 /* Record Keeping Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Record Keeping Views"; sourceTree = "<group>"; };
 		1F60A83C2E61E7D10006ABA1 /* ActiveGrowViews */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ActiveGrowViews; sourceTree = "<group>"; };
-		1F60A83D2E61E84D0006ABA1 /* Materials Managment  Views */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (1F60A83E2E61E8850006ABA1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Materials Managment  Views"; sourceTree = "<group>"; };
+		1F60A83D2E61E84D0006ABA1 /* Materials Managment Views */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (1F60A83E2E61E8850006ABA1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Materials Managment Views"; sourceTree = "<group>"; };
 		1F60A83F2E61E8B10006ABA1 /* Practice Management Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Practice Management Views"; sourceTree = "<group>"; };
 		1FBCAA562E5E596200E3C619 /* InspectionSystem */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = InspectionSystem; sourceTree = "<group>"; };
 		1FC121242E5F86B2008B4851 /* PhotoLibrary */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = PhotoLibrary; sourceTree = "<group>"; };
@@ -178,7 +178,7 @@
 				1F5136E52E622C930017110E /* MaterialsAndPractices.xcdatamodeld */,
 				1F2E92412E5A5641003962BA /* Configuration */,
 				1F60A83F2E61E8B10006ABA1 /* Practice Management Views */,
-				1F60A83D2E61E84D0006ABA1 /* Materials Managment  Views */,
+				1F60A83D2E61E84D0006ABA1 /* Materials Managment Views */,
 				1F60A83C2E61E7D10006ABA1 /* ActiveGrowViews */,
 				1F60A83B2E61E78A0006ABA1 /* Record Keeping Views */,
 				1FC121242E5F86B2008B4851 /* PhotoLibrary */,
@@ -264,7 +264,7 @@
 				1F1BD3AE2E63BF4C002E2E85 /* Worker Managment Views */,
 				1F60A83B2E61E78A0006ABA1 /* Record Keeping Views */,
 				1F60A83C2E61E7D10006ABA1 /* ActiveGrowViews */,
-				1F60A83D2E61E84D0006ABA1 /* Materials Managment  Views */,
+				1F60A83D2E61E84D0006ABA1 /* Materials Managment Views */,
 				1F60A83F2E61E8B10006ABA1 /* Practice Management Views */,
 				1FBCAA562E5E596200E3C619 /* InspectionSystem */,
 				1FC121242E5F86B2008B4851 /* PhotoLibrary */,

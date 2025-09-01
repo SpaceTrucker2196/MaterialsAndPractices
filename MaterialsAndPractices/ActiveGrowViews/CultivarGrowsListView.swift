@@ -86,7 +86,7 @@ struct CultivarGrowsListView: View {
             }
         }
         .sheet(isPresented: $showingCreateGrow) {
-            CreateGrowFromCultivarView(cultivar: cultivar, isPresented: $showingCreateGrow)
+            CreateGrowFromSeedLibrary(seed: nil, cultivar: cultivar, isPresented: $showingCreateGrow, context: viewContext)
         }
     }
     

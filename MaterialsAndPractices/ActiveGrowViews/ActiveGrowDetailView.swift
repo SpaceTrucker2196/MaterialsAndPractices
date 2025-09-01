@@ -14,11 +14,12 @@ import CoreData
 
 /// View model for grow detail presentation and data management
 /// Encapsulates grow data and provides computed properties for UI consumption
-struct GrowDetailViewModel  {
+struct ActiveGrowViewModel  {
     // MARK: - Properties
     
     var grow: Grow
     var cultivar = "New Cultivar"
+    var seedName = "New Seed"
     var cultivarFamily = ""
     var hardyZone = ""
     var season = ""
@@ -37,11 +38,12 @@ struct GrowDetailViewModel  {
     /// - Parameter grow: The Core Data grow entity
     init(grow: Grow) {
         self.grow = grow
-        cultivar = grow.cultivar?.name ?? "No Cultivar Selected"
-        cultivarFamily = grow.cultivar?.family ?? ""
-        hardyZone = grow.cultivar?.hardyZone ?? ""
-        season = grow.cultivar?.season ?? ""
-        plantingWeek = grow.cultivar?.plantingWeek ?? ""
+        cultivar = grow.seed!.cultivar?.name ?? "No Cultivar Selected"
+        cultivarFamily = grow.seed!.cultivar?.family ?? ""
+        seedName = grow.seed!.seedName!
+        hardyZone = grow.seed!.cultivar?.hardyZone ?? ""
+        season = grow.seed?.cultivar?.season ?? ""
+        plantingWeek = grow.seed?.cultivar?.plantingWeek ?? ""
         name = grow.title ?? ""
         plantedDate = grow.plantedDate ?? Date()
         harvestDate = grow.harvestDate ?? Date()
@@ -60,11 +62,11 @@ private let itemFormatter: DateFormatter = {
 
 /// Comprehensive grow detail view providing complete grow information and management
 /// Displays cultivar details, dates, location, work practices, amendments, and safety compliance
-struct GrowDetailView: View {
+struct ActiveGrowDetailView: View {
     // MARK: - Properties
     
     @Environment(\.managedObjectContext) private var viewContext
-    @State var growViewModel: GrowDetailViewModel
+    @State var growViewModel: ActiveGrowViewModel
     @State private var showingHarvestChecklist = false
     @State private var showingPerformWorkView = false
     @State private var showingInspectionScheduling = false
@@ -189,7 +191,7 @@ struct GrowDetailView: View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             SectionHeader(title: "Cultivar Growing Suggestions")
             
-            if let cultivar = growViewModel.grow.cultivar {
+            if let cultivar = growViewModel.grow.seed?.cultivar {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
@@ -491,28 +493,27 @@ struct GrowDetailView: View {
     private var harvestCalendarSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
 
-            if let cultivar = growViewModel.grow.cultivar,
-               let plantedDate = growViewModel.grow.plantedDate {
+            if let seed = growViewModel.grow.seed {
                 let harvestData = HarvestCalculator.calculateHarvestCalendarData(
-                    cultivar: cultivar,
-                    plantDate: plantedDate,
-                    usdaZone: cultivar.hardyZone
+                    cultivar: seed.cultivar!,
+                    plantDate:growViewModel.plantedDate,
+                    usdaZone:growViewModel.hardyZone
                 )
                 
-                HarvestCalendarHeatMap(
+                ActiveGrowHeatMap(
                     harvestData: harvestData,
                     showLabels: true,
                     showLegend: true
                 )
             } else {
                 Text("Harvest calendar requires cultivar and planted date information")
-                    .font(AppTheme.Typography.bodyMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
+                    .font(AppTheme.Typography.dataMedium)
+                    .foregroundColor(AppTheme.Colors.error)
                     .padding()
                     .background(AppTheme.Colors.warning.opacity(0.1))
                     .cornerRadius(AppTheme.CornerRadius.medium)
             }
-        }
+        }.frame(height:400)
     }
     
     /// Section displaying location information
@@ -657,15 +658,16 @@ struct GrowDetailView: View {
     
     /// Current harvest estimate for the grow
     private var currentHarvestEstimate: HarvestEstimate? {
-        guard let cultivar = growViewModel.grow.cultivar,
+        guard let seed = growViewModel.grow.seed,
               let plantedDate = growViewModel.grow.plantedDate else {
             return nil
         }
         
         return HarvestCalculator.calculateHarvestEstimate(
-            cultivar: cultivar,
+            seed: seed,
             plantDate: plantedDate,
-            usdaZone: cultivar.hardyZone
+            usdaZone: seed.cultivar?.optimalZones
+            
         )
     }
     
@@ -899,7 +901,7 @@ private struct ExpandableDetailCard: View {
 struct GrowDetailView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            GrowDetailView(growViewModel: GrowDetailViewModel(grow: Grow(context:PersistenceController.preview.container.viewContext)))
+            ActiveGrowDetailView(growViewModel: ActiveGrowViewModel(grow: Grow(context:PersistenceController.preview.container.viewContext)))
         }
     }
 }
@@ -1067,7 +1069,7 @@ struct GrowInspectionSchedulingView: View {
                     HStack {
                         Text("Cultivar:")
                         Spacer()
-                        Text(grow.cultivar?.name ?? "Unknown")
+                        Text(grow.seed!.cultivar?.name ?? "Unknown")
                             .foregroundColor(.secondary)
                     }
                     
@@ -1130,7 +1132,7 @@ struct GrowInspectionSchedulingView: View {
     /// Updates suggested inspection name based on category and grow context
     private func updateSuggestedName(for category: InspectionCategory) {
         if inspectionName.isEmpty {
-            let cultivarName = grow.cultivar?.name ?? "Crop"
+            let cultivarName = grow.seed!.cultivar?.name ?? "Crop"
             switch category {
             case .grow:
                 inspectionName = "Pre-Harvest Inspection - \(cultivarName)"
