@@ -52,7 +52,7 @@ struct SeedLibraryManagementView: View {
             if !searchText.isEmpty {
                 let searchLower = searchText.lowercased()
                 let matchesSearch = (seed.seedName?.lowercased().contains(searchLower) ?? false) ||
-                                  (seed.cultivar?.name.lowercased().contains(searchLower) ?? false) ||
+                (seed.cultivar?.name!.lowercased().contains(searchLower) ?? false) ||
                                   (seed.cultivar?.family?.lowercased().contains(searchLower) ?? false) ||
                                   (seed.supplierSource?.name?.lowercased().contains(searchLower) ?? false)
                 if !matchesSearch { return false }
@@ -244,16 +244,16 @@ struct SeedLibraryRow: View {
                 // Seed information
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
                     HStack {
-                        Text(seed.displayName)
+                        Text(seed.seedName ?? "Taco Seeds")
                             .font(AppTheme.Typography.bodyMedium)
                             .fontWeight(.medium)
                             .foregroundColor(AppTheme.Colors.textPrimary)
                         
                         Spacer()
                         
-                        Text(seed.quantityDisplay)
-                            .font(AppTheme.Typography.labelSmall)
-                            .foregroundColor(AppTheme.Colors.textSecondary)
+//                        Text(seed.quantity)
+//                            .font(AppTheme.Typography.labelSmall)
+//                            .foregroundColor(AppTheme.Colors.textSecondary)
                     }
                     
                     if let cultivarFamily = seed.cultivar?.family {

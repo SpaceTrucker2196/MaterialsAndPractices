@@ -313,7 +313,7 @@
         <relationship name="amendments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Amendment" inverseName="grow" inverseEntity="Amendment"/>
         <relationship name="cultivar" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Cultivar" inverseName="grows" inverseEntity="Cultivar"/>
         <relationship name="field" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Field" inverseName="grows" inverseEntity="Field"/>
-        <relationship name="seed" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SeedLibrary" inverseName="grows" inverseEntity="SeedLibrary"/>
+        <relationship name="seed" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SeedLibrary" inverseName="grows" inverseEntity="SeedLibrary"/>
         <relationship name="work" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Work" inverseName="grow" inverseEntity="Work"/>
         <relationship name="workOrders" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WorkOrder" inverseName="grow" inverseEntity="WorkOrder"/>
     </entity>

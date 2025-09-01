@@ -157,7 +157,7 @@ struct CreateGrowFromSeedView: View {
         Section("Seed Information") {
             HStack {
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                    Text(seed.displayName)
+                    Text(seed.cultivar?.displayName ?? "Taco Beans")
                         .font(AppTheme.Typography.bodyMedium)
                         .fontWeight(.semibold)
                         .foregroundColor(AppTheme.Colors.textPrimary)
@@ -178,12 +178,12 @@ struct CreateGrowFromSeedView: View {
                     }
                     
                     HStack {
-                        Text("Available: \(seed.quantityDisplay)")
+                        Text("Available: \(seed.quantity)")
                             .font(AppTheme.Typography.labelSmall)
                             .foregroundColor(AppTheme.Colors.textSecondary)
                         
                         if let supplier = seed.supplierSource {
-                            Text("• \(supplier.name ?? "Unknown Supplier")")
+                            Text("• \(supplier.brand ?? "Unknown Supplier")")
                                 .font(AppTheme.Typography.labelSmall)
                                 .foregroundColor(AppTheme.Colors.textTertiary)
                         }
@@ -326,14 +326,14 @@ struct CreateGrowFromSeedView: View {
             }
             
             // Associate with seed and cultivar
-            grow.addToSeed(seed)
+           // grow.addToSeed(seed)
             grow.cultivar = seed.cultivar
             
             // Update seed quantity
             if let usedQuantity = Double(seedQuantityUsed) {
                 if seed.quantity >= usedQuantity {
                     seed.quantity -= usedQuantity
-                    seed.updateModificationDate()
+                    seed.lastModifiedDate = Date()
                 } else {
                     errorMessage = "Not enough seeds available. Available: \(seed.quantity), Requested: \(usedQuantity)"
                     showingErrorAlert = true

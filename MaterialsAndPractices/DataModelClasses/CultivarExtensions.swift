@@ -62,7 +62,7 @@ extension Cultivar {
         return parseGrowingDays().late
     }
 }
-
+ 
 // MARK: - Harvest Estimation
 
 /// Enumeration for harvest timing estimation
@@ -148,7 +148,44 @@ enum HarvestTiming: String, CaseIterable {
 
 /// Reusable harvest calculator class for generating harvest estimates and calendar data
 class HarvestCalculator {
-    
+    static func calculateHarvestCalendarData(
+        cultivar: Cultivar,
+        plantDate: Date,
+        usdaZone: String? = nil
+    ) -> HarvestCalendarData {
+        let growingDays = cultivar.parseGrowingDays()
+        let calendar = Calendar.current
+        
+        let earlyHarvestDate = calendar.date(byAdding: .day, value: growingDays.early, to: plantDate) ?? plantDate
+        let lateHarvestDate = calendar.date(byAdding: .day, value: growingDays.late, to: plantDate) ?? plantDate
+        
+        let earlyWeek = calendar.component(.weekOfYear, from: earlyHarvestDate)
+        let lateWeek = calendar.component(.weekOfYear, from: lateHarvestDate)
+        
+        let bestWeeks: [Int]
+        if lateWeek >= earlyWeek {
+            bestWeeks = Array(earlyWeek...min(lateWeek, earlyWeek + 2))
+        } else {
+            bestWeeks = Array(earlyWeek...52) + Array(1...min(lateWeek, 2))
+        }
+        
+        let goodStartWeek = max(1, earlyWeek - 1)
+        let goodEndWeek = min(52, lateWeek + 1)
+        let goodWeeks: [Int]
+        if lateWeek >= earlyWeek {
+            goodWeeks = Array(goodStartWeek...goodEndWeek).filter { !bestWeeks.contains($0) }
+        } else {
+            goodWeeks = (Array(goodStartWeek...52) + Array(1...goodEndWeek)).filter { !bestWeeks.contains($0) }
+        }
+        
+        return HarvestCalendarData(
+            bestHarvestWeeks: bestWeeks,
+            goodHarvestWeeks: goodWeeks,
+            cultivar: cultivar,
+            plantedDate: plantDate,
+            usdaZone: usdaZone
+        )
+    }
     /// Calculates harvest estimates for a given cultivar and plant date
     /// - Parameters:
     ///   - cultivar: The cultivar being grown
@@ -156,11 +193,11 @@ class HarvestCalculator {
     ///   - usdaZone: The USDA hardiness zone (optional)
     /// - Returns: Harvest estimation data
     static func calculateHarvestEstimate(
-        cultivar: Cultivar, 
-        plantDate: Date, 
+        seed: SeedLibrary,
+        plantDate: Date,
         usdaZone: String? = nil
     ) -> HarvestEstimate {
-        let growingDays = cultivar.parseGrowingDays()
+        let growingDays = seed.cultivar!.parseGrowingDays()
         let calendar = Calendar.current
         
         // Calculate early and late harvest dates

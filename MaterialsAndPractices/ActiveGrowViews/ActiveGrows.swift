@@ -4,7 +4,7 @@ import CoreData
 
 /// Main view for displaying and managing current active grows
 /// Provides comprehensive tile-based overview categorized by farm
-struct CurrentGrowsView: View {
+struct ActiveGrows: View {
     // MARK: - Properties
 
     @State private var showCreateGrow = false
@@ -43,7 +43,7 @@ struct CurrentGrowsView: View {
             }
         }
         .sheet(isPresented: $showCreateGrow) {
-            EnhancedEditGrowView(isPresented: $showCreateGrow)
+            ActiveGrowCreateEdit(isPresented: $showCreateGrow)
         }
     }
 
@@ -112,7 +112,7 @@ struct CurrentGrowsView: View {
                 GridItem(.flexible())
             ], spacing: AppTheme.Spacing.medium) {
                 ForEach(grows, id: \.self) { grow in
-                    NavigationLink(destination: GrowDetailView(growViewModel: GrowDetailViewModel(grow: grow))) {
+                    NavigationLink(destination: ActiveGrowDetailView(growViewModel: ActiveGrowViewModel(grow: grow))) {
                         GrowTileView(grow: grow)
                     }
                     .buttonStyle(PlainButtonStyle())
@@ -277,11 +277,13 @@ struct GrowTileView: View {
     
     /// Formatted days to harvest text
     private var daysToHarvestText: String {
-        guard let cultivar = grow.cultivar,
+        guard let seed = grow.seed,
               let plantedDate = grow.plantedDate else {
             return "Unknown"
         }
-        
+        guard let cultivar = seed.cultivar else{
+            return "unknown"
+        }
         let daysUntilHarvest = HarvestCalculator.daysUntilHarvest(
             cultivar: cultivar,
             plantDate: plantedDate
@@ -298,13 +300,13 @@ struct GrowTileView: View {
     
     /// Formatted harvest estimate text
     private var harvestEstimateText: String {
-        guard let cultivar = grow.cultivar,
+        guard let seed = grow.seed,
               let plantedDate = grow.plantedDate else {
             return "Unknown"
         }
         
         let harvestEstimate = HarvestCalculator.calculateHarvestEstimate(
-            cultivar: cultivar,
+            seed: seed,
             plantDate: plantedDate
         )
         
@@ -333,7 +335,7 @@ private struct AddGrowToolbar: ToolbarContent {
 struct CurrentGrowsView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            CurrentGrowsView()
+            ActiveGrows()
                 .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         }
     }

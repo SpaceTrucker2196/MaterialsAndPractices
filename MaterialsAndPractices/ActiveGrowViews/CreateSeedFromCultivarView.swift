@@ -94,7 +94,7 @@ struct CultivarSelectionView: View {
             // Search text filter
             if !searchText.isEmpty {
                 let searchLower = searchText.lowercased()
-                let matchesSearch = (cultivar.name.lowercased().contains(searchLower)) ||
+                let matchesSearch = (cultivar.name!.lowercased().contains(searchLower)) ||
                                   (cultivar.commonName?.lowercased().contains(searchLower) ?? false) ||
                                   (cultivar.family?.lowercased().contains(searchLower) ?? false)
                 if !matchesSearch { return false }

@@ -83,15 +83,15 @@ struct ContentView: View {
     private var mainInterface: some View {
         TabView {
             // Active grows management tab
-            CurrentGrowsView()
+            ActiveGrows()
                 .tabItem {
                     Label("Grows", systemImage: "leaf.fill")
                 }
             
             // Plant cultivar database tab
-            CultivarListView()
+            ActivePracticesView()
                 .tabItem {
-                    Label("Cultivars", systemImage: "list.bullet.rectangle")
+                    Label("Practices", systemImage: "list.bullet.rectangle")
                 }
             
             // Farm management dashboard tab

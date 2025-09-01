@@ -20,6 +20,144 @@
 import SwiftUI
 import CoreData
 
+
+@objc(SeedLibrary)
+
+// MARK: - Fetch Request Helpers
+
+extension SeedLibrary {
+    
+    
+    // MARK: - Computed Properties
+    
+    /// Display name for the seed entry
+    var displayName: String {
+        return seedName ?? cultivar?.displayName ?? "Unknown Seed"
+    }
+    
+    /// Array of grows using this seed
+    var growsArray: [Grow] {
+        let set = grows as? Set<Grow> ?? []
+        return Array(set).sorted { ($0.title ?? "") < ($1.title ?? "") }
+    }
+    
+    /// Formatted quantity string with units
+    var quantityDisplay: String {
+        if quantity > 0 {
+            let formatter = NumberFormatter()
+            formatter.maximumFractionDigits = 2
+            formatter.minimumFractionDigits = 0
+            let quantityString = formatter.string(from: NSNumber(value: quantity)) ?? "\(quantity)"
+            
+            if let unit = unit, !unit.isEmpty {
+                return "\(quantityString) \(unit)"
+            } else {
+                return quantityString
+            }
+        } else {
+            return "No quantity specified"
+        }
+    }
+    
+    /// Check if seed is expired or past recommended use
+    var isExpired: Bool {
+        guard let purchaseDate = purchasedDate else { return false }
+        
+        // Most seeds are good for 2-3 years
+        let calendar = Calendar.current
+        let expirationDate = calendar.date(byAdding: .year, value: 3, to: purchaseDate) ?? purchaseDate
+        return Date() > expirationDate
+    }
+    
+    /// Check if germination test is current (within last year)
+    var isGerminationTestCurrent: Bool {
+        guard let testDate = germinationTestDate else { return false }
+        
+        let calendar = Calendar.current
+        let oneYearAgo = calendar.date(byAdding: .year, value: -1, to: Date()) ?? Date()
+        return testDate > oneYearAgo
+    }
+    
+    // MARK: - Helper Methods
+    
+    /// Initialize a new seed library entry with cultivar data
+    /// - Parameters:
+    ///   - cultivar: The source cultivar
+    ///   - context: Core Data managed object context
+    /// - Returns: Configured SeedLibrary instance
+    static func createFromCultivar(_ cultivar: Cultivar, in context: NSManagedObjectContext) -> SeedLibrary {
+        let seed = SeedLibrary(context: context)
+        
+        // Set unique identifier
+        //eed.id = UUID()
+        
+        // Set basic information from cultivar
+        seed.seedName = cultivar.displayName
+        seed.cultivar = cultivar
+        seed.createdDate = Date()
+        seed.lastModifiedDate = Date()
+        
+        // Set organic certification based on cultivar
+        seed.isCertifiedOrganic = cultivar.isOrganicCertified
+        
+        // Default values for new seeds
+        seed.isGMO = false
+        seed.isUntreated = true
+        seed.germinationRate = 0.0
+        seed.quantity = 0.0
+        seed.productionYear = Int16(Calendar.current.component(.year, from: Date()))
+        
+        return seed
+    }
+    
+    
+    
+    /// Update modification date when seed is edited
+    func updateModificationDate() {
+        lastModifiedDate = Date()
+    }
+    
+    /// Check if this seed meets organic compliance requirements
+    var meetsOrganicCompliance: Bool {
+        return isCertifiedOrganic && !isGMO && isUntreated
+    }
+    
+    /// Get compliance status string for display
+    var complianceStatus: String {
+        if meetsOrganicCompliance {
+            return "Organic Compliant"
+        } else {
+            var issues: [String] = []
+            if !isCertifiedOrganic { issues.append("Not certified organic") }
+            if isGMO { issues.append("Contains GMO") }
+            if !isUntreated { issues.append("Treated seeds") }
+            return "Non-compliant: \(issues.joined(separator: ", "))"
+        }
+    }
+
+
+    /// Fetch request sorted by seed name
+    static func fetchRequestSortedByName() -> NSFetchRequest<SeedLibrary> {
+        let request: NSFetchRequest<SeedLibrary> = fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \SeedLibrary.seedName, ascending: true)]
+        return request
+    }
+    
+    /// Fetch request for organic certified seeds only
+    static func fetchRequestOrganicOnly() -> NSFetchRequest<SeedLibrary> {
+        let request = fetchRequestSortedByName()
+        request.predicate = NSPredicate(format: "isCertifiedOrganic == YES")
+        return request
+    }
+    
+    /// Fetch request for seeds from a specific supplier
+    static func fetchRequestForSupplier(_ supplier: SupplierSource) -> NSFetchRequest<SeedLibrary> {
+        let request = fetchRequestSortedByName()
+        request.predicate = NSPredicate(format: "supplierSource == %@", supplier)
+        return request
+    }
+}
+
 /// Detailed view for viewing and editing seed library entries
 /// Provides comprehensive seed management with organic compliance tracking
 struct SeedDetailView: View {
@@ -81,7 +219,7 @@ struct SeedDetailView: View {
                     viewingSections
                 }
             }
-            .navigationTitle(isEditing ? "Edit Seed" : seed.displayName)
+            .navigationTitle((isEditing ? "Edit Seed" : seed.seedName) ?? "Taco Seeds")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -159,7 +297,7 @@ struct SeedDetailView: View {
         storageViewSection
         
         // Related grows section
-        relatedGrowsSection
+       // relatedGrowsSection
         
         // Actions section
         actionsSection
@@ -284,7 +422,7 @@ struct SeedDetailView: View {
                         .font(AppTheme.Typography.bodyMedium)
                         .fontWeight(.semibold)
                     
-                    if let contactPerson = supplier.contactPerson {
+                    if let contactPerson = supplier.contactName {
                         Text(contactPerson)
                             .font(AppTheme.Typography.bodySmall)
                             .foregroundColor(AppTheme.Colors.textSecondary)
@@ -310,8 +448,8 @@ struct SeedDetailView: View {
             HStack {
                 Text("Compliance Status")
                 Spacer()
-                Text(seed.complianceStatus)
-                    .foregroundColor(seed.meetsOrganicCompliance ? AppTheme.Colors.organicPractice : AppTheme.Colors.warning)
+                Text("Is Organic")
+                    .foregroundColor(seed.isCertifiedOrganic ? AppTheme.Colors.organicPractice : AppTheme.Colors.warning)
                     .font(AppTheme.Typography.labelMedium)
                     .fontWeight(.medium)
             }
@@ -403,44 +541,44 @@ struct SeedDetailView: View {
         }
     }
     
-    @ViewBuilder
-    private var relatedGrowsSection: some View {
-        Section("Related Grows") {
-            if seed.growsArray.isEmpty {
-                Text("No grows using this seed")
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-            } else {
-                ForEach(seed.growsArray, id: \.objectID) { grow in
-                    HStack {
-                        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                            Text(grow.displayName)
-                                .font(AppTheme.Typography.bodyMedium)
-                            
-                            if let plantedDate = grow.plantedDate {
-                                Text("Planted: \(plantedDate, style: .date)")
-                                    .font(AppTheme.Typography.bodySmall)
-                                    .foregroundColor(AppTheme.Colors.textSecondary)
-                            }
-                        }
-                        
-                        Spacer()
-                        
-                        if grow.isActive {
-                            Text("Active")
-                                .font(AppTheme.Typography.labelSmall)
-                                .fontWeight(.medium)
-                                .foregroundColor(AppTheme.Colors.organicPractice)
-                        } else {
-                            Text("Completed")
-                                .font(AppTheme.Typography.labelSmall)
-                                .foregroundColor(AppTheme.Colors.textSecondary)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
+//    @ViewBuilder
+//    private var relatedGrowsSection: some View {
+//        Section("Related Grows") {
+//            if seed.growsArray.isEmpty {
+//                Text("No grows using this seed")
+//                    .foregroundColor(AppTheme.Colors.textSecondary)
+//            } else {
+//                ForEach(seed.growsArray, id: \.objectID) { grow in
+//                    HStack {
+//                        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+//                            Text(grow.displayName)
+//                                .font(AppTheme.Typography.bodyMedium)
+//                            
+//                            if let plantedDate = grow.plantedDate {
+//                                Text("Planted: \(plantedDate, style: .date)")
+//                                    .font(AppTheme.Typography.bodySmall)
+//                                    .foregroundColor(AppTheme.Colors.textSecondary)
+//                            }
+//                        }
+//                        
+//                        Spacer()
+//                        
+//                        if grow.isActive {
+//                            Text("Active")
+//                                .font(AppTheme.Typography.labelSmall)
+//                                .fontWeight(.medium)
+//                                .foregroundColor(AppTheme.Colors.organicPractice)
+//                        } else {
+//                            Text("Completed")
+//                                .font(AppTheme.Typography.labelSmall)
+//                                .foregroundColor(AppTheme.Colors.textSecondary)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    
     @ViewBuilder
     private var actionsSection: some View {
         Section {
@@ -583,7 +721,7 @@ struct SeedDetailView: View {
                 seed.germinationTestDate = nil
             }
             
-            seed.updateModificationDate()
+            seed.lastModifiedDate = Date()
             
             try viewContext.save()
             isEditing = false
