@@ -11,6 +11,12 @@
 import Foundation
 import CoreData
 
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        return (startIndex..<endIndex).contains(index) ? self[index] : nil
+    }
+}
+
 /// Zappa Farms test data loader
 class ZappaFarmsDataLoader {
     
@@ -26,7 +32,7 @@ class ZappaFarmsDataLoader {
         try loadProperties()
         
         // Load fields for each property
-        try loadFields()
+       // try loadFields()
         
         // Load ledger entries
         try loadLedgerEntries()
@@ -40,7 +46,7 @@ class ZappaFarmsDataLoader {
         try clearExistingProperties()
         
         // Load CSV data
-        guard let csvPath = Bundle.main.path(forResource: "ZappaFarmsDataset", ofType: "csv"),
+        guard let csvPath = Bundle.main.path(forResource: "ZappaFarmsDataset", ofType: "csv" ),
               let csvContent = try? String(contentsOfFile: csvPath) else {
             throw ZappaFarmsDataError.propertiesCSVNotFound
         }
@@ -51,7 +57,7 @@ class ZappaFarmsDataLoader {
         }
         
         // Parse header to get column indices
-        let headers = parseCSVLine(lines[0])
+        let headers = parseCSVLine(lines[1])
         let columnMap = createColumnMap(headers: headers)
         
         // Process each property row
@@ -83,8 +89,15 @@ class ZappaFarmsDataLoader {
             throw ZappaFarmsDataError.invalidCSVFormat
         }
         
-        // Parse header to get column indices
-        let headers = parseCSVLine(lines[0])
+        let propertyRequest: NSFetchRequest<Property> = Property.fetchRequest()
+        let properties = try viewContext.fetch(propertyRequest)
+        guard properties.count > 0 else {
+            return
+        }
+        
+        
+        // Parse header to get column indices4
+        let headers = parseCSVLine(lines[1])
         let columnMap = createColumnMap(headers: headers)
         
         // Group fields by property ID and add to property notes
@@ -94,6 +107,7 @@ class ZappaFarmsDataLoader {
             let line = lines[i].trimmingCharacters(in: .whitespacesAndNewlines)
             if !line.isEmpty {
                 let fields = parseCSVLine(line)
+                let field = Field(context: viewContext)
                 
                 if let propertyIdIndex = columnMap["propertyid"], propertyIdIndex < fields.count {
                     let propertyId = fields[propertyIdIndex]
@@ -105,19 +119,25 @@ class ZappaFarmsDataLoader {
                     var fieldDescription = ""
                     if let fieldNameIndex = columnMap["fieldname"], fieldNameIndex < fields.count {
                         fieldDescription += "Field: \(fields[fieldNameIndex])"
+                        field.name = fields[fieldNameIndex]
+                        
+                        
                     }
                     if let acreageIndex = columnMap["acreage"], acreageIndex < fields.count {
                         fieldDescription += " (\(fields[acreageIndex]) acres)"
+                       // field.description = fields[acreageIndex]
                     }
                     if let primaryCropIndex = columnMap["primarycrop"], primaryCropIndex < fields.count {
                         fieldDescription += " - Primary: \(fields[primaryCropIndex])"
+                       
                     }
                     
-                    fieldsData[propertyId]?.append(fieldDescription)
+                    field.property = properties.randomElement()
                 }
             }
+          
         }
-        
+        try viewContext.save()
         // Update properties with field information
         for (propertyId, fieldDescriptions) in fieldsData {
             updatePropertyWithFieldData(propertyId: propertyId, fieldDescriptions: fieldDescriptions)
@@ -230,6 +250,7 @@ class ZappaFarmsDataLoader {
         // Map basic fields
         if let displayNameIndex = columnMap["displayname"], displayNameIndex < fields.count {
             property.displayName = fields[displayNameIndex]
+        
         }
         
         if let countyIndex = columnMap["county"], countyIndex < fields.count {
@@ -291,6 +312,7 @@ class ZappaFarmsDataLoader {
         
         do {
             let properties = try viewContext.fetch(fetchRequest)
+            let field = Field(context: viewContext)
             
             // For now, match by array index (property 1 = first property, etc.)
             if let propertyIndex = Int(propertyId), propertyIndex > 0 && propertyIndex <= properties.count {

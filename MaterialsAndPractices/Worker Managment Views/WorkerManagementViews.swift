@@ -176,6 +176,9 @@ struct WorkerDetailView: View {
     @State private var todayEntry: TimeClock?
     @State private var showingOffboardAlert = false
     
+  
+    
+    
     // Calculate today's hours worked
     private var todayHoursWorked: Double {
         guard let todayEntry = todayEntry else { return 0 }
@@ -245,6 +248,8 @@ struct WorkerDetailView: View {
             HStack(alignment: .top, spacing: AppTheme.Spacing.medium) {
                 // Left side - Profile image
                 VStack {
+                    
+                    
                     if let imagePath = worker.imagePath,
                        let image = UIImage(contentsOfFile:imagePath) {
                         Image(uiImage: image)
@@ -257,9 +262,7 @@ struct WorkerDetailView: View {
                                 RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
                                     .stroke(AppTheme.Colors.primary, lineWidth: 3)
                             )
-                    }
-                    // Fallback to profilePhotoData
-                    else if let photoData = worker.profilePhotoData,
+                    } else if let photoData = worker.profilePhotoData,
                        let uiImage = UIImage(data: photoData) {
                         Image(uiImage: uiImage)
                             .resizable()

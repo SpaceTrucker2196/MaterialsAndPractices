@@ -57,14 +57,15 @@ struct UtilitiesView: View {
     var body: some View {
         NavigationView {
             List {
+                // Profile Management Section
+                profileManagementSection
                 // Farm Management Utilities Section
                 farmManagementUtilitiesSection
                 
                 // Soil Testing Section
                 soilTestingSection
                 
-                // Profile Management Section
-                profileManagementSection
+            
                 
                 // App Configuration Section
                 appConfigurationSection
@@ -149,7 +150,7 @@ struct UtilitiesView: View {
                         .font(.caption)
                 }
                 .padding()
-                .background(AppTheme.Colors.backgroundSecondary)
+                .background(AppTheme.Colors.backgroundPrimary)
                 .cornerRadius(AppTheme.CornerRadius.medium)
             }
             
@@ -181,34 +182,7 @@ struct UtilitiesView: View {
                 .cornerRadius(AppTheme.CornerRadius.medium)
             }
             
-            // Practice Management Utility
-            NavigationLink(destination: PracticeManagementView()) {
-                HStack {
-                    Image(systemName: "doc.text.below.ecg")
-                        .foregroundColor(AppTheme.Colors.organicPractice)
-                        .font(.title2)
-                    
-                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                        Text("Practice Management")
-                            .font(AppTheme.Typography.bodyMedium)
-                            .foregroundColor(AppTheme.Colors.textPrimary)
-                        
-                        Text("Manage farm practices and view work orders by practice")
-                            .font(AppTheme.Typography.bodySmall)
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                        .font(.caption)
-                }
-                .padding()
-                .background(AppTheme.Colors.backgroundSecondary)
-                .cornerRadius(AppTheme.CornerRadius.medium)
-            }
-            
+        
             // Manage Infrastructure Utility
             NavigationLink(destination: InfrastructureManagementView()) {
                 HStack {
@@ -258,7 +232,33 @@ struct UtilitiesView: View {
                         .font(.caption)
                 }
             }
-            
+            // Practice Management Utility
+            NavigationLink(destination: PracticeManagementView()) {
+                HStack {
+                    Image(systemName: "doc.text.below.ecg")
+                        .foregroundColor(AppTheme.Colors.organicPractice)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                        Text("Practice Management")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        Text("Manage farm practices and view work orders by practice")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .font(.caption)
+                }
+                .padding()
+                .background(AppTheme.Colors.backgroundSecondary)
+                .cornerRadius(AppTheme.CornerRadius.medium)
+            }
             // Manage Leases Utility
             NavigationLink(destination: LeaseManagementView()) {
                 HStack {

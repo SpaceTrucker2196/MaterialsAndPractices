@@ -177,17 +177,19 @@ class WorkerTestDataLoader {
             let photoFilename = fields[photoIndex]
             if !photoFilename.isEmpty {
                 
-                if let url = Bundle.main.url(forResource: "profilephotodata", withExtension: "png", subdirectory: "PhotoLibrary") {
+                if let url = Bundle.main.url(forResource: photoFilename, withExtension: "png", subdirectory: "PhotoLibrary") {
                     worker.imagePath = url.absoluteString
-                } else if  let url = Bundle.main.url(forResource: "profilephotodata", withExtension: "jpeg", subdirectory: "PhotoLibrary") {
+                } else if  let url = Bundle.main.url(forResource: photoFilename, withExtension: "jpeg", subdirectory: "PhotoLibrary") {
                     worker.imagePath = url.absoluteString
-                } else if let url = Bundle.main.url(forResource: "profilephotodata", withExtension: "jpg", subdirectory: "PhotoLibrary") {
+                } else if let url = Bundle.main.url(forResource: photoFilename, withExtension: "jpg", subdirectory: "PhotoLibrary") {
                     worker.imagePath = url.absoluteString
                 }
                 loadProfilePhoto(filename: worker.imagePath ?? "profile.jpg", for: worker)
             }
         }
     }
+    
+    
     
     /// Load profile photo from bundle resources
     private func loadProfilePhoto(filename: String, for worker: Worker) {

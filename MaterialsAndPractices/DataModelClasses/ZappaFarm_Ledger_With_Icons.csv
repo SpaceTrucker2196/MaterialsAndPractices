@@ -1,4 +1,4 @@
-vendorName,taxCategory,referenceNumber,reconciled,notes,ledgerDescription,id,entryType,debitAmount,date,creditAmount,checkNumber,balance,amount,accountName,accountCode,iosSymbol,emoji
+vendonName,taxcategory,referencenumber,reconciled,notes,ledgerdescription,id,entrytype,debitamount,date,creditamount,checknumber,balance,amount,accountname,accountcode,iossymbol,emoji
 Farm Co-op,No Tax,REF-3797,True,Someone painted the barn plaid again.,Weekly payroll distribution,56495,Payment,114.86,2025-07-14 14:09:00,0.0,CHK-2135,1143.69,114.86,Sales - Value-Added Goods,4100,folder,🐔
 Johnny's Seeds,Sales Tax,REF-2304,False,Someone painted the barn plaid again.,Utility payment: irrigation pump,97607,Tax,0.0,2025-07-14 07:55:00,737.4,,1969.89,737.4,Fuel,5300,tray,💼
 Zappa Solar,No Tax,REF-8168,True,Billy the Mountain requested cash.,Sale at Saturday farmer's market,92079,Payroll,1166.73,2025-07-14 18:56:00,0.0,,3672.51,1166.73,Depreciation,6000,calendar,🛠

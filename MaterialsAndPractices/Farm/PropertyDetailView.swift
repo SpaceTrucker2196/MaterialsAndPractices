@@ -19,13 +19,13 @@ struct PropertyDetailView: View {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
                 // MARK: - Property Information Section
                 propertyInformationSection
-                
+                fieldsSection
                 // MARK: - Photo Management Section
-                photoManagementSection
+                //photoManagementSection
                 
                 // MARK: - Advanced Sections (only in advanced mode)
                 if isAdvancedMode {
-                    fieldsSection
+                   
                     infrastructureSection
                     leasesSection
                     inspectionSection
@@ -123,6 +123,8 @@ struct PropertyDetailView: View {
     }
     
     /// Section displaying fields (advanced mode only)
+    @State private var showingCreateFieldView = false
+
     private var fieldsSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             HStack {
@@ -130,7 +132,9 @@ struct PropertyDetailView: View {
                 
                 Spacer()
                 
-                NavigationLink(destination: CreateFieldView(property: property)) {
+                Button(action: {
+                    showingCreateFieldView = true
+                }) {
                     Image(systemName: "plus.circle.fill")
                         .foregroundColor(AppTheme.Colors.primary)
                 }
@@ -147,13 +151,15 @@ struct PropertyDetailView: View {
                     systemImage: "grid",
                     actionTitle: "Add Field"
                 ) {
-                    // This will be handled by the NavigationLink above
+                    showingCreateFieldView = true
                 }
-                .frame(height: 120)
+                .frame(height: 250)
             }
         }
+        .sheet(isPresented: $showingCreateFieldView) {
+            CreateFieldView(property: property)
+        }
     }
-    
     /// Section displaying infrastructure (advanced mode only)
     private var infrastructureSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
@@ -297,21 +303,21 @@ struct PropertyDetailView: View {
 /// Helper view for field information rows
 //struct FieldRow: View {
 //    let field: Field
-//    
+//
 //    var body: some View {
 //        HStack {
 //            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
 //                Text(field.name ?? "Unknown Field")
 //                    .font(AppTheme.Typography.bodyMedium)
 //                    .foregroundColor(AppTheme.Colors.textPrimary)
-//                
+//
 //                Text("\(field.acres, specifier: "%.1f") acres")
 //                    .font(AppTheme.Typography.bodySmall)
 //                    .foregroundColor(AppTheme.Colors.textSecondary)
 //            }
-//            
+//
 //            Spacer()
-//            
+//
 //            if field.hasDrainTile {
 //                Image(systemName: "drop.triangle.fill")
 //                    .foregroundColor(AppTheme.Colors.info)
