@@ -185,6 +185,7 @@ class WorkerTestDataLoader {
                     worker.imagePath = url.absoluteString
                 }
                 loadProfilePhoto(filename: worker.imagePath ?? "profile.jpg", for: worker)
+               
             }
         }
     }

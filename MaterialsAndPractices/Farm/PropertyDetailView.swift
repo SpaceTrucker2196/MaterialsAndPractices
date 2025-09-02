@@ -29,6 +29,7 @@ struct PropertyDetailView: View {
                     infrastructureSection
                     leasesSection
                     inspectionSection
+                    notesSection
                 }
             }
             .padding()
@@ -55,73 +56,76 @@ struct PropertyDetailView: View {
     /// Section displaying comprehensive property information
     private var propertyInformationSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            SectionHeader(title: "Property Information")
+            SectionHeader(title: "Property Dashboard")
             
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
-                InfoBlock(label: "Display Name:") {
+                
+          
+                    LargeInfoBlock(label: "Property") {
                     Text(property.displayName ?? "N/A")
-                }
-
-                InfoBlock(label: "Total Acres:") {
+                    }
+                    InfoBlock(label: "Total Acres:") {
                     Text("\(property.totalAcres, specifier: "%.1f")")
-                }
+                    }
+                
 
                 if isAdvancedMode {
-                    InfoBlock(label: "Tillable Acres:") {
-                        Text("\(property.tillableAcres, specifier: "%.1f")")
+                    HStack(){
+                        InfoBlock(label: "Tillable Acres") {
+                            Text("\(property.tillableAcres, specifier: "%.1f")")
+                        }
+                        InfoBlock(label: "Pasture Acres") {
+                            Text("\(property.pastureAcres, specifier: "%.1f")")
+                        }
                     }
-                    InfoBlock(label: "Pasture Acres:") {
-                        Text("\(property.pastureAcres, specifier: "%.1f")")
+                    HStack(){
+                        InfoBlock(label: "Woodland Acres") {
+                            Text("\(property.woodlandAcres, specifier: "%.1f")")
+                        }
+                        InfoBlock(label: "Wetland Acres") {
+                            Text("\(property.wetlandAcres, specifier: "%.1f")")
+                        }
                     }
-                    InfoBlock(label: "Woodland Acres:") {
-                        Text("\(property.woodlandAcres, specifier: "%.1f")")
+                    HStack(){
+                        InfoBlock(label: "Has Irrigation") {
+                            Text(property.hasIrrigation ? "Yes" : "No")
+                        }
                     }
-                    InfoBlock(label: "Wetland Acres:") {
-                        Text("\(property.wetlandAcres, specifier: "%.1f")")
-                    }
-                    InfoBlock(label: "Has Irrigation:") {
-                        Text(property.hasIrrigation ? "Yes" : "No")
+                    
+                    if let county = property.county, let state = property.state {
+                        InfoBlock(label: "Location") {
+                            Text("\(county), \(state)")
+                        }
                     }
                 }
-
-                if let county = property.county, let state = property.state {
-                    InfoBlock(label: "Location:") {
-                        Text("\(county), \(state)")
-                    }
-                }
-
-                if let notes = property.notes, !notes.isEmpty {
-                    InfoBlock(label: "Notes:") {
-                        Text(notes)
-                    }
-                }
+                
             }
         }
     }
     
     /// Section for photo management with tile interface
-    private var photoManagementSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            HStack {
-                SectionHeader(title: "Photos")
-                
-                Spacer()
-                
-                Button(action: {
-                    showingPhotoCapture = true
-                }) {
-                    Image(systemName: "camera.fill")
-                        .foregroundColor(AppTheme.Colors.primary)
-                }
-            }
-            
-            PhotoGalleryView(property: property)
-        }
-        .sheet(isPresented: $showingPhotoCapture) {
-            PhotoCaptureView(property: property, isPresented: $showingPhotoCapture)
-        }
-    }
-    
+//    private var photoManagementSection: some View {
+//        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+//            HStack {
+//                SectionHeader(title: "Photos")
+//                
+//                Spacer()
+//                
+//                Button(action: {
+//                    showingPhotoCapture = true
+//                }) {
+//                    Image(systemName: "camera.fill")
+//                        .foregroundColor(AppTheme.Colors.primary)
+//                }
+//            }
+//            
+//            PhotoGalleryView(property: property)
+//        }
+//        .sheet(isPresented: $showingPhotoCapture) {
+//            PhotoCaptureView(property: property, isPresented: $showingPhotoCapture)
+//        }
+//    }
+//    
     /// Section displaying fields (advanced mode only)
     @State private var showingCreateFieldView = false
 
@@ -205,6 +209,17 @@ struct PropertyDetailView: View {
                 Text("No active leases")
                     .font(AppTheme.Typography.bodyMedium)
                     .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+        }
+    }
+    
+    private var notesSection: some View {
+        VStack(alignment: .leading, spacing:AppTheme.Spacing.medium){
+            SectionHeader(title: "Property Notes")
+            if let notes = property.notes, !notes.isEmpty {
+                InfoBlock(label: "Notes:") {
+                    Text(notes)
+                }
             }
         }
     }

@@ -36,6 +36,24 @@ struct InfoBlock<Content: View>: View {
         }
     }
 }
+struct LargeInfoBlock<Content: View>: View {
+    let label: String
+    @ViewBuilder var value: Content
+
+    var body: some View {
+        
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+            Text(label)
+                .font(AppTheme.Typography.labelMedium)
+                .foregroundColor(AppTheme.Colors.textSecondary)
+                .frame(minWidth: 120, alignment: .leading)
+            value
+                .font(AppTheme.Typography.dataLarge)
+                .foregroundColor(AppTheme.Colors.textDataFieldNormal)
+            Spacer(minLength: 0)
+        }
+    }
+}
 
 // MARK: - Action Button
 
