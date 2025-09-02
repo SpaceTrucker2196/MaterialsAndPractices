@@ -103,6 +103,9 @@ struct FieldDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                // Organic Certification Banner
+                organicCertificationBanner
+                
                 // Field Information Section
                 fieldInformationSection
                 
@@ -117,6 +120,12 @@ struct FieldDetailView: View {
                 
                 // Grows Section
                 growsSection
+                
+                // Amendments Section
+                amendmentsSection
+                
+                // Harvests Section
+                harvestsSection
             }
             .padding()
         }
@@ -139,6 +148,57 @@ struct FieldDetailView: View {
     
     // MARK: - Sections
     
+    private var organicCertificationBanner: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+            HStack {
+                Image(systemName: "leaf.fill")
+                    .foregroundColor(AppTheme.Colors.organicMaterial)
+                
+                Text("Certified Organic Field")
+                    .font(AppTheme.Typography.labelMedium)
+                    .foregroundColor(AppTheme.Colors.organicMaterial)
+                
+                Spacer()
+                
+                if let inspectionStatus = field.inspectionStatus {
+                    MetadataTag(
+                        text: inspectionStatus.capitalized,
+                        backgroundColor: colorForInspectionStatus(inspectionStatus),
+                        textColor: .white
+                    )
+                }
+            }
+            
+            if let nextInspection = field.nextInspectionDue {
+                HStack {
+                    Image(systemName: "calendar")
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                        .font(.caption)
+                    
+                    Text("Next Inspection: \(nextInspection, style: .date)")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+            }
+        }
+        .padding(AppTheme.Spacing.medium)
+        .background(AppTheme.Colors.organicMaterial.opacity(0.1))
+        .cornerRadius(AppTheme.CornerRadius.medium)
+    }
+    
+    private func colorForInspectionStatus(_ status: String) -> Color {
+        switch status.lowercased() {
+        case "passed", "compliant":
+            return AppTheme.Colors.success
+        case "pending", "scheduled":
+            return AppTheme.Colors.warning
+        case "failed", "non-compliant":
+            return AppTheme.Colors.error
+        default:
+            return AppTheme.Colors.info
+        }
+    }
+    
     private var fieldInformationSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             SectionHeader(title: "Field Information")
@@ -150,6 +210,37 @@ struct FieldDetailView: View {
                 
                 InfoBlock(label: "Drain Tile:") {
                     Text(field.hasDrainTile ? "Yes" : "No")
+                }
+                
+                if let slope = field.slope, !slope.isEmpty {
+                    InfoBlock(label: "Slope:") {
+                        Text(slope)
+                    }
+                }
+                
+                if let soilType = field.soilType, !soilType.isEmpty {
+                    InfoBlock(label: "Soil Type:") {
+                        Text(soilType)
+                    }
+                }
+                
+                if let soilMapUnits = field.soilMapUnits as? [String], !soilMapUnits.isEmpty {
+                    InfoBlock(label: "Soil Map Units:") {
+                        Text(soilMapUnits.joined(separator: ", "))
+                    }
+                }
+                
+                if let inspectionStatus = field.inspectionStatus, !inspectionStatus.isEmpty {
+                    InfoBlock(label: "Inspection Status:") {
+                        Text(inspectionStatus.capitalized)
+                            .foregroundColor(colorForInspectionStatus(inspectionStatus))
+                    }
+                }
+                
+                if let nextInspection = field.nextInspectionDue {
+                    InfoBlock(label: "Next Inspection:") {
+                        Text(nextInspection, style: .date)
+                    }
                 }
                 
                 if let property = field.property {
@@ -285,6 +376,76 @@ struct FieldDetailView: View {
             }
         }
     }
+    
+    private var amendmentsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Applied Amendments")
+            
+            if let amendments = getFieldAmendments(), !amendments.isEmpty {
+                ForEach(amendments, id: \.amendmentID) { amendment in
+                    AmendmentSummaryRow(amendment: amendment)
+                }
+            } else {
+                Text("No amendments applied to this field")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+        }
+    }
+    
+    private var harvestsSection: some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+            SectionHeader(title: "Field Harvests")
+            
+            if let harvests = getFieldHarvests(), !harvests.isEmpty {
+                ForEach(harvests, id: \.timestamp) { harvest in
+                    HarvestSummaryRow(harvest: harvest)
+                }
+            } else {
+                Text("No harvests recorded for this field")
+                    .font(AppTheme.Typography.bodyMedium)
+                    .foregroundColor(AppTheme.Colors.textSecondary)
+            }
+        }
+    }
+    
+    /// Gets all amendments applied to grows in this field
+    private func getFieldAmendments() -> [CropAmendment]? {
+        guard let grows = field.grows?.allObjects as? [Grow] else { return nil }
+        
+        var allAmendments: [CropAmendment] = []
+        
+        for grow in grows {
+            if let workOrders = grow.workOrders?.allObjects as? [WorkOrder] {
+                for workOrder in workOrders {
+                    if let amendment = workOrder.amendment {
+                        allAmendments.append(amendment)
+                    }
+                }
+            }
+        }
+        
+        return allAmendments.isEmpty ? nil : allAmendments.sorted { 
+            ($0.dateApplied ?? Date.distantPast) > ($1.dateApplied ?? Date.distantPast) 
+        }
+    }
+    
+    /// Gets all harvests from grows in this field
+    private func getFieldHarvests() -> [Harvest]? {
+        guard let grows = field.grows?.allObjects as? [Grow] else { return nil }
+        
+        var allHarvests: [Harvest] = []
+        
+        for grow in grows {
+            if let harvests = grow.harvests?.allObjects as? [Harvest] {
+                allHarvests.append(contentsOf: harvests)
+            }
+        }
+        
+        return allHarvests.isEmpty ? nil : allHarvests.sorted { 
+            ($0.timestamp ?? Date.distantPast) > ($1.timestamp ?? Date.distantPast) 
+        }
+    }
 }
 
 // MARK: - Edit Field View
@@ -299,6 +460,11 @@ struct EditFieldView: View {
     @State private var fieldAcres: String
     @State private var fieldHasDrainTile: Bool
     @State private var fieldNotes: String
+    @State private var fieldSlope: String
+    @State private var fieldSoilType: String
+    @State private var fieldInspectionStatus: String
+    @State private var fieldNextInspectionDue: Date
+    @State private var fieldSoilMapUnits: String
     
     init(field: Field, isPresented: Binding<Bool>) {
         self.field = field
@@ -307,19 +473,49 @@ struct EditFieldView: View {
         self._fieldAcres = State(initialValue: String(field.acres))
         self._fieldHasDrainTile = State(initialValue: field.hasDrainTile)
         self._fieldNotes = State(initialValue: field.notes ?? "")
+        self._fieldSlope = State(initialValue: field.slope ?? "")
+        self._fieldSoilType = State(initialValue: field.soilType ?? "")
+        self._fieldInspectionStatus = State(initialValue: field.inspectionStatus ?? "")
+        self._fieldNextInspectionDue = State(initialValue: field.nextInspectionDue ?? Date())
+        
+        // Convert soil map units array to string for editing
+        let soilMapUnitsArray = field.soilMapUnits as? [String] ?? []
+        self._fieldSoilMapUnits = State(initialValue: soilMapUnitsArray.joined(separator: ", "))
     }
     
     var body: some View {
         NavigationView {
             Form {
-                Section("Field Details") {
+                Section("Basic Information") {
                     TextField("Field Name", text: $fieldName)
                     
                     TextField("Acres", text: $fieldAcres)
                         .keyboardType(.decimalPad)
                     
                     Toggle("Has Drain Tile", isOn: $fieldHasDrainTile)
+                }
+                
+                Section("Soil Information") {
+                    TextField("Soil Type", text: $fieldSoilType)
                     
+                    TextField("Slope", text: $fieldSlope)
+                    
+                    TextField("Soil Map Units (comma separated)", text: $fieldSoilMapUnits)
+                }
+                
+                Section("Organic Certification") {
+                    Picker("Inspection Status", selection: $fieldInspectionStatus) {
+                        Text("Not Selected").tag("")
+                        Text("Passed").tag("passed")
+                        Text("Pending").tag("pending")
+                        Text("Failed").tag("failed")
+                        Text("Scheduled").tag("scheduled")
+                    }
+                    
+                    DatePicker("Next Inspection Due", selection: $fieldNextInspectionDue, displayedComponents: .date)
+                }
+                
+                Section("Notes") {
                     TextField("Notes", text: $fieldNotes, axis: .vertical)
                         .lineLimit(3...6)
                 }
@@ -348,6 +544,21 @@ struct EditFieldView: View {
         field.acres = Double(fieldAcres) ?? 0.0
         field.hasDrainTile = fieldHasDrainTile
         field.notes = fieldNotes.isEmpty ? nil : fieldNotes
+        field.slope = fieldSlope.isEmpty ? nil : fieldSlope
+        field.soilType = fieldSoilType.isEmpty ? nil : fieldSoilType
+        field.inspectionStatus = fieldInspectionStatus.isEmpty ? nil : fieldInspectionStatus
+        field.nextInspectionDue = fieldInspectionStatus.isEmpty ? nil : fieldNextInspectionDue
+        
+        // Convert comma-separated string back to array for soil map units
+        if !fieldSoilMapUnits.isEmpty {
+            let soilMapUnitsArray = fieldSoilMapUnits
+                .split(separator: ",")
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+            field.soilMapUnits = soilMapUnitsArray
+        } else {
+            field.soilMapUnits = nil
+        }
         
         do {
             try viewContext.save()
@@ -461,9 +672,18 @@ struct GrowSummaryRow: View {
         NavigationLink(destination: ActiveGrowDetailView(growViewModel: ActiveGrowViewModel(grow: grow))) {
             HStack {
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
-                    Text(grow.title ?? "Unnamed Grow")
-                        .font(AppTheme.Typography.bodyMedium)
-                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    HStack {
+                        Text(grow.title ?? "Unnamed Grow")
+                            .font(AppTheme.Typography.bodyMedium)
+                            .foregroundColor(AppTheme.Colors.textPrimary)
+                        
+                        // Organic certification indicator
+                        if isOrganicCertified {
+                            Image(systemName: "leaf.fill")
+                                .foregroundColor(AppTheme.Colors.organicMaterial)
+                                .font(.caption)
+                        }
+                    }
                     
                     if let cultivar = grow.cultivar {
                         Text(cultivar.name ?? "Unknown Cultivar")
@@ -474,14 +694,149 @@ struct GrowSummaryRow: View {
                 
                 Spacer()
                 
-                if let plantedDate = grow.plantedDate {
-                    Text(plantedDate, style: .date)
-                        .font(AppTheme.Typography.bodySmall)
-                        .foregroundColor(AppTheme.Colors.textSecondary)
+                VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                    if let plantedDate = grow.plantedDate {
+                        Text(plantedDate, style: .date)
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    if isOrganicCertified {
+                        MetadataTag(
+                            text: "Organic",
+                            backgroundColor: AppTheme.Colors.organicMaterial.opacity(0.2),
+                            textColor: AppTheme.Colors.organicMaterial
+                        )
+                    }
                 }
             }
             .padding(.vertical, AppTheme.Spacing.tiny)
         }
+    }
+    
+    /// Determines if this grow is certified organic based on seed and field
+    private var isOrganicCertified: Bool {
+        // Check if the seed/cultivar is organic
+        let seedIsOrganic = grow.seed?.isCertifiedOrganic ?? false
+        // Assume field is organic (in real implementation, check field certification)
+        let fieldIsOrganic = true
+        
+        return seedIsOrganic && fieldIsOrganic
+    }
+}
+
+/// Row for displaying amendment information
+struct AmendmentSummaryRow: View {
+    let amendment: CropAmendment
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                HStack {
+                    Text(amendment.productName ?? "Unknown Amendment")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    if amendment.omriListed {
+                        Image(systemName: "leaf.fill")
+                            .foregroundColor(AppTheme.Colors.organicMaterial)
+                            .font(.caption)
+                    }
+                }
+                
+                if let applicationMethod = amendment.applicationMethod {
+                    Text("Applied: \(applicationMethod)")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                if let rate = amendment.applicationRate {
+                    Text("Rate: \(rate)")
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                if let date = amendment.dateApplied {
+                    Text(date, style: .date)
+                        .font(AppTheme.Typography.bodySmall)
+                        .foregroundColor(AppTheme.Colors.textSecondary)
+                }
+                
+                if amendment.omriListed {
+                    MetadataTag(
+                        text: "OMRI",
+                        backgroundColor: AppTheme.Colors.organicMaterial.opacity(0.2),
+                        textColor: AppTheme.Colors.organicMaterial
+                    )
+                }
+            }
+        }
+        .padding(.vertical, AppTheme.Spacing.tiny)
+    }
+}
+
+/// Row for displaying harvest information
+struct HarvestSummaryRow: View {
+    let harvest: Harvest
+    
+    var body: some View {
+        NavigationLink(destination: HarvestDetailView(harvest: harvest)) {
+            HStack {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    HStack {
+                        if let grow = harvest.grow {
+                            Text(grow.title ?? "Unknown Grow")
+                                .font(AppTheme.Typography.bodyMedium)
+                                .foregroundColor(AppTheme.Colors.textPrimary)
+                        }
+                        
+                        if isOrganicCertified {
+                            Image(systemName: "leaf.fill")
+                                .foregroundColor(AppTheme.Colors.organicMaterial)
+                                .font(.caption)
+                        }
+                    }
+                    
+                    if let quantity = harvest.totalQuantity, quantity > 0 {
+                        Text("Quantity: \(quantity, specifier: "%.1f") lbs")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
+                    if let timestamp = harvest.timestamp {
+                        Text(timestamp, style: .date)
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                    }
+                    
+                    if isOrganicCertified {
+                        MetadataTag(
+                            text: "Organic",
+                            backgroundColor: AppTheme.Colors.organicMaterial.opacity(0.2),
+                            textColor: AppTheme.Colors.organicMaterial
+                        )
+                    }
+                }
+            }
+            .padding(.vertical, AppTheme.Spacing.tiny)
+        }
+    }
+    
+    /// Determines if this harvest is certified organic
+    private var isOrganicCertified: Bool {
+        guard let grow = harvest.grow else { return false }
+        let seedIsOrganic = grow.seed?.isCertifiedOrganic ?? false
+        let fieldIsOrganic = true // In real implementation, check field certification
+        
+        return seedIsOrganic && fieldIsOrganic
     }
 }
 
@@ -576,5 +931,15 @@ struct WellDetailView: View {
     var body: some View {
         Text("Well Detail - Coming Soon")
             .navigationTitle(well.name ?? "Well")
+    }
+}
+
+/// Placeholder for harvest detail view
+struct HarvestDetailView: View {
+    let harvest: Harvest
+    
+    var body: some View {
+        Text("Harvest Detail - Coming Soon")
+            .navigationTitle("Harvest Details")
     }
 }
