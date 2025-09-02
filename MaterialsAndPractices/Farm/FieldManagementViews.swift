@@ -91,6 +91,141 @@ struct FieldRow: View {
     }
 }
 
+/// Enhanced field row component that ensures proper data prefetching for navigation
+struct FieldRowWithPrefetch: View {
+    let field: Field
+    @Environment(\.managedObjectContext) private var viewContext
+    @State private var latestSoilTest: SoilTest?
+    @State private var prefetchedField: Field?
+    
+    var body: some View {
+        NavigationLink(destination: destinationView) {
+            HStack {
+                VStack(alignment: .leading, spacing: AppTheme.Spacing.tiny) {
+                    Text(field.name ?? "Unnamed Field")
+                        .font(AppTheme.Typography.bodyMedium)
+                        .foregroundColor(AppTheme.Colors.textPrimary)
+                    
+                    HStack {
+                        Text("\(field.acres, specifier: "%.1f") acres")
+                            .font(AppTheme.Typography.bodySmall)
+                            .foregroundColor(AppTheme.Colors.textSecondary)
+                        
+                        if field.hasDrainTile {
+                            MetadataTag(
+                                text: "Drain Tile",
+                                backgroundColor: AppTheme.Colors.info
+                            )
+                        }
+                        
+                        // Soil test status tag
+                        if let soilTest = latestSoilTest {
+                            // Show pH with appropriate color if recent test exists
+                            if isRecentTest(soilTest) {
+                                MetadataTag(
+                                    text: String(format: "pH %.1f", soilTest.ph),
+                                    backgroundColor: colorForPH(soilTest.ph)
+                                )
+                            } else {
+                                // Old test - show warning
+                                MetadataTag(
+                                    text: "Old Test",
+                                    backgroundColor: AppTheme.Colors.warning
+                                )
+                            }
+                        } else {
+                            // No test - show yellow warning
+                            MetadataTag(
+                                text: "No pH Test",
+                                backgroundColor: AppTheme.Colors.warning
+                            )
+                        }
+                    }
+                }
+                
+                Spacer()
+                
+                if field.photoData != nil {
+                    Image(systemName: "photo.fill")
+                        .foregroundColor(AppTheme.Colors.primary)
+                        .font(.caption)
+                }
+            }
+            .padding(.vertical, AppTheme.Spacing.tiny)
+        }
+        .onAppear {
+            loadLatestSoilTest()
+            prefetchFieldData()
+        }
+    }
+    
+    @ViewBuilder
+    private var destinationView: some View {
+        if let prefetched = prefetchedField {
+            FieldDetailView(field: prefetched)
+        } else {
+            FieldDetailView(field: field)
+        }
+    }
+    
+    private func prefetchFieldData() {
+        // Ensure field data and relationships are loaded before navigation
+        guard let fieldID = field.id else { return }
+        
+        let fetchRequest: NSFetchRequest<Field> = Field.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", fieldID as CVarArg)
+        fetchRequest.relationshipKeyPathsForPrefetching = [
+            "property", "grows", "soilTests", "wells", "grows.workOrders", "grows.harvests"
+        ]
+        
+        do {
+            let results = try viewContext.fetch(fetchRequest)
+            if let fetchedField = results.first {
+                // Force load relationships to prevent lazy loading issues
+                _ = fetchedField.property?.displayName
+                _ = fetchedField.grows?.count
+                _ = fetchedField.soilTests?.count
+                _ = fetchedField.wells?.count
+                
+                // Force load grow relationships
+                if let grows = fetchedField.grows?.allObjects as? [Grow] {
+                    for grow in grows {
+                        _ = grow.workOrders?.count
+                        _ = grow.harvests?.count
+                    }
+                }
+                
+                prefetchedField = fetchedField
+            }
+        } catch {
+            print("Error prefetching field data: \(error)")
+            // Fall back to original field
+        }
+    }
+    
+    private func loadLatestSoilTest() {
+        if let soilTests = field.soilTests?.allObjects as? [SoilTest] {
+            latestSoilTest = soilTests
+                .sorted { ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast) }
+                .first
+        }
+    }
+    
+    private func isRecentTest(_ soilTest: SoilTest) -> Bool {
+        guard let testDate = soilTest.date else { return false }
+        let daysSinceTest = Calendar.current.dateComponents([.day], from: testDate, to: Date()).day ?? 0
+        return daysSinceTest <= 1095 // 3 years
+    }
+    
+    private func colorForPH(_ ph: Double) -> Color {
+        switch ph {
+        case 0..<5.5, 8.0...: return AppTheme.Colors.error
+        case 5.5..<6.0, 7.5..<8.0: return AppTheme.Colors.warning
+        default: return AppTheme.Colors.success
+        }
+    }
+}
+
 // MARK: - Field Detail View
 
 /// Detailed view for field information and management
@@ -99,6 +234,7 @@ struct FieldDetailView: View {
     @State private var isEditing = false
     @State private var showingPhotoCapture = false
     @Environment(\.managedObjectContext) private var viewContext
+    @StateObject private var loadingState = ViewLoadingStateManager()
     
     var body: some View {
         ScrollView {
@@ -143,6 +279,38 @@ struct FieldDetailView: View {
         }
         .sheet(isPresented: $showingPhotoCapture) {
             FieldPhotoCaptureView(field: field, isPresented: $showingPhotoCapture)
+        }
+        .dataLoadingState(
+            isLoading: loadingState.isLoading,
+            hasError: loadingState.hasError,
+            errorMessage: loadingState.errorMessage,
+            retryAction: loadFieldData
+        )
+        .onAppear {
+            loadFieldData()
+        }
+        .refreshable {
+            loadFieldData()
+        }
+    }
+    
+    // MARK: - Data Loading Methods
+    
+    private func loadFieldData() {
+        loadingState.setLoading(true)
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                FieldDataLoader.ensureFieldDataLoaded(field, in: viewContext)
+                
+                DispatchQueue.main.async {
+                    loadingState.setLoading(false)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    loadingState.setError(error)
+                }
+            }
         }
     }
     

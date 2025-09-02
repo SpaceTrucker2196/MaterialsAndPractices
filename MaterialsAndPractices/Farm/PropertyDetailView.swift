@@ -11,6 +11,7 @@ struct PropertyDetailView: View {
     @State private var showingPhotoCapture = false
     @State private var showingEditView = false
     @State private var showingInspectionScheduling = false
+    @StateObject private var loadingState = ViewLoadingStateManager()
     
     // MARK: - Body
     
@@ -48,6 +49,38 @@ struct PropertyDetailView: View {
         }
         .sheet(isPresented: $showingInspectionScheduling) {
             FarmInspectionSchedulingView(property: property, isPresented: $showingInspectionScheduling)
+        }
+        .dataLoadingState(
+            isLoading: loadingState.isLoading,
+            hasError: loadingState.hasError,
+            errorMessage: loadingState.errorMessage,
+            retryAction: loadPropertyData
+        )
+        .onAppear {
+            loadPropertyData()
+        }
+        .refreshable {
+            loadPropertyData()
+        }
+    }
+    
+    // MARK: - Data Loading
+    
+    private func loadPropertyData() {
+        loadingState.setLoading(true)
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                PropertyDataLoader.ensurePropertyDataLoaded(property, in: viewContext)
+                
+                DispatchQueue.main.async {
+                    loadingState.setLoading(false)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    loadingState.setError(error)
+                }
+            }
         }
     }
     
@@ -146,7 +179,7 @@ struct PropertyDetailView: View {
             
             if let fields = property.fields?.allObjects as? [Field], !fields.isEmpty {
                 ForEach(fields.sorted(by: { ($0.name ?? "") < ($1.name ?? "") }), id: \.id) { field in
-                    FieldRow(field: field)
+                    FieldRowWithPrefetch(field: field)
                 }
             } else {
                 EmptyStateView(
