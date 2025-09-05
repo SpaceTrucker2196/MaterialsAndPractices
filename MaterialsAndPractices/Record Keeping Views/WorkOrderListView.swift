@@ -266,7 +266,7 @@ struct WorkOrderRow: View {
             // Grow location and practice
             if let grow = workOrder.grow {
                 HStack {
-                    if let cultivar = grow.cultivar {
+                    if let cultivar = grow.seed?.cultivar {
                         Text(cultivar.emoji ?? "🌱")
                             .font(.caption)
                     }

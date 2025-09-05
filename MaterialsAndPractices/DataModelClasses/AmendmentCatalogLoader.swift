@@ -123,10 +123,7 @@ class AmendmentCatalogLoader {
             amendment.unitOfMeasure = fields[unitOfMeasureIndex]
         }
         
-        if let cropTreatedIndex = columnMap["croptreated"], cropTreatedIndex < fields.count {
-            amendment.cropTreated = fields[cropTreatedIndex]
-        }
-        
+     
         if let locationIndex = columnMap["location"], locationIndex < fields.count {
             amendment.location = fields[locationIndex]
         }

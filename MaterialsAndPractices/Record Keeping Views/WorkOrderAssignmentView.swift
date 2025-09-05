@@ -437,7 +437,7 @@ struct WorkOrderAssignmentView: View {
     private func growInformationCard(grow: Grow) -> some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
             HStack {
-                if let cultivar = grow.cultivar {
+                if let cultivar = grow.seed?.cultivar {
                     Text(cultivar.emoji ?? "🌱")
                         .font(.title3)
                 }

@@ -95,7 +95,7 @@ struct CropAmendmentCatalogView: View {
             }
             .sheet(isPresented: $showingAmendmentDetail) {
                 if let amendment = selectedAmendment {
-                    AmendmentDetailView(amendment: amendment)
+                 //   AmendmentDetailView(amendment: amendment)
                 }
             }
         }

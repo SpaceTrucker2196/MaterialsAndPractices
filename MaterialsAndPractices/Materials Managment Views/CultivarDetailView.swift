@@ -248,18 +248,18 @@ struct CultivarDetailView: View {
                 }
                 
                 // View Existing Grows button
-                if !cultivar.growsArray.isEmpty {
-                    NavigationLink(destination: CultivarGrowsListView(cultivar: cultivar)) {
-                        ActionButton(
-                            title: "View Grows",
-                            subtitle: "\(cultivar.growsArray.count) existing",
-                            icon: "list.bullet",
-                            color: AppTheme.Colors.secondary
-                        ) {
-                            // Navigation handled by NavigationLink
-                        }
-                    }
-                }
+//                if !cultivar.growsArray.isEmpty {
+//                    NavigationLink(destination: CultivarGrowsListView(cultivar: cultivar)) {
+//                        ActionButton(
+//                            title: "View Grows",
+//                            subtitle: "\(cultivar.growsArray.count) existing",
+//                            icon: "list.bullet",
+//                            color: AppTheme.Colors.secondary
+//                        ) {
+//                            // Navigation handled by NavigationLink
+//                        }
+//                    }
+//                }
             }
         }
     }
@@ -530,10 +530,10 @@ extension Cultivar {
     }
     
     /// Array of associated grows
-    var growsArray: [Grow] {
-        let set = grows as? Set<Grow> ?? []
-        return Array(set).sorted { ($0.title ?? "") < ($1.title ?? "") }
-    }
+//    var growsArray: [Grow] {
+//        let set = grows as? Set<Grow> ?? []
+//        return Array(set).sorted { ($0.title ?? "") < ($1.title ?? "") }
+//    }
 }
 
 

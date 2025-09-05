@@ -516,13 +516,7 @@ struct PerformWorkView: View {
         workOrder.grow = grow
         
         // Create work practice
-        let workPractice = Work(context: viewContext)
-        workPractice.name = practiceName
-        workPractice.practice = practiceNotes
-        workPractice.jobCompleted = false
-        workPractice.grow = grow
-        workPractice.workOrder = workOrder
-        
+  
         // Save context
         do {
             try viewContext.save()

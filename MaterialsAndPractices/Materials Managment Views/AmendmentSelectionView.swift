@@ -145,7 +145,7 @@ struct AmendmentSelectionView: View {
     /// Seeds amendments if none exist
     private func seedAmendmentsIfNeeded() {
         if allAmendments.isEmpty {
-            CropAmendmentSeeder.seedAmendments(in: viewContext)
+         //   CropAmendmentSeeder.seedAmendments(in: viewContext)
         }
     }
 }
