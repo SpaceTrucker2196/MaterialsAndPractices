@@ -50,7 +50,7 @@ struct FieldDataLoader {
         
         // Force load nested relationships for grows
         if let grows = field.grows?.allObjects as? [Grow] {
-            context.prefetchRelationships(for: grows, keyPaths: ["workOrders", "harvests", "cropAmendment"])
+            context.prefetchRelationships(for: grows, keyPaths: ["workOrders", "harvest"])
         }
     }
     

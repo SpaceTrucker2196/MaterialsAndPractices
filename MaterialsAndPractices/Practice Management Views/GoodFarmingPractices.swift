@@ -1,31 +1,185 @@
-//
-//  GoodFarmingPractices.swift
-//  MaterialsAndPractices
-//
-//  Standardized Good Farming Practices enum providing comprehensive
-//  organic certification and food safety practice definitions
-//
-//  Created by GitHub Copilot on current date.
-//
+/// ALL THE BEST ENUMS
 
 import Foundation
 import SwiftUI
 import CoreData
 
+
+/// Enumeration of common weed and pest management methods
+/// Backed by Int32 for Core Data storage
+@objc enum WeedAndPestManagmentMethod: Int32, CaseIterable, Identifiable {
+    // MARK: - Cultural
+    case cropRotation = 0
+    case coverCropping = 1
+    case intercropping = 2
+    case resistantVarieties = 3
+    case sanitation = 4
+
+    // MARK: - Mechanical / Physical
+    case handWeeding = 10
+    case cultivation = 11
+    case mowing = 12
+    case mulching = 13
+    case flaming = 14
+    case tillage = 15
+    case barriersRowCovers = 16
+    case trapping = 17
+    case solarization = 18
+
+    // MARK: - Biological
+    case beneficialInsects = 20
+    case biologicalSprays = 21
+    case grazingAnimals = 22
+    case microbialControls = 23
+
+    // MARK: - Chemical
+    case organicApprovedPesticides = 30
+    case herbicides = 31
+    case insecticides = 32
+    case fungicides = 33
+    
+    case other = 99
+
+    public var id: Int32 { rawValue }
+
+    /// Human-readable display name
+    var displayName: String {
+        switch self {
+        // Cultural
+        case .cropRotation: return "🌾 Crop Rotation"
+        case .coverCropping: return "🌱 Cover Cropping"
+        case .intercropping: return "🌿 Intercropping"
+        case .resistantVarieties: return "🧬 Resistant Varieties"
+        case .sanitation: return "🧼 Sanitation"
+
+        // Mechanical
+        case .handWeeding: return "✋ Hand Weeding"
+        case .cultivation: return "🚜 Cultivation"
+        case .mowing: return "✂️ Mowing"
+        case .mulching: return "🍂 Mulching"
+        case .flaming: return "🔥 Flaming"
+        case .tillage: return "🔧 Tillage"
+        case .barriersRowCovers: return "🪢 Barriers / Row Covers"
+        case .trapping: return "🪤 Trapping"
+        case .solarization: return "☀️ Solarization"
+
+        // Biological
+        case .beneficialInsects: return "🐞 Beneficial Insects"
+        case .biologicalSprays: return "🧴 Biological Sprays (Bt, Neem)"
+        case .grazingAnimals: return "🐑 Grazing Animals"
+        case .microbialControls: return "🦠 Microbial Controls"
+
+        // Chemical
+        case .organicApprovedPesticides: return "✅ OMRI-Approved Pesticides"
+        case .herbicides: return "🌿 Herbicides"
+        case .insecticides: return "🐜 Insecticides"
+        case .fungicides: return "🍄 Fungicides"
+        case .other:
+            return " Other"
+        }
+    }
+
+    /// Category grouping for filtering/presentation
+    var category: ManagementCategory {
+        switch self {
+        case .cropRotation, .coverCropping, .intercropping, .resistantVarieties, .sanitation:
+            return .cultural
+        case .handWeeding, .cultivation, .mowing, .mulching, .flaming,
+             .tillage, .barriersRowCovers, .trapping, .solarization:
+            return .mechanical
+        case .beneficialInsects, .biologicalSprays, .grazingAnimals, .microbialControls:
+            return .biological
+        case .organicApprovedPesticides, .herbicides, .insecticides, .fungicides:
+            return .chemical
+        case .other:
+            return .other
+        }
+    }
+}
+
+/// Categories for organizing management methods
+@objc enum ManagementCategory: Int32, CaseIterable {
+    case cultural = 0
+    case mechanical = 1
+    case biological = 2
+    case chemical = 3
+    case other = 99
+
+    var label: String {
+        switch self {
+        case .cultural: return "Cultural"
+        case .mechanical: return "Mechanical / Physical"
+        case .biological: return "Biological"
+        case .chemical: return "Chemical"
+        case .other: return "Other"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .cultural: return "leaf.fill"
+        case .mechanical: return "hammer.fill"
+        case .biological: return "ladybug.fill"
+        case .chemical: return "flask.fill"
+        case .other:
+            return "leaf.fill"
+        }
+    }
+}
+/// Enumeration of common methods for applying soil amendments
+// MARK: - Int32-backed enum to match Core Data
+@objc public enum ApplicationMethod: Int32, CaseIterable, Identifiable {
+    case broadcastSurface       = 0
+    case broadcastIncorporated  = 1
+    case banding                = 2
+    case sideDress              = 3
+    case fertigation            = 4
+    case foliarSpray            = 5
+    case dripIrrigation         = 6
+    case soilInjection          = 7
+    case topDress               = 8
+    case inRow                  = 9
+    case seedTreatment          = 10
+    case transplantDip          = 11
+    case compostMulch           = 12
+    case other                  = 99
+
+    public var id: Int32 { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .broadcastSurface:      return "Broadcast (Surface)"
+        case .broadcastIncorporated: return "Broadcast (Incorporated)"
+        case .banding:               return "Banding"
+        case .sideDress:             return "Side-dress"
+        case .fertigation:           return "Fertigation"
+        case .foliarSpray:           return "Foliar Spray"
+        case .dripIrrigation:        return "Drip Irrigation"
+        case .soilInjection:         return "Soil Injection"
+        case .topDress:              return "Top Dress"
+        case .inRow:                 return "In-row"
+        case .seedTreatment:         return "Seed Treatment"
+        case .transplantDip:         return "Transplant Dip"
+        case .compostMulch:          return "Compost / Mulch Application"
+        case .other:                 return "Other"
+        }
+    }
+}
+
 /// Standardized Good Farming Practices for organic certification and food safety compliance
 /// Provides comprehensive practice definitions with training, frequency, and certification requirements
-enum GoodFarmingPractices: String, CaseIterable, Identifiable {
-    case soilAmendmentRecordkeeping = "soil_amendment_recordkeeping"
-    case seedSourceDocumentation = "seed_source_documentation"
-    case pestAndWeedManagementLog = "pest_and_weed_management_log"
-    case harvestRecordkeeping = "harvest_recordkeeping"
-    case workerHygieneAndFoodSafetyTraining = "worker_hygiene_and_food_safety_training"
-    case waterSourceAndQualityMonitoring = "water_source_and_quality_monitoring"
-    case manureAndCompostApplicationLog = "manure_and_compost_application_log"
-    case equipmentSanitationLog = "equipment_sanitation_log"
-    case traceabilityLotCodesAndProductFlow = "traceability_lot_codes_and_product_flow"
+enum GoodFarmingPractices: Int32, CaseIterable, Identifiable {
+    case soilAmendmentRecordkeeping = 1
+    case seedSourceDocumentation = 2
+    case pestAndWeedManagementLog = 3
+    case harvestRecordkeeping = 4
+    case workerHygieneAndFoodSafetyTraining = 5
+    case waterSourceAndQualityMonitoring = 6
+    case manureAndCompostApplicationLog = 7
+    case equipmentSanitationLog = 8
+    case traceabilityLotCodesAndProductFlow = 9
     
-    var id: String { rawValue }
+    var id: Int32 { rawValue }
     
     /// Display name with emoji icon for visual recognition
     var name: String {

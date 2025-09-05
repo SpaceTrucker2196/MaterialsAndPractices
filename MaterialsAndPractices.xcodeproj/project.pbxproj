@@ -14,6 +14,7 @@
 		1F4F48CD257DB4C4005E559D /* MaterialsAndPracticesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48CC257DB4C4005E559D /* MaterialsAndPracticesTests.swift */; };
 		1F4F48D8257DB4C4005E559D /* MaterialsAndPracticesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F48D7257DB4C4005E559D /* MaterialsAndPracticesUITests.swift */; };
 		1F5136F82E622C930017110E /* MaterialsAndPractices.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1F5136E52E622C930017110E /* MaterialsAndPractices.xcdatamodeld */; };
+		1F6D74D72E67515900879AA7 /* FieldManagementViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6D74D62E67515900879AA7 /* FieldManagementViews.swift */; };
 		1FB247B52E5ACC3000F7BAF7 /* FarmListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247AE2E5ACC3000F7BAF7 /* FarmListView.swift */; };
 		1FB247B62E5ACC3000F7BAF7 /* EditPropertyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB247AD2E5ACC3000F7BAF7 /* EditPropertyView.swift */; };
 		1FCEB4532E5B790100021D62 /* CreateFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCEB44C2E5B790100021D62 /* CreateFieldView.swift */; };
@@ -76,6 +77,7 @@
 		1F5136F52E622C930017110E /* MaterialsAndPractices 15.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 15.xcdatamodel"; sourceTree = "<group>"; };
 		1F5136F62E622C930017110E /* MaterialsAndPractices 16.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 16.xcdatamodel"; sourceTree = "<group>"; };
 		1F5136F72E622C930017110E /* MaterialsAndPractices 17.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MaterialsAndPractices 17.xcdatamodel"; sourceTree = "<group>"; };
+		1F6D74D62E67515900879AA7 /* FieldManagementViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FieldManagementViews.swift; path = Farm/FieldManagementViews.swift; sourceTree = "<group>"; };
 		1FB247AD2E5ACC3000F7BAF7 /* EditPropertyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPropertyView.swift; sourceTree = "<group>"; };
 		1FB247AE2E5ACC3000F7BAF7 /* FarmListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FarmListView.swift; sourceTree = "<group>"; };
 		1FCEB44C2E5B790100021D62 /* CreateFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateFieldView.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 		1F4F48B4257DB4C2005E559D /* MaterialsAndPractices */ = {
 			isa = PBXGroup;
 			children = (
+				1F6D74D62E67515900879AA7 /* FieldManagementViews.swift */,
 				1F1BD3A62E638D1D002E2E85 /* FarmStaffView.swift */,
 				1F1BD3822E634EDE002E2E85 /* UIResourceFIles */,
 				1F1BD3A82E638F1E002E2E85 /* SharedUIViews */,
@@ -178,8 +181,8 @@
 				1F1BD3AE2E63BF4C002E2E85 /* Worker Managment Views */,
 				1F2E92412E5A5641003962BA /* Configuration */,
 				1F60A83F2E61E8B10006ABA1 /* Practice Management Views */,
-				1F60A83D2E61E84D0006ABA1 /* Materials Managment Views */,
 				1F60A83C2E61E7D10006ABA1 /* ActiveGrowViews */,
+				1F60A83D2E61E84D0006ABA1 /* Materials Managment Views */,
 				1F60A83B2E61E78A0006ABA1 /* Record Keeping Views */,
 				1FC121242E5F86B2008B4851 /* PhotoLibrary */,
 				1FBCAA562E5E596200E3C619 /* InspectionSystem */,
@@ -391,6 +394,7 @@
 				1F1BD3A72E638D1D002E2E85 /* FarmStaffView.swift in Sources */,
 				1FEE44C42E5E168400A1887B /* AdaptiveDashboardView.swift in Sources */,
 				1F2E92422E5A5641003962BA /* SecureConfiguration.swift in Sources */,
+				1F6D74D72E67515900879AA7 /* FieldManagementViews.swift in Sources */,
 				1FCEB4652E5B940300021D62 /* UtilitiesView.swift in Sources */,
 				1FCEB45D2E5B7A5C00021D62 /* FarmerProfileView.swift in Sources */,
 				1F4F48B6257DB4C2005E559D /* MaterialsAndPracticesApp.swift in Sources */,

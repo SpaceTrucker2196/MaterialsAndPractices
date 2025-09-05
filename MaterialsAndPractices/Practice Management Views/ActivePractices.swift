@@ -621,7 +621,7 @@ struct UpcomingHarvestTile: View {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
                 // Header with cultivar emoji
                 HStack {
-                    Text(grow.cultivar?.emoji ?? "🌱")
+                    Text(grow.seed?.cultivar?.emoji ?? "🌱")
                         .font(.system(size: 28))
                     
                     Spacer()

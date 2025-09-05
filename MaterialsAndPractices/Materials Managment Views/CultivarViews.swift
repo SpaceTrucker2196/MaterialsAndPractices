@@ -46,292 +46,292 @@ extension SwiftUI.Image {
     }
 }
 
-/// Comprehensive cultivar detail view displaying all cultivar information,
+// Comprehensive cultivar detail view displaying all cultivar information,
 /// associated active grows, and historical completed grows with navigation support
-struct CultivarGrowView: View {
-    let cultivar: Cultivar
-    @Environment(\.managedObjectContext) private var viewContext
-    
-    /// Computed property to filter active grows (those without harvest dates)
-    private var activeGrows: [Grow] {
-        guard let grows = cultivar.grows else { return [] }
-        return grows.compactMap { $0 as? Grow }
-            .filter { $0.harvestDate == nil }
-            .sorted { ($0.title ?? "") < ($1.title ?? "") }
-    }
-    
-    /// Computed property to filter completed grows (those with harvest dates)
-    private var completedGrows: [Grow] {
-        guard let grows = cultivar.grows else { return [] }
-        return grows.compactMap { $0 as? Grow }
-            .filter { $0.harvestDate != nil }
-            .sorted { ($0.harvestDate ?? Date.distantPast) > ($1.harvestDate ?? Date.distantPast) }
-    }
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
-                // MARK: - Cultivar Header Section
-                cultivarHeaderSection
-                
-                // MARK: - Cultivar Details Grid
-                cultivarDetailsGrid
-                
-                // MARK: - Active Grows Section
-                if !activeGrows.isEmpty {
-                    activeGrowsSection
-                }
-                
-                // MARK: - Completed Grows Section
-                if !completedGrows.isEmpty {
-                    completedGrowsSection
-                }
-                
-                Spacer()
-            }
-            .padding()
-        }
-        .navigationTitle(cultivar.name ?? "Cultivar")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    // MARK: - Header Section
-    
-    /// Header section displaying cultivar name, image, and family information
-    private var cultivarHeaderSection: some View {
-        HStack {
-            Text(cultivar.emoji ?? "0")
-                .font(AppTheme.Typography.displayLarge)
-                .foregroundColor(AppTheme.Colors.textPrimary)
-            VStack(alignment: .leading) {
-                Text(cultivar.name ?? "Unknown Cultivar")
-                    .font(AppTheme.Typography.displaySmall)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-
-                if let family = cultivar.family, !family.isEmpty {
-                    Text("Family: \(family)")
-                        .font(AppTheme.Typography.bodyMedium)
-                        .foregroundColor(AppTheme.Colors.textSecondary)
-                }
-            }
-            Spacer()
-        }
-    }
-    
-    // MARK: - Details Grid
-    
-    /// Grid layout displaying cultivar attributes in organized cards with color coding
-    private var cultivarDetailsGrid: some View {
-        VStack(spacing: AppTheme.Spacing.medium) {
-            // Primary information grid
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: AppTheme.Spacing.medium) {
-
-                if let season = cultivar.season, !season.isEmpty {
-                    DetailCard(
-                        title: "Season",
-                        value: season,
-                        backgroundColor: AppTheme.Colors.textSecondary,
-                        titleColor: AppTheme.Colors.textSecondary
-                    )
-                }
-
-                if let hardyZone = cultivar.hardyZone, !hardyZone.isEmpty {
-                    DetailCard(
-                        title: "Hardy Zone",
-                        value: hardyZone,
-                        backgroundColor: AppTheme.ColorCoding.colorForUSDAZone(hardyZone).opacity(0.1),
-                        titleColor: AppTheme.Colors.textSecondary
-                    )
-                }
-
-                if let weatherTolerance = cultivar.weatherTolerance, !weatherTolerance.isEmpty {
-                    DetailCard(
-                        title: "Weather Tolerance",
-                        value: weatherTolerance,
-                        backgroundColor: AppTheme.ColorCoding.colorForWeatherTolerance(weatherTolerance).opacity(0.1),
-                        titleColor: AppTheme.Colors.textSecondary
-                    )
-                }
-
-                if let growingDays = cultivar.growingDays, !growingDays.isEmpty {
-                    DetailCard(
-                        title: "Growing Days",
-                        value: growingDays,
-                        backgroundColor: AppTheme.ColorCoding.colorForGrowingDays(growingDays).opacity(0.1),
-                        titleColor:AppTheme.Colors.textSecondary
-                    )
-                }
-
-                if let plantingWeek = cultivar.plantingWeek, !plantingWeek.isEmpty {
-                    DetailCard(
-                        title: "Planting Week",
-                        value: plantingWeek,
-                        backgroundColor: AppTheme.Colors.organicPractice.opacity(0.1),
-                        titleColor: AppTheme.Colors.textSecondary
-                    )
-                }
-
-                if let optimalZones = cultivar.optimalZones, !optimalZones.isEmpty {
-                    DetailCard(
-                        title: "Optimal Zones",
-                        value: optimalZones,
-                        backgroundColor: AppTheme.Colors.zoneIndicator.opacity(0.1),
-                        titleColor:AppTheme.Colors.textSecondary
-                    )
-                }
-            }
-            
-            // Heat Map Section
-            HarvestHeatMapView(cultivar: cultivar)
-            
-            // Timeline Section (if there's an active grow)
-            if let activeGrow = activeGrows.first {
-                GrowingSeasonTimelineView(cultivar: cultivar, grow: activeGrow)
-            }
-            
-            // Additional information grid
-            if hasAdditionalInfo {
-                additionalInfoGrid
-            }
-        }
-    }
-    
-    /// Additional information grid for extended cultivar data
-    private var additionalInfoGrid: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            Text("Additional Information")
-                .font(AppTheme.Typography.headlineMedium)
-                .foregroundColor(AppTheme.Colors.textPrimary)
-            
-            LazyVGrid(columns: [GridItem(.flexible())], spacing: AppTheme.Spacing.small) {
-                
-                if let description = cultivar.cultivarDescription, !description.isEmpty {
-                    ExpandableDetailCard(
-                        title: "Description",
-                        value: description,
-                        backgroundColor: AppTheme.Colors.backgroundTertiary,
-                        titleColor: AppTheme.Colors.textSecondary
-                    )
-                }
-                
-                if let growingAdvice = cultivar.growingAdvice, !growingAdvice.isEmpty {
-                    ExpandableDetailCard(
-                        title: "Growing Advice",
-                        value: growingAdvice,
-                        backgroundColor: AppTheme.Colors.success.opacity(0.1),
-                        titleColor:  AppTheme.Colors.textSecondary
-                    )
-                }
-                
-                if let soilInfo = cultivar.soilInfo, !soilInfo.isEmpty {
-                    ExpandableDetailCard(
-                        title: "Soil Requirements",
-                        value: soilInfo,
-                        backgroundColor: AppTheme.Colors.organicMaterial.opacity(0.1),
-                        titleColor:  AppTheme.Colors.textSecondary
-                    )
-                }
-                
-                if let pests = cultivar.pests, !pests.isEmpty {
-                    ExpandableDetailCard(
-                        title: "Common Pests",
-                        value: pests,
-                        backgroundColor: AppTheme.Colors.warning.opacity(0.1),
-                        titleColor:  AppTheme.Colors.textSecondary
-                    )
-                }
-                
-                if let amendments = cultivar.amendments, !amendments.isEmpty {
-                    ExpandableDetailCard(
-                        title: "Recommended Amendments",
-                        value: amendments,
-                        backgroundColor: AppTheme.Colors.organicPractice.opacity(0.1),
-                        titleColor:  AppTheme.Colors.textSecondary
-                    )
-                }
-            }
-        }
-    }
-    
-    /// Check if cultivar has additional information to display
-    private var hasAdditionalInfo: Bool {
-        return [
-            cultivar.cultivarDescription,
-            cultivar.growingAdvice,
-            cultivar.soilInfo,
-            cultivar.pests,
-            cultivar.amendments
-        ].contains { $0 != nil && !($0?.isEmpty ?? true) }
-    }
-    
-    // MARK: - Active Grows Section
-    
-    /// Section displaying active grows in a grid layout with small tiles
-    private var activeGrowsSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            HStack {
-                Text("Active Grows")
-                    .font(AppTheme.Typography.headlineLarge)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                
-                Spacer()
-                
-                Text("\(activeGrows.count)")
-                    .font(AppTheme.Typography.labelMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-            }
-            
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: AppTheme.Spacing.small) {
-                ForEach(activeGrows, id: \.self) { grow in
-                    NavigationLink(destination: ActiveGrowDetailView(growViewModel: ActiveGrowViewModel(grow: grow))) {
-                        GrowTile(grow: grow, isActive: true)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-            }
-        }
-    }
-    
-    // MARK: - Completed Grows Section
-    
-    /// Section displaying completed grows in a grid layout with historical information
-    private var completedGrowsSection: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
-            HStack {
-                Text("Completed Grows")
-                    .font(AppTheme.Typography.headlineLarge)
-                    .foregroundColor(AppTheme.Colors.textPrimary)
-                
-                Spacer()
-                
-                Text("\(completedGrows.count)")
-                    .font(AppTheme.Typography.labelMedium)
-                    .foregroundColor(AppTheme.Colors.textSecondary)
-            }
-            
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: AppTheme.Spacing.small) {
-                ForEach(completedGrows, id: \.self) { grow in
-                    NavigationLink(destination: ActiveGrowDetailView(growViewModel: ActiveGrowViewModel(grow: grow))) {
-                        GrowTile(grow: grow, isActive: false)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-            }
-        }
-    }
-}
-
+//struct CultivarGrowView: View {
+//    let cultivar: Cultivar
+//    @Environment(\.managedObjectContext) private var viewContext
+//    
+//    /// Computed property to filter active grows (those without harvest dates)
+//    private var activeGrows: [Grow] {
+//        guard let grows = cultivar.seedLibrary.grows else { return [] }
+//        return grows.compactMap { $0 as? Grow }
+//            .filter { $0.harvestDate == nil }
+//            .sorted { ($0.title ?? "") < ($1.title ?? "") }
+//    }
+//    
+//    /// Computed property to filter completed grows (those with harvest dates)
+//    private var completedGrows: [Grow] {
+//        guard let grows = cultivar.grows else { return [] }
+//        return grows.compactMap { $0 as? Grow }
+//            .filter { $0.harvestDate != nil }
+//            .sorted { ($0.harvestDate ?? Date.distantPast) > ($1.harvestDate ?? Date.distantPast) }
+//    }
+//
+//    var body: some View {
+//        ScrollView {
+//            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+//                // MARK: - Cultivar Header Section
+//                cultivarHeaderSection
+//                
+//                // MARK: - Cultivar Details Grid
+//                cultivarDetailsGrid
+//                
+//                // MARK: - Active Grows Section
+//                if !activeGrows.isEmpty {
+//                    activeGrowsSection
+//                }
+//                
+//                // MARK: - Completed Grows Section
+//                if !completedGrows.isEmpty {
+//                    completedGrowsSection
+//                }
+//                
+//                Spacer()
+//            }
+//            .padding()
+//        }
+//        .navigationTitle(cultivar.name ?? "Cultivar")
+//        .navigationBarTitleDisplayMode(.inline)
+//    }
+//    
+//    // MARK: - Header Section
+//    
+//    /// Header section displaying cultivar name, image, and family information
+//    private var cultivarHeaderSection: some View {
+//        HStack {
+//            Text(cultivar.emoji ?? "0")
+//                .font(AppTheme.Typography.displayLarge)
+//                .foregroundColor(AppTheme.Colors.textPrimary)
+//            VStack(alignment: .leading) {
+//                Text(cultivar.name ?? "Unknown Cultivar")
+//                    .font(AppTheme.Typography.displaySmall)
+//                    .foregroundColor(AppTheme.Colors.textPrimary)
+//
+//                if let family = cultivar.family, !family.isEmpty {
+//                    Text("Family: \(family)")
+//                        .font(AppTheme.Typography.bodyMedium)
+//                        .foregroundColor(AppTheme.Colors.textSecondary)
+//                }
+//            }
+//            Spacer()
+//        }
+//    }
+//    
+//    // MARK: - Details Grid
+//    
+//    /// Grid layout displaying cultivar attributes in organized cards with color coding
+//    private var cultivarDetailsGrid: some View {
+//        VStack(spacing: AppTheme.Spacing.medium) {
+//            // Primary information grid
+//            LazyVGrid(columns: [
+//                GridItem(.flexible()),
+//                GridItem(.flexible())
+//            ], spacing: AppTheme.Spacing.medium) {
+//
+//                if let season = cultivar.season, !season.isEmpty {
+//                    DetailCard(
+//                        title: "Season",
+//                        value: season,
+//                        backgroundColor: AppTheme.Colors.textSecondary,
+//                        titleColor: AppTheme.Colors.textSecondary
+//                    )
+//                }
+//
+//                if let hardyZone = cultivar.hardyZone, !hardyZone.isEmpty {
+//                    DetailCard(
+//                        title: "Hardy Zone",
+//                        value: hardyZone,
+//                        backgroundColor: AppTheme.ColorCoding.colorForUSDAZone(hardyZone).opacity(0.1),
+//                        titleColor: AppTheme.Colors.textSecondary
+//                    )
+//                }
+//
+//                if let weatherTolerance = cultivar.weatherTolerance, !weatherTolerance.isEmpty {
+//                    DetailCard(
+//                        title: "Weather Tolerance",
+//                        value: weatherTolerance,
+//                        backgroundColor: AppTheme.ColorCoding.colorForWeatherTolerance(weatherTolerance).opacity(0.1),
+//                        titleColor: AppTheme.Colors.textSecondary
+//                    )
+//                }
+//
+//                if let growingDays = cultivar.growingDays, !growingDays.isEmpty {
+//                    DetailCard(
+//                        title: "Growing Days",
+//                        value: growingDays,
+//                        backgroundColor: AppTheme.ColorCoding.colorForGrowingDays(growingDays).opacity(0.1),
+//                        titleColor:AppTheme.Colors.textSecondary
+//                    )
+//                }
+//
+//                if let plantingWeek = cultivar.plantingWeek, !plantingWeek.isEmpty {
+//                    DetailCard(
+//                        title: "Planting Week",
+//                        value: plantingWeek,
+//                        backgroundColor: AppTheme.Colors.organicPractice.opacity(0.1),
+//                        titleColor: AppTheme.Colors.textSecondary
+//                    )
+//                }
+//
+//                if let optimalZones = cultivar.optimalZones, !optimalZones.isEmpty {
+//                    DetailCard(
+//                        title: "Optimal Zones",
+//                        value: optimalZones,
+//                        backgroundColor: AppTheme.Colors.zoneIndicator.opacity(0.1),
+//                        titleColor:AppTheme.Colors.textSecondary
+//                    )
+//                }
+//            }
+//            
+//            // Heat Map Section
+//            HarvestHeatMapView(cultivar: cultivar)
+//            
+//            // Timeline Section (if there's an active grow)
+//            if let activeGrow = activeGrows.first {
+//                GrowingSeasonTimelineView(cultivar: cultivar, grow: activeGrow)
+//            }
+//            
+//            // Additional information grid
+//            if hasAdditionalInfo {
+//                additionalInfoGrid
+//            }
+//        }
+//    }
+//    
+//    /// Additional information grid for extended cultivar data
+//    private var additionalInfoGrid: some View {
+//        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+//            Text("Additional Information")
+//                .font(AppTheme.Typography.headlineMedium)
+//                .foregroundColor(AppTheme.Colors.textPrimary)
+//            
+//            LazyVGrid(columns: [GridItem(.flexible())], spacing: AppTheme.Spacing.small) {
+//                
+//                if let description = cultivar.cultivarDescription, !description.isEmpty {
+//                    ExpandableDetailCard(
+//                        title: "Description",
+//                        value: description,
+//                        backgroundColor: AppTheme.Colors.backgroundTertiary,
+//                        titleColor: AppTheme.Colors.textSecondary
+//                    )
+//                }
+//                
+//                if let growingAdvice = cultivar.growingAdvice, !growingAdvice.isEmpty {
+//                    ExpandableDetailCard(
+//                        title: "Growing Advice",
+//                        value: growingAdvice,
+//                        backgroundColor: AppTheme.Colors.success.opacity(0.1),
+//                        titleColor:  AppTheme.Colors.textSecondary
+//                    )
+//                }
+//                
+//                if let soilInfo = cultivar.soilInfo, !soilInfo.isEmpty {
+//                    ExpandableDetailCard(
+//                        title: "Soil Requirements",
+//                        value: soilInfo,
+//                        backgroundColor: AppTheme.Colors.organicMaterial.opacity(0.1),
+//                        titleColor:  AppTheme.Colors.textSecondary
+//                    )
+//                }
+//                
+//                if let pests = cultivar.pests, !pests.isEmpty {
+//                    ExpandableDetailCard(
+//                        title: "Common Pests",
+//                        value: pests,
+//                        backgroundColor: AppTheme.Colors.warning.opacity(0.1),
+//                        titleColor:  AppTheme.Colors.textSecondary
+//                    )
+//                }
+//                
+//                if let amendments = cultivar.amendments, !amendments.isEmpty {
+//                    ExpandableDetailCard(
+//                        title: "Recommended Amendments",
+//                        value: amendments,
+//                        backgroundColor: AppTheme.Colors.organicPractice.opacity(0.1),
+//                        titleColor:  AppTheme.Colors.textSecondary
+//                    )
+//                }
+//            }
+//        }
+//    }
+//    
+//    /// Check if cultivar has additional information to display
+//    private var hasAdditionalInfo: Bool {
+//        return [
+//            cultivar.cultivarDescription,
+//            cultivar.growingAdvice,
+//            cultivar.soilInfo,
+//            cultivar.pests,
+//            cultivar.amendments
+//        ].contains { $0 != nil && !($0?.isEmpty ?? true) }
+//    }
+//    
+//    // MARK: - Active Grows Section
+//    
+//    /// Section displaying active grows in a grid layout with small tiles
+//    private var activeGrowsSection: some View {
+//        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+//            HStack {
+//                Text("Active Grows")
+//                    .font(AppTheme.Typography.headlineLarge)
+//                    .foregroundColor(AppTheme.Colors.textPrimary)
+//                
+//                Spacer()
+//                
+//                Text("\(activeGrows.count)")
+//                    .font(AppTheme.Typography.labelMedium)
+//                    .foregroundColor(AppTheme.Colors.textSecondary)
+//            }
+//            
+//            LazyVGrid(columns: [
+//                GridItem(.flexible()),
+//                GridItem(.flexible()),
+//                GridItem(.flexible())
+//            ], spacing: AppTheme.Spacing.small) {
+//                ForEach(activeGrows, id: \.self) { grow in
+//                    NavigationLink(destination: ActiveGrowDetailView(growViewModel: ActiveGrowViewModel(grow: grow))) {
+//                        GrowTile(grow: grow, isActive: true)
+//                    }
+//                    .buttonStyle(PlainButtonStyle())
+//                }
+//            }
+//        }
+//    }
+//    
+//    // MARK: - Completed Grows Section
+//    
+//    /// Section displaying completed grows in a grid layout with historical information
+//    private var completedGrowsSection: some View {
+//        VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
+//            HStack {
+//                Text("Completed Grows")
+//                    .font(AppTheme.Typography.headlineLarge)
+//                    .foregroundColor(AppTheme.Colors.textPrimary)
+//                
+//                Spacer()
+//                
+//                Text("\(completedGrows.count)")
+//                    .font(AppTheme.Typography.labelMedium)
+//                    .foregroundColor(AppTheme.Colors.textSecondary)
+//            }
+//            
+//            LazyVGrid(columns: [
+//                GridItem(.flexible()),
+//                GridItem(.flexible()),
+//                GridItem(.flexible())
+//            ], spacing: AppTheme.Spacing.small) {
+//                ForEach(completedGrows, id: \.self) { grow in
+//                    NavigationLink(destination: ActiveGrowDetailView(growViewModel: ActiveGrowViewModel(grow: grow))) {
+//                        GrowTile(grow: grow, isActive: false)
+//                    }
+//                    .buttonStyle(PlainButtonStyle())
+//                }
+//            }
+//        }
+//    }
+//}
+//
 // MARK: - Supporting Views
 
 /// Reusable card component for displaying cultivar detail information

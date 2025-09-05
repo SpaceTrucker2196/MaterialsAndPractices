@@ -89,7 +89,7 @@ struct ContentView: View {
                 }
             
             // Plant cultivar database tab
-            ActivePracticesView()
+            GoodFarmingPracticesOverview()
                 .tabItem {
                     Label("Practices", systemImage: "list.bullet.rectangle")
                 }

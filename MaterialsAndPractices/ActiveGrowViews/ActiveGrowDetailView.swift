@@ -71,19 +71,20 @@ struct ActiveGrowDetailView: View {
     @State private var showingPerformWorkView = false
     @State private var showingInspectionScheduling = false
     @State private var showingHarvestCreation = false
+    @State private var showingAmendmentDetail = false
+    @State private var showingWeedAndPestManagmentDetail = false
     
     // MARK: - Body
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
-                locationInformationSection
+               
                 harvestCalendarSection
                 growQuickActionsToolbar
                 timelineInformationSection
                 cultivarGrowingDetailsSection
                 fieldAndFarmInformationSection
-        
                 workPracticesSection
                 inspectionSection
                 
@@ -104,6 +105,14 @@ struct ActiveGrowDetailView: View {
         .sheet(isPresented: $showingHarvestCreation) {
             HarvestCreationView(isPresented: $showingHarvestCreation, grow: growViewModel.grow)
         }
+        .sheet(isPresented:$showingAmendmentDetail) {
+            let soilApplication = SoilAmendmentApplication(context: viewContext)
+            ApplySoilAmendmentDetailView(application:soilApplication,grow:growViewModel.grow, isPresented: $showingAmendmentDetail)
+        }
+        .sheet(isPresented:$showingWeedAndPestManagmentDetail) {
+            let weedAndPestManagment = WeedAndPestManagment(context: viewContext)
+            ApplyWeedAndPestManagmetnDetailView(managment:weedAndPestManagment,grow:growViewModel.grow, isPresented: $showingWeedAndPestManagmentDetail)
+        }
     }
     
     // MARK: - Section Components
@@ -113,10 +122,17 @@ struct ActiveGrowDetailView: View {
             
             // First row of buttons
             HStack {
+//                CommonActionButton(
+//                    title: "New Work Order",
+//                    style: .outline,
+//                    action: performWork
+//                )
+//                .frame(maxWidth: .infinity)
+//
                 CommonActionButton(
-                    title: "New Work Order",
+                    title: "Pest and Weed Managment",
                     style: .outline,
-                    action: performWork
+                    action: addPestAndWeedManagment
                 )
                 .frame(maxWidth: .infinity)
                 
@@ -530,7 +546,7 @@ struct ActiveGrowDetailView: View {
                     .background(AppTheme.Colors.warning.opacity(0.1))
                     .cornerRadius(AppTheme.CornerRadius.medium)
             }
-        }.frame(height:400)
+        }.frame(height:300)
     }
     
     /// Section displaying location information
@@ -565,9 +581,9 @@ struct ActiveGrowDetailView: View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             SectionHeader(title: "Amendment Applications")
             
-            Amendments(selectedGrow: growViewModel.grow)
-                .frame(maxWidth: .infinity)
-            
+//            SoilAdmedmentApplicaitons(selectedGrow: growViewModel.grow)
+//                .frame(maxWidth: .infinity)
+//            
             CommonActionButton(
                 title: "Apply",
                 action: addAmendment
@@ -655,15 +671,17 @@ struct ActiveGrowDetailView: View {
     }
     
     /// Adds a new work practice entry to the current grow
-    private func addWorkPractice() {
-        let newWork = Work(context: viewContext)
-        growViewModel.grow.addToWork(newWork)
-    }
+    
     
     /// Adds a new amendment application to the current grow
     private func addAmendment() {
-        let newAmendment = Amendment(context: viewContext)
-        growViewModel.grow.addToAmendments(newAmendment)
+//        let newAmendment = SoilAmendmentApplication(context: viewContext)
+//        growViewModel.grow.addToSoilAmendments(newAmendment)
+        showingAmendmentDetail = true
+        
+    }
+    private func addPestAndWeedManagment() {
+        showingWeedAndPestManagmentDetail = true
     }
     
     /// Opens the inspection scheduling view for this grow
@@ -695,7 +713,7 @@ struct ActiveGrowDetailView: View {
     
     /// Formatted days to harvest text
     private var daysToHarvestText: String {
-        guard let cultivar = growViewModel.grow.cultivar,
+        guard let cultivar = growViewModel.grow.seed?.cultivar,
               let plantedDate = growViewModel.grow.plantedDate else {
             return "Unknown"
         }

@@ -191,7 +191,7 @@ struct FieldRowWithPrefetch: View {
                 if let grows = fetchedField.grows?.allObjects as? [Grow] {
                     for grow in grows {
                         _ = grow.workOrders?.count
-                        _ = grow.harvests?.count
+                        _ = grow.harvest?.count
                     }
                 }
                 
@@ -566,7 +566,7 @@ struct FieldDetailView: View {
             SectionHeader(title: "Field Harvests")
             
             if let harvests = getFieldHarvests(), !harvests.isEmpty {
-                ForEach(harvests, id: \.timestamp) { harvest in
+                ForEach(harvests, id: \.id) { harvest in
                     HarvestSummaryRow(harvest: harvest)
                 }
             } else {
@@ -602,16 +602,16 @@ struct FieldDetailView: View {
     private func getFieldHarvests() -> [Harvest]? {
         guard let grows = field.grows?.allObjects as? [Grow] else { return nil }
         
-        var allHarvests: [Harvest] = []
+        var allHarvests = [Harvest]()
         
         for grow in grows {
-            if let harvests = grow.harvests?.allObjects as? [Harvest] {
+            if let harvests = grow.harvest?.allObjects as? [Harvest] {
                 allHarvests.append(contentsOf: harvests)
             }
         }
         
-        return allHarvests.isEmpty ? nil : allHarvests.sorted { 
-            ($0.timestamp ?? Date.distantPast) > ($1.timestamp ?? Date.distantPast) 
+        return allHarvests.isEmpty ? nil : allHarvests.sorted { (a: Harvest, b: Harvest) in
+            (a.date ?? .distantPast) > (b.date ?? .distantPast)
         }
     }
 }
@@ -723,7 +723,7 @@ struct EditFieldView: View {
                 .split(separator: ",")
                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                 .filter { !$0.isEmpty }
-            field.soilMapUnits = soilMapUnitsArray
+            //field.soilMapUnits = soilMapUnitsArray
         } else {
             field.soilMapUnits = nil
         }
@@ -853,7 +853,7 @@ struct GrowSummaryRow: View {
                         }
                     }
                     
-                    if let cultivar = grow.cultivar {
+                    if let cultivar = grow.seed?.cultivar {
                         Text(cultivar.name ?? "Unknown Cultivar")
                             .font(AppTheme.Typography.bodySmall)
                             .foregroundColor(AppTheme.Colors.textSecondary)
@@ -969,17 +969,17 @@ struct HarvestSummaryRow: View {
                         }
                     }
                     
-                    if let quantity = harvest.totalQuantity, quantity > 0 {
-                        Text("Quantity: \(quantity, specifier: "%.1f") lbs")
-                            .font(AppTheme.Typography.bodySmall)
-                            .foregroundColor(AppTheme.Colors.textSecondary)
-                    }
+//                    if let quantity = harvest.quantityUnit, quantity.rawValue > 0 {
+//                        Text("Quantity: \(quantity, specifier: "%.1f") lbs")
+//                            .font(AppTheme.Typography.bodySmall)
+//                            .foregroundColor(AppTheme.Colors.textSecondary)
+//                    }
                 }
                 
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: AppTheme.Spacing.tiny) {
-                    if let timestamp = harvest.timestamp {
+                    if let timestamp = harvest.date {
                         Text(timestamp, style: .date)
                             .font(AppTheme.Typography.bodySmall)
                             .foregroundColor(AppTheme.Colors.textSecondary)
@@ -1102,12 +1102,3 @@ struct WellDetailView: View {
     }
 }
 
-/// Placeholder for harvest detail view
-struct HarvestDetailView: View {
-    let harvest: Harvest
-    
-    var body: some View {
-        Text("Harvest Detail - Coming Soon")
-            .navigationTitle("Harvest Details")
-    }
-}

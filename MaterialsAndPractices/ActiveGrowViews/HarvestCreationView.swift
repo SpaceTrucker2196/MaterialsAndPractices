@@ -108,7 +108,7 @@ struct HarvestCreationView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
             HStack {
-                Text(grow.cultivar?.emoji ?? "🌱")
+                Text(grow.seed?.cultivar?.emoji ?? "🌱")
                     .font(.system(size: 32))
                 
                 VStack(alignment: .leading) {
@@ -449,7 +449,7 @@ struct HarvestCreationView: View {
         
         // Generate format: YYYY-FARM-CROP-####
         let farmCode = "FARM" // TODO: Get from farm configuration
-        let cropCode = String(grow.cultivar?.name?.prefix(3).uppercased() ?? "UNK")
+        let cropCode = String(grow.seed?.cultivar?.name?.prefix(3).uppercased() ?? "UNK")
         let sequence = String(format: "%04d", Int.random(in: 1...9999))
         
         return "\(year)-\(farmCode)-\(cropCode)-\(sequence)"

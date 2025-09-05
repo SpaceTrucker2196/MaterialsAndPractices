@@ -324,11 +324,7 @@ struct CreateGrowFromSeedView: View {
                 grow.state = property.state
                 grow.zip = property.zip
             }
-            
-            // Associate with seed and cultivar
-           // grow.addToSeed(seed)
-            grow.cultivar = seed.cultivar
-            
+
             // Update seed quantity
             if let usedQuantity = Double(seedQuantityUsed) {
                 if seed.quantity >= usedQuantity {

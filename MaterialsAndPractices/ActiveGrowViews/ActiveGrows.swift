@@ -155,7 +155,7 @@ struct GrowTileView: View {
             // Top row: Emoji and worker count
             HStack {
                 // Crop emoji
-                Text(grow.cultivar?.emoji ?? "🌱")
+                Text(grow.seed?.cultivar?.emoji ?? "🌱")
                     .font(.system(size: 32))
                 
                 Spacer()
